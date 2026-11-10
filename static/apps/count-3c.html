@@ -28,7 +28,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .ball{width:5vh;height:5vh;border-radius:50%;flex:none;box-shadow:inset -.6vh -.6vh 0 rgba(0,0,0,.18)}
 .p0 .ball{background:var(--white)}.p1 .ball{background:var(--yellow)}
 .name{font-weight:900;font-size:4.6vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.goal{margin-left:auto;font-weight:700;font-size:2.4vh;white-space:nowrap;background:rgba(23,26,34,.55);border-radius:1.4vh;padding:.4vh 1vw;text-align:right}.goal small{display:block;font-size:1.8vh;color:#DCE3F0}
+.goal{margin-left:auto;font-weight:700;font-size:2.4vh;white-space:nowrap;background:rgba(23,26,34,.55);border-radius:1.4vh;padding:.4vh 1vw;text-align:right}.goal small{display:block;font-size:2.4vh;color:#fff;font-weight:900}
 .goal b{font-family:Anton,Impact,sans-serif;font-size:4.4vh;font-weight:400;margin-left:.4vw}
 .score{display:flex;align-items:center;justify-content:center;font-size:min(46vh,26vw)}
 .p0 .score{color:var(--white)}.p1 .score{color:var(--yellow)}
@@ -38,12 +38,15 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .stat b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:5.4vh}
 .turn{position:absolute;top:-2.2vh;left:50%;transform:translateX(-50%);background:var(--lime);color:var(--night);font-weight:900;font-size:2.2vh;padding:.4vh 1.4vw;border-radius:999px;white-space:nowrap}
 .side:not(.on) .turn{display:none}
-.mid{display:grid;grid-template-rows:auto auto 1fr;gap:1vh;min-height:0}
+.mid{display:grid;grid-template-rows:1.3fr 1fr;gap:1vh;min-height:0}
 .box{background:var(--night2);border-radius:2vh;padding:1.4vh .8vw;text-align:center}
 .box small{display:block;font-weight:700;font-size:2vh;color:var(--sub)}
-.run b{font-size:15vh;color:var(--chalk)}
-.inn b{font-size:9vh}
-.timer b{font-size:11vh}
+.box{display:flex;flex-direction:column;justify-content:center}.run b{font-size:22vh;color:var(--chalk)}
+.inn b{font-size:14vh}
+.cd{position:relative;height:7vh;margin-top:1vh;background:var(--night2);border-radius:1.4vh;padding:.8vh .6vw}.segs{display:flex;gap:.25vw;height:100%}.segs i{flex:1;border-radius:.5vh;transition:opacity .2s}.segs i.off{opacity:.08}
+.cd b{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:6vh;line-height:1;background:var(--night);color:var(--chalk);border-radius:1.2vh;padding:.3vh 1.4vw;min-width:8vw;text-align:center;border:.3vh solid var(--chalk)}
+.cd.warn b{color:var(--yellow);border-color:var(--yellow)}.cd.over b{color:#fff;background:var(--red);border-color:var(--red)}
+.pt .clock{font-family:Anton,Impact,sans-serif;font-size:min(34vh,24vw);line-height:1;text-align:center;font-variant-numeric:tabular-nums;margin:1vh 0}.pt.warn .clock{color:var(--yellow)}.pt.over .clock{color:var(--red)}.pt .keys{margin-top:2vh;font-size:2.2vh}
 .timer.warn b{color:var(--yellow)}.timer.over b{color:var(--red)}
 .timer .bar{height:1vh;background:var(--night);border-radius:1vh;overflow:hidden;margin-top:.8vh}
 .timer .bar i{display:block;height:100%;width:100%;background:var(--lime);transform-origin:left}
@@ -76,7 +79,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   html,body{overflow:auto}.board{height:auto;min-height:100vh}
   .main{grid-template-columns:1fr 1fr;grid-template-areas:"a b" "m m"}.p0{grid-area:a}.p1{grid-area:b}.mid{grid-area:m;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto}
   .score{font-size:30vw}.name{font-size:5vw}.goal{font-size:2.6vw;padding:1vw 2vw}.goal b{font-size:5vw}.goal small{font-size:2.4vw}.who{flex-wrap:wrap}.sheet .lab{font-size:3.2vw;max-width:40vw}.ball{width:7vw;height:7vw}.stat b{font-size:6vw}.stat small{font-size:2.6vw}
-  .run b,.inn b,.timer b{font-size:11vw}.box small,.keys,.sheet{font-size:3vw}.top .ttl{display:none}.turn{font-size:3vw;top:-3.4vw}
+  .run b,.inn b{font-size:11vw}.mid{grid-template-columns:1fr 1fr!important}.cd{height:11vw}.cd b{font-size:8vw;min-width:20vw}.box small,.keys,.sheet{font-size:3vw}.top .ttl{display:none}.turn{font-size:3vw;top:-3.4vw}
   .panel h2{font-size:5vw}.panel p,.f label{font-size:3.4vw}.f input,.f select,.btn{font-size:4vw}.grid2{grid-template-columns:1fr}
   .sheet .row span{min-width:7vw;font-size:4vw}.top button{font-size:3.2vw;padding:1.6vw 3vw}.top img{height:9vw}
 }
@@ -87,31 +90,31 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   <div class="top">
     <a href="/" aria-label="VIBES BILLIARDS トップ"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
     <span class="ttl">スリークッション デジタルカウント</span>
-    <span style="display:flex;gap:.8vw"><button type="button" id="bSet">設定（/）</button><button type="button" id="bFull">全画面（F）</button></span>
+    <span style="display:flex;gap:.8vw"><button type="button" id="bPr">練習タイマー（P）</button><button type="button" id="bSet">設定（/）</button><button type="button" id="bFull">全画面（F）</button></span>
   </div>
   <div class="main">
     <section class="side p0" id="s0" aria-label="先攻">
       <span class="turn">撞いています</span>
-      <div class="who"><span class="ball"></span><span class="name" id="n0"></span><span class="goal">持ち点<b id="g0"></b><small id="rm0"></small></span></div>
+      <div class="who"><span class="ball"></span><span class="name" id="n0"></span><span class="goal"><b id="g0" hidden></b><small id="rm0"></small></span></div>
       <div class="score num" id="sc0">0</div>
       <div class="stats"><div class="stat"><small>イニング</small><b id="in0">0</b></div><div class="stat"><small>ハイラン</small><b id="hr0">0</b></div><div class="stat"><small>アベレージ</small><b id="av0">0.000</b></div></div>
     </section>
     <div class="mid">
       <div class="box run"><small>このイニングの得点</small><b class="num" id="run">0</b></div>
       <div class="box inn"><small>イニング</small><b class="num" id="inn">1</b><small id="lim"></small></div>
-      <div class="box timer" id="tbox"><small>タイマー（＊で開始）</small><b class="num" id="tm">40</b><div class="bar"><i id="tbar"></i></div></div>
     </div>
     <section class="side p1" id="s1" aria-label="後攻">
       <span class="turn">撞いています</span>
-      <div class="who"><span class="ball"></span><span class="name" id="n1"></span><span class="goal">持ち点<b id="g1"></b><small id="rm1"></small></span></div>
+      <div class="who"><span class="ball"></span><span class="name" id="n1"></span><span class="goal"><b id="g1" hidden></b><small id="rm1"></small></span></div>
       <div class="score num" id="sc1">0</div>
       <div class="stats"><div class="stat"><small>イニング</small><b id="in1">0</b></div><div class="stat"><small>ハイラン</small><b id="hr1">0</b></div><div class="stat"><small>アベレージ</small><b id="av1">0.000</b></div></div>
     </section>
   </div>
   <div>
     <div class="sheet"><span class="lab"><i style="background:#fff"></i><span id="ln0"></span></span><div class="row" id="r0"></div><span class="lab"><i style="background:#F2C200"></i><span id="ln1"></span></span><div class="row" id="r1"></div></div>
-    <div class="keys" style="margin-top:1vh">
-      <span><kbd>＋</kbd>1点</span><span><kbd>−</kbd>1点もどす</span><span><kbd>0〜9</kbd>得点を数字で入力</span><span><kbd>Enter</kbd>交代（イニング終了）</span><span><kbd>BackSpace</kbd>ひとつ前にもどす</span><span><kbd>＊</kbd>タイマー</span><span><kbd>/</kbd>設定</span><span><kbd>.</kbd>2回で新しいゲーム</span>
+    <div class="cd" id="tbox" aria-label="カウントダウンタイマー"><div class="segs" id="segs"></div><b class="num" id="tm">40</b></div>
+    <div class="keys" style="margin-top:.8vh">
+      <span><kbd>＋</kbd>1点</span><span><kbd>−</kbd>1点もどす</span><span><kbd>0〜9</kbd>得点を入力</span><span><kbd>Enter</kbd>交代</span><span><kbd>BackSpace</kbd>もどす</span><span><kbd>＊</kbd>タイマー</span><span><kbd>−</kbd>試合前：練習タイマー</span><span><kbd>/</kbd>設定</span><span><kbd>.</kbd>2回で新しいゲーム</span>
     </div>
   </div>
 </div>
@@ -127,6 +130,8 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
       <div class="f"><label for="fg1">後攻の持ち点</label><input id="fg1" type="number" inputmode="numeric" min="1" max="999"></div>
       <div class="f"><label for="fl">イニング制限（0＝なし）</label><input id="fl" type="number" inputmode="numeric" min="0" max="999"></div>
       <div class="f"><label for="ft">タイマーの秒数（0＝使わない）</label><input id="ft" type="number" inputmode="numeric" min="0" max="180"></div>
+      <div class="f"><label for="fp">試合前の練習タイマー（分）</label><input id="fp" type="number" inputmode="numeric" min="1" max="60"></div>
+      <div class="f" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="bPr2" style="width:100%">練習タイマーを開く</button></div>
       <div class="f"><label for="fe">後攻の裏撞き（先攻が先に上がったとき）</label><select id="fe"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fs">音（残り10秒・時間切れ）</label><select id="fs"><option value="1">鳴らす</option><option value="0">鳴らさない</option></select></div>
     </div>
@@ -144,15 +149,22 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
     <div class="acts"><button type="button" class="btn" id="bBack">ひとつ前にもどす（BackSpace）</button><button type="button" class="btn go" id="bAgain">新しいゲーム（Enter）</button></div>
   </div>
 </div>
+<div class="over-l" id="prL" hidden>
+  <div class="panel pt" id="prP" role="dialog" aria-label="練習タイマー">
+    <h2>練習タイマー <span id="prWho" style="color:var(--sub);font-size:.7em"></span></h2>
+    <div class="clock" id="prC">5:00</div>
+    <div class="keys"><span><kbd>＋</kbd>スタート／ストップ</span><span><kbd>/</kbd>リセット</span><span><kbd>1〜9</kbd>分数を変える</span><span><kbd>Enter</kbd>終了</span></div>
+  </div>
+</div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
 (function () {
   var KEY = 'vibes-count-3c-v1';
   var $ = function (id) { return document.getElementById(id); };
-  var def = function () { return { cfg: { n: ['先攻', '後攻'], g: [25, 25], lim: 0, t: 40, eq: 1, snd: 1 }, sc: [0, 0], inn: [[], []], run: 0, typed: false, turn: 0, over: false }; };
+  var def = function () { return { cfg: { n: ['先攻', '後攻'], g: [25, 25], lim: 0, t: 40, eq: 1, snd: 1, pm: 5 }, sc: [0, 0], inn: [[], []], run: 0, typed: false, turn: 0, over: false }; };
   var S = def(), hist = [], tLeft = 0, tOn = false, tId = null, dotAt = 0, actx = null;
-  try { var raw = localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); if (o && o.cfg && o.sc) S = Object.assign(def(), o); } } catch (e) {}
+  try { var raw = localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); if (o && o.cfg && o.sc) { S = Object.assign(def(), o); S.cfg = Object.assign(def().cfg, o.cfg); } } } catch (e) {}
   var RK = 'vibes-count-3c-roster-v1', roster = {};
   try { roster = JSON.parse(localStorage.getItem(RK) || '{}') || {}; } catch (e) { roster = {}; }
   function drawRoster() { var dl = $('roster'); dl.textContent = ''; Object.keys(roster).sort().forEach(function (n) { var o = document.createElement('option'); o.value = n; o.label = '持ち点 ' + roster[n]; dl.appendChild(o); }); }
@@ -169,9 +181,9 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   }
   function render() {
     for (var p = 0; p < 2; p++) {
-      $('n' + p).textContent = S.cfg.n[p]; $('g' + p).textContent = S.cfg.g[p];
+      $('n' + p).textContent = S.cfg.n[p] + '（' + S.cfg.g[p] + '）'; $('g' + p).textContent = S.cfg.g[p];
       var left = S.cfg.g[p] - S.sc[p] - (p === S.turn && !S.over ? S.run : 0); $('rm' + p).textContent = left > 0 ? 'あと ' + left + ' 点' : '上がり';
-      var ln = $('ln' + p); ln.textContent = S.cfg.n[p]; var sm = document.createElement('small'); sm.textContent = '持ち点 ' + S.cfg.g[p]; ln.appendChild(sm);
+      $('ln' + p).textContent = S.cfg.n[p] + '（' + S.cfg.g[p] + '）';
       $('sc' + p).textContent = S.sc[p] + (p === S.turn && !S.over ? S.run : 0);
       $('in' + p).textContent = S.inn[p].length; $('hr' + p).textContent = Math.max(hi(p), p === S.turn ? S.run : 0); $('av' + p).textContent = avg(p);
       $('s' + p).classList.toggle('on', p === S.turn && !S.over);
@@ -186,7 +198,10 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   }
   function drawTimer() {
     var T = S.cfg.t || 1, v = tOn ? Math.max(0, Math.ceil(tLeft)) : S.cfg.t;
-    $('tm').textContent = v; $('tbar').style.transform = 'scaleX(' + (tOn ? Math.max(0, tLeft) / T : 1) + ')';
+    $('tm').textContent = v;
+    var sg = $('segs');
+    if (sg.children.length !== (S.cfg.t || 0)) { sg.textContent = ''; for (var i = 0; i < (S.cfg.t || 0); i++) { var el = document.createElement('i'); el.style.background = 'hsl(' + Math.round(i / Math.max(1, T - 1) * 125) + ',78%,46%)'; sg.appendChild(el); } }
+    for (var j = 0; j < sg.children.length; j++) sg.children[j].classList.toggle('off', j >= v);
     $('tbox').classList.toggle('warn', tOn && tLeft <= 10 && tLeft > 0); $('tbox').classList.toggle('over', tOn && tLeft <= 0);
   }
   function tStop() { tOn = false; clearInterval(tId); tId = null; drawTimer(); }
@@ -215,21 +230,21 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   function newGame(keep) { snap(); var c = S.cfg; S = def(); S.cfg = c; if (!keep) hist = []; tStop(); $('winL').hidden = true; render(); }
   function showWin() {
     var pct = function (p) { return S.sc[p] / S.cfg.g[p]; }, w = pct(0) === pct(1) ? -1 : (pct(0) > pct(1) ? 0 : 1);
-    $('wName').textContent = w < 0 ? '引き分け' : S.cfg.n[w] + ' の勝ち';
+    $('wName').textContent = w < 0 ? '引き分け' : S.cfg.n[w] + '（' + S.cfg.g[w] + '） の勝ち';
     var tb = $('wT'); tb.textContent = '';
-    [0, 1].forEach(function (p) { var tr = document.createElement('tr'); [S.cfg.n[p], S.sc[p] + ' / ' + S.cfg.g[p], S.inn[p].length, hi(p), avg(p)].forEach(function (v, i) { var c = document.createElement(i ? 'td' : 'th'); c.textContent = v; tr.appendChild(c); }); tb.appendChild(tr); });
+    [0, 1].forEach(function (p) { var tr = document.createElement('tr'); [S.cfg.n[p] + '（' + S.cfg.g[p] + '）', S.sc[p] + ' / ' + S.cfg.g[p], S.inn[p].length, hi(p), avg(p)].forEach(function (v, i) { var c = document.createElement(i ? 'td' : 'th'); c.textContent = v; tr.appendChild(c); }); tb.appendChild(tr); });
     $('winL').hidden = false;
   }
   function openSet() {
     $('fn0').value = S.cfg.n[0]; $('fn1').value = S.cfg.n[1]; $('fg0').value = S.cfg.g[0]; $('fg1').value = S.cfg.g[1];
-    $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd;
+    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd;
     $('setL').hidden = false; $('fn0').focus(); $('fn0').select();
   }
   function closeSet(apply) {
     if (apply) {
       var num = function (id, lo, hi, d) { var v = parseInt($(id).value, 10); return isNaN(v) ? d : Math.max(lo, Math.min(hi, v)); };
       S.cfg.n = [$('fn0').value.trim() || '先攻', $('fn1').value.trim() || '後攻'];
-      S.cfg.g = [num('fg0', 1, 999, 25), num('fg1', 1, 999, 25)]; S.cfg.lim = num('fl', 0, 999, 0); S.cfg.t = num('ft', 0, 180, 40);
+      S.cfg.g = [num('fg0', 1, 999, 25), num('fg1', 1, 999, 25)]; S.cfg.lim = num('fl', 0, 999, 0); S.cfg.t = num('ft', 0, 180, 40); S.cfg.pm = num('fp', 1, 60, 5);
       S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value;
       remember();
       for (var p = 0; p < 2; p++) if (S.sc[p] > S.cfg.g[p]) S.cfg.g[p] = S.sc[p];
@@ -237,11 +252,23 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
     }
     $('setL').hidden = true; tStop(); render();
   }
+  var pLeft = 0, pOn = false, pId = null;
+  function prDraw() { var v = Math.max(0, Math.ceil(pLeft)), m = Math.floor(v / 60), s = v % 60; $('prC').textContent = m + ':' + (s < 10 ? '0' : '') + s; $('prP').classList.toggle('warn', v <= 30 && v > 0); $('prP').classList.toggle('over', v <= 0); }
+  function prStop() { pOn = false; clearInterval(pId); pId = null; }
+  function prReset() { prStop(); pLeft = S.cfg.pm * 60; prDraw(); }
+  function prToggle() {
+    if (pOn) { prStop(); return; } if (pLeft <= 0) pLeft = S.cfg.pm * 60;
+    pOn = true; var last = Date.now(), w30 = pLeft <= 30, done = false;
+    pId = setInterval(function () { var n = Date.now(); pLeft -= (n - last) / 1000; last = n; if (!w30 && pLeft <= 30) { w30 = true; beep(880, 200); } if (!done && pLeft <= 0) { done = true; pLeft = 0; beep(330, 1200); prStop(); } prDraw(); }, 200);
+  }
+  function prOpen() { $('setL').hidden = true; tStop(); $('prWho').textContent = S.cfg.n[0] + ' ／ ' + S.cfg.n[1]; $('prL').hidden = false; prReset(); }
+  function prClose() { prStop(); $('prL').hidden = true; render(); }
   function full() { var d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {}); }
 
   $('setF').addEventListener('submit', function (e) { e.preventDefault(); closeSet(true); });
   [0, 1].forEach(function (p) { $('fn' + p).addEventListener('input', function () { var v = this.value.trim(); if (roster[v]) $('fg' + p).value = roster[v]; }); });
   drawRoster();
+  $('bPr').onclick = prOpen; $('bPr2').onclick = function () { closeSet(true); prOpen(); };
   $('bSet').onclick = openSet; $('bFull').onclick = full;
   $('bSwap').onclick = function () { var a = $('fn0').value; $('fn0').value = $('fn1').value; $('fn1').value = a; a = $('fg0').value; $('fg0').value = $('fg1').value; $('fg1').value = a; };
   $('bNew').onclick = function () { closeSet(true); newGame(true); toast('新しいゲームを始めます'); };
@@ -251,10 +278,17 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     var k = e.key;
     if (!$('setL').hidden) { if (k === 'Escape') { e.preventDefault(); closeSet(false); } else if (k === '/' && e.target.type === 'number') e.preventDefault(); return; }
+    if (!$('prL').hidden) {
+      if (k === '+' || k === ' ') prToggle(); else if (k === '/') prReset(); else if (k === 'Enter' || k === 'Escape') prClose();
+      else if (k >= '1' && k <= '9' && !pOn) { S.cfg.pm = +k; save(); prReset(); }
+      else return; e.preventDefault(); return;
+    }
     if (!$('winL').hidden) { if (k === 'Enter') { e.preventDefault(); newGame(false); } else if (k === 'Backspace') { e.preventDefault(); undo(); } return; }
     var hit = true;
     if (k >= '0' && k <= '9') digit(+k);
     else if (k === '+' || k === 'ArrowUp') add(1);
+    else if (k === '-' && !S.over && !S.run && !S.inn[0].length && !S.inn[1].length) prOpen();
+    else if (k === 'p' || k === 'P') prOpen();
     else if (k === '-' || k === 'ArrowDown') add(-1);
     else if (k === 'Enter' || k === ' ') commit();
     else if (k === 'Backspace') undo();
