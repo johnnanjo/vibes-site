@@ -4,7 +4,7 @@
 
 ## Build
 - `node build.mjs` → `dist/`（依存パッケージなし。Node 18+）
-- Cloudflare Pages：Build command `node build.mjs`、Output directory `dist`
+- 公開：GitHub Pages（`.github/workflows/pages.yml`、mainへのpushで自動）。Cloudflare Worker `vibes-site1` はプレビュー（ドメイン移管後に本番へ）
 - 確認：`cd dist && python3 -m http.server`
 
 ## Data（ここを書き換えるとサイトが更新される）
@@ -12,7 +12,9 @@
 - `data/shops.json` ビリヤード場
 - `data/articles.json` NEWS・試合結果・ハウストーナメント・試合速報の記事（`blog.handle` で振り分け）
 - `data/pages.json` 規約などの固定ページ本文、`data/products.json` 商品
-- `data/inbox/{articles,tournaments,shops}/*.json` 自動化（Make）が1件1ファイルで書き込む追加分。同じhandleは上書き
+- `data/inbox/{articles,tournaments,shops}/*.json` 自動化が書き込む追加分（1件または配列）。ファイル名順に読み、同じhandleは項目ごとに上書き
+  - 記事：Make「VIBES Shopify記事 → 新サイト同期」が2時間ごとに `sync-*.json` を追加。掲載フォームは `ht-*`/`form-*` を直接追加
+  - 大会・店：Shopifyに書き込む予約タスクが、最後に変更分を `sync-*.json` で追加。`status:"DRAFT"` は運営者が外した大会として非表示（終了14日以上後のDRAFTは結果の履歴として表示）
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック
 
 ## URL
