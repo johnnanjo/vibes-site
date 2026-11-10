@@ -1,0 +1,3 @@
+{%- comment -%} 記事の競技タグ：heyball / carom / pocket / all を出力。render 'vibes-game-tag', article: article {%- endcomment -%}
+{%- assign tg = article.tags | join: ' ' | append: ' ' | append: article.title -%}
+{%- if tg contains 'ヘイボール' or tg contains 'HEYBALL' or tg contains 'HeyBall' or tg contains 'Heyball' or tg contains 'JHBA' -%}heyball{%- elsif tg contains 'スリークッション' or tg contains 'キャロム' or tg contains '3C' or tg contains 'JPBF' or tg contains 'アマ連' -%}carom{%- elsif tg contains 'ポケット' or tg contains '9ボール' or tg contains '10ボール' or tg contains 'JPBA' or tg contains 'JAPA' -%}pocket{%- else -%}all{%- endif -%}

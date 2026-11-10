@@ -1,0 +1,9 @@
+{%- comment -%} 大会データの英字コード → 表示名。 kind: game / class / org / feature / rank / status {%- endcomment -%}
+{%- case kind -%}
+{%- when 'game' -%}{%- case code -%}{%- when '9ball' -%}9ボール{%- when '10ball' -%}10ボール{%- when '8ball' -%}8ボール{%- when '14-1' -%}14-1{%- when 'heyball' -%}HEYBALL（ヘイボール）{%- when 'pocket-other' -%}ポケット{%- when '3cushion' -%}スリークッション{%- when '1cushion' -%}ワンクッション{%- when 'balkline' -%}ボークライン{%- when '4ball' -%}四つ球{%- when 'band' -%}バンド{%- when 'carom-other' -%}キャロム{%- when 'snooker' -%}スヌーカー{%- else -%}その他{%- endcase -%}
+{%- when 'class' -%}{%- case code -%}{%- when 'beginner' -%}ビギナー{%- when 'pro' -%}プロ{%- when 'ladies' -%}レディース{%- when 'senior' -%}シニア{%- when 'student' -%}学生{%- when 'junior' -%}ジュニア{%- when 'open' -%}オープン{%- else -%}{{ code }}級{%- endcase -%}
+{%- when 'org' -%}{%- case code -%}{%- when 'JPBF' -%}JPBF（3Cプロ公式戦）{%- when 'NBA-KANTO' -%}NBA関東支部（関東3C・アマ/オープン）{%- when 'KA3CF' -%}関東アマ連（関東3C・アマ）{%- when 'KA3U' -%}関西アマ連（関西3C・アマ）{%- when 'JHBA' -%}日本HeyBall協会（HEYBALL）{%- when 'JPBA' -%}JPBA（ポケットプロ公式戦）{%- when 'JAPA' -%}JAPA（ポケットアマ公式戦）{%- when 'NBA' -%}日本ビリヤード協会（NBA）{%- when 'shop' -%}店舗（ハウストーナメント）{%- when 'other' -%}その他{%- else -%}{{ code }}{%- endcase -%}
+{%- when 'feature' -%}{%- case code -%}{%- when 'handicap' -%}ハンデ戦{%- when 'doubles' -%}ダブルス{%- when 'beginner_welcome' -%}初心者歓迎{%- when 'women_welcome' -%}女性歓迎{%- when 'stream' -%}配信あり{%- when 'free_watch' -%}観戦無料{%- when 'same_day_entry' -%}当日受付あり{%- endcase -%}
+{%- when 'rank' -%}{%- case code -%}{%- when 'national' -%}全国大会{%- when 'regional' -%}地域大会{%- when 'monthly' -%}マンスリー{%- when 'weekly' -%}ウィークリー{%- when 'other' -%}{%- else -%}{{ code }}{%- endcase -%}
+{%- when 'status' -%}{%- case code -%}{%- when 'open' -%}受付中{%- when 'closed' -%}受付終了{%- when 'cancelled' -%}中止{%- when 'postponed' -%}延期{%- else -%}要確認{%- endcase -%}
+{%- endcase -%}

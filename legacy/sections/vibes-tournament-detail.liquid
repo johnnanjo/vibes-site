@@ -1,0 +1,119 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{%- render 'vibes-t-style' -%}
+{%- assign t = metaobject -%}
+{%- assign wd = '日,月,火,水,木,金,土' | split: ',' -%}
+{%- assign st = t.starts_at.value -%}
+{%- assign w = st | date: '%w' | plus: 0 -%}
+{%- assign cat = t.category.value -%}
+{%- assign status = t.entry_status.value | default: 'open' -%}
+{%- assign sp = t.shop.value -%}
+{%- assign shopname = t.venue_name.value -%}{%- if sp -%}{%- assign shopname = sp.name.value -%}{%- endif -%}
+{%- assign phone = t.contact.value -%}{%- if sp.phone.value != blank -%}{%- assign phone = sp.phone.value -%}{%- endif -%}
+{%- assign tel = phone | remove: '-' | remove: ' ' | remove: '（' | remove: '）' | remove: '(' | remove: ')' -%}
+{%- capture addr -%}{%- if sp.address.value != blank -%}{{ sp.address.value }}{%- else -%}{{ t.prefecture.value }}{{ t.city.value }}{%- endif -%}{%- endcapture -%}
+{%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+{%- assign endd = t.ends_at.value | default: st | date: '%Y%m%d' | plus: 0 -%}
+<style>
+.vb .td{padding:14px 0 120px;max-width:760px}
+.vb .td-top{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.vb .td h1{font-family:var(--jp);font-size:clamp(22px,6.2vw,30px);font-weight:900;line-height:1.35;margin:0 0 10px;text-transform:none;letter-spacing:0}
+.vb .td-when{font-family:var(--anton);font-size:clamp(24px,7vw,34px);line-height:1.1}
+.vb .td-when small{font-family:var(--jp);font-weight:700;font-size:14px;color:var(--muted);margin-left:8px}
+.vb .td-sum{margin:8px 0 0;font-size:15px;line-height:1.7}
+.vb .td-sec{margin:24px 0 0}
+.vb .td-sec h2{font-family:var(--jp);font-size:17px;font-weight:900;margin:0 0 8px;padding-bottom:6px;border-bottom:2px solid #0A0A09;text-transform:none;letter-spacing:0}
+.vb .td-dl{display:grid;grid-template-columns:7.5em 1fr;margin:0;font-size:15px;line-height:1.65}
+.vb .td-dl dt{font-weight:900;color:#4A4A46;padding:9px 0;border-bottom:1px solid var(--line,#E2E2DE)}
+.vb .td-dl dd{margin:0;padding:9px 0;border-bottom:1px solid var(--line,#E2E2DE);white-space:pre-line;overflow-wrap:anywhere}
+.vb .td-res{padding:16px;border-radius:14px;background:#0A0A09;color:#FAFAFA;font-size:16px;line-height:1.8;white-space:pre-line}
+.vb .td-res h2{color:#C6FF1F;border-color:#C6FF1F}
+.vb .td-venue{display:block;padding:14px 16px;border-radius:14px;background:#F2F2EF;color:#0A0A09;text-decoration:none}
+.vb .td-venue b{display:block;font-size:16px}
+.vb .td-venue span{font-size:13px;color:#4A4A46}
+.vb .td-act{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom));z-index:40;display:flex;gap:8px;padding:10px 12px;background:rgba(250,250,250,.96);border-top:1px solid var(--line,#E2E2DE)}
+.vb .td-act a{flex:1;display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:999px;font-weight:900;font-size:15px;text-decoration:none;border:2px solid #0A0A09;color:#0A0A09;background:#fff}
+.vb .td-act a.main{background:#FA4E02;border-color:#FA4E02}
+.vb .td-src{margin-top:20px;font-size:12px;line-height:1.7;color:var(--muted)}
+.vb .td-src a{color:inherit}
+@media (min-width:860px){.vb .td-act{position:static;padding:0;margin:20px 0 0;background:none;border:0;max-width:760px}}
+</style>
+<div class="vb">
+<div class="wrap">
+<article class="td">
+  <div class="crumbs"><a href="/">Vibes Billiards</a> ／ <a href="/pages/tournaments">大会をさがす</a></div>
+  <div class="td-top">
+    {%- if cat == 'official' -%}<b class="tc-badge of">公式戦</b>{%- elsif cat == 'house' -%}<b class="tc-badge ht">ハウス</b>{%- else -%}<b class="tc-badge ev">イベント</b>{%- endif -%}
+    {%- if t.organizer.value != blank and t.organizer.value != 'shop' -%}<b class="tc-badge st-closed">{%- render 'vibes-t-labels', kind: 'org', code: t.organizer.value -%}</b>{%- endif -%}
+    {%- if t.rank.value != blank and t.rank.value != 'other' -%}<b class="tc-badge st-closed">{%- render 'vibes-t-labels', kind: 'rank', code: t.rank.value -%}</b>{%- endif -%}
+    {%- if t.women_only.value -%}<b class="tc-badge wo">女性限定</b>{%- endif -%}
+    {%- if endd < today -%}<b class="tc-badge st-closed">終了</b>{%- else -%}<b class="tc-badge {% if status == 'open' %}ht{% else %}st-{{ status }}{% endif %}">{%- render 'vibes-t-labels', kind: 'status', code: status -%}</b>{%- endif -%}
+  </div>
+  <h1>{{ t.title.value | escape }}</h1>
+  <div class="td-when">{%- if t.date_label.value != blank -%}{{ t.date_label.value }}{%- else -%}{{ st | date: '%-m/%-d' }}（{{ wd[w] }}）{{ st | date: '%H:%M' }}{%- endif -%}<small>{{ st | date: '%Y年' }}{%- if t.ends_at.value != blank and t.date_label.value == blank -%}　〜{{ t.ends_at.value | date: '%H:%M' }}{%- endif -%}</small></div>
+  {%- if t.notes.value != blank -%}<p class="td-sum">{{ t.notes.value | escape }}</p>{%- endif -%}
+
+  {%- if t.results.value != blank or t.winner.value != blank -%}
+  <section class="td-sec td-res">
+    <h2>結果</h2>
+    {%- if t.results.value != blank -%}{{ t.results.value | escape }}{%- else -%}🥇 {{ t.winner.value | escape }}{%- endif -%}
+    {%- if t.results_url.value != blank -%}<br><a href="{{ t.results_url.value }}" target="_blank" rel="noopener" style="color:#C6FF1F;font-size:13px">公式の結果ページ →</a>{%- endif -%}
+  </section>
+  {%- endif -%}
+
+  <section class="td-sec">
+    <h2>大会要項</h2>
+    <dl class="td-dl">
+      {%- if t.games.value.size > 0 -%}<dt>種目</dt><dd>{%- for g in t.games.value -%}{%- render 'vibes-t-labels', kind: 'game', code: g -%}{%- unless forloop.last -%}・{%- endunless -%}{%- endfor -%}</dd>{%- endif -%}
+      {%- if t.classes.value.size > 0 -%}<dt>参加クラス</dt><dd>{%- for c in t.classes.value -%}{%- render 'vibes-t-labels', kind: 'class', code: c -%}{%- unless forloop.last -%}・{%- endunless -%}{%- endfor -%}{%- if t.women_only.value -%}（女性限定）{%- endif -%}</dd>{%- endif -%}
+      {%- if t.handicap.value != blank -%}<dt>ハンデ</dt><dd>{{ t.handicap.value | escape }}</dd>{%- endif -%}
+      {%- if t.format.value != blank -%}<dt>試合形式</dt><dd>{{ t.format.value | escape }}</dd>{%- endif -%}
+      {%- if t.fee_note.value != blank -%}<dt>参加費</dt><dd>{{ t.fee_note.value | escape }}</dd>{%- elsif t.fee_yen.value != blank -%}<dt>参加費</dt><dd>{{ t.fee_yen.value | times: 100 | money_without_trailing_zeros }}</dd>{%- endif -%}
+      {%- if t.capacity.value != blank -%}<dt>定員</dt><dd>{{ t.capacity.value | escape }}</dd>{%- endif -%}
+      {%- if t.entry_deadline.value != blank -%}<dt>申込締切</dt><dd>{{ t.entry_deadline.value | date: '%-m月%-d日 %H:%M' }}</dd>{%- endif -%}
+      {%- if t.apply_method.value != blank -%}<dt>申込方法</dt><dd>{{ t.apply_method.value | escape }}</dd>{%- endif -%}
+      {%- if t.features.value.size > 0 -%}<dt>特徴</dt><dd>{%- for f in t.features.value -%}{%- render 'vibes-t-labels', kind: 'feature', code: f -%}{%- unless forloop.last -%}・{%- endunless -%}{%- endfor -%}</dd>{%- endif -%}
+      {%- if phone != blank -%}<dt>問い合わせ</dt><dd>{%- if tel.size >= 9 -%}<a href="tel:{{ tel }}">{{ phone | escape }}</a>{%- else -%}{{ phone | escape }}{%- endif -%}</dd>{%- endif -%}
+    </dl>
+  </section>
+
+  <section class="td-sec">
+    <h2>会場</h2>
+    {%- if sp -%}
+      <a class="td-venue" href="{{ sp.system.url }}"><b>{{ sp.name.value | escape }} →</b><span>{{ addr | escape }}{%- if sp.station.value != blank -%}　{{ sp.station.value | escape }}{%- endif -%}</span></a>
+    {%- else -%}
+      <div class="td-venue"><b>{{ shopname | default: '会場は主催者の発表をご確認ください' | escape }}</b><span>{{ addr | escape }}</span></div>
+    {%- endif -%}
+  </section>
+
+  {%- if sp -%}
+    {%- assign more = 0 -%}
+    {%- capture next_html -%}
+      {%- paginate shop.metaobjects.tournament.values by 250 -%}
+      {%- for o in shop.metaobjects.tournament.values -%}
+        {%- if more < 3 and o.system.handle != t.system.handle and o.shop.value.system.handle == sp.system.handle -%}
+          {%- assign od = o.starts_at.value | date: '%Y%m%d' | plus: 0 -%}
+          {%- if od >= today -%}{%- assign more = more | plus: 1 -%}{%- render 'vibes-t-card', t: o -%}{%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- endpaginate -%}
+    {%- endcapture -%}
+    {%- if more > 0 -%}<section class="td-sec"><h2>この店舗の次の大会</h2>{{ next_html }}</section>{%- endif -%}
+  {%- endif -%}
+
+  <p class="td-src">{%- if t.source_url.value != blank -%}出典：<a href="{{ t.source_url.value }}" target="_blank" rel="noopener">{{ t.source_name.value | default: '主催者の発表' }}</a>。{%- endif -%}内容は変更になる場合があります。参加の前に主催者へご確認ください。</p>
+
+  <div class="td-act">
+    {%- if t.apply_url.value != blank and endd >= today -%}<a class="main" href="{{ t.apply_url.value }}" target="_blank" rel="noopener">申し込む</a>{%- endif -%}
+    {%- if tel.size >= 9 -%}<a{% if t.apply_url.value == blank %} class="main"{% endif %} href="tel:{{ tel }}">電話</a>{%- endif -%}
+    {%- if addr != blank -%}<a href="https://www.google.com/maps/search/?api=1&amp;query={{ shopname | append: ' ' | append: addr | url_encode }}" target="_blank" rel="noopener">地図</a>{%- endif -%}
+    <a href="/pages/tournaments">一覧へ</a>
+  </div>
+</article>
+</div>
+</div>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SportsEvent","name":{{ t.title.value | json }},"startDate":{{ st | date: '%Y-%m-%dT%H:%M:%S+09:00' | json }}{%- if t.ends_at.value != blank -%},"endDate":{{ t.ends_at.value | date: '%Y-%m-%dT%H:%M:%S+09:00' | json }}{%- endif -%},"eventStatus":"https://schema.org/{% if status == 'cancelled' %}EventCancelled{% elsif status == 'postponed' %}EventPostponed{% else %}EventScheduled{% endif %}","sport":"Billiards","location":{"@type":"Place","name":{{ shopname | default: '未定' | json }},"address":{{ addr | default: '日本' | json }}},"organizer":{"@type":"Organization","name":{{ shopname | default: t.organizer.value | json }}},"url":{{ shop.url | append: t.system.url | json }}}</script>
+{% schema %}
+{ "name": "Vibes Tournament", "settings": [] }
+{% endschema %}

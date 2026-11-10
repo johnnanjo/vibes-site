@@ -1,0 +1,121 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{%- assign icon = 'https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-icon-official-512.png?v=1793790888' -%}
+<style>
+.vb .ap{padding:14px 0 120px;max-width:760px}
+.vb .ap-hero{position:relative;overflow:hidden;margin:6px 0 0;padding:30px 20px 26px;border-radius:24px;color:#F4F4F0;background:radial-gradient(90% 60% at 100% 0%,rgba(255,46,147,.34),transparent 60%),radial-gradient(80% 60% at 0% 100%,rgba(198,255,31,.2),transparent 62%),#0A0A09;box-shadow:inset 0 0 0 2px rgba(255,46,147,.7),0 0 34px rgba(255,46,147,.2)}
+.vb .ap-hero h1{font-family:var(--jp);font-weight:900;font-size:clamp(26px,7.6vw,40px);line-height:1.3;margin:0;color:#fff;text-transform:none;letter-spacing:0}
+.vb .ap-hero .lead{margin:12px 0 0;font-size:15px;line-height:1.8;color:#E2E2DC}
+.vb .ap-free{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0;padding:0;list-style:none}
+.vb .ap-free li{padding:6px 12px;border-radius:999px;background:#1C1C1A;color:#C6FF1F;font-size:13px;font-weight:900}
+.vb .ap-phone{position:relative;width:min(260px,72vw);aspect-ratio:9/17;margin:26px auto 4px;border-radius:38px;padding:14px;background:#1A1A18;box-shadow:inset 0 0 0 2px #3A3A36,0 20px 50px rgba(0,0,0,.5)}
+.vb .ap-scr{position:relative;height:100%;border-radius:28px;overflow:hidden;background:linear-gradient(160deg,#2B2140,#14202A 55%,#0E1512);padding:34px 16px 0}
+.vb .ap-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 12px;align-items:start}
+.vb .ap-grid i{display:block;aspect-ratio:1;border-radius:24%;background:rgba(255,255,255,.12)}
+.vb .ap-grid i:nth-child(3n){background:rgba(255,255,255,.08)}
+.vb .ap-me{position:relative;display:grid;justify-items:center;gap:5px}
+.vb .ap-me img{display:block;width:100%;height:auto;aspect-ratio:1;border-radius:24%;box-shadow:0 0 0 2px #C6FF1F,0 0 18px rgba(198,255,31,.8);animation:aplit 1.4s cubic-bezier(.2,.8,.2,1) .4s both}
+.vb .ap-me span{font-size:10px;font-weight:900;color:#fff;letter-spacing:.02em}
+.vb .ap-me::after{content:"";position:absolute;left:50%;top:38%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.55);animation:aptap 1.4s ease-out 1.9s both}
+.vb .ap-dock{position:absolute;left:12px;right:12px;bottom:12px;height:58px;border-radius:20px;background:rgba(255,255,255,.14)}
+@keyframes aplit{0%{transform:scale(.4);opacity:0;box-shadow:0 0 0 2px transparent}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+@keyframes aptap{0%{transform:scale(.3);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.vb .ap-go{display:flex;align-items:center;justify-content:center;width:100%;min-height:60px;margin-top:22px;border:0;border-radius:999px;background:#FF2E93;color:#0A0A09;font:900 18px/1.2 var(--jp);cursor:pointer;box-shadow:0 0 24px rgba(255,46,147,.5)}
+.vb .ap-done{display:none;margin-top:22px;padding:16px;border-radius:16px;background:#1C1C1A;color:#C6FF1F;font-weight:900;font-size:15px;line-height:1.6;text-align:center}
+html.vb-standalone .vb .ap-go{display:none}html.vb-standalone .vb .ap-done{display:block}
+.vb .ap-sec{margin:34px 0 0}
+.vb .ap-sec h2{font-family:var(--jp);font-size:20px;font-weight:900;line-height:1.4;margin:0 0 12px;text-transform:none;letter-spacing:0}
+.vb .ap-use{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.vb .ap-use a{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:center;padding:14px 16px;border-radius:16px;background:#fff;border:1px solid #E2E2DE;text-decoration:none;color:#0A0A09}
+.vb .ap-use .ic{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;font-size:22px;background:var(--c)}
+.vb .ap-use b{display:block;font-size:16px;font-weight:900;line-height:1.4}
+.vb .ap-use span span{display:block;font-size:13px;line-height:1.6;color:#4A4A46}
+.vb .ap-os{display:grid;gap:12px}
+@media (min-width:640px){.vb .ap-os{grid-template-columns:1fr 1fr}}
+.vb .ap-os div{padding:16px;border-radius:16px;background:#F2F2EF}
+.vb .ap-os h3{margin:0 0 8px;font-family:var(--jp);font-size:16px;font-weight:900;text-transform:none;letter-spacing:0}
+.vb .ap-os ol{margin:0;padding-left:1.3em;font-size:14px;line-height:1.85}
+.vb .ap-os p{margin:8px 0 0;font-size:12px;line-height:1.6;color:#4A4A46}
+.vb .ap-tip{margin:12px 0 0;font-size:13px;line-height:1.7;color:#4A4A46}
+.vb .ap-line{display:grid;gap:10px;padding:18px;border-radius:18px;background:#0A0A09;color:#F4F4F0;box-shadow:inset 0 0 0 2px #06C755}
+.vb .ap-line p{margin:0;font-size:14px;line-height:1.75}
+.vb .ap-line a{display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:999px;background:#06C755;color:#fff;font-weight:900;text-decoration:none}
+.vb .ap-faq dt{font-weight:900;font-size:15px;margin:14px 0 4px}
+.vb .ap-faq dd{margin:0;font-size:14px;line-height:1.75;color:#3A3A36}
+@media (prefers-reduced-motion:reduce){.vb .ap-me img{animation:none}.vb .ap-me::after{display:none}}
+</style>
+<div class="vb">
+<div class="wrap">
+<section class="ap">
+  <div class="crumbs"><a href="/">Vibes Billiards</a> ／ VIBESアプリ</div>
+  <div class="ap-hero">
+    <h1>ビリヤードの「いま」を、<br>ホーム画面に。</h1>
+    <p class="lead">VIBESは、スマホのホーム画面に置いて使えるアプリです。今日の大会も、近くのビリヤード場も、タップひとつ。アプリストアからのダウンロードはいりません。</p>
+    <ul class="ap-free"><li>無料</li><li>登録なし</li><li>容量ほぼゼロ</li><li>いつも最新</li></ul>
+    <div class="ap-phone" aria-hidden="true">
+      <div class="ap-scr">
+        <div class="ap-grid">
+          <i></i><i></i><i></i><i></i>
+          <i></i><div class="ap-me"><img src="{{ icon }}&width=160" alt="" width="80" height="80"><span>VIBES</span></div><i></i><i></i>
+          <i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i>
+        </div>
+        <div class="ap-dock"></div>
+      </div>
+    </div>
+    <button type="button" class="ap-go" data-ins-open>ホーム画面に追加する</button>
+    <div class="ap-done">✓ VIBESアプリから開いています。いつでもホーム画面からどうぞ。</div>
+  </div>
+
+  <div class="ap-sec">
+    <h2>アプリでできること</h2>
+    <ul class="ap-use">
+      <li><a href="/pages/tournaments" style="--c:#C6FF1F"><span class="ic">🎱</span><span><b>今日・今週末の大会</b><span>全国のハウストーナメントと公式戦を日付ですぐ探せます。</span></span></a></li>
+      <li><a href="/pages/near?auto=1" style="--c:#00E1FF"><span class="ic">📍</span><span><b>近くのビリヤード場</b><span>いる場所から近い順に。ルート案内と電話もそのまま。</span></span></a></li>
+      <li><a href="/blogs/results" style="--c:#FFD400"><span class="ic">🏆</span><span><b>試合結果</b><span>各店の大会結果を毎日更新。仲間の優勝もすぐ見つかります。</span></span></a></li>
+      <li><a href="/#price" style="--c:#FA4E02"><span class="ic">🛠</span><span><b>シャフトのオーダーとメンテナンス</b><span>Vibes Carbon Shaft のパターンオーダー、タップ交換などの相談。</span></span></a></li>
+    </ul>
+  </div>
+
+  <div class="ap-sec">
+    <h2>追加のしかた（30秒）</h2>
+    <div class="ap-os">
+      <div>
+        <h3>iPhone（Safari）</h3>
+        <ol><li>画面下の共有ボタン（□に↑）をタップ</li><li>「ホーム画面に追加」をタップ</li><li>右上の「追加」をタップ</li></ol>
+        <p>Chromeの場合は、右上の共有ボタンから同じ手順です。</p>
+      </div>
+      <div>
+        <h3>Android（Chrome）</h3>
+        <ol><li>右上の︙をタップ</li><li>「ホーム画面に追加」または「アプリをインストール」</li><li>「追加」をタップ</li></ol>
+        <p>上の「ホーム画面に追加する」ボタンから、そのまま追加できることもあります。</p>
+      </div>
+    </div>
+    <p class="ap-tip">LINEやInstagramの中で開いている場合は、いったん「ブラウザで開く」を選んでから追加してください。</p>
+  </div>
+
+  <div class="ap-sec">
+    <h2>公式LINEもいっしょに</h2>
+    <div class="ap-line">
+      <p>月曜は先週の試合結果、水曜は来週の大会、金曜は今週末の大会をお届けします。お店の開店・閉店の情報もLINEから送れます。</p>
+      <a href="https://line.me/R/ti/p/@361mehjz" target="_blank" rel="noopener">公式LINEを友だち追加</a>
+    </div>
+  </div>
+
+  <div class="ap-sec">
+    <h2>よくある質問</h2>
+    <dl class="ap-faq">
+      <dt>お金はかかりますか？</dt><dd>かかりません。登録も不要です。</dd>
+      <dt>アプリストアにありますか？</dt><dd>ありません。ブラウザからホーム画面に追加する形なので、ダウンロードの待ち時間も更新作業もなく、いつも最新の情報が出ます。</dd>
+      <dt>消したいときは？</dt><dd>ふつうのアプリと同じく、ホーム画面のアイコンを長押しして削除できます。</dd>
+      <dt>位置情報は送られますか？</dt><dd>「近くのビリヤード場」で使う位置情報は画面の中だけで使い、保存も送信もしません。</dd>
+    </dl>
+  </div>
+</section>
+</div>
+</div>
+{% schema %}
+{ "name": "Vibes App", "settings": [] }
+{% endschema %}

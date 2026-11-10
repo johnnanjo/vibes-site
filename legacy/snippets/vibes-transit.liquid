@@ -1,0 +1,58 @@
+{%- comment -%}
+  トップ：乗換案内（電車でお店へ）。外部の経路検索（Yahoo!乗換案内／Googleマップ）を新しいタブで開くだけ。APIキー不要・入力値は端末の localStorage（vb_tr）にのみ保存。
+{%- endcomment -%}
+<style>
+/* 乗換案内（電車でお店へ） */
+.vb.v46 .tr{margin:12px 0 0;padding:14px;border-radius:var(--vb-r);background:var(--vb-card);border:1px solid var(--vb-border);box-shadow:var(--vb-shadow)}
+.vb.v46 .tr-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin:0 0 10px}
+.vb.v46 .tr-h b{font-size:16px;font-weight:900;color:var(--vb-ink)}
+.vb.v46 .tr-h span{font-size:12.5px;font-weight:700;color:var(--vb-sub)}
+.vb.v46 .tr-st{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:6px 8px;align-items:center}
+.vb.v46 .tr-f{min-width:0;display:flex;align-items:center;gap:10px;min-height:52px;padding:0 12px;border:1.5px solid #CBD2D9;border-radius:12px;background:#fff;cursor:text}
+.vb.v46 .tr-f:focus-within{border-color:var(--vb-ink)}
+.vb.v46 .tr-f i{flex:0 0 auto;font-style:normal;font-size:12px;font-weight:900;padding:2px 8px;border-radius:6px;background:var(--vb-ink);color:#fff}
+.vb.v46 .tr-f i.to{background:var(--vb-mint);color:var(--vb-ink)}
+.vb.v46 .tr-f input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:700 16px/1.2 var(--vb-jp);color:var(--vb-ink);padding:0}
+.vb.v46 .tr-f input::placeholder{color:#9CA3AF;font-weight:500}
+.vb.v46 .tr-sw{grid-column:2;grid-row:1 / span 2;width:44px;height:44px;border:1.5px solid #CBD2D9;border-radius:12px;background:#fff;color:var(--vb-ink);font-size:20px;font-weight:900;line-height:1;cursor:pointer}
+.vb.v46 .tr-sw:hover{border-color:var(--vb-ink)}
+.vb.v46 .tr-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 0}
+.vb.v46 .tr-btns button{min-height:50px;padding:0 10px;border-radius:12px;border:0;background:var(--vb-ink);color:#fff;font:900 15px/1.3 var(--vb-jp);cursor:pointer;white-space:nowrap}
+.vb.v46 .tr-btns button.g{background:#fff;color:var(--vb-ink);box-shadow:inset 0 0 0 1.5px var(--vb-ink)}
+.vb.v46 .tr-msg{margin:8px 2px 0;font-size:13px;font-weight:700;color:#B91C1C;min-height:0}
+.vb.v46 .tr-note{margin:8px 2px 0;font-size:12px;line-height:1.6;color:var(--vb-sub)}
+@media (min-width:760px){.vb.v46 .tr{padding:16px 18px}.vb.v46 .tr-st{grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr)}.vb.v46 .tr-sw{grid-column:2;grid-row:1}.vb.v46 .tr-btns{max-width:520px}}
+</style>
+<div class="tr" id="transit" aria-labelledby="tr-h">
+  <p class="tr-h"><b id="tr-h">乗換案内</b><span>電車でお店へ。駅名を入れて、調べるサービスを選んでください</span></p>
+  <form class="tr-st" id="tr-form" autocomplete="off">
+    <label class="tr-f"><i>出発</i><span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">出発駅</span><input type="text" id="tr-from" name="from" placeholder="出発駅（空欄なら現在地）" enterkeyhint="next"></label>
+    <button type="button" class="tr-sw" id="tr-sw" aria-label="出発駅と到着駅を入れ替える">⇅</button>
+    <label class="tr-f"><i class="to">到着</i><span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">到着駅</span><input type="text" id="tr-to" name="to" placeholder="お店の最寄り駅" enterkeyhint="search"></label>
+  </form>
+  <div class="tr-btns"><button type="button" data-tr="yahoo">Yahoo!乗換案内</button><button type="button" class="g" data-tr="google">Googleマップ</button></div>
+  <p class="tr-msg" id="tr-msg" role="alert" aria-live="polite"></p>
+  <p class="tr-note">外部サイトが新しいタブで開きます。出発時刻や終電はそのページで指定できます。出発駅を空欄にすると、Googleマップでは現在地から調べます。</p>
+</div>
+<script>
+(function(){
+  var f=document.getElementById('tr-from'),t=document.getElementById('tr-to'),msg=document.getElementById('tr-msg');
+  try{var s=JSON.parse(localStorage.getItem('vb_tr')||'{}');if(s.from)f.value=s.from;if(s.to)t.value=s.to;}catch(e){}
+  function clean(v){return (v||'').trim().replace(/駅$/,'');}
+  document.getElementById('tr-sw').addEventListener('click',function(){var a=f.value;f.value=t.value;t.value=a;});
+  function go(kind){
+    var from=clean(f.value),to=clean(t.value);msg.textContent='';
+    if(!to){msg.textContent='到着駅を入力してください。';t.focus();return;}
+    if(kind==='yahoo'&&!from){msg.textContent='Yahoo!乗換案内では出発駅を入力してください（現在地から調べる場合はGoogleマップを使ってください）。';f.focus();return;}
+    try{localStorage.setItem('vb_tr',JSON.stringify({from:f.value.trim(),to:t.value.trim()}));}catch(e){}
+    var url=kind==='yahoo'
+      ?'https://transit.yahoo.co.jp/search/result?from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to)
+      :'https://www.google.com/maps/dir/?api=1'+(from?'&origin='+encodeURIComponent(from+'駅'):'')+'&destination='+encodeURIComponent(to+'駅')+'&travelmode=transit';
+    window.open(url,'_blank','noopener');
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-tr]'),function(b){b.addEventListener('click',function(){go(b.getAttribute('data-tr'));});});
+  document.getElementById('tr-form').addEventListener('submit',function(e){e.preventDefault();go(f.value.trim()?'yahoo':'google');});
+  t.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();go(f.value.trim()?'yahoo':'google');}});
+  f.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();t.focus();}});
+})();
+</script>

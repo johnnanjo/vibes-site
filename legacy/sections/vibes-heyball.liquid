@@ -1,0 +1,225 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{%- render 'vibes-t-style' -%}
+{%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+{%- assign keys = '' -%}
+{%- paginate shop.metaobjects.tournament.values by 250 -%}
+  {%- for t in shop.metaobjects.tournament.values -%}
+    {%- assign gs = t.games.value | join: ' ' -%}
+    {%- if gs contains 'heyball' -%}
+      {%- assign endd = t.starts_at.value | date: '%Y%m%d' | plus: 0 -%}
+      {%- if t.ends_at.value != blank -%}{%- assign endd = t.ends_at.value | date: '%Y%m%d' | plus: 0 -%}{%- endif -%}
+      {%- if endd >= today -%}
+        {%- assign k = t.starts_at.value | date: '%Y%m%d%H%M' -%}
+        {%- assign keys = keys | append: k | append: '~' | append: t.system.handle | append: ',' -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endpaginate -%}
+{%- assign keys = keys | split: ',' | sort -%}
+<style>
+.vb .hb{padding:14px 0 120px;max-width:760px}
+.vb .hb h2{font-family:var(--jp);font-size:22px;font-weight:900;line-height:1.4;margin:0 0 6px;text-transform:none;letter-spacing:0}
+.vb .hb .sec{margin:38px 0 0}
+.vb .hb .sec > p.lead{margin:0 0 14px;font-size:14px;line-height:1.8;color:#4A4A46}
+.vb .hb-hero{position:relative;overflow:hidden;margin:6px 0 0;padding:34px 20px 30px;border-radius:24px;color:#F4F4F0;background:radial-gradient(90% 60% at 100% 0%,rgba(255,46,147,.34),transparent 60%),radial-gradient(80% 60% at 0% 100%,rgba(0,225,255,.22),transparent 62%),#0A0A09;box-shadow:inset 0 0 0 2px #FA4E02,0 0 34px rgba(250,78,2,.25)}
+.vb .hb-hero .k{font-family:var(--anton);font-size:14px;letter-spacing:.14em;color:#C6FF1F;text-transform:uppercase}
+.vb .hb-hero h1{font-family:var(--anton);font-size:clamp(56px,17vw,96px);line-height:.95;margin:6px 0 0;color:#fff;letter-spacing:.01em}
+.vb .hb-hero h1 small{display:block;font-family:var(--jp);font-size:18px;font-weight:900;letter-spacing:0;margin-top:10px;color:#FA4E02}
+.vb .hb-hero .lead{margin:16px 0 0;font-size:15px;line-height:1.85;color:#E2E2DC}
+.vb .hb-hero .lead b{color:#C6FF1F}
+.vb .hb-tags{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 0;padding:0;list-style:none}
+.vb .hb-tags li{padding:6px 12px;border-radius:999px;background:#1C1C1A;color:#F4F4F0;font-size:13px;font-weight:900}
+.vb .hb-tags li.o{background:#FA4E02;color:#0A0A09}
+.vb .hb-cta{display:grid;gap:10px;margin:22px 0 0}
+@media (min-width:560px){.vb .hb-cta{grid-template-columns:1fr 1fr}}
+.vb .hb-cta a{display:flex;align-items:center;justify-content:center;min-height:54px;border-radius:999px;font-weight:900;font-size:16px;text-decoration:none}
+.vb .hb-cta .a{background:#FA4E02;color:#0A0A09}
+.vb .hb-cta .b{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px #fff}
+.vb .hb-diff{display:grid;gap:12px}
+@media (min-width:640px){.vb .hb-diff{grid-template-columns:repeat(3,1fr)}}
+.vb .hb-diff div{padding:16px;border-radius:16px;background:#fff;border:1px solid #E2E2DE;border-top:6px solid var(--c)}
+.vb .hb-diff .n{font-family:var(--anton);font-size:34px;line-height:1;color:var(--c)}
+.vb .hb-diff h3{margin:8px 0 6px;font-family:var(--jp);font-size:17px;font-weight:900;text-transform:none;letter-spacing:0}
+.vb .hb-diff p{margin:0;font-size:13.5px;line-height:1.75;color:#3A3A36}
+.vb .hb-diff small{display:block;margin-top:8px;font-size:12px;color:#6B6B66}
+.vb .hb-vs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vb .hb-vs div{padding:14px;border-radius:14px}
+.vb .hb-vs .h{background:#0A0A09;color:#F4F4F0}
+.vb .hb-vs .p{background:#F2F2EF;color:#0A0A09}
+.vb .hb-vs b{display:block;font-family:var(--anton);font-size:15px;letter-spacing:.06em;margin-bottom:8px}
+.vb .hb-vs .h b{color:#C6FF1F}
+.vb .hb-vs ol{margin:0;padding-left:1.2em;font-size:13.5px;line-height:1.7}
+.vb .hb-vs .t{display:block;margin-top:8px;font-size:12px;font-weight:900}
+.vb .hb-num{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (min-width:640px){.vb .hb-num{grid-template-columns:repeat(4,1fr)}}
+.vb .hb-num div{padding:14px 12px;border-radius:14px;background:#0A0A09;color:#F4F4F0}
+.vb .hb-num b{display:block;font-family:var(--anton);font-size:30px;line-height:1;color:#C6FF1F}
+.vb .hb-num span{display:block;margin-top:6px;font-size:12px;line-height:1.5;color:#CFCFCA}
+.vb .hb-road{list-style:none;margin:0;padding:0;border-left:3px solid #FA4E02}
+.vb .hb-road li{position:relative;padding:4px 0 14px 18px;font-size:14px;line-height:1.7}
+.vb .hb-road li::before{content:"";position:absolute;left:-9px;top:10px;width:15px;height:15px;border-radius:50%;background:#FA4E02;box-shadow:0 0 0 3px #fff}
+.vb .hb-road b{font-family:var(--anton);font-size:18px;letter-spacing:.04em;margin-right:8px}
+.vb .hb-five{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.vb .hb-five li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #E2E2DE}
+.vb .hb-five i{font-style:normal;font-family:var(--anton);font-size:22px;color:#FA4E02}
+.vb .hb-five b{display:block;font-size:15px}
+.vb .hb-five span{font-size:13px;line-height:1.7;color:#4A4A46}
+.vb .hb-shop{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.vb .hb-shop li{padding:14px 16px;border-radius:16px;background:#fff;border:1px solid #E2E2DE;border-left:6px solid #00E1FF}
+.vb .hb-shop b{display:block;font-size:16px}
+.vb .hb-shop span{display:block;font-size:13px;line-height:1.7;color:#4A4A46}
+.vb .hb-shop .l{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.vb .hb-shop .l a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:#0A0A09;color:#C6FF1F;font-size:13px;font-weight:900;text-decoration:none}
+.vb .hb-shop .l a.m{background:#F2F2EF;color:#0A0A09}
+.vb .hb-term{width:100%;border-collapse:collapse;font-size:14px}
+.vb .hb-term th,.vb .hb-term td{text-align:left;padding:9px 8px;border-bottom:1px solid #E2E2DE;vertical-align:top}
+.vb .hb-term th{font-size:12px;color:#6B6B66;font-weight:700}
+.vb .hb-term td b{color:#0A0A09}
+.vb .hb-term td em{font-style:normal;font-family:var(--anton);letter-spacing:.04em;color:#FA4E02;margin-left:6px}
+.vb .hb-start{display:grid;gap:10px;margin:0;padding:0;list-style:none;counter-reset:s}
+.vb .hb-start li{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:14px;border-radius:16px;background:#0A0A09;color:#F4F4F0}
+.vb .hb-start li::before{counter-increment:s;content:counter(s,decimal-leading-zero);font-family:var(--anton);font-size:26px;color:#C6FF1F}
+.vb .hb-start b{display:block;font-size:15px}
+.vb .hb-start span{font-size:13px;line-height:1.7;color:#CFCFCA}
+.vb .hb-start a{color:#C6FF1F}
+.vb .hb-src{margin:28px 0 0;font-size:12px;line-height:1.8;color:#6B6B66}
+.vb .hb-src a{color:#FA4E02}
+.vb .hb .tc{margin:8px 0}
+.vb .hb-empty{padding:18px;border-radius:14px;background:#F2F2EF;font-size:14px;line-height:1.7}
+</style>
+<div class="vb">
+<div class="wrap">
+<section class="hb">
+  <div class="crumbs"><a href="/">Vibes Billiards</a> ／ HEYBALLとは？</div>
+
+  <div class="hb-hero">
+    <div class="k">Chinese 8-ball → Heyball</div>
+    <h1>HEYBALL<small>ヘイボール（旧チャイニーズ8）とは？</small></h1>
+    <p class="lead">アメリカンプールの<b>ボールと8ボール系ルール</b>に、スヌーカーの<b>テーブルと狭いポケット</b>を組み合わせた競技。1980年代に中国で生まれ、いまは世界最大級の賞金が動くキュースポーツです。2029年のワールドゲームズ（ドイツ・カールスルーエ）で正式種目に。日本では2026年5月に日本HeyBall協会が発足し、賞金総額100万円超の「HEYBALL JAPAN OPEN」が始まっています。</p>
+    <ul class="hb-tags"><li class="o">ルールは5分でわかる</li><li>実力がそのまま結果に</li><li>観ていて勝敗がわかる</li><li>World Games 2029</li></ul>
+    <div class="hb-cta">
+      <a class="a" href="#hb-t">開催予定の大会を見る</a>
+      <a class="b" href="#hb-start">はじめ方（3ステップ）</a>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>ふつうのビリヤードと、何が違う？</h2>
+    <p class="lead">道具はほぼ同じ。違うのは「台」と「ポケット」と「ルールの考え方」の3つです。</p>
+    <div class="hb-diff">
+      <div style="--c:#FA4E02"><div class="n">01</div><h3>テーブルはスヌーカー寄り</h3><p>9フィート（内寸2,540×1,270mm）。クロスはスヌーカー級の速いナップ地、スレートは40〜50mmと厚く、反発が安定します。</p><small>ボールは米式の2.25インチ（57.15mm）</small></div>
+      <div style="--c:#C6FF1F"><div class="n">02</div><h3>ポケットが「はじき返す」</h3><p>開口は約3.5インチ（≒89mm、球径の約1.55倍）。丸く加工されたナックルが、わずかにズレた球を跳ね返します。中心を狙う精度が必要。</p><small>ナインボールのポケットは約4.5インチ（≒114mm）</small></div>
+      <div style="--c:#00E1FF"><div class="n">03</div><h3>ルールは8ボール系</h3><p>ブレイク後に自分のグループ（単色 or 縞）が決まり、7球をすべて落として、最後に8番を指定ポケットへ。初心者でも5分で理解できます。</p><small>WPA HEYBALLルール（2025）を採用</small></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>運より、実力。観ていて、わかる。</h2>
+    <p class="lead">ポケットが小さく丸いので「たまたま入る」が起きにくく、コールショット制（Zero-Fluke）。正確なポッティング、キューボールのコントロール、セーフティ、数手先の戦略がそのまま結果に出ます。残り球を見れば勝敗の近さがわかるので、配信や観戦とも相性がいい競技です。</p>
+    <div class="hb-vs">
+      <div class="h"><b>HEYBALL</b><ol><li>自分のグループを全部落とす</li><li>最後に8番を指定ポケットへ</li><li>コールショット制・フロックなし</li></ol><span class="t">勝ち方が一目でわかる</span></div>
+      <div class="p"><b>NINE-BALL</b><ol><li>必ず最小番号の球から当てる</li><li>順番が違うとファール</li><li>9番が入った時点で勝ち（コンビ可）</li></ol><span class="t">偶然入った球も得点</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>世界では、すでに「賞金スポーツ」</h2>
+    <div class="hb-num">
+      <div><b>$740K</b><span>WPA史上最大の単一試合賞金（2024年 JOY World Heyball Masters Grand Final・鄭宇伯）</span></div>
+      <div><b>60M+</b><span>中国国内の主要大会の視聴者数</span></div>
+      <div><b>2029</b><span>World Games カールスルーエ大会（7/19〜29）で正式種目。3C・10ボールと並ぶ3種目</span></div>
+      <div><b>2032</b><span>オーストラリア五輪での採用を目指す（協会資料より）</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>日本の動き</h2>
+    <p class="lead">一般社団法人 日本HeyBall協会（JHBA）が2026年5月に設立。株式会社丸一（JOY）とグローバルビリヤードスポーツジャパンの協賛で、賞金総額100万円以上の「HEYBALL JAPAN OPEN」を年間ランキング制で開催しています。</p>
+    <ul class="hb-road">
+      <li><b>2026</b>協会設立（5月）／第一回 HEYBALL JAPAN OPEN を東京タワー特設会場で開催（6月・初代王者 土方隼斗）／以後ほぼ毎月開催、12月の第五回が年間最終戦</li>
+      <li><b>2027</b>国内競技者基盤の整備、学生リーグ創設、企業対抗リーグ準備</li>
+      <li><b>2028</b>日本代表選考大会、世界選手権遠征でランキング獲得</li>
+      <li><b>2029</b>World Games カールスルーエ大会に出場</li>
+    </ul>
+    <h2 style="margin-top:22px">2026年 HEYBALL JAPAN OPEN これまでの優勝者</h2>
+    <ul class="hb-five">
+      <li><i>1st</i><div><b>土方 隼斗（6/28・東京タワー）</b><span>決勝 5-4 村松勇志。ベスト4 大井直行・羅立文</span></div></li>
+      <li><i>2nd</i><div><b>Julian Serradilla（8/30）</b><span>決勝 5-4 土方隼斗</span></div></li>
+      <li><i>3rd</i><div><b>陳 思明（9/27）</b><span>決勝 7-5 Julian Serradilla</span></div></li>
+      <li><i>4th</i><div><b>Koki Sugiyama（10/25・越谷）</b><span>決勝 7-3 Hiraguchi Yuki。3位タイ 羅立文・鈴木瑛太</span></div></li>
+    </ul>
+    <p class="lead" style="margin-top:10px">9月時点のポイントランキング：1位 土方隼斗 670pt／2位 Julian Serradilla 600pt／3位 陳思明 400pt／4位 村松勇志 250pt。上位4名は決勝大会のベスト16シード（エントリー無料）。</p>
+  </div>
+
+  <div class="sec" id="hb-t">
+    <h2>開催予定のHEYBALL大会</h2>
+    <p class="lead">VIBESの大会データベースから、ヘイボールの大会だけを表示しています。エントリーは各大会の公式ページから。</p>
+    {%- if keys.size > 0 -%}
+      {%- for key in keys -%}
+        {%- assign h = key | split: '~' | last -%}
+        {%- assign t = shop.metaobjects.tournament[h] -%}
+        {%- if t -%}{%- render 'vibes-t-card', t: t -%}{%- endif -%}
+      {%- endfor -%}
+    {%- else -%}
+      <div class="hb-empty">現在、開催予定のヘイボール大会はありません。<a href="https://heyball-joy-japan.jp/tournaments" target="_blank" rel="noopener">HEY BALL JAPAN の大会情報</a>もご確認ください。</div>
+    {%- endif -%}
+    <p class="lead" style="margin-top:10px"><a href="/pages/tournaments?game=heyball">大会をさがす（種目：HEYBALL）→</a>　<a href="/blogs/results">試合結果 →</a></p>
+  </div>
+
+  <div class="sec" id="hb-start">
+    <h2>はじめ方（3ステップ）</h2>
+    <ol class="hb-start">
+      <li><div><b>無料会員に登録する</b><span><a href="https://heyball-joy-japan.jp/register-player" target="_blank" rel="noopener">HEY BALL JAPAN</a> の無料会員で、大会エントリー・選手一覧・ランキング閲覧ができます。有料のHEYBALL会員は早割1,000円引き・優先受付・NFC会員カードなどの特典つき。</span></div></li>
+      <li><div><b>JOYテーブルのある店で撞いてみる</b><span>下の加盟店で、まずは1ラック。ルールは8ボールなので、ポケットが初めての人でもすぐ遊べます。</span></div></li>
+      <li><div><b>大会にエントリーする</b><span>初心者歓迎の「アマチュア限定」大会から。女子・U14は1ボールハンディ。ドレスコードは襟付きシャツ（サンダル・短パン・ジーンズ不可）。</span></div></li>
+    </ol>
+  </div>
+
+  <div class="sec">
+    <h2>HEYBALLができるお店（JOY加盟店）</h2>
+    <ul class="hb-shop">
+      <li><b>JOY ACE BILLIARDS</b><span>埼玉県越谷市蒲生茜町19-8 蒲生ビューハイツ111室／JOYテーブル8台／平日12:00〜翌2:00・土日祝も営業／HEYBALL JAPAN OPEN の会場</span><div class="l"><a href="/pages/shop/jhba-joy-ace-koshigaya">店舗ページ</a><a class="m" href="https://www.google.com/maps/search/?api=1&query=%E5%9F%BC%E7%8E%89%E7%9C%8C%E8%B6%8A%E8%B0%B7%E5%B8%82%E8%92%B2%E7%94%9F%E8%8C%9C%E7%94%BA19-8" target="_blank" rel="noopener">地図</a><a class="m" href="tel:090-6319-2225">090-6319-2225</a></div></li>
+      <li><b>JOYビリヤード草加</b><span>埼玉県草加市弁天2丁目25-11／JOYテーブル7台</span><div class="l"><a href="/pages/shop/jhba-joy-soka">店舗ページ</a><a class="m" href="https://www.google.com/maps/search/?api=1&query=%E5%9F%BC%E7%8E%89%E7%9C%8C%E8%8D%89%E5%8A%A0%E5%B8%82%E5%BC%81%E5%A4%A92%E4%B8%81%E7%9B%AE25-11" target="_blank" rel="noopener">地図</a><a class="m" href="tel:090-6589-8860">090-6589-8860</a></div></li>
+      <li><b>HEY ROOM 北参道店（2026年12月オープン予定）</b><span>東京都渋谷区千駄ヶ谷3-26-7 FMGビルB1／1室1台のVIPルーム・2時間制・4名まで（5名〜は＋1,000円/人）／10:00〜翌9:00／HEYBALL有料会員は優先予約・割引</span><div class="l"><a href="/pages/shop/jhba-hey-room-kitasando">店舗ページ</a><a class="m" href="https://heyball-joy-japan.jp/stores" target="_blank" rel="noopener">公式の店舗一覧</a></div></li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2>用語はこう呼ぶ（HEYBALL推奨用語）</h2>
+    <p class="lead">HEYBALL JAPANでは、大会・配信・記事で英式の呼び方に統一しています。覚えておくと配信がわかりやすくなります。</p>
+    <table class="hb-term">
+      <tr><th>これまでの言い方</th><th>HEYBALLでの呼び方</th></tr>
+      <tr><td>手玉</td><td><b>キューボール</b><em>Cueball</em></td></tr>
+      <tr><td>的玉</td><td><b>オブジェクトボール</b><em>Objectball</em></td></tr>
+      <tr><td>フリーボール</td><td><b>ボールインハンド</b><em>In hand</em></td></tr>
+      <tr><td>コンビネーションショット</td><td><b>プラント</b><em>Plant</em></td></tr>
+      <tr><td>バンクショット</td><td><b>ダブル</b><em>Double</em></td></tr>
+      <tr><td>押玉／引玉</td><td><b>トップ／スクリューバック</b><em>Top / Screwback</em></td></tr>
+      <tr><td>バンキング</td><td><b>ラグ</b><em>Lag</em></td></tr>
+      <tr><td>レスト（メカニカルブリッジ）</td><td><b>レスト</b><em>Rest</em>　※手のブリッジは <b>ブリッジ</b></td></tr>
+      <tr><td>マス割</td><td><b>ブレイケンラン</b><em>Break and Run</em></td></tr>
+      <tr><td>アンドセーフ</td><td><b>ショットトゥーナッシング</b><em>Shot to Nothing</em></td></tr>
+      <tr><td>腹切りバンク</td><td><b>クロスダブル</b><em>Crossdouble</em></td></tr>
+      <tr><td>空クッション</td><td><b>クッションファースト</b><em>Cushionfirst</em></td></tr>
+      <tr><td>セット／ポケットイン・シュート</td><td><b>ラック／ポット</b><em>Rack / Pot</em></td></tr>
+    </table>
+  </div>
+
+  <div class="sec">
+    <h2>もっと知る</h2>
+    <ul class="hb-five">
+      <li><i>WEB</i><div><b><a href="https://heyball-joy-japan.jp/" target="_blank" rel="noopener">HEY BALL JAPAN 公式サイト</a></b><span>大会情報・エントリー・試合結果・ランキング・公式競技規則PDF</span></div></li>
+      <li><i>YT</i><div><b><a href="https://www.youtube.com/@heyballjapan" target="_blank" rel="noopener">HEY BALL JAPAN YouTube</a></b><span>毎週金曜19時更新。決勝戦のアーカイブ、プロのレクチャー動画</span></div></li>
+      <li><i>IG</i><div><b><a href="https://www.instagram.com/heyballjapan" target="_blank" rel="noopener">Instagram @heyballjapan</a></b><span>大会の写真・告知</span></div></li>
+      <li><i>JHBA</i><div><b><a href="https://jhba-official.jp/" target="_blank" rel="noopener">一般社団法人 日本HeyBall協会</a></b><span>東京都北区赤羽台3-2-15／info@heyball-joy-japan.jp</span></div></li>
+    </ul>
+    <p class="hb-src">出典：<a href="https://heyball-joy-japan.jp/heyball/index.html" target="_blank" rel="noopener">日本HeyBall協会「HEYBALLとは？」（2026年資料）</a>／<a href="https://heyball-joy-japan.jp/heyball-rules" target="_blank" rel="noopener">HEYBALL ルール・用語</a>／<a href="https://heyball-joy-japan.jp/tournaments" target="_blank" rel="noopener">大会情報</a>／<a href="https://heyball-joy-japan.jp/news" target="_blank" rel="noopener">ニュース</a>／<a href="https://heyball-joy-japan.jp/stores" target="_blank" rel="noopener">店舗</a>。賞金・視聴者数などの数字は協会資料の記載によります。大会の最新情報は各大会ページをご確認ください。</p>
+  </div>
+</section>
+</div>
+</div>
+{% schema %}
+{ "name": "Vibes Heyball", "settings": [] }
+{% endschema %}

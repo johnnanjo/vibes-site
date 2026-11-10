@@ -1,0 +1,37 @@
+{%- comment -%} 大会カード（1件）。 t = tournament メタオブジェクト {%- endcomment -%}
+{%- assign wd = '日,月,火,水,木,金,土' | split: ',' -%}
+{%- assign st = t.starts_at.value -%}
+{%- assign w = st | date: '%w' | plus: 0 -%}
+{%- comment -%} 終了が深夜（6時前）の大会は前日扱い：金曜夜の大会が土日の絞り込みに混ざらないようにする {%- endcomment -%}
+{%- assign endd = st | date: '%Y-%m-%d' -%}
+{%- if t.ends_at.value != blank -%}
+  {%- assign endh = t.ends_at.value | date: '%H' | plus: 0 -%}
+  {%- if endh < 6 -%}{%- assign endd = t.ends_at.value | date: '%s' | minus: 21600 | date: '%Y-%m-%d' -%}{%- else -%}{%- assign endd = t.ends_at.value | date: '%Y-%m-%d' -%}{%- endif -%}
+{%- endif -%}
+{%- assign cat = t.category.value -%}
+{%- assign status = t.entry_status.value | default: 'open' -%}
+{%- assign gs = t.games.value | join: ' ' -%}
+{%- assign cs = t.classes.value | join: ' ' -%}
+{%- assign shopname = t.venue_name.value -%}
+{%- if t.shop.value -%}{%- assign shopname = t.shop.value.name.value -%}{%- endif -%}
+{%- assign fam = '' -%}
+{%- if gs contains '9ball' or gs contains '10ball' or gs contains '8ball' or gs contains '14-1' or gs contains 'pocket' -%}{%- assign fam = fam | append: ' pocket' -%}{%- endif -%}
+{%- if gs contains 'cushion' or gs contains 'balkline' or gs contains '4ball' or gs contains 'band' or gs contains 'carom' -%}{%- assign fam = fam | append: ' carom' -%}{%- endif -%}
+{%- if gs contains 'snooker' -%}{%- assign fam = fam | append: ' snooker' -%}{%- endif -%}
+{%- capture search -%}{{ t.title.value }} {{ shopname }} {{ t.prefecture.value }} {{ t.city.value }} {{ t.shop.value.station.value }} {{ t.winner.value }} {{ t.organizer.value }}{%- endcapture -%}
+<a class="tc tc-{{ cat }}{% if status == 'cancelled' or status == 'postponed' %} tc-off{% endif %}" href="{{ t.system.url }}"
+  data-date="{{ st | date: '%Y-%m-%d' }}" data-end="{{ endd }}" data-time="{{ st | date: '%H%M' }}"
+  data-cat="{{ cat }}" data-pref="{{ t.prefecture.value }}" data-region="{{ t.region.value }}" data-games="{{ gs }}{{ fam }}" data-classes="{{ cs }}"
+  data-women="{% if t.women_only.value %}1{% endif %}" data-status="{{ status }}" data-org="{{ t.organizer.value }}"
+  data-deadline="{{ t.entry_deadline.value | date: '%Y-%m-%d' }}" data-q="{{ search | downcase | escape }}">
+  <span class="tc-time">{%- if t.date_label.value != blank -%}{{ t.date_label.value }}{%- else -%}{{ st | date: '%-m/%-d' }}（{{ wd[w] }}）{{ st | date: '%H:%M' }}{%- endif -%}</span>
+  <span class="tc-title">{%- if cat == 'official' -%}<b class="tc-badge of">公式戦</b>{%- elsif cat == 'house' -%}<b class="tc-badge ht">ハウス</b>{%- else -%}<b class="tc-badge ev">イベント</b>{%- endif -%}{%- if t.women_only.value -%}<b class="tc-badge wo">女性限定</b>{%- endif -%}{%- if status != 'open' -%}<b class="tc-badge st-{{ status }}">{%- render 'vibes-t-labels', kind: 'status', code: status -%}</b>{%- endif -%}{{ t.title.value | escape }}</span>
+  <span class="tc-meta">
+    {%- if shopname != blank -%}{{ shopname | escape }}{%- endif -%}
+    {%- if t.city.value != blank -%}（{{ t.prefecture.value | remove: '都' | remove: '府' | remove: '県' }}{{ t.city.value }}）{%- elsif t.prefecture.value != blank -%}（{{ t.prefecture.value }}）{%- endif -%}
+    {%- for g in t.games.value limit: 2 -%}・{%- render 'vibes-t-labels', kind: 'game', code: g -%}{%- endfor -%}
+    {%- if t.classes.value.size > 0 -%}・{%- for c in t.classes.value limit: 4 -%}{%- render 'vibes-t-labels', kind: 'class', code: c -%}{%- unless forloop.last -%}/{%- endunless -%}{%- endfor -%}{%- endif -%}
+    {%- if t.fee_yen.value != blank -%}・{{ t.fee_yen.value | times: 100 | money_without_trailing_zeros }}{%- endif -%}
+  </span>
+  {%- if t.winner.value != blank -%}<span class="tc-win">🥇 {{ t.winner.value | escape }}</span>{%- endif -%}
+</a>

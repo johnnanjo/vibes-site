@@ -1,0 +1,160 @@
+{%- comment -%} 競技別ページ：その競技の大会・NEWS・試合結果・ハウストーナメントだけを集めて表示。section.settings.game = pocket | carom | heyball {%- endcomment -%}
+{%- assign game = section.settings.game | default: 'pocket' -%}
+{%- case game -%}
+  {%- when 'carom' -%}
+    {%- assign g_name = 'キャロム' -%}{%- assign g_en = '3 Cushion' -%}{%- assign g_color = '#00E1FF' -%}
+    {%- assign g_orgs = 'JPBF（プロ）・NBA関東支部・関東アマチュアスリークッション連盟・関西アマチュアスリークッション連盟・各店舗のハウストーナメント' -%}
+    {%- assign g_lead = 'スリークッションを中心に、キャロムの公式戦・試合結果・ハウストーナメントをまとめています。' -%}
+  {%- when 'heyball' -%}
+    {%- assign g_name = 'ヘイボール' -%}{%- assign g_en = 'Heyball' -%}{%- assign g_color = '#FA4E02' -%}
+    {%- assign g_orgs = '日本HeyBall協会（JHBA／HEYBALL JOY JAPAN）・各店舗のハウストーナメント' -%}
+    {%- assign g_lead = 'HEYBALL（旧チャイニーズ8）の公式戦・試合結果・できるお店をまとめています。' -%}
+  {%- else -%}
+    {%- assign g_name = 'ポケット' -%}{%- assign g_en = 'Pocket' -%}{%- assign g_color = '#C6FF1F' -%}
+    {%- assign g_orgs = 'JPBA（プロ）・JAPA（アマチュア）・NBA関東支部ポケット・各店舗のハウストーナメント' -%}
+    {%- assign g_lead = '9ボール・10ボール・8ボール・14-1。ポケットの公式戦・試合結果・ハウストーナメントをまとめています。' -%}
+{%- endcase -%}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-media.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{%- render 'vibes-t-style' -%}
+<style>
+.vb .gp-hero{margin:14px 0 0;padding:26px 20px 24px;border-radius:22px;background:#0A0A09;color:#F4F4F0;box-shadow:inset 0 0 0 2px {{ g_color }}}
+.vb .gp-hero .k{font-family:var(--anton);font-size:14px;letter-spacing:.14em;color:{{ g_color }}}
+.vb .gp-hero h1{font-family:var(--jp);font-weight:900;font-size:clamp(30px,9vw,52px);line-height:1.15;margin:6px 0 0;color:#fff;letter-spacing:0;text-transform:none}
+.vb .gp-hero h1 small{display:block;font-family:var(--anton);font-weight:400;font-size:clamp(16px,4.6vw,24px);letter-spacing:.06em;color:{{ g_color }};margin-top:4px}
+.vb .gp-hero p{margin:12px 0 0;font-size:14px;line-height:1.75;color:#D5D5D0}
+.vb .gp-hero .orgs{margin-top:10px;font-size:12.5px;font-weight:700;color:#B9B9B4}
+.vb .gp-hero .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.vb .gp-hero .btns a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;font-size:14px;font-weight:900;text-decoration:none;background:{{ g_color }};color:#0A0A09}
+.vb .gp-hero .btns a.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px #fff}
+.vb .gp-set{display:none;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 0;padding:10px 14px;border-radius:12px;background:#F2F2EF;font-size:13px;font-weight:700}
+.vb .gp-set.on{display:flex}
+.vb .gp-set b{color:#0A0A09}
+.vb .gp-set button{border:0;background:#0A0A09;color:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-weight:900;cursor:pointer}
+.vb .gp-list{max-width:760px}
+.vb .gp-more{display:inline-flex;align-items:center;min-height:46px;padding:0 18px;margin-top:12px;border-radius:999px;background:#0A0A09;color:#fff;font-weight:900;font-size:14px;text-decoration:none}
+.vb .gp-empty{padding:18px;border-radius:14px;background:#F2F2EF;font-size:14px;color:var(--muted)}
+.vb .gp-cols{display:grid;gap:22px}
+@media (min-width:860px){.vb .gp-cols{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.vb .gp-col .colhead{display:flex;align-items:baseline;gap:10px;text-decoration:none;padding:0 0 8px;border-bottom:3px solid #0A0A09}
+.vb .gp-col .colhead .k{font-family:var(--anton);font-size:1.6rem;letter-spacing:.03em;color:#0A0A09}
+.vb .gp-col .colhead .j{font-size:12px;font-weight:700;color:var(--muted)}
+.vb .gp-col .post{display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:start;padding:11px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.vb .gp-col .post time{font-family:var(--anton);font-size:15px;color:#0A0A09;padding-top:2px}
+.vb .gp-col .post .t{font-size:14px;font-weight:700;line-height:1.55}
+.vb .gp-col .more{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;margin-top:10px;border-radius:999px;background:#0A0A09;color:#fff;font-size:13px;font-weight:900;text-decoration:none}
+.vb .tc[hidden]{display:none!important}
+</style>
+<div class="vb">
+<div class="wrap">
+  <div class="crumbs" style="padding-top:14px"><a href="/">Vibes Billiards</a> ／ {{ g_name }}</div>
+  <section class="gp-hero" style="padding-top:26px;border-top:0">
+    <div class="k">MY MAIN GAME</div>
+    <h1>{{ g_name }}<small>{{ g_en }}</small></h1>
+    <p>{{ g_lead }}</p>
+    <div class="orgs">{{ g_orgs }}</div>
+    <div class="btns">
+      <a href="/pages/tournaments?game={{ game }}">大会をさがす（{{ g_name }}）</a>
+      {%- if game == 'heyball' -%}<a class="ghost" href="/pages/heyball">HEYBALLとは？</a>{%- endif -%}
+      <a class="ghost" href="/#mygame">競技を変える</a>
+    </div>
+  </section>
+  <div class="gp-set" id="gp-set"><span>このページの競技を<b>メインの競技</b>に設定中。トップ・NEWS・大会検索も {{ g_name }} 優先で表示します。</span><button type="button" id="gp-setbtn">メインに設定</button></div>
+
+  <section id="upcoming" style="padding-bottom:0">
+    <div class="h2"><div class="en">Upcoming</div><span class="ja">{{ g_name }}の大会 ─ 公式戦・ハウストーナメント（開催日が近い順）</span></div>
+    {%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+    {%- assign n = 0 -%}
+    {%- capture cards -%}
+    {%- paginate shop.metaobjects.tournament.values by 250 -%}
+      {%- for t in shop.metaobjects.tournament.values -%}
+        {%- assign gs = t.games.value | join: ' ' -%}
+        {%- assign ok = false -%}
+        {%- if game == 'heyball' -%}
+          {%- if gs contains 'heyball' -%}{%- assign ok = true -%}{%- endif -%}
+        {%- elsif game == 'carom' -%}
+          {%- if gs contains 'cushion' or gs contains 'balkline' or gs contains '4ball' or gs contains 'band' or gs contains 'carom' -%}{%- assign ok = true -%}{%- endif -%}
+        {%- else -%}
+          {%- if gs contains '9ball' or gs contains '10ball' or gs contains '8ball' or gs contains '14-1' or gs contains 'pocket' -%}{%- assign ok = true -%}{%- endif -%}
+        {%- endif -%}
+        {%- if ok -%}
+          {%- assign endd = t.starts_at.value | date: '%Y%m%d' | plus: 0 -%}
+          {%- if t.ends_at.value != blank -%}{%- assign endd = t.ends_at.value | date: '%Y%m%d' | plus: 0 -%}{%- endif -%}
+          {%- if endd >= today -%}
+            {%- assign n = n | plus: 1 -%}
+            {%- render 'vibes-t-card', t: t -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endpaginate -%}
+    {%- endcapture -%}
+    <div class="gp-list" id="gp-list" data-limit="20">{{ cards }}</div>
+    {%- if n == 0 -%}<div class="gp-empty">{{ g_name }}の大会は、いまは登録がありません。店舗の方は<a href="/pages/tournament-form">掲載フォーム</a>から（無料）。</div>{%- endif -%}
+    <a class="gp-more" href="/pages/tournaments?game={{ game }}">{{ n }}件すべてを日付・地域で絞り込む →</a>
+  </section>
+
+  <section id="news">
+    <div class="h2"><div class="en">News & Results</div><span class="ja">{{ g_name }}に関係する記事 ─ 全団体まとめの記事は、{{ g_name }}の章が先頭に表示されます</span></div>
+    <div class="gp-cols">
+      {%- assign cols = 'news|News|公式戦・エントリー,results|Results|試合結果,house-tournament|Tournament|ハウストーナメント' | split: ',' -%}
+      {%- for col in cols -%}
+        {%- assign c = col | split: '|' -%}
+        {%- assign b = blogs[c[0]] -%}
+        <div class="gp-col">
+          <a class="colhead" href="/blogs/{{ c[0] }}"><span class="k">{{ c[1] }}</span><span class="j">{{ c[2] }}</span></a>
+          {%- assign m = 0 -%}
+          {%- for article in b.articles -%}
+            {%- if m >= 6 -%}{%- break -%}{%- endif -%}
+            {%- if article.tags contains 'お知らせ' -%}{%- continue -%}{%- endif -%}
+            {%- capture ag -%}{%- render 'vibes-game-tag', article: article -%}{%- endcapture -%}{%- assign ag = ag | strip -%}
+            {%- if ag == game or ag == 'all' -%}
+              {%- assign m = m | plus: 1 -%}
+              <a class="post" href="{{ article.url }}" data-game="{{ ag }}">
+                <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%-m/%-d' }}</time>
+                <span class="t">{{ article.title | remove: '【公式戦】' | remove: '【ハウストーナメント結果】' | remove: '【ハウストーナメント】' | escape }}</span>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if m == 0 -%}<p class="gp-empty" style="margin-top:10px">まだ記事がありません。</p>{%- endif -%}
+          <a class="more" href="/blogs/{{ c[0] }}">{{ c[1] | upcase }}をすべて見る →</a>
+        </div>
+      {%- endfor -%}
+    </div>
+  </section>
+
+  <section id="line-sec">
+    <div class="h2"><div class="en">LINE</div><span class="ja">{{ g_name }}の大会も、公式LINEで届きます</span></div>
+    {%- render 'vibes-line' -%}
+  </section>
+</div>
+</div>
+<script>
+(function(){
+  var g='{{ game }}';
+  /* 大会カード：日付順に並べ替えて、先頭20件だけ表示 */
+  var list=document.getElementById('gp-list'); if(list){
+    var cs=[].slice.call(list.querySelectorAll('.tc')), lim=+list.dataset.limit||20;
+    cs.sort(function(a,b){var ka=a.dataset.date+a.dataset.time,kb=b.dataset.date+b.dataset.time;return ka<kb?-1:ka>kb?1:0;});
+    var WD=['日','月','火','水','木','金','土'], last='', frag=document.createDocumentFragment();
+    cs.forEach(function(c,i){ if(i>=lim){c.hidden=true;return;} var d=c.dataset.date; if(d!==last){var p=d.split('-'),w=new Date(Date.UTC(+p[0],+p[1]-1,+p[2])).getUTCDay();var h=document.createElement('h2');h.className='tdb-dh';h.innerHTML=(+p[1])+'月'+(+p[2])+'日（'+WD[w]+'）';frag.appendChild(h);last=d;} frag.appendChild(c); });
+    list.innerHTML=''; list.appendChild(frag);
+  }
+  /* メイン競技の設定バー */
+  function cur(){try{return localStorage.getItem('vibes_game')||'';}catch(e){return '';}}
+  var bar=document.getElementById('gp-set'), btn=document.getElementById('gp-setbtn');
+  function paint(){ var on=cur()===g; bar.classList.add('on'); bar.querySelector('span').innerHTML=on?'このページの競技を<b>メインの競技</b>に設定中。トップ・NEWS・大会検索も{{ g_name }}優先で表示します。':'いまのメインの競技は '+(cur()?{pocket:'ポケット',carom:'キャロム',heyball:'ヘイボール'}[cur()]:'未設定')+' です。'; btn.hidden=on; }
+  btn.addEventListener('click',function(){ if(window.VBGAME){window.VBGAME.set(g);} else { try{localStorage.setItem('vibes_game',g);}catch(e){} } paint(); });
+  paint();
+})();
+</script>
+{% schema %}
+{
+  "name": "Vibes Game Page",
+  "settings": [
+    { "type": "select", "id": "game", "label": "競技", "default": "pocket",
+      "options": [ { "value": "pocket", "label": "ポケット" }, { "value": "carom", "label": "キャロム" }, { "value": "heyball", "label": "ヘイボール" } ] }
+  ]
+}
+{% endschema %}

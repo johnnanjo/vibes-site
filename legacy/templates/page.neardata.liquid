@@ -1,0 +1,11 @@
+{%- layout none -%}
+{%- paginate shop.metaobjects.shop.values by 250 -%}
+{"next":{% if paginate.next %}true{% else %}false{% endif %},"nu":{{ paginate.next.url | json }},"cur":{{ paginate.current_page | json }},"total":{{ paginate.items | json }},"items":[
+{%- assign first = true -%}
+{%- for s in shop.metaobjects.shop.values -%}
+  {%- capture addr -%}{%- if s.address.value != blank -%}{{ s.address.value }}{%- else -%}{{ s.prefecture.value }}{{ s.city.value }}{%- endif -%}{%- endcapture -%}
+  {%- unless first -%},{%- endunless -%}{%- assign first = false -%}
+  {"h":{{ s.system.handle | json }},"n":{{ s.name.value | json }},"a":{{ addr | strip | json }},"p":{{ s.prefecture.value | default: '' | json }},"c":{{ s.city.value | default: '' | json }},"st":{{ s.station.value | default: '' | json }},"tel":{{ s.phone.value | default: '' | json }},"hr":{{ s.hours.value | default: '' | json }},"tb":{{ s.tables.value | join: '・' | default: '' | json }},"u":{{ s.system.url | json }},"lat":{{ s.lat.value | default: '' | json }},"lng":{{ s.lng.value | default: '' | json }},"exact":{% if s.address.value != blank %}true{% else %}false{% endif %}{% if s.status.value == 'closed' %},"x":1{% endif %}}
+{%- endfor -%}
+]}
+{%- endpaginate -%}

@@ -1,0 +1,85 @@
+{%- comment -%} 新機能・新サイト（LIVE TABLE・KIDS・POUR FEMME）の告知バナー＋試合速報（トップの「大会情報・結果」の上に移動して表示） {%- endcomment -%}
+<style>
+#vb-kids-banner{max-width:1140px;margin:0 auto;padding:22px 16px 0;display:grid;gap:14px}
+.vb #vb-kids-banner{padding:22px 0 0}
+#vb-kids-banner a{display:block;border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(17,19,21,.06),0 6px 18px rgba(17,19,21,.08);transition:transform .15s}
+#vb-kids-banner a:hover{transform:translateY(-2px)}
+#vb-kids-banner a:focus-visible{outline:3px solid #111315;outline-offset:3px}
+#vb-kids-banner img{display:block;width:100%;height:auto}
+@media (prefers-reduced-motion:reduce){#vb-kids-banner a{transition:none}}
+#vb-live{max-width:1140px;margin:0 auto;padding:22px 16px 0}
+.vb #vb-live{padding:22px 0 0}
+#vb-live .lv-hd{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 12px}
+#vb-live h2{margin:0;font-size:22px;font-weight:900;letter-spacing:.02em;display:flex;align-items:center;gap:10px;color:#111315}
+#vb-live .lv-dot{width:10px;height:10px;border-radius:50%;background:#E5322D;box-shadow:0 0 0 4px rgba(229,50,45,.18)}
+#vb-live .lv-hd a{font-size:14px;font-weight:700;color:#111315}
+#vb-live .lv-row{display:grid;grid-auto-flow:column;grid-auto-columns:min(72%,260px);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 10px;-webkit-overflow-scrolling:touch}
+#vb-live .lv-c{scroll-snap-align:start;display:block;background:#fff;border-radius:14px;overflow:hidden;text-decoration:none;color:#111315;box-shadow:0 1px 2px rgba(17,19,21,.06),0 4px 14px rgba(17,19,21,.08)}
+#vb-live .lv-c:focus-visible{outline:3px solid #111315;outline-offset:3px}
+#vb-live .lv-img{position:relative;display:block;aspect-ratio:4/3;background:#1d2024}
+#vb-live .lv-img img{width:100%;height:100%;object-fit:cover;display:block}
+#vb-live .lv-img em{position:absolute;left:8px;top:8px;background:#E5322D;color:#fff;font-style:normal;font-size:11px;font-weight:800;padding:3px 7px;border-radius:999px}
+#vb-live .lv-c b{display:block;padding:10px 12px 2px;font-size:15px;line-height:1.4}
+#vb-live .lv-c small{display:block;padding:0 12px 12px;font-size:12px;color:#5b6168}
+#vb-live .lv-empty{margin:0 0 10px;font-size:14px;line-height:1.7;color:#3a3f45}
+#vb-live .lv-howto{margin-top:4px}
+#vb-live .lv-btn{display:inline-block;background:#06C755;color:#fff;font-weight:800;text-decoration:none;padding:10px 18px;border-radius:999px;margin-bottom:8px}
+</style>
+<div id="vb-kids-banner" role="region" aria-label="新しいサイトのお知らせ">
+  <a href="/pages/live-table">
+    <picture>
+      <source media="(min-width: 750px)" srcset="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-live-table-pc.jpg?v=1794067089" width="1600" height="560">
+      <img src="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-live-table-sq.jpg?v=1794067088" width="1080" height="1080" alt="VIBES LIVE TABLE デジタルカウント機能がつきました。キャロム版・ポケット版。ハイラン・アベレージを自動計算、スマホ・タブレットで無料">
+    </picture>
+  </a>
+  {%- comment -%} POUR FEMME：一時非公開（2026-11-08）。戻すときはこのコメントを外す {%- endcomment -%}
+  {%- comment -%}
+  <a href="/pages/pour-femme">
+    <picture>
+      <source media="(min-width: 750px)" srcset="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-pour-femme-open-pc.jpg?v=1794053201" width="1600" height="560">
+      <img src="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-pour-femme-open-sq.jpg?v=1794053202" width="1080" height="1080" alt="ビリヤードを楽しむ女性のための VIBES BILLIARDS POUR FEMME、オープン。女性限定の大会、ビリヤードの日の服、自分に合うキュー、ひとりで行けるお店">
+    </picture>
+  </a>
+  {%- endcomment -%}
+  <a href="/pages/kids">
+    <picture>
+      <source media="(min-width: 750px)" srcset="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-kids-open-pc.jpg?v=1794054916" width="1600" height="560">
+      <img src="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-kids-open-sq.jpg?v=1794054916" width="1080" height="1080" loading="lazy" alt="VIBES BILLIARDS -KIDS- サイトオープン！小学生から楽しめる、ビリヤードのゲーム・クイズ・検定">
+    </picture>
+  </a>
+</div>
+{%- assign lb = blogs.live -%}
+{%- assign now_s = 'now' | date: '%s' | plus: 0 -%}
+{%- assign live_n = 0 -%}
+{%- capture live_cards -%}
+{%- for a in lb.articles limit: 12 -%}
+{%- assign pub_s = a.published_at | date: '%s' | plus: 0 -%}
+{%- assign age = now_s | minus: pub_s -%}
+{%- if age < 604800 and live_n < 8 -%}
+{%- assign live_n = live_n | plus: 1 -%}
+<a class="lv-c" href="{{ a.url }}">
+  <span class="lv-img">{%- if a.image -%}<img src="{{ a.image | image_url: width: 640 }}" width="320" height="240" loading="lazy" alt="{{ a.image.alt | default: a.title | escape }}">{%- endif -%}{%- if age < 10800 -%}<em>NEW</em>{%- endif -%}</span>
+  <b>{{ a.title | remove_first: '【速報】' | split: '｜' | first | escape }}</b>
+  <small>{{ a.title | split: '｜' | last | escape }} ・ {{ a.published_at | date: '%-m/%-d %H:%M' }}</small>
+</a>
+{%- endif -%}
+{%- endfor -%}
+{%- endcapture -%}
+<div id="vb-live" aria-labelledby="vb-live-h">
+  <div class="lv-hd">
+    <h2 id="vb-live-h"><span class="lv-dot" aria-hidden="true"></span>試合速報</h2>
+    <a href="/blogs/live">すべて見る</a>
+  </div>
+  {%- if live_n > 0 -%}
+  <div class="lv-row">{{ live_cards }}</div>
+  {%- else -%}
+  <p class="lv-empty">今週の速報はまだありません。最初の速報を送ってみませんか？</p>
+  {%- endif -%}
+  <div class="lv-howto">{% render 'vibes-live-howto' %}</div>
+</div>
+<script>
+(function(){var t=document.getElementById('info');if(!t||!t.parentNode)return;['vb-kids-banner','vb-live'].forEach(function(id){var b=document.getElementById(id);if(b)t.parentNode.insertBefore(b,t);});})();
+</script>
+{% schema %}
+{"name":"新サイト告知・試合速報","settings":[],"presets":[{"name":"新サイト告知・試合速報"}]}
+{% endschema %}

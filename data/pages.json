@@ -1,0 +1,182 @@
+[
+{
+"id": "gid://shopify/Page/169393553507",
+"handle": "contact",
+"title": "お問い合わせ",
+"body": "<p>ご注文前のご相談（ジョイント規格、ウェイト、Mezz など対応キュー）や、ご注文後のロゴデータ入稿は、下記メールまたはフォームからお送りください。通常1〜2営業日以内にご返信します。</p><p><strong>メール：</strong><a href=\"mailto:info@vibesbilliards.com\">info@vibesbilliards.com</a></p><p>ジョイント規格が分からない場合は、バット側のピンを横から撮影した写真を添付してください。</p>",
+"isPublished": true,
+"templateSuffix": "contact",
+"updatedAt": "2026-10-28T09:10:52Z"
+},
+{
+"id": "gid://shopify/Page/169503653987",
+"handle": "legal-notice",
+"title": "特定商取引法に基づく表記",
+"body": "<table>\n<tr>\n<th>販売業者</th>\n<td>Vibes Billiards</td>\n</tr>\n<tr>\n<th>運営責任者</th>\n<td>安藤 達也</td>\n</tr>\n<tr>\n<th>所在地</th>\n<td>埼玉県朝霞市（番地以降は、請求があった場合には遅滞なく開示いたします）</td>\n</tr>\n<tr>\n<th>電話番号</th>\n<td>請求があった場合には遅滞なく開示いたします。お問い合わせはメールでお願いします。</td>\n</tr>\n<tr>\n<th>メールアドレス</th>\n<td><a href=\"mailto:info@vibesbilliards.com\">info@vibesbilliards.com</a></td>\n</tr>\n<tr>\n<th>販売価格</th>\n<td>各商品ページに記載の価格（税込）。Vibes Carbon Shaft：¥25,000（税込・国内送料込）。Vibes Tee：¥5,500（税込）。Vibes Cap：¥6,600（税込）。</td>\n</tr>\n<tr>\n<th>商品代金以外の必要料金</th>\n<td>国内送料は商品価格に含みます。海外発送の場合は別途送料・関税。銀行振込の場合の振込手数料はお客様負担。</td>\n</tr>\n<tr>\n<th>支払方法</th>\n<td>銀行振込<br>※クレジットカード決済は2026年12月から対応予定です。</td>\n</tr>\n<tr>\n<th>支払時期</th>\n<td>銀行振込：ご注文から7日以内にお振込みください（ご入金確認後に製作開始）。</td>\n</tr>\n<tr>\n<th>引渡時期</th>\n<td>カーボンシャフト：ご注文確定（銀行振込はご入金確認）から3週間〜4週間ほど（パターンオーダー・受注生産）。<br>Tシャツ・キャップ：公式LINEまたはメールで個別にご注文を承ります（受注生産）。お届け時期はご注文時にご案内します。</td>\n</tr>\n<tr>\n<th>返品・交換</th>\n<td>パターンオーダー・受注生産のため、お客様都合による返品・交換はお受けできません。到着時の初期不良（振れ、刻印ミス、仕様違い等）は、商品到着後7日以内にご連絡ください。交換にて対応いたします。詳細は<a href=\"/pages/refund-policy\">返品・交換ポリシー</a>をご覧ください。</td>\n</tr>\n</table>",
+"isPublished": true,
+"templateSuffix": null,
+"updatedAt": "2026-11-01T13:00:30Z"
+},
+{
+"id": "gid://shopify/Page/169503686755",
+"handle": "privacy-policy",
+"title": "プライバシーポリシー",
+"body": "<p>Vibes Billiards（以下「当ストア」）は、お客様の個人情報を以下の方針に基づき取り扱います。</p>\n<h3>1. 取得する情報</h3>\n<p>ご注文時にご入力いただく氏名、住所、電話番号、メールアドレス、注文内容（シャフトの仕様・刻印のお名前・ロゴデータ等）、およびお問い合わせ内容。</p>\n<h3>2. 利用目的</h3>\n<p>商品の製作・発送、ご注文に関するご連絡、お問い合わせへの回答、および当ストアからのご案内のために利用します。</p>\n<h3>3. 第三者への提供</h3>\n<p>商品の製作・配送に必要な範囲で製造先・配送業者に提供する場合、および法令に基づく場合を除き、お客様の同意なく第三者に提供しません。</p>\n<h3>4. 決済情報</h3>\n<p>クレジットカード情報は決済代行会社（Shopify Payments 等）が取り扱い、当ストアでは保持しません。</p>\n<h3>5. Cookie 等</h3>\n<p>当ストアは Shopify のプラットフォーム上で運営されており、サービス提供と分析のために Cookie を使用することがあります。</p>\n<h3>6. 開示・訂正・削除</h3>\n<p>ご本人からのご請求があった場合、合理的な範囲で速やかに対応します。</p>\n<h3>7. お問い合わせ</h3>\n<p>info@vibesbilliards.com</p>\n<p>制定日：2026年10月28日</p>",
+"isPublished": true,
+"templateSuffix": null,
+"updatedAt": "2026-10-28T05:05:37Z"
+},
+{
+"id": "gid://shopify/Page/169510436963",
+"handle": "refund-policy",
+"title": "返品・交換ポリシー",
+"body": "<p>Vibes Carbon Shaft はパターンオーダー（受注生産）のため、お客様都合による返品・交換・キャンセルはお受けできません。ご注文確定前に、長さ・テーパー・先端径・ジョイント・ウェイト・刻印の内容を必ずご確認ください。</p><h3>初期不良について</h3><p>到着時の初期不良（振れ、刻印ミス、ご注文内容との仕様違い）は、商品到着後7日以内に <a href=\"mailto:info@vibesbilliards.com\">info@vibesbilliards.com</a> へ写真を添えてご連絡ください。確認のうえ、同仕様の製品と交換いたします（送料は当店負担）。</p><h3>交換の対象外</h3><ul>\n<li>ご使用後の打感・硬さ・重さの好みによるもの</li>\n<li>ご注文時の入力内容（ジョイント規格・刻印名など）の誤り</li>\n<li>お客様による加工・改造後の不具合</li>\n</ul><h3>Tシャツについて</h3><p>受注生産のため、サイズ違い・イメージ違いによる返品・交換はお受けできません。不良品・誤配送の場合は、商品到着後7日以内にご連絡ください。</p>",
+"isPublished": true,
+"templateSuffix": null,
+"updatedAt": "2026-10-28T09:10:51Z"
+},
+{
+"id": "gid://shopify/Page/169877307491",
+"handle": "tournament-entry",
+"title": "ハウストーナメント掲載フォーム（店舗様向け）",
+"body": "<style>\n.vf{--o:#FA4E02;--k:#0A0A09;--w:#FAFAFA;--l:#C6FF1F;--g:#6b6b66;max-width:760px;margin:0 auto;padding:18px 18px 40px;background:var(--w);border-radius:10px;font-size:15px;line-height:1.6;color:var(--k)}\n.vf label,.vf legend,.vf .agree span{color:var(--k)}\n.vf *{box-sizing:border-box}\n.vf .lead{background:var(--k);color:var(--w);padding:20px 22px;margin:0 0 22px;border-left:6px solid var(--o)}\n.vf .lead strong{color:var(--l)}\n.vf .lead p{margin:0 0 6px}\n.vf .lead small{color:#bbb}\n.vf fieldset{border:0;padding:0;margin:0 0 10px}\n.vf legend{font-weight:900;font-size:17px;color:var(--k);margin:26px 0 10px;padding-bottom:6px;border-bottom:3px solid var(--o);width:100%}\n.vf label{display:block;font-weight:700;margin:14px 0 4px}\n.vf label .req{display:inline-block;background:var(--o);color:var(--k);font-size:11px;font-weight:900;padding:1px 6px;margin-left:6px;vertical-align:middle;border-radius:2px}\n.vf label .opt{display:inline-block;background:#e5e5e2;color:#555;font-size:11px;font-weight:700;padding:1px 6px;margin-left:6px;vertical-align:middle;border-radius:2px}\n.vf .hint{display:block;font-weight:400;font-size:12.5px;color:var(--g);margin-top:1px}\n.vf input[type=text],.vf input[type=email],.vf textarea,.vf select{width:100%;font-size:16px;padding:12px 12px;border:2px solid #d7d7d2;border-radius:6px;background:#fff;color:var(--k);font-family:inherit}\n.vf textarea{min-height:84px;resize:vertical}\n.vf input:focus,.vf textarea:focus,.vf select:focus{outline:none;border-color:var(--o);box-shadow:0 0 0 3px rgba(250,78,2,.18)}\n.vf .row{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}\n@media(max-width:560px){.vf .row{grid-template-columns:1fr}}\n.vf .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}\n.vf .chips button{font-size:12.5px;padding:5px 10px;border:1.5px solid #ccc;background:#fff;border-radius:999px;cursor:pointer;color:#333}\n.vf .chips button:hover{border-color:var(--o);color:var(--o)}\n.vf .agree{display:flex;gap:10px;align-items:flex-start;margin:22px 0 14px;font-weight:400}\n.vf .agree input{width:20px;height:20px;margin-top:2px}\n.vf .btn{display:block;width:100%;background:var(--o);color:var(--k);font-weight:900;font-size:18px;letter-spacing:.04em;padding:16px;border:0;border-radius:6px;cursor:pointer}\n.vf .btn:disabled{opacity:.5;cursor:wait}\n.vf .msg{margin-top:16px;padding:16px 18px;border-radius:6px;display:none}\n.vf .msg.err{display:block;background:#fff1ec;border:2px solid var(--o);color:#8a2a00}\n.vf .msg.ok{display:block;background:var(--k);color:var(--w);border-left:6px solid var(--l)}\n.vf .msg.ok a{color:var(--l);word-break:break-all;font-weight:700}\n.vf .hp{position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden}\n.vf .foot{font-size:12.5px;color:var(--g);margin-top:28px;border-top:1px solid #e5e5e2;padding-top:12px}\n</style>\n\n<div class=\"vf\">\n  <div class=\"lead\">\n    <p><strong>店舗様向け｜ハウストーナメント掲載フォーム</strong></p>\n    <p>入力して送信するだけで、VIBESサイトの <strong>Tournament</strong> ページに即掲載。毎週月曜12時の公式LINE配信（全友だち）にも自動で載ります。<strong>掲載は無料</strong>です。</p>\n    <p><small>※ 必須は <span style=\"color:#FA4E02;font-weight:900\">必須</span> の項目だけ。その他は分かる範囲でOKです。</small></p>\n  </div>\n\n  <form id=\"vf-form\" novalidate>\n    <fieldset>\n      <legend>店舗情報</legend>\n      <div class=\"row\">\n        <div>\n<label for=\"f-store\">店舗名 <span class=\"req\">必須</span></label><input type=\"text\" id=\"f-store\" name=\"store\" placeholder=\"例：ビリヤードWIND\" maxlength=\"40\" required>\n</div>\n        <div>\n<label for=\"f-pref\">都道府県 <span class=\"req\">必須</span></label><select id=\"f-pref\" name=\"pref\" required><option value=\"\">選択してください</option></select>\n</div>\n      </div>\n      <label for=\"f-email\">担当者メール <span class=\"opt\">任意</span><span class=\"hint\">掲載内容の確認など、こちらから連絡する場合のみ使用します（サイトには載りません）</span></label>\n      <input type=\"email\" id=\"f-email\" name=\"email\" placeholder=\"例：info@example.com\" maxlength=\"120\">\n    </fieldset>\n\n    <fieldset>\n      <legend>大会情報</legend>\n      <label for=\"f-title\">大会名 <span class=\"req\">必須</span></label>\n      <input type=\"text\" id=\"f-title\" name=\"title\" placeholder=\"例：第○回 WIND ハウストーナメント\" maxlength=\"80\" required>\n\n      <label for=\"f-date\">開催日時 <span class=\"req\">必須</span></label>\n      <input type=\"text\" id=\"f-date\" name=\"date\" placeholder=\"例：11月16日（日）／集合12:30・開始13:00\" maxlength=\"80\" required>\n\n      <label for=\"f-end\">終了予定 <span class=\"opt\">任意</span></label>\n      <input type=\"text\" id=\"f-end\" name=\"end\" placeholder=\"例：18:00頃予定 ※参加人数で前後\" maxlength=\"80\">\n\n      <label for=\"f-venue\">会場・アクセス <span class=\"req\">必須</span><span class=\"hint\">店舗名・住所・最寄り駅・駐車場の有無</span></label>\n      <textarea id=\"f-venue\" name=\"venue\" placeholder=\"例：ビリヤードWIND\n東京都新宿区○○1-2-3 ○○ビル2F\nJR新宿駅 東口より徒歩5分／駐車場なし（近隣コインP）\" required></textarea>\n\n      <label for=\"f-game\">競技種目 <span class=\"req\">必須</span></label>\n      <input type=\"text\" id=\"f-game\" name=\"game\" placeholder=\"例：スリークッション／ナインボール\" maxlength=\"80\" required>\n      <div class=\"chips\" data-for=\"f-game\">\n<button type=\"button\">スリークッション</button><button type=\"button\">ナインボール</button><button type=\"button\">テンボール</button><button type=\"button\">エイトボール</button><button type=\"button\">ボークライン</button><button type=\"button\">14-1</button>\n</div>\n\n      <label for=\"f-target\">参加対象 <span class=\"opt\">任意</span></label>\n      <input type=\"text\" id=\"f-target\" name=\"target\" placeholder=\"例：どなたでも参加可／初心者歓迎／常連以外も歓迎\" maxlength=\"120\">\n      <div class=\"chips\" data-for=\"f-target\">\n<button type=\"button\">どなたでも参加可</button><button type=\"button\">初心者歓迎</button><button type=\"button\">常連以外も歓迎</button><button type=\"button\">女性歓迎</button><button type=\"button\">PABC</button><button type=\"button\">BC級</button>\n</div>\n\n      <div class=\"row\">\n        <div>\n<label for=\"f-capacity\">定員 <span class=\"opt\">任意</span></label><input type=\"text\" id=\"f-capacity\" name=\"capacity\" placeholder=\"例：先着16名\" maxlength=\"40\">\n</div>\n        <div>\n<label for=\"f-fee\">参加費 <span class=\"req\">必須</span></label><input type=\"text\" id=\"f-fee\" name=\"fee\" placeholder=\"例：2,000円／ゲーム代込み・ワンドリンク付き\" maxlength=\"80\" required>\n</div>\n      </div>\n\n      <label for=\"f-handicap\">ハンディキャップ <span class=\"opt\">任意</span><span class=\"hint\">持ち点制・クラス別ハンデ／初参加者の決め方</span></label>\n      <input type=\"text\" id=\"f-handicap\" name=\"handicap\" placeholder=\"例：持ち点制（クラス別）／初参加者は店側で判定\" maxlength=\"160\">\n\n      <label for=\"f-format\">試合形式 <span class=\"opt\">任意</span></label>\n      <input type=\"text\" id=\"f-format\" name=\"format\" placeholder=\"例：予選リーグ → 決勝トーナメント\" maxlength=\"160\">\n      <div class=\"chips\" data-for=\"f-format\">\n<button type=\"button\">予選リーグ→決勝トーナメント</button><button type=\"button\">ダブルイリミネーション</button><button type=\"button\">シングルイリミネーション</button><button type=\"button\">総当たり</button>\n</div>\n\n      <label for=\"f-limit\">試合の制限 <span class=\"opt\">任意</span><span class=\"hint\">イニング制限・時間制限の有無</span></label>\n      <input type=\"text\" id=\"f-limit\" name=\"limit\" placeholder=\"例：イニング制限あり（25イニング）／時間制限なし\" maxlength=\"160\">\n    </fieldset>\n\n    <fieldset>\n      <legend>申込・お問い合わせ</legend>\n      <label for=\"f-apply\">申込方法 <span class=\"req\">必須</span><span class=\"hint\">店頭・電話・LINE など</span></label>\n      <input type=\"text\" id=\"f-apply\" name=\"apply\" placeholder=\"例：店頭・電話・店舗LINEにて受付\" maxlength=\"160\" required>\n      <div class=\"chips\" data-for=\"f-apply\">\n<button type=\"button\">店頭</button><button type=\"button\">電話</button><button type=\"button\">店舗LINE</button><button type=\"button\">Instagram DM</button>\n</div>\n\n      <label for=\"f-website\">申込先リンク <span class=\"opt\">任意</span><span class=\"hint\">店舗LINE・申込フォーム・SNSなどのURL（QRコードの代わりに掲載されます）</span></label>\n      <input type=\"text\" id=\"f-website\" name=\"website\" placeholder=\"例：https://lin.ee/xxxxx\" maxlength=\"300\">\n\n      <label for=\"f-deadline\">申込締切 <span class=\"opt\">任意</span></label>\n      <input type=\"text\" id=\"f-deadline\" name=\"deadline\" placeholder=\"例：11月14日まで／定員に達し次第締切\" maxlength=\"80\">\n\n      <label for=\"f-contact\">問い合わせ先 <span class=\"req\">必須</span><span class=\"hint\">担当者名・電話番号など（サイトに掲載されます）</span></label>\n      <input type=\"text\" id=\"f-contact\" name=\"contact\" placeholder=\"例：担当：山田／03-0000-0000\" maxlength=\"120\" required>\n\n      <label for=\"f-note\">備考 <span class=\"opt\">任意</span></label>\n      <textarea id=\"f-note\" name=\"note\" placeholder=\"例：賞品あり／飲食持込不可／当日の流れ など\"></textarea>\n    </fieldset>\n\n    <div class=\"hp\"><label>ご記入不要<input type=\"text\" name=\"hp\" tabindex=\"-1\" autocomplete=\"off\"></label></div>\n\n    <label class=\"agree\"><input type=\"checkbox\" id=\"f-agree\"><span>入力内容がVIBESサイトおよび公式LINEに掲載されることに同意します。不適切な内容は予告なく削除される場合があります。</span></label>\n\n    <button type=\"submit\" class=\"btn\" id=\"vf-btn\">この内容で掲載する</button>\n    <div class=\"msg\" id=\"vf-msg\"></div>\n  </form>\n\n  <p class=\"foot\">掲載後の修正・削除は <a href=\"mailto:info@vibesbilliards.com\">info@vibesbilliards.com</a> まで（店舗名と大会名をお知らせください）。LINEから投稿する方法は <a href=\"/blogs/house-tournament/how-to-post\">こちら</a>。</p>\n</div>\n\n<script>\n(function(){\n  var HOOK='https://hook.eu1.make.com/i0ku107i3c61wtxalx6lk05x3uz41ayr';\n  var prefs='北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県'.split(',');\n  var sel=document.getElementById('f-pref');prefs.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});\n  document.querySelectorAll('.vf .chips').forEach(function(c){var t=document.getElementById(c.getAttribute('data-for'));c.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){var v=b.textContent;t.value=t.value?(t.value.indexOf(v)>=0?t.value:t.value+'／'+v):v;t.focus();});});});\n  var form=document.getElementById('vf-form'),btn=document.getElementById('vf-btn'),msg=document.getElementById('vf-msg');\n  function show(cls,html){msg.className='msg '+cls;msg.innerHTML=html;msg.scrollIntoView({behavior:'smooth',block:'center'});}\n  try{var saved=JSON.parse(localStorage.getItem('vf-store')||'{}');['store','pref','email','contact'].forEach(function(k){if(saved[k]&&form[k])form[k].value=saved[k];});}catch(e){}\n  form.addEventListener('submit',function(ev){\n    ev.preventDefault();\n    var req=['store','pref','title','date','venue','game','fee','apply','contact'],lab={store:'店舗名',pref:'都道府県',title:'大会名',date:'開催日時',venue:'会場・アクセス',game:'競技種目',fee:'参加費',apply:'申込方法',contact:'問い合わせ先'};\n    var miss=req.filter(function(k){return !form[k].value.trim();});\n    if(miss.length){show('err','未入力の必須項目があります：'+miss.map(function(k){return lab[k];}).join('・'));form[miss[0]].focus();return;}\n    if(!document.getElementById('f-agree').checked){show('err','掲載への同意にチェックを入れてください。');return;}\n    var data={};new FormData(form).forEach(function(v,k){data[k]=v;});\n    btn.disabled=true;btn.textContent='送信中…';\n    fetch(HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})\n      .then(function(r){return r.text();})\n      .then(function(t){var j={};try{j=JSON.parse(t);}catch(e){j={ok:/accepted/i.test(t)};}\n        if(j.ok){try{localStorage.setItem('vf-store',JSON.stringify({store:data.store,pref:data.pref,email:data.email,contact:data.contact}));}catch(e){}\n          show('ok','<strong>✅ 掲載しました！ありがとうございます。</strong><br>'+(j.title?j.title+'<br>':'')+(j.url?'<a href=\"'+j.url+'\" target=\"_blank\" rel=\"noopener\">'+j.url+'</a><br>':'')+'<span style=\"color:#bbb;font-size:13px\">毎週月曜12時の公式LINE配信にも載ります。修正はメールでご連絡ください。</span>');\n          form.reset();try{var s=JSON.parse(localStorage.getItem('vf-store')||'{}');['store','pref','email','contact'].forEach(function(k){if(s[k])form[k].value=s[k];});}catch(e){}\n          btn.textContent='もう1件 掲載する';\n        }else{show('err','送信できませんでした：'+(j.error||'時間をおいて再度お試しください'));btn.textContent='この内容で掲載する';}\n        btn.disabled=false;})\n      .catch(function(){show('err','通信エラーです。時間をおいて再度お試しください。');btn.disabled=false;btn.textContent='この内容で掲載する';});\n  });\n})();\n</script>\n",
+"isPublished": true,
+"templateSuffix": null,
+"updatedAt": "2026-10-31T10:09:54Z"
+},
+{
+"id": "gid://shopify/Page/169877536867",
+"handle": "tournament-form",
+"title": "ハウストーナメント掲載フォーム（店舗様用）",
+"body": "<style>\n.vf{--o:#FA4E02;--k:#0A0A09;--w:#FAFAFA;--l:#C6FF1F;max-width:760px;margin:0 auto;font-family:inherit;color:var(--k);background:#FAFAFA;padding:22px 22px 28px;border-radius:10px;box-shadow:0 2px 14px rgba(0,0,0,.12)}\n.vf *{color:inherit}\n.vf legend{color:var(--k)}\n.vf .lead,.vf .lead *{color:var(--w)}\n.vf .lead strong{color:var(--l)!important}\n.vf .lead{background:var(--k);color:var(--w);padding:22px 24px;border-left:6px solid var(--o);margin:0 0 28px}\n.vf .lead strong{color:var(--l)}\n.vf .lead p{margin:6px 0 0;font-size:14px;line-height:1.7}\n.vf fieldset{border:0;padding:0;margin:0 0 26px}\n.vf legend{font-weight:900;font-size:17px;letter-spacing:.04em;border-bottom:3px solid var(--o);padding:0 0 6px;margin:0 0 14px;width:100%}\n.vf label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}\n.vf label small{font-weight:400;color:#666;margin-left:6px}\n.vf label .req{display:inline-block;background:var(--o);color:#fff;font-size:11px;padding:1px 7px;border-radius:3px;margin-left:8px;vertical-align:middle}\n.vf input[type=text],.vf input[type=email],.vf textarea{width:100%;box-sizing:border-box;border:2px solid #d9d9d6;border-radius:6px;padding:11px 12px;font-size:16px;background:#fff;color:var(--k)}\n.vf input:focus,.vf textarea:focus{outline:0;border-color:var(--o)}\n.vf textarea{min-height:84px;resize:vertical}\n.vf .hint{font-size:12px;color:#777;margin:4px 0 0}\n.vf .hp{position:absolute;left:-9999px;top:-9999px}\n.vf button{display:block;width:100%;background:var(--o);color:#fff;border:0;border-radius:6px;font-size:18px;font-weight:900;letter-spacing:.06em;padding:16px;cursor:pointer;margin-top:10px}\n.vf button:disabled{opacity:.5;cursor:default}\n.vf .msg{display:none;margin-top:18px;padding:18px 20px;border-radius:6px;font-size:15px;line-height:1.7}\n.vf .msg.ok{display:block;background:var(--k);color:var(--w);border-left:6px solid var(--l)}\n.vf .msg.ok a{color:var(--l);font-weight:700;word-break:break-all}\n.vf .msg.ng{display:block;background:#fff1ec;border-left:6px solid var(--o)}\n.vf .foot{font-size:12px;color:#777;margin-top:26px;line-height:1.7}\n</style>\n<div class=\"vf\">\n  <div class=\"lead\">\n    <strong>ハウストーナメント掲載フォーム（店舗様用・無料）</strong>\n    <p>入力して送信すると、<b>すぐに VIBES サイトの「Tournament」ページに掲載</b>され、<b>公式LINE配信（水:来週の試合／金:今週末の試合）</b>にも自動で載ります。わかる項目だけで大丈夫です。</p>\n  </div>\n  <form id=\"vbForm\" novalidate>\n    <fieldset>\n      <legend>店舗情報</legend>\n      <label>店舗名<span class=\"req\">必須</span></label>\n      <input type=\"text\" name=\"store\" placeholder=\"例：ビリヤード WIND\" required>\n      <label>地域<small>都道府県・市区</small></label>\n      <input type=\"text\" name=\"area\" placeholder=\"例：神奈川県 横浜市\">\n      <label>連絡用メール<small>公開されません・掲載URLの控えに使用</small></label>\n      <input type=\"email\" name=\"email\" placeholder=\"例：info@example.com\">\n    </fieldset>\n    <fieldset>\n      <legend>大会情報</legend>\n      <label>大会名<span class=\"req\">必須</span></label>\n      <input type=\"text\" name=\"title\" placeholder=\"例：第○回 WIND ハウストーナメント\" required>\n      <label>開催日時<span class=\"req\">必須</span></label>\n      <input type=\"text\" name=\"datetime\" placeholder=\"例：11月23日（日）／集合12:30・開始13:00\" required>\n      <label>終了予定</label>\n      <input type=\"text\" name=\"endtime\" placeholder=\"例：18:00頃予定 ※参加人数で前後\">\n      <label>会場・アクセス</label>\n      <textarea name=\"venue\" placeholder=\"店舗名・住所・最寄り駅・駐車場の有無\"></textarea>\n      <label>競技種目</label>\n      <input type=\"text\" name=\"game\" placeholder=\"例：スリークッション／ナインボール\">\n      <label>参加対象</label>\n      <input type=\"text\" name=\"target\" placeholder=\"例：どなたでも参加可／初心者歓迎／常連以外も歓迎\">\n      <label>定員</label>\n      <input type=\"text\" name=\"capacity\" placeholder=\"例：先着16名\">\n      <label>参加費</label>\n      <input type=\"text\" name=\"fee\" placeholder=\"例：2,000円／ゲーム代込み・ワンドリンク付き\">\n      <label>ハンディキャップ</label>\n      <input type=\"text\" name=\"handicap\" placeholder=\"例：持ち点制・クラス別ハンデ／初参加者は当日決定\">\n      <label>試合形式</label>\n      <input type=\"text\" name=\"format\" placeholder=\"例：予選リーグ→決勝トーナメント\">\n      <label>試合の制限</label>\n      <input type=\"text\" name=\"limit\" placeholder=\"例：イニング制限・時間制限の有無\">\n    </fieldset>\n    <fieldset>\n      <legend>申込・問い合わせ</legend>\n      <label>申込方法</label>\n      <input type=\"text\" name=\"apply\" placeholder=\"例：店頭・電話・LINE（申込先URLがあれば記入）\">\n      <label>申込締切</label>\n      <input type=\"text\" name=\"deadline\" placeholder=\"例：11月20日まで／定員に達し次第締切\">\n      <label>問い合わせ先<small>掲載されます</small></label>\n      <input type=\"text\" name=\"contact\" placeholder=\"例：担当 山田・045-000-0000\">\n      <label>備考</label>\n      <textarea name=\"note\" placeholder=\"そのほか伝えたいこと\"></textarea>\n    </fieldset>\n    <div class=\"hp\">\n<label>website</label><input type=\"text\" name=\"hp\" tabindex=\"-1\" autocomplete=\"off\">\n</div>\n    <button type=\"submit\" id=\"vbBtn\">この内容で掲載する</button>\n    <div class=\"msg\" id=\"vbMsg\"></div>\n  </form>\n  <p class=\"foot\">※ 送信後すぐに掲載URLが表示されます。修正したい場合は同じフォームからもう一度送ってください（新しい記事として掲載されます。古い記事の削除は info@vibesbilliards.com まで）。※ 不適切な投稿は予告なく削除することがあります。<br>公式LINE（@361mehjz）からもテキストで投稿できます。</p>\n</div>\n<script>\n(function(){\n  var f=document.getElementById('vbForm'),b=document.getElementById('vbBtn'),m=document.getElementById('vbMsg');\n  var URL='https://hook.eu1.make.com/il3qzjb5v8vnenn9j9kn5zfj3529mciv';\n  f.addEventListener('submit',function(e){\n    e.preventDefault();\n    var d={};new FormData(f).forEach(function(v,k){d[k]=String(v).trim();});\n    var miss=[['store','店舗名'],['title','大会名'],['datetime','開催日時']].filter(function(x){return !d[x[0]];});\n    if(miss.length){m.className='msg ng';m.textContent='必須項目を入力してください：'+miss.map(function(x){return x[1]}).join('・');return;}\n    b.disabled=true;b.textContent='送信中…';m.className='msg';m.textContent='';\n    fetch(URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})\n      .then(function(r){return r.json().catch(function(){return {ok:r.ok}})})\n      .then(function(j){\n        if(j&&j.ok){m.className='msg ok';m.innerHTML='✅ 掲載しました！<br>'+(j.title?('<b>'+j.title.replace(/</g,'&lt;')+'</b><br>'):'')+'<a href=\"'+j.url+'\" target=\"_blank\" rel=\"noopener\">'+j.url+'</a><br><br>公式LINE配信（水:来週の試合／金:今週末の試合）にも掲載されます。ありがとうございました！';f.reset();window.scrollTo({top:m.getBoundingClientRect().top+window.scrollY-120,behavior:'smooth'});}\n        else{m.className='msg ng';m.textContent='送信できませんでした：'+((j&&j.error)||'時間をおいて再度お試しください');}\n      })\n      .catch(function(){m.className='msg ng';m.textContent='通信エラーです。時間をおいて再度お試しください。';})\n      .then(function(){b.disabled=false;b.textContent='この内容で掲載する';});\n  });\n})();\n</script>\n",
+"isPublished": true,
+"templateSuffix": null,
+"updatedAt": "2026-10-31T16:21:42Z"
+},
+{
+"id": "gid://shopify/Page/169989636195",
+"handle": "tournaments",
+"title": "大会をさがす",
+"body": "<p>公式戦とハウストーナメントを、日付・地域・種目・クラスで絞り込めます。</p>",
+"isPublished": true,
+"templateSuffix": "tournaments",
+"updatedAt": "2026-11-01T19:52:14Z"
+},
+{
+"id": "gid://shopify/Page/169992224867",
+"handle": "near",
+"title": "近くのビリヤード場",
+"body": "<p>現在地から近いビリヤード場と、開催予定の大会を表示します。</p>",
+"isPublished": true,
+"templateSuffix": "near",
+"updatedAt": "2026-11-01T21:12:21Z"
+},
+{
+"id": "gid://shopify/Page/169992912995",
+"handle": "near-data",
+"title": "近くのビリヤード場（データ）",
+"body": "",
+"isPublished": true,
+"templateSuffix": "neardata",
+"updatedAt": "2026-11-01T21:34:53Z"
+},
+{
+"id": "gid://shopify/Page/169993371747",
+"handle": "app",
+"title": "VIBESアプリ",
+"body": "<p>VIBESはスマホのホーム画面に置いて使える無料アプリです。今日の大会・近くのビリヤード場・試合結果にいつでも1タップ。</p>",
+"isPublished": true,
+"templateSuffix": "app",
+"updatedAt": "2026-11-01T22:13:45Z"
+},
+{
+"id": "gid://shopify/Page/170198401123",
+"handle": "heyball",
+"title": "HEYBALL（ヘイボール）とは？",
+"body": "<p><strong>HEYBALL（ヘイボール／旧チャイニーズ8）</strong>は、アメリカンプールのボールと8ボール系ルールに、スヌーカーのテーブルと狭いポケットを組み合わせた競技です。1980年代に中国で生まれ、世界最大級の賞金が動くキュースポーツとして成長。2029年のワールドゲームズ（ドイツ・カールスルーエ）では正式種目になります。日本では2026年5月に一般社団法人 日本HeyBall協会（JHBA）が発足し、賞金総額100万円超の「HEYBALL JAPAN OPEN」を開催しています。</p>\n<h2>3つの違い</h2>\n<ul>\n<li>\n<b>テーブル</b>：9フィート、スヌーカー級の速いクロス、厚いスレート。</li>\n<li>\n<b>ポケット</b>：約89mm（球径の約1.55倍）で、丸いナックルがズレた球をはじき返す。</li>\n<li>\n<b>ルール</b>：自分のグループ7球をすべて落として、最後に8番を指定ポケットへ。コールショット制。</li>\n</ul>\n<h2>大会・お店</h2>\n<p><a href=\"/pages/tournaments?game=heyball\">開催予定のHEYBALL大会</a>／<a href=\"/pages/shop/jhba-joy-ace-koshigaya\">JOY ACE BILLIARDS（越谷）</a>／<a href=\"/pages/shop/jhba-joy-soka\">JOYビリヤード草加</a>／<a href=\"https://heyball-joy-japan.jp/\" target=\"_blank\" rel=\"noopener\">HEY BALL JAPAN 公式サイト</a></p>",
+"isPublished": true,
+"templateSuffix": "heyball",
+"updatedAt": "2026-11-03T05:15:57Z"
+},
+{
+"id": "gid://shopify/Page/170216292451",
+"handle": "shaft",
+"title": "Vibes Carbon Shaft｜パターンオーダーのカーボンシャフト",
+"body": "<p>長さ・テーパー・先端径・ジョイント・ウェイト・刻印を、あなたのキューに合わせて1本から仕立てるカーボンシャフト。定価 ¥25,000（税込・送料込）、納期3〜4週間。<a href=\"/products/vibes-carbon-shaft\">1本をつくる</a></p>",
+"isPublished": true,
+"templateSuffix": "shaft",
+"updatedAt": "2026-11-03T17:07:14Z"
+},
+{
+"id": "gid://shopify/Page/170221568099",
+"handle": "pocket",
+"title": "ポケット｜大会・NEWS・試合結果",
+"body": "<p>ポケット（JPBA・JAPA・NBA関東支部ポケット・ハウストーナメント）の大会・NEWS・試合結果。<a href=\"/pages/tournaments?game=pocket\">大会をさがす</a></p>",
+"isPublished": true,
+"templateSuffix": "game-pocket",
+"updatedAt": "2026-11-03T20:21:21Z"
+},
+{
+"id": "gid://shopify/Page/170221600867",
+"handle": "carom",
+"title": "キャロム（スリークッション）｜大会・NEWS・試合結果",
+"body": "<p>キャロム（JPBF・NBA関東・関東アマ連・関西アマ連・ハウストーナメント）の大会・NEWS・試合結果。<a href=\"/pages/tournaments?game=carom\">大会をさがす</a></p>",
+"isPublished": true,
+"templateSuffix": "game-carom",
+"updatedAt": "2026-11-03T20:21:21Z"
+},
+{
+"id": "gid://shopify/Page/170221633635",
+"handle": "heyball-news",
+"title": "ヘイボール｜大会・NEWS・試合結果",
+"body": "<p>HEYBALL（日本HeyBall協会）の大会・NEWS・試合結果。<a href=\"/pages/tournaments?game=heyball\">大会をさがす</a>／<a href=\"/pages/heyball\">HEYBALLとは？</a></p>",
+"isPublished": true,
+"templateSuffix": "game-heyball",
+"updatedAt": "2026-11-03T20:21:21Z"
+},
+{
+"id": "gid://shopify/Page/170314399843",
+"handle": "wear",
+"title": "Wear Vibes（オフィシャルTシャツ）",
+"body": "<p>オフィシャルTシャツ（7色・¥5,500税込・SS〜3XL）。ユニセックス・受注生産です。キャップは新ロゴで近日発売予定です。</p><p>ご注文は公式LINE（@361mehjz）またはメール（info@vibesbilliards.com）に、商品番号（T-01〜07）・サイズ・数量を送ってください。</p>",
+"isPublished": true,
+"templateSuffix": "wear",
+"updatedAt": "2026-11-04T11:24:26Z"
+},
+{
+"id": "gid://shopify/Page/170431873123",
+"handle": "jpa",
+"title": "JPA（プールリーグ）とは？",
+"body": "<p><strong>JPA（日本プールプレイヤーズアソシエーション）</strong>は、アメリカのAPA（American Poolplayers Association）の日本支部です。5人対5人のチーム戦で、毎週決まった曜日にナインボール・エイトボールのリーグ戦を行います。スキルレベル制のハンデで初心者と上級者が同じ試合を楽しめ、勝ち進んだチームはラスベガスの世界大会に日本代表として出場できます。</p><p><a href=\"/pages/tournaments\">開催予定の大会</a>／<a href=\"http://www.poolplayers.jp/\" target=\"_blank\" rel=\"noopener\">JPA 公式サイト</a>／<a href=\"https://poolplayersblog.blogspot.com/\" target=\"_blank\" rel=\"noopener\">JPAブログ</a></p>",
+"isPublished": true,
+"templateSuffix": "jpa",
+"updatedAt": "2026-11-05T08:14:47Z"
+},
+{
+"id": "gid://shopify/Page/170653155427",
+"handle": "pour-femme",
+"title": "VIBES BILLIARDS POUR FEMME",
+"body": "<p>VIBES BILLIARDS POUR FEMME（プール・ファム）は、ビリヤードを楽しむ女性のためのページです。女性限定の大会、ビリヤードに似合う服、体のケア、自分に合うキュー、ひとりでも行きやすいお店の選び方をまとめています。</p><p><a href=\"/pages/tournaments?women=1\">女性限定の大会を見る</a></p>",
+"isPublished": false,
+"templateSuffix": "pour-femme",
+"updatedAt": "2026-11-07T21:18:48Z"
+},
+{
+"id": "gid://shopify/Page/170657579107",
+"handle": "kids",
+"title": "VIBES BILLIARDS -KIDS-",
+"body": "<p>小学生から楽しめる、ビリヤードのゲーム・クイズ・検定。9ボール・8ボール・キャロムのゲーム、毎日1問のクイズ、キッズ検定、ルールとマナー。</p>",
+"isPublished": true,
+"templateSuffix": "kids",
+"updatedAt": "2026-11-07T12:35:15Z"
+},
+{
+"id": "gid://shopify/Page/170661970019",
+"handle": "live-table",
+"title": "VIBES LIVE TABLE（デジタルカウント）",
+"body": "<p>スマホ・タブレットで使えるビリヤードのデジタルカウント。キャロム版（得点・ハイラン・アベレージ）とポケット版（ラック数・マスワリ・ブレイクエース）。</p>",
+"isPublished": true,
+"templateSuffix": "live-table",
+"updatedAt": "2026-11-07T15:58:07Z"
+}
+]

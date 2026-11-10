@@ -1,0 +1,87 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "vibes-options": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{%- assign fid = 'product-form-' | append: section.id -%}\n<style>\n.vbo{font-family:\"Noto Sans JP\",system-ui,sans-serif;font-size:1.5rem;scroll-margin-top:90px;margin:1.6rem 0;display:grid;gap:1.2rem}\n.vbo label{display:block;font-weight:700;margin-bottom:.4rem}\n.vbo select,.vbo input[type=text],.vbo textarea{width:100%;padding:1rem 1.2rem;border:1px solid #CFCFCF;background:#FFFFFF;color:#0A0A09;font-size:1.4rem;border-radius:0}\n.vbo small{display:block;color:#5A595A;margin-top:.4rem;font-size:1.3rem;line-height:1.6}\n.vbo .r{display:grid;gap:.4rem}\n.vbo .r label{font-weight:400;display:flex;gap:.8rem;align-items:flex-start}\n.vbo .r input{margin-top:.5rem;accent-color:#FA4E02}\n</style>\n<div class=\"vbo\">\n  <style>.vbo > div{scroll-margin-top:90px}</style>\n  <div><label for=\"vb-len\">01 · 長さ</label>\n    <select id=\"vb-len\" name=\"properties[長さ]\" form=\"{{ fid }}\" required>\n      <option value=\"27in（68.6cm）\">27in（68.6cm）標準</option><option value=\"28in（71.1cm）\">28in（71.1cm）</option><option value=\"29in（73.7cm）\">29in（73.7cm）</option><option value=\"30in（76.2cm）\">30in（76.2cm）</option><option value=\"31in（78.7cm）\">31in（78.7cm）</option>\n    </select></div>\n  <div><label for=\"vb-taper\">02 · テーパー</label>\n    <select id=\"vb-taper\" name=\"properties[テーパー]\" form=\"{{ fid }}\" required>\n      <option value=\"JAZZY（コニカル）\">JAZZY（コニカル）</option><option value=\"MELLOW（ストレート）\">MELLOW（ストレート）</option>\n    </select></div>\n  <div><label for=\"vb-tip\">03 · 先端径</label>\n    <select id=\"vb-tip\" name=\"properties[先端径]\" form=\"{{ fid }}\" required>\n      <option>10.5mm</option><option selected>11.8mm</option><option>12.0mm</option><option>12.4mm</option><option>12.5mm</option><option>12.8mm</option>\n    </select></div>\n  <div><label for=\"vb-joint\">04 · ジョイント</label>\n    <select id=\"vb-joint\" name=\"properties[ジョイント]\" form=\"{{ fid }}\" required>\n      <option value=\"\">— ジョイントを選択 —</option><option>Radial</option><option>3/8×10</option><option>3/8×11</option><option>3/8×14</option><option>5/16×14</option><option>United</option><option>5/16×18</option><option>Uni-Loc</option><option>VP2（Longoni）</option><option>不明（ピンの写真で確認）</option>\n    </select><small>バット側のピン規格に合わせて選択してください。Mezzの場合は、別途ご相談ください。</small></div>\n  <div><label for=\"vb-cue\">お使いのキュー（メーカー・モデル）</label>\n    <input id=\"vb-cue\" type=\"text\" name=\"properties[お使いのキュー]\" form=\"{{ fid }}\" placeholder=\"例：Sasaki / ADAM MUGEN / Predator P3\"></div>\n  <div><label for=\"vb-weight\">05 · ウェイト</label>\n    <select id=\"vb-weight\" name=\"properties[ウェイト]\" form=\"{{ fid }}\" required>\n      <option>110g</option><option>115g</option><option>120g</option><option>125g</option><option>おまかせ</option>\n    </select><small>110g未満は、ご相談ください。※ユニロック、VP2は120g前後からの重さ調整になります。ご了承ください。ラジアルなどの場合は、110g〜調整が可能です。</small></div>\n  <div id=\"vb-engrave\"><label>06 · 刻印</label>\n    <div class=\"r\">\n      <label><input type=\"radio\" name=\"properties[刻印]\" value=\"① なし（Vibesの刻印のみ）\" form=\"{{ fid }}\" checked>① なし（Vibes の刻印のみ）</label>\n      <label><input type=\"radio\" name=\"properties[刻印]\" value=\"② なし＋自分の名前\" form=\"{{ fid }}\">② なし＋自分の名前（Vibes の刻印の下にお名前・ローマ字）</label>\n      <label><input type=\"radio\" name=\"properties[刻印]\" value=\"③ あり（オリジナルロゴのみ）\" form=\"{{ fid }}\">③ あり（オリジナルロゴのみ）</label>\n      <label><input type=\"radio\" name=\"properties[刻印]\" value=\"④ あり＋自分の名前\" form=\"{{ fid }}\">④ あり＋自分の名前（オリジナルロゴ＋お名前・ローマ字）</label>\n    </div></div>\n  <div><label for=\"vb-name\">刻印するお名前（ローマ字）</label>\n    <input id=\"vb-name\" type=\"text\" name=\"properties[お名前（ローマ字）]\" form=\"{{ fid }}\"><small>②④を選んだ方のみ。ロゴデータ（PNG / PDF）は、ご注文後に info@vibesbilliards.com へお送りください。</small></div>\n  <div id=\"vb-color\"><label>07 · ロゴの色（③④を選んだ方）</label>\n    <div class=\"r\">\n      <label><input type=\"radio\" name=\"vb-color\" value=\"mono\" checked>単色（標準）— 追加料金なし</label>\n      <label><input type=\"radio\" name=\"vb-color\" value=\"color\">カラー（ロゴに色を入れる）— <b>+2,500円</b>（合計 ¥27,500 税込・送料込）</label>\n    </div><small id=\"vb-color-note\">オリジナルロゴに色を入れる場合は +2,500円です。①②（オリジナルロゴなし）の場合は単色のみです。</small></div>\n  <div><label for=\"vb-note\">備考</label>\n    <textarea id=\"vb-note\" name=\"properties[備考]\" form=\"{{ fid }}\" rows=\"3\" placeholder=\"ADAM用の細ピン指定、ジョイントの写真を送る旨など\"></textarea></div>\n</div>\n<script>\n(function(){\n  var fid='{{ fid }}', VMONO='{{ product.variants[0].id }}', VCOLOR='';\n  {%- for v in product.variants -%}{%- if v.title contains 'カラー' -%}VCOLOR='{{ v.id }}';{%- endif -%}{%- endfor -%}\n  function idInput(){var f=document.getElementById(fid);return f?f.querySelector('input[name=\"id\"]'):null;}\n  function setPrice(y){var el=document.querySelector('.price__regular .price-item--regular, .price .price-item--regular');if(el)el.textContent='¥'+y.toLocaleString('ja-JP');}\n  function logoOn(){var r=document.querySelector('input[name=\"properties[刻印]\"]:checked');return r&&/^[③④]/.test(r.value);}\n  function sync(){var on=logoOn(),c=document.querySelector('input[name=\"vb-color\"][value=\"color\"]'),m=document.querySelector('input[name=\"vb-color\"][value=\"mono\"]');\n    if(!on){m.checked=true;} c.disabled=!on; c.parentNode.style.opacity=on?'1':'.45';\n    var color=on&&c.checked&&VCOLOR; var inp=idInput(); if(inp)inp.value=color?VCOLOR:VMONO; setPrice(color?27500:25000);}\n  document.addEventListener('change',function(e){if(e.target&&(e.target.name==='properties[刻印]'||e.target.name==='vb-color'))sync();});\n  sync();\n})();\n</script>\n"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": false
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "vibes-sub": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<p style=\"margin:-.6rem 0 1.2rem;font-size:1.4rem;color:#5A595A;font-weight:700\">ポケット、スリークッション用カーボンシャフト（パターンオーダー）</p>"
+          }
+        },
+        "vibes-pricenote": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<p style=\"margin:-.4rem 0 .8rem;font-size:1.3rem;color:#5A595A\">定価・税込・送料込。パターンオーダー・刻印込み。ロゴのカラー刻印は +¥2,500。納期 3〜4週間。</p>"
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "vibes-sub",
+        "price",
+        "vibes-pricenote",
+        "vibes-options",
+        "buy_buttons",
+        "description"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "color_scheme": "scheme-1",
+        "media_size": "medium",
+        "constrain_to_viewport": true,
+        "media_fit": "contain",
+        "gallery_layout": "stacked",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "mobile_thumbnails": "show",
+        "hide_variants": true,
+        "enable_video_looping": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "vibes-flow": {
+      "type": "vibes-flow",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "vibes-flow"
+  ]
+}

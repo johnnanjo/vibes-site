@@ -1,0 +1,21 @@
+<style>
+.vbi{background:#FFFFFF;color:#0A0A09;border-top:1px solid #E3E3E3;font-family:"Noto Sans JP",system-ui,sans-serif}
+.vbi .wrap{max-width:1200px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-left,0px)) 14px max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.vbi img{width:36px;height:36px;display:block;flex:0 0 auto}
+.vbi .t{font-size:14px;font-weight:700;color:#0A0A09}
+.vbi .d{font-size:13px;color:#5A595A}
+.vbi .d i{font-style:normal;color:#0A0A09}
+.vbi button{display:none;margin-left:auto;font-family:inherit;font-size:13px;font-weight:700;background:#FA4E02;color:#0A0A09;border:0;padding:10px 14px;cursor:pointer}
+html.vb-can-install .vbi button{display:inline-block}
+html.vb-standalone .vbi{display:none}
+</style>
+<div class="vbi" id="app">
+  <div class="wrap">
+    <img src="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-icon-official-512.png?v=1793790888&width=72" width="36" height="36" alt="" loading="lazy">
+    <div><div class="t">スマホのホーム画面に追加できます</div><div class="d">iPhone：Safari の共有 → <i>ホーム画面に追加</i>　／　Android：Chrome の ⋮ → <i>ホーム画面に追加</i></div></div>
+    <button type="button" onclick="if(window.vbInstallPrompt){window.vbInstallPrompt.prompt();}">アプリとして追加</button>
+  </div>
+</div>
+{% schema %}
+{ "name": "Vibes App", "settings": [], "presets": [{ "name": "Vibes App" }] }
+{% endschema %}

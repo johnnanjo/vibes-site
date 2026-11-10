@@ -1,0 +1,33 @@
+<style>
+.vbf{background:#FAFAFA;color:#0A0A09;font-family:"Noto Sans JP",system-ui,sans-serif;border-top:1px solid #E3E3E3}
+.vbf .wrap{max-width:1200px;margin:0 auto;padding:40px max(16px,env(safe-area-inset-left,0px)) 48px max(16px,env(safe-area-inset-right,0px))}
+.vbf .en{font-family:"Anton",Impact,"Noto Sans JP",sans-serif;font-size:clamp(2rem,7vw,3.4rem);text-transform:uppercase;line-height:1;color:#0A0A09}
+.vbf .ja{display:block;font-size:14px;font-weight:700;color:#5A595A;margin:8px 0 22px;letter-spacing:.04em}
+.vbf ol{list-style:none;margin:0;padding:0;display:grid}
+.vbf li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:16px 0;border-top:1px solid #E3E3E3;align-items:start}
+.vbf li:last-child{border-bottom:1px solid #E3E3E3}
+.vbf .s{font-family:"Anton",Impact,sans-serif;font-size:1.8rem;line-height:1;color:#FA4E02}
+.vbf .t{font-size:15px;font-weight:700;color:#0A0A09}
+.vbf .d{font-size:14px;color:#5A595A;margin-top:4px;line-height:1.8}
+.vbf .pay{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.vbf .pay span{font-size:13px;font-weight:700;border:1px solid #0A0A09;padding:5px 9px;color:#0A0A09}
+.vbf .note{font-size:13px;color:#5A595A;margin:14px 0 0}
+@media (min-width:860px){.vbf ol{grid-template-columns:repeat(5,minmax(0,1fr));gap:0 18px}.vbf li{grid-template-columns:1fr;border-bottom:1px solid #E3E3E3}}
+</style>
+<section class="vbf" id="flow">
+  <div class="wrap">
+    <div class="en">Order flow</div><span class="ja">ご注文の流れ</span>
+    <ol>
+      <li><span class="s">01</span><div><div class="t">パターンオーダーを決定</div><div class="d">商品ページで、長さ・テーパー・先端径・ジョイント・ウェイト・刻印を選びます。</div></div></li>
+      <li><span class="s">02</span><div><div class="t">内容を送信</div><div class="d">ご注文を確定します。お支払いは銀行振込のみです。<div class="pay"><span>銀行振込のみ</span><span class="soon">カード決済は12月から</span></div></div></div></li>
+      <li><span class="s">03</span><div><div class="t">確認メール</div><div class="d">ご注文内容の確認メールが自動で届きます。相違があれば、そのメールにご返信ください。</div></div></li>
+      <li><span class="s">04</span><div><div class="t">発注</div><div class="d">内容確認後、ご入金を確認してから工場へ発注します。</div></div></li>
+      <li><span class="s">05</span><div><div class="t">お届け</div><div class="d">発送時に発送完了メールをお送りします。納期は、ご注文確定から3〜4週間ほどです。</div></div></li>
+    </ol>
+    <p class="note">パターンオーダーのため、お客様都合による返品はお受けできません。初期不良は交換いたします。</p>
+    {%- render 'vibes-notice' -%}
+  </div>
+</section>
+{% schema %}
+{ "name": "Vibes Flow", "settings": [], "presets": [{ "name": "Vibes Flow" }] }
+{% endschema %}

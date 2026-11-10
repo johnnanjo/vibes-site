@@ -1,0 +1,169 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{%- render 'vibes-t-style' -%}
+{%- comment -%} JPA（日本プールプレイヤーズアソシエーション）紹介ページ。大会は tournament の source_name が JPA のものを表示 {%- endcomment -%}
+{%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+{%- assign keys = '' -%}
+{%- paginate shop.metaobjects.tournament.values by 250 -%}
+  {%- for t in shop.metaobjects.tournament.values -%}
+    {%- if t.source_name.value == 'JPA' -%}
+      {%- assign endd = t.starts_at.value | date: '%Y%m%d' | plus: 0 -%}
+      {%- if t.ends_at.value != blank -%}{%- assign endd = t.ends_at.value | date: '%Y%m%d' | plus: 0 -%}{%- endif -%}
+      {%- if endd >= today -%}
+        {%- assign k = t.starts_at.value | date: '%Y%m%d%H%M' -%}
+        {%- assign keys = keys | append: k | append: '~' | append: t.system.handle | append: ',' -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endpaginate -%}
+{%- assign keys = keys | split: ',' | sort -%}
+<style>
+.vb .jp{padding:14px 0 120px;max-width:760px}
+.vb .jp h2{font-family:var(--jp);font-size:22px;font-weight:900;line-height:1.4;margin:0 0 6px;text-transform:none;letter-spacing:0}
+.vb .jp .sec{margin:38px 0 0}
+.vb .jp .lead{margin:0 0 14px;font-size:14px;line-height:1.85;color:#4A4A46}
+.vb .jp-hero{margin:6px 0 0;padding:32px 20px 28px;border-radius:24px;background:#0B1B3A;color:#F4F4F0;box-shadow:inset 0 0 0 2px #2F6BFF}
+.vb .jp-hero .k{font-family:var(--anton);font-size:14px;letter-spacing:.14em;color:#8FB3FF;text-transform:uppercase}
+.vb .jp-hero h1{font-family:var(--anton);font-size:clamp(64px,19vw,104px);line-height:.95;margin:6px 0 0;color:#fff;letter-spacing:.02em}
+.vb .jp-hero h1 small{display:block;font-family:var(--jp);font-size:17px;font-weight:900;letter-spacing:0;margin-top:10px;color:#FFD23F}
+.vb .jp-hero .lead{margin:16px 0 0;color:#DCE4F5;font-size:15px}
+.vb .jp-hero .lead b{color:#FFD23F}
+.vb .jp-tags{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 0;padding:0;list-style:none}
+.vb .jp-tags li{padding:6px 12px;border-radius:999px;background:#16305F;color:#F4F4F0;font-size:13px;font-weight:900}
+.vb .jp-cta{display:grid;gap:10px;margin:22px 0 0}
+@media (min-width:560px){.vb .jp-cta{grid-template-columns:1fr 1fr}}
+.vb .jp-cta a{display:flex;align-items:center;justify-content:center;min-height:54px;border-radius:999px;font-weight:900;font-size:16px;text-decoration:none}
+.vb .jp-cta .a{background:#FFD23F;color:#0B1B3A}
+.vb .jp-cta .b{color:#fff;box-shadow:inset 0 0 0 2px #fff}
+.vb .jp-flow{list-style:none;margin:0;padding:0;border-left:3px solid #2F6BFF}
+.vb .jp-flow li{position:relative;padding:4px 0 16px 18px;font-size:14px;line-height:1.75}
+.vb .jp-flow li::before{content:"";position:absolute;left:-9px;top:10px;width:15px;height:15px;border-radius:50%;background:#2F6BFF;box-shadow:0 0 0 3px #fff}
+.vb .jp-flow b{display:block;font-size:16px}
+.vb .jp-season{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px}
+.vb .jp-season div{padding:12px 10px;border-radius:14px;background:#0B1B3A;color:#fff;text-align:center}
+.vb .jp-season b{display:block;font-family:var(--anton);font-size:20px;letter-spacing:.04em;color:#FFD23F}
+.vb .jp-season span{font-size:12.5px;font-weight:700}
+.vb .jp-tbl{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:14px;overflow:hidden}
+.vb .jp-tbl th,.vb .jp-tbl td{text-align:left;padding:9px 10px;border-bottom:1px solid #E2E2DE;vertical-align:top}
+.vb .jp-tbl th{font-size:12px;color:#6B6B66;font-weight:700;background:#F6F7F9}
+.vb .jp-rule{margin:12px 0 0;padding:14px 16px;border-radius:14px;background:#FFF8DB;border:1px solid #F3E2A0;font-size:14px;line-height:1.8}
+.vb .jp-rule b{font-size:16px}
+.vb .jp-area{display:grid;gap:10px}
+@media (min-width:640px){.vb .jp-area{grid-template-columns:1fr 1fr}}
+.vb .jp-area div{padding:14px 16px;border-radius:16px;background:#fff;border:1px solid #E2E2DE}
+.vb .jp-area h3{margin:0 0 6px;font-family:var(--jp);font-size:15px;font-weight:900;text-transform:none;letter-spacing:0}
+.vb .jp-area ul{margin:0;padding:0;list-style:none;font-size:13.5px;line-height:1.75}
+.vb .jp-area li span{color:#6B6B66}
+.vb .jp-res{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.vb .jp-res li{padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #E2E2DE;border-left:6px solid #FFD23F;font-size:13.5px;line-height:1.7}
+.vb .jp-res b{display:block;font-size:15px}
+.vb .jp-start{display:grid;gap:10px;margin:0;padding:0;list-style:none;counter-reset:s}
+.vb .jp-start li{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:14px;border-radius:16px;background:#0B1B3A;color:#F4F4F0}
+.vb .jp-start li::before{counter-increment:s;content:counter(s,decimal-leading-zero);font-family:var(--anton);font-size:26px;color:#FFD23F}
+.vb .jp-start b{display:block;font-size:15px}
+.vb .jp-start span{font-size:13px;line-height:1.7;color:#CFD6E6}
+.vb .jp-start a{color:#FFD23F}
+.vb .jp-empty{padding:18px;border-radius:14px;background:#F2F2EF;font-size:14px;line-height:1.7}
+.vb .jp-src{margin:28px 0 0;font-size:12px;line-height:1.8;color:#6B6B66}
+.vb .jp-src a,.vb .jp .lead a{color:#2F6BFF;font-weight:700}
+</style>
+<div class="vb">
+<div class="wrap">
+<section class="jp">
+  <div class="crumbs"><a href="/">Vibes Billiards</a> ／ JPA（プールリーグ）とは？</div>
+
+  <div class="jp-hero">
+    <div class="k">Japanese Poolplayers Association</div>
+    <h1>JPA<small>チームで戦う、アマチュアのプールリーグ</small></h1>
+    <p class="lead">JPA（日本プールプレイヤーズアソシエーション）は、アメリカの<b>APA</b>（American Poolplayers Association）の日本支部です。<b>5人対5人のチーム戦</b>で、毎週決まった曜日にナインボール・エイトボールのリーグ戦を行います。<b>スキルレベル制のハンデ</b>で、始めたばかりの人と上級者が同じ試合を楽しめるのが特徴。勝ち進んだチームは、8月の<b>ラスベガス世界大会</b>に日本代表として出場できます。</p>
+    <ul class="jp-tags"><li>5人対5人のチーム戦</li><li>9ボール・8ボール</li><li>ハンデはスキルレベル制</li><li>ラスベガスへの道</li></ul>
+    <div class="jp-cta">
+      <a class="a" href="#jp-t">開催予定のJPA大会を見る</a>
+      <a class="b" href="#jp-start">参加するには</a>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>リーグのしくみ</h2>
+    <p class="lead">近くのビリヤード場どうしで4〜12チームの「ディビジョン（地区）」をつくり、1シーズン平均14週かけて総当たりで戦います。1年は3シーズンです。</p>
+    <div class="jp-season">
+      <div><b>SPRING</b><span>1月〜5月</span></div>
+      <div><b>SUMMER</b><span>6月〜9月</span></div>
+      <div><b>FALL</b><span>9月〜12月</span></div>
+    </div>
+    <ol class="jp-flow">
+      <li><b>毎週のリーグ戦</b>ホーム／アウェイで5人ずつの個人戦を行い、チームの合計ポイントで順位を競います。上位チームはシーズン末のプレーオフへ。</li>
+      <li><b>ディビジョン優勝 → Tri Cup</b>各ディビジョンの優勝チームが地域ごと（関東・関西・中部北陸）の「JPA Tri Cup」でシーズン王者を争います。</li>
+      <li><b>エリア決勝（5月〜6月）</b>関東の「KTC」、西日本の「WTC」、エイトボールの「8TC」などのチームチャンピオンシップを開催。</li>
+      <li><b>ラスベガス（8月）</b>エリア決勝を勝ち抜いたチームが、約1,500チームが出場する世界最大級のアマチュア大会「APA World Pool Championships」に招待されます。</li>
+    </ol>
+  </div>
+
+  <div class="sec">
+    <h2>ハンデ（スキルレベル）</h2>
+    <p class="lead">A級・B級・C級ではなく、ナインボールは1〜9、エイトボールは2〜7の細かいスキルレベル（SL）で表します。試合ごとのスコアシートをもとにSLが上下するので、上達すればハンデも変わります。</p>
+    <table class="jp-tbl">
+      <tr><th>これまでのクラス</th><th>9ボールのSL</th><th>8ボールのSL</th></tr>
+      <tr><td>ビギナー</td><td>1〜2</td><td>2</td></tr>
+      <tr><td>C級</td><td>3〜4</td><td>4</td></tr>
+      <tr><td>B級</td><td>5〜7</td><td>6</td></tr>
+      <tr><td>A級</td><td>8〜9</td><td>7</td></tr>
+    </table>
+    <p class="lead" style="margin-top:8px;font-size:12.5px">初参加のときは自分のクラスに合わせて申告します（例：A級は8未満、B級は5未満、C級は3未満では申告できません）。</p>
+    <div class="jp-rule"><b>23ルール</b><br>1チームは最大8人まで登録でき、試合に出る5人のSL合計は23以内にします。SL6以上の選手は1試合に3人まで。強い人だけを並べず、バランスよくチームを組むのがリーグのおもしろさです。</div>
+  </div>
+
+  <div class="sec" id="jp-t">
+    <h2>開催予定のJPA大会</h2>
+    <p class="lead">リーグ戦とは別に、メンバー以外も出られる企業対抗戦や、ダブルス・トリオス・レディースの大会も開かれています。VIBESの大会データベースから、JPAの大会を表示しています。</p>
+    {%- if keys.size > 0 -%}
+      {%- for key in keys -%}
+        {%- assign h = key | split: '~' | last -%}
+        {%- assign t = shop.metaobjects.tournament[h] -%}
+        {%- if t -%}{%- render 'vibes-t-card', t: t -%}{%- endif -%}
+      {%- endfor -%}
+    {%- else -%}
+      <div class="jp-empty">現在、掲載中のJPA大会はありません。最新の要項は <a href="https://poolplayersblog.blogspot.com/" target="_blank" rel="noopener">JPAブログ</a> で発表されます。</div>
+    {%- endif -%}
+  </div>
+
+  <div class="sec">
+    <h2>リーグを開催しているエリア</h2>
+    <p class="lead">2026年秋セッション時点で、JPA公式サイトに掲載されているディビジョンです。曜日・時間の詳細や参加できる店は、各ディビジョンのお店にご確認ください。</p>
+    <div class="jp-area">
+      <div><h3>東京</h3><ul><li>9ボール：火曜（東急・城西Ⅰ・自遊空間・台東荒川・COLLEGE）、木曜（城西・墨田江東江戸川・池袋・BAGUS・城南・城北）、土曜（城南・世田谷・新宿・池袋・Saturday Night・東東京）</li><li>8ボール：火曜（大田川崎）、土曜（杉並・城南・池袋）</li></ul></div>
+      <div><h3>埼玉・千葉・神奈川</h3><ul><li>埼玉：水曜（自遊空間アクティブ西浦和）、土曜（埼玉／CESPA）、8ボール月曜（埼玉）</li><li>千葉：水曜（柏・松戸）、土曜（千葉）</li><li>神奈川：土曜（横浜・相模原厚木）</li></ul></div>
+      <div><h3>中部・北陸</h3><ul><li>愛知：月曜（名古屋）、火曜（愛知・三河知多）、水曜（名古屋）、8ボール金曜（愛知）</li><li>富山：月曜（EAST・WEST）／石川：木曜</li></ul></div>
+      <div><h3>関西・中国・九州・沖縄</h3><ul><li>京都：水曜／大阪：火曜（Ⅰ・Ⅱ）／兵庫：水曜（神戸三宮）</li><li>広島：土曜（9ボール）・水曜（8ボール）</li><li>福岡：水曜／沖縄：水曜</li></ul></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>2026年の主な結果</h2>
+    <ul class="jp-res">
+      <li><b>関東エリアチームチャンピオンシップ（KTC）・8TC（6月）</b>9ボールは SB-dokyubu Holiday Link と HideOut Zero、8ボールは ewalu lanakila（東京・コウホアロハ）がラスベガス行きを決定</li>
+      <li><b>西日本エリアチームチャンピオンシップ（WTC・6月）</b>優勝 KSB（大阪・フタバボウルカラオケプラス関大前）</li>
+      <li><b>Tri Cup for Summer 2026（9〜10月）</b>中部北陸：Sante cue's（愛知・R.T.B）／関西：WHITE POGMA（大阪・POCHE）</li>
+      <li><b>JPA 9-Ball Scotch Doubles 2026 Summer（7月・143組）</b>優勝 Orcas</li>
+      <li><b>JPA Ladies 9-ball Singles 2026 Summer（8月・48名）</b>優勝 佐藤美沙希</li>
+    </ul>
+    <p class="lead" style="margin-top:10px">結果の詳細は <a href="https://poolplayersblog.blogspot.com/" target="_blank" rel="noopener">JPAブログ</a> に掲載されています（敬称略）。</p>
+  </div>
+
+  <div class="sec" id="jp-start">
+    <h2>参加するには</h2>
+    <ol class="jp-start">
+      <li><div><b>チームを組む・チームを探す</b><span>仲間と5〜8人でチームをつくるか、個人なら <a href="https://jpamatch.vercel.app/index.html" target="_blank" rel="noopener">JPA Match</a> でチームやチームメイトを探せます。</span></div></li>
+      <li><div><b>ホームにするお店を決める</b><span>上のエリアのディビジョンを開催しているお店に相談します。エントリーはお店の許可を取ってから行います。</span></div></li>
+      <li><div><b>メンバー登録してシーズンにエントリー</b><span><a href="https://gt102.secure.ne.jp/~gt102073/registration/" target="_blank" rel="noopener">JPAメンバー登録</a> のあと、シーズン開始の1週間前までにエントリー。各シーズンの開催案内は JPAブログで発表されます。</span></div></li>
+    </ol>
+  </div>
+
+  <p class="jp-src">出典：<a href="http://www.poolplayers.jp/" target="_blank" rel="noopener">JPA 公式サイト</a>（JPAについて・ハンディキャップ・開催中のリーグ）／<a href="https://poolplayersblog.blogspot.com/" target="_blank" rel="noopener">JPA Poolplayers Blog</a>（大会要項・結果）。運営：Primal Amusement Japan, Inc.（東京都目黒区自由が丘2-3-12 セレナヴィータ自由が丘3D／TEL 03-6459-5750）。内容は2026年11月5日時点の公開情報をもとにまとめています。最新情報は公式サイトとブログでご確認ください。</p>
+</section>
+</div>
+</div>
+{% schema %}
+{ "name": "Vibes JPA", "settings": [] }
+{% endschema %}

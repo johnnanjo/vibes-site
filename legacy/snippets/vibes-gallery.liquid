@@ -1,0 +1,49 @@
+{%- comment -%}
+  #VibesShaft 装着ギャラリー。ブログ shaft-gallery の記事（装着写真・選んだ仕様・感想）を最新6件表示。
+  記事が無いときは募集の案内だけを出す。トップ（vibes-home）とシャフトページ（vibes-shaft-page）で共用。
+{%- endcomment -%}
+{%- assign g = blogs['shaft-gallery'] -%}
+{%- assign line_post = 'https://line.me/R/oaMessage/@361mehjz/?%23VibesShaft%20%E8%A3%85%E7%9D%80%E3%82%AE%E3%83%A3%E3%83%A9%E3%83%AA%E3%83%BC%E3%81%AB%E6%8E%B2%E8%BC%89%E5%B8%8C%E6%9C%9B%E3%81%A7%E3%81%99%E3%80%82%0A%E3%82%AD%E3%83%A5%E3%83%BC%EF%BC%9A%0A%E3%82%B8%E3%83%A7%E3%82%A4%E3%83%B3%E3%83%88%EF%BC%9A%0A%E9%95%B7%E3%81%95%E3%83%BB%E5%85%88%E7%AB%AF%E5%BE%84%E3%83%BB%E3%83%86%E3%83%BC%E3%83%91%E3%83%BC%EF%BC%9A%0A%E5%88%BB%E5%8D%B0%EF%BC%9A%0A%E3%81%B2%E3%81%A8%E3%81%93%E3%81%A8%EF%BC%9A%0A%EF%BC%88%E8%A3%85%E7%9D%80%E5%86%99%E7%9C%9F%E3%82%92%E6%B7%BB%E4%BB%98%EF%BC%89' -%}
+<style>
+.vgl{margin:36px 0 0}
+.vgl-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin:0 0 14px}
+.vgl-h b{font-family:"Oswald","Inter",system-ui,sans-serif;font-weight:700;font-size:clamp(24px,6vw,34px);line-height:1.05;letter-spacing:.01em;text-transform:uppercase;color:#111315}
+.vgl-h span{font-size:13.5px;font-weight:700;color:#4B5563}
+.vgl-strip{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(210px,70vw);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.vgl-strip::-webkit-scrollbar{display:none}
+.vgl-item{scroll-snap-align:start;display:block;min-width:0;padding:10px 10px 12px;border-radius:16px;background:#fff;border:1px solid #E5E7EB;box-shadow:0 1px 2px rgba(17,19,21,.04),0 8px 24px rgba(17,19,21,.06);text-decoration:none;color:#111315}
+.vgl-item img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:12px;background:#F3F4F6}
+.vgl-item .ph{display:grid;place-items:center;aspect-ratio:4/3;border-radius:12px;background:#F3F4F6;color:#9CA3AF;font-size:12px;font-weight:700}
+.vgl-item b{display:block;margin:10px 0 0;font-size:14.5px;font-weight:900;line-height:1.5}
+.vgl-item span{display:block;margin:4px 0 0;font-size:12.5px;line-height:1.6;color:#4B5563;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.vgl-item em{display:inline-block;margin:8px 0 0;padding:2px 8px;border-radius:6px;background:#F3F4F6;font-style:normal;font-size:11px;font-weight:800;color:#4B5563}
+.vgl-all{display:inline-flex;align-items:center;min-height:44px;margin:12px 0 0;padding:0 18px;border-radius:999px;background:#111315;color:#fff;font-size:14px;font-weight:900;text-decoration:none}
+.vgl-post{display:grid;gap:10px;margin:14px 0 0;padding:16px 18px;border-radius:16px;background:#fff;border:1px solid #E5E7EB}
+.vgl-post b{font-size:15px;font-weight:900;color:#111315}
+.vgl-post p{margin:0;font-size:13px;line-height:1.7;color:#4B5563}
+.vgl-post a{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 20px;border-radius:999px;background:#06C755;color:#fff;font-size:14px;font-weight:900;text-decoration:none}
+@media (min-width:860px){.vgl-strip{grid-auto-flow:row;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}.vgl-post{grid-template-columns:1fr auto;align-items:center}}
+</style>
+<section class="vgl" id="gallery" aria-labelledby="vgl-h">
+  <div class="vgl-h"><b id="vgl-h">#VibesShaft Gallery</b><span>装着ギャラリー ─ 実際にオーダーしたプレイヤーの1本・選んだ仕様・使ってみた感想</span></div>
+  {%- if g.articles_count > 0 -%}
+  <div class="vgl-strip">
+    {%- for a in g.articles limit: 6 -%}
+      <a class="vgl-item" href="{{ a.url }}">
+        {%- if a.image -%}<img src="{{ a.image | image_url: width: 640 }}" width="640" height="480" alt="{{ a.image.alt | default: a.title | escape }}" loading="lazy">{%- else -%}<div class="ph">PHOTO</div>{%- endif -%}
+        <b>{{ a.title | escape }}</b>
+        <span>{{ a.excerpt_or_content | strip_html | strip_newlines | truncate: 80 }}</span>
+        {%- for t in a.tags limit: 3 -%}<em>{{ t | escape }}</em> {%- endfor -%}
+      </a>
+    {%- endfor -%}
+  </div>
+  <a class="vgl-all" href="{{ g.url }}">ギャラリーをすべて見る →</a>
+  {%- endif -%}
+  <div class="vgl-post">
+    <div>
+      <b>あなたの1本も、掲載しませんか？</b>
+      <p>装着写真と、選んだ仕様（キュー・ジョイント・長さ・先端径・テーパー・刻印）、使ってみたひとことを公式LINEへ送ってください。ギャラリーに掲載します（お名前はニックネーム可）。</p>
+    </div>
+    <a href="{{ line_post }}" target="_blank" rel="noopener">LINEで写真と仕様を送る</a>
+  </div>
+</section>

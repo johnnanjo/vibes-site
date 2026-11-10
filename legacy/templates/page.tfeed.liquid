@@ -1,0 +1,20 @@
+{%- layout none -%}
+{%- comment -%}
+  /pages/tournaments?view=tfeed — 今日以降の大会をJSONで返す（トップの「今日の大会」バッジ・7日ストリップ用）。
+  d=開始日 e=終了日 p=都道府県 c=official|house|event g=種目 h=ハンドル
+{%- endcomment -%}
+{%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+{%- assign first = true -%}
+[{%- paginate shop.metaobjects.tournament.values by 250 -%}
+{%- for t in shop.metaobjects.tournament.values -%}
+  {%- assign d = t.starts_at | date: '%Y-%m-%d' -%}
+  {%- if d == blank -%}{%- continue -%}{%- endif -%}
+  {%- assign e = t.ends_at | date: '%Y-%m-%d' -%}
+  {%- if e == blank -%}{%- assign e = d -%}{%- endif -%}
+  {%- assign en = e | remove: '-' | plus: 0 -%}
+  {%- if en >= today -%}
+    {%- unless first -%},{%- endunless -%}{%- assign first = false -%}
+    {"d":{{ d | json }},"e":{{ e | json }},"p":{{ t.prefecture.value | json }},"c":{{ t.category.value | json }},"g":{{ t.games.value | json }},"h":{{ t.system.handle | json }}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endpaginate -%}]

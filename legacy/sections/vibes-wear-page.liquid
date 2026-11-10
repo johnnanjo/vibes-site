@@ -1,0 +1,55 @@
+{%- comment -%} /pages/wear — Wear Vibes（Tシャツ8種・キャップ11/6発売）。注文はLINE／メール。 {%- endcomment -%}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Oswald:wght@600;700&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-media.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v46.css' | asset_url | stylesheet_tag }}
+<style>
+.vb.v46w{background:var(--vb-bg);color:var(--vb-ink);font-family:var(--vb-jp)}
+.vb.v46w .wrap{max-width:1140px}
+.vb.v46w .pg-h{padding:28px 0 8px}
+.vb.v46w .crumbs{font-size:12px;font-weight:700;color:var(--vb-sub);margin:0 0 10px}
+.vb.v46w .crumbs a{color:var(--vb-sub);text-decoration:none}
+.vb.v46w .pg-en{font-family:var(--vb-disp);font-weight:700;font-size:clamp(34px,9vw,60px);line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--vb-ink);margin:0}
+.vb.v46w .pg-ja{margin:10px 0 0;font-size:15px;font-weight:700;color:var(--vb-sub)}
+.vb.v46w .how{display:grid;gap:8px;margin:18px 0 0;padding:16px 18px;border-radius:16px;background:var(--vb-card);border:1px solid var(--vb-border);box-shadow:var(--vb-shadow)}
+.vb.v46w .how b{font-size:15px;font-weight:900}
+.vb.v46w .how p{margin:0;font-size:14px;color:var(--vb-sub)}
+.vb.v46w .wear-sub{border-top:2px solid var(--vb-ink)}
+.vb.v46w .wear-sub b{font-family:var(--vb-disp);font-weight:700;font-size:26px}
+.vb.v46w .wear-sub .uni{background:var(--vb-ink);color:#fff}
+.vb.v46w .wear-sub span{color:var(--vb-sub)}
+.vb.v46w .tees{gap:14px 12px}
+.vb.v46w .tee .tee-in{padding:10px 10px 12px;border-radius:16px;background:var(--vb-card);border:1px solid var(--vb-border);box-shadow:var(--vb-shadow)}
+.vb.v46w .tee .tee-in img{border-radius:12px}
+.vb.v46w .tee .tag{font-family:var(--vb-num);font-weight:700;color:var(--vb-sub)}
+.vb.v46w .tee h3{font-family:var(--vb-jp);font-size:14px;font-weight:900;text-transform:none;letter-spacing:0;color:var(--vb-ink)}
+.vb.v46w .tee .spec{color:var(--vb-sub)}
+.vb.v46w .tee .tprice{font-family:var(--vb-num);font-weight:800;font-size:19px;color:var(--vb-ink)}
+.vb.v46w .tee .tprice small{color:var(--vb-sub)}
+.vb.v46w .tee-order{background:var(--vb-dark);color:#fff;border-radius:16px}
+.vb.v46w .tee-order h3{color:#fff}
+.vb.v46w .tee-order p{color:var(--vb-dark-sub)}
+.vb.v46w .tee-order .btn{border-radius:999px;border:2px solid #fff;color:#fff;background:transparent}
+.vb.v46w .tee-order .btn.fill{background:var(--vb-line);border-color:var(--vb-line);color:#fff}
+.vb.v46w .note{font-size:13px;color:var(--vb-sub)}
+.vb.v46w .back{display:inline-flex;align-items:center;min-height:44px;margin:24px 0 40px;padding:0 18px;border-radius:999px;background:var(--vb-ink);color:#fff;font-weight:900;font-size:14px;text-decoration:none}
+</style>
+<div class="vb v46w">
+<div class="wrap">
+  <header class="pg-h">
+    <p class="crumbs"><a href="/">Vibes Billiards</a> ／ Wear Vibes</p>
+    <h1 class="pg-en">Wear Vibes</h1>
+    <p class="pg-ja">オフィシャルTシャツ（4色×胸中央／左胸の8種）─ ユニセックス・受注生産／キャップは11月6日発売</p>
+    <div class="how">
+      <b>ご注文は、公式LINEまたはメールで。</b>
+      <p>Shopifyのカートは使いません。商品番号（T-01〜08・C-01）・サイズ・数量を送っていただくと、お支払い方法とお届け日を折り返しご連絡します。ページ下部のボタンからどうぞ。</p>
+    </div>
+  </header>
+  {%- render 'vibes-wear' -%}
+  <a class="back" href="/">← トップへ戻る</a>
+</div>
+</div>
+{% schema %}
+{ "name": "Vibes Wear Page", "settings": [], "presets": [{ "name": "Vibes Wear Page" }] }
+{% endschema %}

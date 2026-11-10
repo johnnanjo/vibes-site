@@ -1,0 +1,16 @@
+{%- comment -%} 多言語表示：日本語以外のとき、テーマ内の固定文言を辞書で翻訳（Files CDN の vibes-i18n-xx.js） {%- endcomment -%}
+{%- liquid
+  assign iso = request.locale.iso_code
+  assign src = ''
+  case iso
+    when 'en'
+      assign src = 'https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-i18n-en.js?v=1794213906'
+    when 'ko'
+      assign src = 'https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-i18n-ko.js?v=1794213906'
+    when 'zh-CN'
+      assign src = 'https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-i18n-zh.js?v=1794213906'
+    when 'vi'
+      assign src = 'https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-i18n-vi.js?v=1794213906'
+  endcase
+-%}
+{%- if src != '' -%}<script src="{{ src }}" defer></script>{%- endif -%}

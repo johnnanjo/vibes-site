@@ -1,0 +1,307 @@
+{%- comment -%}
+  Vibes Home v46 — slim top page.
+  ② hero + ビリヤード場検索 → メイン競技 → ③ 大会情報3カード + LINE → ④ シャフト ダイジェスト（ダーク） → ⑤ Wear Vibes + 提携工房
+  シャフトの詳細（テーパー・仕様・対応キュー・No.001・FAQ・注文フロー）は /pages/shaft（sections/vibes-shaft-page.liquid）側。
+{%- endcomment -%}
+{%- assign shaft_url = '/pages/shaft' -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Oswald:wght@600;700&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-media.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v46.css' | asset_url | stylesheet_tag }}
+<style>
+/* ===== v46 home (scoped .vb.v46) ===== */
+.vb.v46{background:var(--vb-bg);color:var(--vb-ink);font-family:var(--vb-jp);font-size:15px;line-height:1.75}
+.vb.v46 section{padding-block:40px;border-top:0}
+.vb.v46 .wrap{max-width:1140px}
+.vb.v46 h1,.vb.v46 h2,.vb.v46 h3{color:inherit;margin:0;letter-spacing:0;text-transform:none}
+.vb.v46 .sh{margin:0 0 18px}
+.vb.v46 .sh-en{font-family:var(--vb-disp);font-weight:700;font-size:clamp(26px,6.4vw,38px);line-height:1.05;letter-spacing:.01em;text-transform:uppercase;color:var(--vb-ink)}
+.vb.v46 .sh-ja{margin:8px 0 0;font-size:14px;font-weight:700;color:var(--vb-sub)}
+.vb.v46 .card46{background:var(--vb-card);border:1px solid var(--vb-border);border-radius:var(--vb-r);box-shadow:var(--vb-shadow)}
+.vb.v46 .note{font-size:13px;color:var(--vb-sub);margin:14px 0 0}
+.vb.v46 .note a{color:var(--vb-ink);font-weight:700;text-decoration:underline;text-decoration-color:var(--vb-mint);text-decoration-thickness:3px}
+
+/* ② hero + search */
+.vb.v46 .hv{padding-block:26px 6px}
+.vb.v46 .hv-h1{font-weight:900;font-size:clamp(28px,7.6vw,48px);line-height:1.22;letter-spacing:-.01em;max-width:14em;color:var(--vb-ink)}
+.vb.v46 .hv-lead{margin:12px 0 0;font-size:15px;color:var(--vb-sub);max-width:34em}
+.vb.v46 .sx{margin:20px 0 0;padding:14px;border-radius:22px}
+.vb.v46 .sx-form{display:flex;gap:8px}
+.vb.v46 .sx-in{flex:1;display:flex;align-items:center;gap:10px;min-height:58px;padding:0 10px 0 14px;border:2.5px solid var(--vb-ink);border-radius:14px;background:#fff;cursor:text}
+.vb.v46 .sx-in svg{width:26px;height:26px;flex:0 0 26px;color:var(--vb-ink)}
+.vb.v46 .sx-in input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:700 16px/1.2 var(--vb-jp);color:var(--vb-ink);padding:0}
+.vb.v46 .sx-in input::placeholder{color:#9CA3AF;font-weight:700}
+.vb.v46 .sx-btn{flex:0 0 auto;min-height:58px;padding:0 20px;border:0;border-radius:14px;background:var(--vb-ink);color:#fff;font:900 15px/1 var(--vb-jp);cursor:pointer}
+.vb.v46 .sx-btn:hover{background:var(--vb-slate)}
+.vb.v46 .sx-geo{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 0;min-height:56px;padding:0 20px;border-radius:999px;background:var(--vb-mint);color:var(--vb-ink);font-weight:900;font-size:16px;text-decoration:none;box-shadow:0 6px 18px rgba(0,229,163,.28)}
+.vb.v46 .sx-geo svg{width:22px;height:22px;flex:0 0 22px}
+.vb.v46 .sx-geo:active{transform:scale(.99)}
+.vb.v46 .sx-hint{margin:10px 2px 0;font-size:13px;color:var(--vb-sub)}
+.vb.v46 .sx-new{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 2px 0;font-size:13px;color:var(--vb-sub)}
+.vb.v46 .sx-new em{font-style:normal;font-weight:900;color:var(--vb-ink);padding:0 7px;border-radius:6px;background:#ECFDF5;color:#047857;margin-right:4px}
+.vb.v46 .sx-new em.cl{background:#FEE2E2;color:#B91C1C}
+@media (min-width:760px){
+  .vb.v46 .hv{padding-block:48px 10px}
+  .vb.v46 .sx{display:grid;grid-template-columns:1fr auto;gap:10px 12px;align-items:start;padding:16px}
+  .vb.v46 .sx-geo{margin:0;min-height:58px}
+  .vb.v46 .sx-hint,.vb.v46 .sx-new{grid-column:1 / -1;margin-top:0}
+}
+
+/* 競技切り替え（1行ピルタブ） */
+.vb.v46 .gt{display:flex;align-items:center;gap:4px;margin:0 0 12px;padding:4px;background:#fff;border:1px solid var(--vb-border);border-radius:999px;overflow-x:auto;scrollbar-width:none}
+.vb.v46 .gt::-webkit-scrollbar{display:none}
+.vb.v46 .gt button{flex:1 0 auto;min-height:40px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--vb-sub);font:800 13.5px/1 var(--vb-jp);white-space:nowrap;cursor:pointer}
+html[data-vb-game="all"] .vb.v46 .gt button[data-g=""],html:not([data-vb-game]) .vb.v46 .gt button[data-g=""],html[data-vb-game="pocket"] .vb.v46 .gt button[data-g="pocket"],html[data-vb-game="carom"] .vb.v46 .gt button[data-g="carom"],html[data-vb-game="heyball"] .vb.v46 .gt button[data-g="heyball"]{background:var(--vb-ink);color:#fff}
+.vb.v46 .gt-go{display:none;align-items:center;flex:0 0 auto;min-height:40px;padding:0 14px;border-radius:999px;background:#ECFDF5;color:#047857;font-size:13px;font-weight:900;text-decoration:none;white-space:nowrap}
+html[data-vb-game="pocket"] .vb.v46 .gt-go[data-g="pocket"],html[data-vb-game="carom"] .vb.v46 .gt-go[data-g="carom"],html[data-vb-game="heyball"] .vb.v46 .gt-go[data-g="heyball"]{display:inline-flex}
+
+/* ③ 大会情報 */
+.vb.v46 .qk a{border:1px solid var(--vb-border);background:#fff;color:var(--vb-ink);font-size:14px;min-height:42px;box-shadow:none}
+.vb.v46 .qk a.hot{background:var(--vb-ink);border-color:var(--vb-ink);color:#fff}
+.vb.v46 .qk a.of{background:var(--vb-of-bg);border-color:var(--vb-of-bg);color:var(--vb-of)}
+.vb.v46 .qk a.ht{background:var(--vb-ht-bg);border-color:var(--vb-ht-bg);color:var(--vb-ht)}
+.vb.v46 .qk-wrap{margin-top:18px}
+.vb.v46 .qk-all{border-radius:14px;background:var(--vb-ink);color:#fff;margin-bottom:0}
+.vb.v46 .qk-all b{font-size:16px}
+.vb.v46 .qk-all span{color:var(--vb-mint)}
+.vb.v46 .nf-tabs{display:flex;gap:4px;margin:0 0 12px;padding:4px;background:#fff;border:1px solid var(--vb-border);border-radius:999px}
+.vb.v46 .nf-tabs button{flex:1;min-height:42px;border:0;border-radius:999px;background:transparent;color:var(--vb-sub);font:700 13px/1 var(--vb-disp);letter-spacing:.06em;cursor:pointer}
+.vb.v46 .nf-tabs button.on{background:var(--vb-ink);color:#fff}
+.vb.v46 .nf-grid{display:grid;gap:14px}
+.vb.v46 .nf-card{display:none;flex-direction:column;min-width:0;padding:4px 18px 16px;background:var(--vb-card);border:1px solid var(--vb-border);border-radius:var(--vb-r);box-shadow:var(--vb-shadow)}
+.vb.v46 .nf-grid[data-show="news"] .nf-card[data-tab="news"],.vb.v46 .nf-grid[data-show="results"] .nf-card[data-tab="results"],.vb.v46 .nf-grid[data-show="house"] .nf-card[data-tab="house"]{display:flex}
+.vb.v46 .nf-card .colhead{display:flex;align-items:baseline;gap:10px;padding:16px 0 10px;border-bottom:2px solid var(--vb-ink);text-decoration:none;color:var(--vb-ink)}
+.vb.v46 .nf-card .colhead .k{font-family:var(--vb-disp);font-weight:700;font-size:24px;line-height:1;letter-spacing:.02em;text-transform:uppercase}
+.vb.v46 .nf-card .colhead .j{font-size:12px;font-weight:700;color:var(--vb-sub)}
+.vb.v46 .nf-card .mo-mini{margin:12px 0 4px}
+.vb.v46 .nf-card .mo-mini a{background:var(--vb-bg);border:1px solid var(--vb-border);color:var(--vb-ink);font-size:13px}
+.vb.v46 .nf-card .mo-mini a.cur{background:var(--vb-ink);border-color:var(--vb-ink);color:var(--vb-cta)}
+.vb.v46 .nf-card .mo-mini a b{font-family:var(--vb-num);font-weight:800;font-size:17px}
+.vb.v46 .nf-card .post{display:grid;grid-template-columns:56px 1fr;gap:10px;align-items:start;padding:12px 0;border-bottom:1px solid var(--vb-border);text-decoration:none;color:var(--vb-ink);min-width:0}
+.vb.v46 .nf-card .post time{font-family:var(--vb-num);font-weight:800;font-size:17px;line-height:1.3;color:var(--vb-ink);padding-top:2px;white-space:nowrap}
+.vb.v46 .nf-card .post .t{font-size:14.5px;font-weight:700;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.vb.v46 .nf-card .post:hover .t{text-decoration:underline}
+.vb.v46 .nf-card .post.nt{grid-template-columns:1fr}
+.vb.v46 .nf-card .more{display:inline-flex;align-items:center;align-self:flex-start;min-height:42px;margin-top:auto;padding:14px 0 0;font-size:14px;font-weight:800;color:var(--vb-ink);text-decoration:none}
+.vb.v46 .nf-card .more:hover{color:var(--vb-of)}
+.vb.v46 .nf-card .empty{font-size:13px;color:var(--vb-sub);padding:12px 0 0;margin:0}
+.vb.v46 .nf-card .empty a{color:var(--vb-of);font-weight:700}
+@media (min-width:860px){
+  .vb.v46 .nf-tabs{display:none}
+  .vb.v46 .nf-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .vb.v46 .nf-card{display:flex!important}
+}
+/* LINE バナー（セマンティック：LINEグリーン専用） */
+.vb.v46 .ln{display:grid;grid-template-columns:44px 1fr;gap:6px 12px;align-items:center;margin:16px 0 0;padding:14px 16px;border-radius:var(--vb-r);background:var(--vb-line);color:#fff;text-decoration:none}
+.vb.v46 .ln-ic{width:44px;height:44px;border-radius:12px;background:#fff;display:grid;place-items:center;color:var(--vb-line)}
+.vb.v46 .ln-ic svg{width:28px;height:28px}
+.vb.v46 .ln-tx b{display:block;font-size:16px;font-weight:900;line-height:1.4}
+.vb.v46 .ln-tx span{display:block;font-size:12.5px;line-height:1.5;opacity:.92}
+.vb.v46 .ln-btn{grid-column:1 / -1;display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:999px;background:#fff;color:var(--vb-line);font-weight:900;font-size:15px}
+@media (min-width:760px){.vb.v46 .ln{grid-template-columns:44px 1fr auto;padding:16px 20px}.vb.v46 .ln-btn{grid-column:auto;padding:0 22px}}
+/* アプリカード（既存）をパレットに */
+.vb.v46 .ins-card{background:var(--vb-card);border:1px solid var(--vb-border);box-shadow:var(--vb-shadow);color:var(--vb-ink);margin:16px 0 0}
+.vb.v46 .ins-card b{color:var(--vb-ink)}
+.vb.v46 .ins-card span{color:var(--vb-sub)}
+.vb.v46 .ins-card .ins-btn{background:var(--vb-ink);color:#fff}
+.vb.v46 .ins-card .ins-more{color:var(--vb-sub)}
+
+/* ④ シャフト ダイジェスト（ダーク） */
+.vb.v46 .cs{background:var(--vb-dark);color:var(--vb-dark-ink);padding-block:52px 56px;margin:16px 0 0}
+.vb.v46 .cs-k{margin:0 0 10px;font-family:var(--vb-disp);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--vb-mint)}
+.vb.v46 .cs-h{display:grid;gap:10px}
+.vb.v46 .cs-en{font-family:var(--vb-disp);font-weight:700;font-size:clamp(34px,9.4vw,64px);line-height:.98;letter-spacing:.005em;text-transform:uppercase;color:#fff}
+.vb.v46 .cs-ja{font-size:clamp(17px,4.6vw,24px);font-weight:900;line-height:1.5;color:#fff}
+.vb.v46 .cs-b{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:10px}
+.vb.v46 .cs-b li{display:grid;gap:2px;padding:16px 18px;border-radius:14px;background:var(--vb-slate);box-shadow:inset 0 0 0 1px #2A2F35}
+.vb.v46 .cs-b b{font-size:18px;font-weight:900;line-height:1.3;color:#fff}
+.vb.v46 .cs-b b .n{font-size:1.2em}
+.vb.v46 .cs-b li > .n{font-size:30px;font-weight:800;line-height:1.1;color:#fff}
+.vb.v46 .cs-b span{font-size:13px;font-weight:700;color:var(--vb-dark-sub)}
+.vb.v46 .cs-cta{display:flex;align-items:center;justify-content:center;gap:10px;margin:22px 0 0;min-height:62px;padding:0 20px;border-radius:999px;background:var(--vb-cta);color:var(--vb-ink);text-decoration:none;box-shadow:0 10px 30px rgba(212,255,0,.22);font-size:clamp(15px,4.5vw,18px);font-weight:900;line-height:1;letter-spacing:-.01em;white-space:nowrap}
+.vb.v46 .cs-cta b{font-weight:900}
+.vb.v46 .cs-cta .ar{flex:0 0 auto;font-family:var(--vb-num);font-size:1.15em;font-weight:800;line-height:1}
+.vb.v46 .cs-cta:hover{background:#E9FF66}
+.vb.v46 .cs-sub{margin:14px 0 0;font-size:13.5px;line-height:1.7;color:var(--vb-dark-sub)}
+.vb.v46 .cs-sub a{color:#fff;font-weight:700}
+.vb.v46 .cs-assure{margin:16px 0 0;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px #2A2F35;font-size:13px;line-height:1.75;color:#D1D5DB}
+.vb.v46 .cs-assure b{color:#fff;font-weight:900}
+.vb.v46 .cs-assure a{display:inline-block;margin-top:4px;color:#fff;font-weight:800;text-decoration:underline;text-decoration-color:var(--vb-line);text-decoration-thickness:3px;text-underline-offset:3px}
+@media (min-width:760px){
+  .vb.v46 .cs{padding-block:72px 76px;border-radius:28px;max-width:1180px;margin:24px auto 0}
+  .vb.v46 .cs-h{grid-template-columns:1.2fr 1fr;align-items:end;gap:20px}
+  .vb.v46 .cs-b{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:32px}
+  .vb.v46 .cs-cta{display:inline-flex;min-height:66px;padding:0 40px;font-size:19px}
+}
+
+/* ⑤ Wear Vibes（代表4枚・横スクロール） */
+.vb.v46 .wr-strip{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(190px,62vw);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.vb.v46 .wr-strip::-webkit-scrollbar{display:none}
+.vb.v46 .wr-item{display:block;text-decoration:none;color:inherit;scroll-snap-align:start;min-width:0;padding:12px 12px 14px;border-radius:var(--vb-r);background:var(--vb-card);border:1px solid var(--vb-border);box-shadow:var(--vb-shadow)}
+.vb.v46 .wr-item img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:12px;background:#F3F4F6}
+.vb.v46 .wr-item .soon-box{display:grid;place-content:center;gap:4px;aspect-ratio:1/1;border-radius:12px;background:#050505;text-align:center}
+.vb.v46 .wr-item .soon-box b{font-family:var(--vb-disp);font-size:40px;font-weight:700;letter-spacing:.06em;color:var(--vb-cta);line-height:1}
+.vb.v46 .wr-item .soon-box span{font-family:var(--vb-disp);font-size:15px;font-weight:600;letter-spacing:.18em;color:#FF2E93}
+.vb.v46 .wr-item.soon .tprice{font-family:var(--vb-jp);font-size:16px;font-weight:900}
+.vb.v46 .wr-item:hover h3{text-decoration:underline}
+.vb.v46 .wr-item .tag{margin:10px 0 0;font-family:var(--vb-num);font-size:12px;font-weight:700;color:var(--vb-sub);letter-spacing:.04em}
+.vb.v46 .wr-item h3{margin:2px 0 0;font-size:15px;font-weight:900;line-height:1.4}
+.vb.v46 .wr-item .tprice{margin:6px 0 0;font-family:var(--vb-num);font-size:19px;font-weight:800;color:var(--vb-ink)}
+.vb.v46 .wr-item .tprice small{font-family:var(--vb-jp);font-size:12px;font-weight:700;color:var(--vb-sub);margin-left:6px}
+.vb.v46 .wr-all{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;row-gap:4px;margin:12px 0 0;padding:14px 18px;border-radius:14px;background:var(--vb-ink);color:#fff;text-decoration:none}
+.vb.v46 .wr-all b{grid-column:1;font-size:clamp(15px,4.3vw,17px);font-weight:900;line-height:1.35;letter-spacing:0;white-space:nowrap}
+.vb.v46 .wr-all span{grid-column:1;font-size:12.5px;font-weight:700;line-height:1.4;letter-spacing:0;color:var(--vb-mint);white-space:nowrap}
+.vb.v46 .wr-all i{grid-column:2;grid-row:1 / span 2;font-style:normal;font-family:var(--vb-num);font-size:22px;font-weight:800;line-height:1}
+.vb.v46 .wr-note{margin:12px 0 0;font-size:13px;color:var(--vb-sub)}
+.vb.v46 .wr-assure{margin:10px 0 0;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid var(--vb-border);font-size:13px;line-height:1.75;color:var(--vb-sub)}
+.vb.v46 .wr-assure b{color:var(--vb-ink);font-weight:900}
+.vb.v46 .wr-assure a{display:inline-block;margin-top:4px;color:var(--vb-ink);font-weight:800;text-decoration:underline;text-decoration-color:var(--vb-line);text-decoration-thickness:3px;text-underline-offset:3px}
+@media (min-width:860px){.vb.v46 .wr-strip{grid-auto-flow:row;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible}}
+
+/* ⑤ 提携工房メンテナンス */
+.vb.v46 .ws-card{padding:20px 18px 18px}
+.vb.v46 .ws-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--vb-ht-bg);color:var(--vb-ht);font-size:12.5px;font-weight:900}
+.vb.v46 .ws-nm{display:block;margin:12px 0 0;font-size:22px;font-weight:900;line-height:1.3}
+.vb.v46 .ws-sub{display:block;margin:4px 0 0;font-size:13px;font-weight:700;color:var(--vb-sub)}
+.vb.v46 .ws-list{list-style:none;margin:16px 0 0;padding:0;border-top:2px solid var(--vb-ink)}
+.vb.v46 .ws-list li{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:13px 2px;border-bottom:1px solid var(--vb-border)}
+.vb.v46 .ws-list .nm{font-size:15px;font-weight:800;line-height:1.4}
+.vb.v46 .ws-list .nm small{display:block;font-size:12px;font-weight:700;color:var(--vb-sub)}
+.vb.v46 .ws-list .pr{font-family:var(--vb-num);font-size:21px;font-weight:800;white-space:nowrap;color:var(--vb-ink)}
+.vb.v46 .ws-list .pr i{font-style:normal;font-family:var(--vb-jp);font-size:13px;font-weight:900;color:var(--vb-sub);margin-left:2px}
+.vb.v46 .ws-list .pr.ask{font-size:13px;padding:5px 14px;border-radius:999px;background:var(--vb-ink);color:#fff}
+.vb.v46 .ws-btns{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0}
+.vb.v46 .ws-btns a{flex:1 1 160px;display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:999px;font-weight:900;font-size:15px;text-decoration:none}
+.vb.v46 .ws-btns .tel{flex-direction:column;gap:2px;min-height:58px;background:var(--vb-ink);color:#fff;line-height:1.2}
+.vb.v46 .ws-btns .tel span{font-family:var(--vb-disp);font-size:12px;font-weight:600;letter-spacing:.14em}
+.vb.v46 .ws-btns .tel b{font-family:var(--vb-num);font-size:17px;font-weight:800;letter-spacing:.01em}
+.vb.v46 .ws-btns .map{border:2px solid var(--vb-ink);color:var(--vb-ink);background:#fff}
+.vb.v46 .ws-note{margin:12px 0 0;font-size:12.5px;color:var(--vb-sub)}
+@media (min-width:860px){
+  .vb.v46 .ws-card{display:grid;grid-template-columns:1fr 1.2fr;gap:8px 32px;padding:28px 28px 24px}
+  .vb.v46 .ws-list{margin-top:0;grid-row:1 / span 2}
+  .vb.v46 .ws-btns{align-self:start}
+}
+/* V.I.B.E.S. */
+.vb.v46 .tracks{gap:10px}
+.vb.v46 .tracks li{grid-template-columns:44px 1fr;padding:16px;background:var(--vb-card);border:1px solid var(--vb-border);border-left:1px solid var(--vb-border);border-radius:var(--vb-r);box-shadow:var(--vb-shadow)}
+.vb.v46 .tracks .L{font-family:var(--vb-disp);font-weight:700;font-size:30px;line-height:1;color:var(--vb-ink)}
+.vb.v46 .tracks b{font-size:15px;font-weight:900;color:var(--vb-ink)}
+.vb.v46 .tracks span{font-size:13.5px;color:var(--vb-sub);line-height:1.7}
+@media (min-width:860px){.vb.v46 .tracks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.vb.v46 .foot-note{padding:8px 0 40px;font-size:12.5px;color:var(--vb-sub)}
+</style>
+
+<div class="vb v46">
+<div class="wrap" id="top">
+
+  {%- comment -%} ② ファーストビュー＋ビリヤード場検索 {%- endcomment -%}
+  <section class="hv" aria-label="Vibes Billiards">
+    <h1 class="hv-h1">ビリヤードの情報は、<br>ぜんぶここに。</h1>
+    <p class="hv-lead">公式戦のスケジュールと結果、全国のハウストーナメント、近くのビリヤード場を1か所に。</p>
+    <div class="sx card46" id="halls">
+      <form class="sx-form" role="search" action="/pages/near">
+        <label class="sx-in">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.6-4.6"/></svg>
+          <input type="search" name="q" placeholder="店名・駅・市区町村で探す" aria-label="ビリヤード場を探す（店名・駅・市区町村）" autocomplete="off">
+        </label>
+        <button class="sx-btn" type="submit">検索</button>
+      </form>
+      <a class="sx-geo" href="/pages/near?auto=1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg>現在地から近いお店を探す</a>
+      <p class="sx-hint">例：「渋谷」「KOBAYASHI」「中野駅」 ─ 駅名や地名、お店の名前で検索すると、その周辺のお店を近い順に表示します。</p>
+      {%- assign sr = blogs['shop-status'] -%}
+      {%- if sr.articles_count > 0 -%}
+      <div class="sx-new" aria-label="読者から届いた最新の店舗情報">
+        {%- for a in sr.articles limit: 2 -%}
+          {%- assign k = '' -%}
+          {%- if a.tags contains 'closed' -%}{%- assign k = '閉店' -%}{%- elsif a.tags contains 'open' -%}{%- assign k = '新店' -%}{%- elsif a.tags contains 'moved' -%}{%- assign k = '移転' -%}{%- elsif a.tags contains 'reopen' -%}{%- assign k = '営業中' -%}{%- endif -%}
+          <span><em{% if k == '閉店' %} class="cl"{% endif %}>{{ k }}</em>{{ a.title | escape }}</span>
+        {%- endfor -%}
+      </div>
+      {%- endif -%}
+    </div>
+    {%- render 'vibes-week' -%}
+  </section>
+
+  {%- comment -%} ③ 大会情報・結果 {%- endcomment -%}
+  <section id="info" class="nf">
+    <div class="sh"><h2 class="sh-en">Tournaments &amp; Results</h2><p class="sh-ja">大会情報・試合結果 ─ 各団体の公式発表と店舗からの情報をもとに、毎週更新</p></div>
+    {%- render 'vibes-info-v46' -%}
+    <a class="ln" id="line" href="https://line.me/R/ti/p/@361mehjz" target="_blank" rel="noopener" aria-label="公式LINEを友だち追加">
+      <span class="ln-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.4 8.1.3.1.8.2.9.5.1.3 0 .7 0 1l-.1.9c0 .3-.2 1 .9.5 1.1-.4 5.7-3.4 7.8-5.8 1.4-1.6 2.1-3.2 2.1-5.2C22 5.7 17.5 2 12 2z"/></svg></span>
+      <span class="ln-tx"><b>公式LINEで、週3回配信中</b><span>月：先週の試合結果／水：来週の試合／金：今週末の大会。登録・受信は無料。</span></span>
+      <span class="ln-btn">友だち追加 →</span>
+    </a>
+    {%- render 'vibes-install', card: true -%}
+    <p class="note">公式戦は <span class="bd of">公式戦</span>、各店舗の大会は <span class="bd ht">ハウス</span> のラベルで区別しています。店舗の皆さまからの大会情報は、<a href="/pages/tournament-form">掲載フォーム</a>または公式LINEから送るだけで自動掲載されます（無料）。</p>
+  </section>
+</div>
+
+  {%- comment -%} ④ Vibes Carbon Shaft ダイジェスト（ダーク） {%- endcomment -%}
+  <section id="shaft" class="cs" aria-labelledby="cs-h">
+    <div class="wrap">
+      <p class="cs-k">Vibes Carbon Shaft ─ Pocket &amp; 3-Cushion</p>
+      <h2 class="cs-h" id="cs-h"><span class="cs-en">Pattern Order<br>Carbon Shaft</span><span class="cs-ja">あなただけの1本が、<br>手の届く値段で。</span></h2>
+      <ul class="cs-b">
+        <li><span class="n">¥25,000</span><span>税込・送料込（1本から）</span></li>
+        <li><b>全<span class="n">9</span>ジョイント・<span class="n">6</span>サイズ対応</b><span>長さ 27〜31in／先端径 10.5〜12.8mm</span></li>
+        <li><b>名入れ刻印込み</b><span>納期 <span class="n">3〜4</span> 週間</span></li>
+      </ul>
+      <a class="cs-cta" href="{{ shaft_url }}"><b>仕様を選んで1本をつくる</b><span class="ar" aria-hidden="true">→</span></a>
+      <p class="cs-sub">テーパー・選べる仕様・対応キュー・ご注文の流れ・FAQは、<a href="{{ shaft_url }}">シャフト専用ページ</a>にまとめています。</p>
+      <p class="cs-assure"><b>「自分のバットに合うか分からない」という方へ。</b>バット側のピンの写真を公式LINEで送るだけで、スタッフがジョイント規格を判定してご案内します（平日対応）。<a href="https://line.me/R/oaMessage/@361mehjz/?%E3%82%B7%E3%83%A3%E3%83%95%E3%83%88%E3%81%AE%E3%82%B8%E3%83%A7%E3%82%A4%E3%83%B3%E3%83%88%E8%A6%8F%E6%A0%BC%E3%82%92%E7%A2%BA%E8%AA%8D%E3%81%97%E3%81%9F%E3%81%84%E3%81%A7%E3%81%99%E3%80%82%E3%83%90%E3%83%83%E3%83%88%E5%81%B4%E3%81%AE%E3%83%94%E3%83%B3%E3%81%AE%E5%86%99%E7%9C%9F%E3%82%92%E9%80%81%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82" target="_blank" rel="noopener">LINEでピンの写真を送る →</a></p>
+    </div>
+  </section>
+
+<div class="wrap">
+  {%- render 'vibes-gallery' -%}
+
+  {%- comment -%} ⑤ Wear Vibes {%- endcomment -%}
+  <section id="goods" class="wr">
+    <div class="sh"><h2 class="sh-en">Wear Vibes</h2><p class="sh-ja">オフィシャルTシャツ（ユニセックス）─ 受注生産・LINEまたはメールで注文／キャップは11月6日発売</p></div>
+    <div class="wr-strip">
+      <a class="wr-item" href="/pages/wear"><img src="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/tee-v2-02.webp?width=600" width="300" height="300" alt="黒T × VIBES白／BILLIARDSライム・胸中央" loading="lazy"><div class="tag">T-02</div><h3>Black tee · Center</h3><div class="tprice">¥5,500<small>税込・SS〜3XL</small></div></a>
+      <a class="wr-item" href="/pages/wear"><img src="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/tee-v2-01.webp?width=600" width="300" height="300" alt="白T × VIBES黒／BILLIARDSライム・胸中央" loading="lazy"><div class="tag">T-01</div><h3>White tee · Center</h3><div class="tprice">¥5,500<small>税込・SS〜3XL</small></div></a>
+      <a class="wr-item" href="/pages/wear"><img src="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/tee-v2-07.webp?width=600" width="300" height="300" alt="ネイビーT × VIBES白／BILLIARDSライム・左胸" loading="lazy"><div class="tag">T-07</div><h3>Navy tee · Left chest</h3><div class="tprice">¥5,500<small>税込・SS〜3XL</small></div></a>
+      <a class="wr-item" href="/pages/wear"><img src="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/cap-v1-01.webp?width=600" width="300" height="300" alt="黒キャップ × VIBES白／BILLIARDSライム刺繍" loading="lazy"><div class="tag">C-01</div><h3>Black cap · Embroidered</h3><div class="tprice">¥6,500<small>税込・11/6発売</small></div></a>
+    </div>
+    <a class="wr-all" href="/pages/wear"><b>全カラーを見る・ご注文はこちら</b><span>Tシャツ8種（4色×2デザイン）／キャップ 11/6発売</span><i aria-hidden="true">→</i></a>
+    <p class="wr-note">Shopifyのカートは使いません。商品番号・サイズ・数量を公式LINEまたはメールで送っていただく受注生産です。</p>
+    <p class="wr-assure"><b>「サイズ選びで迷ったら…」</b>身長・体型（普段着のサイズ）をLINEで教えていただければ、おすすめのサイズをご提案します。<a href="https://line.me/R/oaMessage/@361mehjz/?T%E3%82%B7%E3%83%A3%E3%83%84%E3%81%AE%E3%82%B5%E3%82%A4%E3%82%BA%E7%9B%B8%E8%AB%87%E3%81%A7%E3%81%99%E3%80%82%0A%E8%BA%AB%E9%95%B7%EF%BC%9A%0A%E6%99%AE%E6%AE%B5%E7%9D%80%E3%81%A6%E3%81%84%E3%82%8B%E3%82%B5%E3%82%A4%E3%82%BA%EF%BC%9A%0A%E5%B8%8C%E6%9C%9B%E3%81%AE%E3%83%95%E3%82%A3%E3%83%83%E3%83%88%E6%84%9F%EF%BC%88%E3%82%86%E3%81%A3%E3%81%9F%E3%82%8A%EF%BC%8F%E3%81%B4%E3%81%A3%E3%81%9F%E3%82%8A%EF%BC%89%EF%BC%9A" target="_blank" rel="noopener">LINEでサイズを相談する →</a></p>
+  </section>
+
+  {%- comment -%} ⑤ 提携工房メンテナンス {%- endcomment -%}
+  <section id="maintenance" class="ws">
+    <div class="sh"><h2 class="sh-en">Official Partner Workshop</h2><p class="sh-ja">提携工房メンテナンス ─ タップ・先角交換、木のシャフトのテーパー整備</p></div>
+    <div class="ws-card card46">
+      <div class="ws-top">
+        <span class="ws-badge">📍 埼玉県志木市・店舗持ち込み（旋盤即日対応）</span>
+        <b class="ws-nm">ビリヤードWIND</b>
+        <span class="ws-sub">担当：阿部／受付 18:00〜深夜／志木市本町5-20-12 サンシャイン志木ビル3F</span>
+      </div>
+      <ul class="ws-list">
+        <li><span class="nm">タップ交換</span><span class="pr">¥1,000<i>〜</i></span></li>
+        <li><span class="nm">先角交換</span><span class="pr">¥5,000<i>〜</i></span></li>
+        <li><span class="nm">木のシャフト テーパー整備<small>旋盤で行います</small></span><span class="pr">¥3,000<i>〜</i></span></li>
+        <li><span class="nm">シャフトのジョイント交換</span><span class="pr ask">ASK</span></li>
+      </ul>
+      <div class="ws-btns"><a class="tel" href="tel:0484872801"><span>TEL</span><b>048-487-2801</b></a><a class="map" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89WIND%20%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%BF%97%E6%9C%A8%E5%B8%82%E6%9C%AC%E7%94%BA5-20-12%20%E3%82%B5%E3%83%B3%E3%82%B7%E3%83%A3%E3%82%A4%E3%83%B3%E5%BF%97%E6%9C%A8%E3%83%93%E3%83%AB%203F" target="_blank" rel="noopener">地図を見る</a></div>
+      <p class="ws-note">※価格はすべて税込。お店に旋盤があるので、その場で作業します。お気軽にご相談ください。</p>
+    </div>
+  </section>
+
+  {%- comment -%} V.I.B.E.S. 5つの約束（最下部） {%- endcomment -%}
+  <section id="vibes" class="pv">
+    <div class="sh"><h2 class="sh-en">V.I.B.E.S.</h2><p class="sh-ja">5つの約束 ─ このサイトが大切にしていること</p></div>
+    {%- render 'vibes-promise' -%}
+  </section>
+
+  <p class="foot-note">サイトの情報は各団体の公式発表と店舗からの連絡をもとに掲載しています。掲載・修正のご連絡は公式LINEまたは <a href="/pages/contact">お問い合わせ</a> へ。</p>
+</div>
+</div>
+{% schema %}
+{ "name": "Vibes Home", "settings": [], "presets": [{ "name": "Vibes Home" }] }
+{% endschema %}

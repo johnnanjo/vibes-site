@@ -1,0 +1,149 @@
+(function(){
+  var go=document.getElementById('nr-go'),msg=document.getElementById('nr-msg'),list=document.getElementById('nr-list'),gm=document.getElementById('nr-gm');
+  var UP='';try{UP=JSON.parse(document.getElementById('nr-ev').textContent)||''}catch(e){}
+  function evOf(h){var k='~'+h+'~';return UP.split(k).length-1;}
+  var PREF=['','北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県'];
+  var ADJ='2|1,3,5|2,4,5|3,5,6,7|2,3,4,6|4,5,7,15|4,6,8,9,10,15|7,9,11,12|7,8,10,11|7,9,11,15,20|8,9,10,12,13,19,20|8,11,13,14|11,12,14,19|12,13,19,22|6,7,10,16,20|15,17,20,21|16,18,21|17,21,25,26|11,13,14,20,22|10,11,15,16,19,21,22,23|16,17,18,20,23,24,25|14,19,20,23|20,21,22,24|21,23,25,26,29,30|18,21,24,26|18,24,25,27,28,29|26,28,29,30|26,27,31,33,36|24,26,27,30|24,27,29|28,32,33,34|31,34,35|28,31,34,37|31,32,33,35,38|32,34,40|28,37,38,39|33,36,38|34,36,37,39|36,38|35,41,43,44|40,42|41|40,44,45,46|40,43,45|43,44,46|43,45,47|46';
+  var CK='vibes-geo-v2',cache={};try{cache=JSON.parse(localStorage.getItem(CK)||'{}')}catch(e){}
+  function save(){try{localStorage.setItem(CK,JSON.stringify(cache))}catch(e){}}
+  function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function clean(a){return String(a||'').replace(/〒?\s*\d{3}[-‐－]?\d{4}\s*/,'').replace(/[０-９]/g,function(d){return String.fromCharCode(d.charCodeAt(0)-65248)}).replace(/[‐－−]/g,'-').trim()}
+  function say(t,err){msg.textContent=t;msg.className='count'+(err?' err':'')}
+
+  /* 公式LINEの読者報告（blog shop-status）を即時反映 */
+  function nrm(t){return String(t||'').replace(/[Ａ-Ｚａ-ｚ０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248)}).toLowerCase().replace(/[\s・･.&＆_\-ー－—'’"「」()（）]/g,'').replace(/ビリヤード|billiards?|プール|pool|ダーツ|darts/g,'').replace(/店$/,'')}
+  function reports(){return Promise.resolve([]);return fetch('/x').then(function(r){return r.text()}).then(function(t){var j={};try{j=JSON.parse(t)}catch(e){return []}
+    return (j.items||[]).map(function(it){var o={name:it.t,d:it.d};var tx=String(it.b||'').replace(/<\/p>/g,'\n').replace(/<br\s*\/?>/g,'\n').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");
+      tx.split('\n').forEach(function(l){var i=l.indexOf(':');if(i>0)o[l.slice(0,i).trim()]=l.slice(i+1).trim()});
+      o.k=o['種類']||((it.tags||[]).filter(function(x){return /^(closed|open|reopen|moved)$/.test(x)})[0])||'';return o;}).reverse();}).catch(function(){return []});}
+  function applyReports(list,rs){
+    rs.forEach(function(r){var w=nrm(r['店名']||r.name);if(!w)return;var pf=r['都道府県']||'';
+      var m=list.filter(function(s){var n=nrm(s.n);return n&&(n===w||(w.length>=2&&n.length>=2&&(n.indexOf(w)>=0||w.indexOf(n)>=0)))&&(!pf||!s.p||s.p===pf)});
+      var ex=m.filter(function(s){return nrm(s.n)===w});if(ex.length===1)m=ex;
+      var addr=r['住所']||'';
+      if(m.length===1){var s=m[0];
+        if(r.k==='closed')s.x=1;
+        else{s.x=0;if(addr&&addr!==s.a){s.a=addr;s.lat='';s.lng='';s.exact=true}if(r['電話'])s.tel=r['電話'];if(r['営業時間'])s.hr=r['営業時間'];if(r['台数'])s.tb=r['台数'];}
+        s.rep=r;}
+      else if(!m.length&&r.k==='open'&&addr){list.push({h:'rep-'+w,n:r['店名']||r.name,a:addr,p:pf,c:r['市区町村']||'',st:'',tel:r['電話']||'',hr:r['営業時間']||'',tb:r['台数']||'',u:r.URL||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent((r['店名']||r.name)+' '+addr)),lat:'',lng:'',exact:true,rep:r});}
+    });
+    return list.filter(function(s){return !s.x});
+  }
+  var shops=null;
+  function load(){
+    if(shops)return Promise.resolve(shops);
+    var all=[];
+    function page(u,n){return fetch(u,{credentials:'same-origin'}).then(function(r){return r.text()}).then(function(t){var j={};try{j=JSON.parse(t)}catch(e){j={items:[]}}all=all.concat(j.items||[]);return (j.nu&&n<20)?page(j.nu,n+1):all;}).catch(function(){return all});}
+    return Promise.all([page('/data/near.json',1),reports()]).then(function(v){var seen={};var a=applyReports(v[0].filter(function(s){if(seen[s.h])return false;seen[s.h]=1;return true}),v[1]);a.forEach(function(s){s.ev=evOf(s.h)});shops=a;return a;});
+  }
+  /* 国土地理院の住所検索。ビル名・階数を落として番地までで調べ、返ってきた場所が同じ市区町村かを確認する（別の土地に飛ばないように） */
+  function gsi(q){return fetch('https://msearch.gsi.go.jp/address-search/AddressSearch?q='+encodeURIComponent(q)).then(function(r){return r.json()}).then(function(j){return (j&&j.length)?j:[]}).catch(function(){return []});}
+  function addrQ(a){var q=clean(a).replace(/\s.*$/,'');var m=q.match(/^(.*?\d+(?:[丁目番地号\-]*\d+)*)/);return m?m[1]:q;}
+  function title(x){return String(x&&x.properties&&x.properties.title||'')}
+  function geocode(s){
+    var q=addrQ(s.a);if(!q)return Promise.resolve(null);
+    var k=s.h+'|'+q;if(cache[k])return Promise.resolve(cache[k]);
+    var city=String(s.c||''),pref=String(s.p||'');
+    function pick(j){var i,t;for(i=0;i<j.length;i++){t=title(j[i]);if(city?t.indexOf(city)>=0:(!pref||t.indexOf(pref)>=0))return j[i];}return null;}
+    function pt(h,ap){var c=h.geometry.coordinates;return [+c[1],+c[0],ap];}
+    return gsi(q).then(function(j){var h=pick(j);if(h)return pt(h,0);
+      if(!pref&&!city)return null;
+      return gsi(pref+city).then(function(j2){var h2=pick(j2);return h2?pt(h2,1):null;});
+    }).then(function(v){if(v)cache[k]=v;return v;});
+  }
+  function myPref(me){return fetch('https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress?lat='+me[0]+'&lon='+me[1]).then(function(r){return r.json()}).then(function(j){var m=j&&j.results&&j.results.muniCd;return m?PREF[parseInt(String(m).slice(0,-3),10)]||'':''}).catch(function(){return ''});}
+  function pool(items,fn,n){var i=0,out=new Array(items.length);return new Promise(function(res){var act=0;function next(){if(i>=items.length&&act===0)return res(out);while(act<n&&i<items.length){(function(idx){act++;fn(items[idx]).then(function(v){out[idx]=v;act--;next();})})(i++);}}next();});}
+  function km(a,b){var R=6371,t=Math.PI/180,dLa=(b[0]-a[0])*t,dLo=(b[1]-a[1])*t,x=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(a[0]*t)*Math.cos(b[0]*t)*Math.sin(dLo/2)*Math.sin(dLo/2);return 2*R*Math.asin(Math.sqrt(x));}
+  function card(s,d,hit){
+    var dist=d==null?'':(d<1?'<span class="km">'+Math.round(d*1000)+'<small>m</small></span>':'<span class="km">'+d.toFixed(d<10?1:0)+'<small>km</small></span>');
+    var walk=d!=null&&d<2?'・徒歩約'+Math.max(1,Math.round(d*1000/80))+'分':'';
+    var route='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(s.n+' '+s.a);
+    var tel=String(s.tel||'').replace(/[^\d]/g,'');
+    return '<div class="nr-c card pad'+(hit?' hit':'')+'"><div class="top"><a class="nm" href="'+esc(s.u)+'">'+esc(s.n)+'</a>'+dist+'</div>'+
+      '<div class="ad">'+esc(s.a)+(s.st?'・'+esc(s.st):'')+walk+'</div>'+
+      ((s.hr||s.tb)?'<div class="ad">'+(s.hr?''+esc(s.hr):'')+(s.hr&&s.tb?'　':'')+(s.tb?''+esc(s.tb):'')+'</div>':'')+
+      (!s.exact&&d!=null?'<span class="approx">市区町村の中心からのおおよその距離です</span>':'')+
+      (s.ev>0?'<a class="ev" href="'+esc(s.u)+'">これからの大会 '+s.ev+'件</a>':'')+
+      '<div class="bt"><a class="rt" href="'+route+'" target="_blank" rel="noopener">ルート</a><a href="'+esc(s.u)+'">お店の情報</a>'+(tel.length>=9?'<a href="tel:'+tel+'">電話</a>':'')+'</div></div>';
+  }
+  function show(rows,label,pin){
+    var L=label?'「'+label+'」':'現在地',P={};(pin||[]).forEach(function(s){P[s.h]=1});
+    rows.sort(function(a,b){return ((P[b.s.h]||0)-(P[a.s.h]||0))||(a.d-b.d)});
+    var near=rows.filter(function(r){return P[r.s.h]||r.d<=30});
+    function c(r){return card(r.s,(r.nod||(P[r.s.h]&&r.d<0.05))?null:r.d,!!P[r.s.h])}
+    if(!rows.length){say('お店の位置を調べられませんでした。Googleマップのボタンから探してください。',true);prefMode();return;}
+    var np=near.filter(function(r){return P[r.s.h]}).length;
+    if(near.length){say(np?L+'に当てはまるお店 '+np+'件と、その周辺30km以内のお店 '+(near.length-np)+'件。近い順に表示しています。':L+'から30km以内に '+near.length+'件。近い順に表示しています。');list.innerHTML=near.slice(0,30).map(c).join('');}
+    else{say('30km以内に掲載店がありません。いちばん近いお店を表示しています。Googleマップのボタンから周辺のビリヤード場も探せます。');list.innerHTML=rows.slice(0,5).map(c).join('');}
+  }
+  function showNear(me,label,pin){
+    gm.href='https://www.google.com/maps/search/%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89%E5%A0%B4/@'+me[0].toFixed(5)+','+me[1].toFixed(5)+',14z';
+    say('お店を探しています…');
+    Promise.all([load(),myPref(me)]).then(function(r){
+      var all=r[0],pref=r[1],rows=[],todo=[];
+      all.forEach(function(s){if(s.lat&&s.lng){rows.push({s:s,d:km(me,[+s.lat,+s.lng])})}else todo.push(s)});
+      var prefs={};if(pref){prefs[pref]=1;var pi=PREF.indexOf(pref);if(pi>0)ADJ.split('|')[pi-1].split(',').forEach(function(x){prefs[PREF[+x]]=1});}
+      rows.slice().sort(function(a,b){return a.d-b.d}).slice(0,15).forEach(function(x){if(x.s.p)prefs[x.s.p]=1});
+      (pin||[]).forEach(function(s){if(s.p)prefs[s.p]=1});
+      todo=todo.filter(function(s){return prefs[s.p]||!s.p}).slice(0,400);
+      function done(){(pin||[]).forEach(function(s){if(!rows.some(function(r){return r.s===s}))rows.push({s:s,d:0,nod:true})});show(rows,label,pin);}
+      if(!todo.length){done();return;}
+      if(rows.length)show(rows.slice(),label,pin);
+      say('お店の位置を調べています…（'+todo.length+'件）');
+      pool(todo,geocode,8).then(function(pos){save();todo.forEach(function(s,i){if(pos[i]){if(pos[i][2])s.exact=false;rows.push({s:s,d:km(me,pos[i])})}});done();});
+    });
+  }
+  function locate(){
+    if(!('geolocation' in navigator)){say('この端末では位置情報が使えません。都道府県からえらんでください。',true);prefMode();return;}
+    go.disabled=true;go.classList.add('busy');go.querySelector('span').textContent='現在地を調べています…';say('');
+    load();
+    navigator.geolocation.getCurrentPosition(function(p){
+      go.disabled=false;go.classList.remove('busy');go.querySelector('span').textContent='もう一度探す';
+      showNear([p.coords.latitude,p.coords.longitude]);
+    },function(err){
+      go.disabled=false;go.classList.remove('busy');go.querySelector('span').textContent='現在地から探す';
+      say(err&&err.code===1?'位置情報の利用が許可されませんでした。端末の設定で、このブラウザ（LINEの場合はLINE）の位置情報をオンにしてください。都道府県からもえらべます。':'現在地を取得できませんでした。電波の良い場所でもう一度お試しください。都道府県からもえらべます。',true);
+      prefMode();
+    },{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+  }
+  function prefMode(sel){
+    var box=document.getElementById('nr-prefbox'),pr=document.getElementById('nr-pref');if(!box.hidden)return;box.hidden=false;
+    load().then(function(shops){
+      var has={};shops.forEach(function(s){if(s.p)has[s.p]=(has[s.p]||0)+1});
+      pr.innerHTML=PREF.filter(function(p){return has[p]}).map(function(p){return '<button type="button" class="chip" data-p="'+esc(p)+'">'+esc(p.replace(/[都府県]$/,''))+'<small style="margin-left:4px;opacity:.6">'+has[p]+'</small></button>'}).join('');
+      pr.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;[].forEach.call(pr.children,function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+        var p=b.dataset.p,rows=shops.filter(function(s){return s.p===p}).sort(function(a,b){return (b.ev-a.ev)||String(a.c).localeCompare(String(b.c),'ja')});
+        gm.href='https://www.google.com/maps/search/'+encodeURIComponent('ビリヤード場 '+p);
+        say(p+'のビリヤード場 '+rows.length+'件（大会の多い順・市区町村順）');list.innerHTML=rows.map(function(s){return card(s,null)}).join('');});
+      if(sel){var b=pr.querySelector('button[data-p="'+sel+'"]');if(b){b.click();}else{gm.href='https://www.google.com/maps/search/'+encodeURIComponent('ビリヤード場 '+sel);say(sel+'のお店は、まだ掲載がありません。Googleマップのボタンから探せます。新しいお店を知っていたら公式LINEで教えてください。');}}
+    });
+  }
+  function nq(t){return String(t||'').replace(/[Ａ-Ｚａ-ｚ０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248)}).toLowerCase().replace(/[\s　・･]/g,'')}
+  function search(q){
+    var w=nq(q),w2=w.replace(/駅$/,'');if(!w)return;document.getElementById('nr-qi').value=q;say('「'+q+'」を探しています…');
+    load().then(function(shops){
+      function hit(s){var t=nq(s.n+s.a+s.st+s.c+s.p);return t.indexOf(w)>=0||(w2.length>=2&&t.indexOf(w2)>=0)}
+      var rows=shops.filter(hit).sort(function(a,b){return (b.ev-a.ev)||String(a.p+a.c).localeCompare(String(b.p+b.c),'ja')});
+      gm.href='https://www.google.com/maps/search/'+encodeURIComponent('ビリヤード場 '+q);
+      if(rows.length>=3||/店|ビリヤード|billiard|pool|プール/i.test(q)&&rows.length){say('「'+q+'」のビリヤード場 '+rows.length+'件');list.innerHTML=rows.slice(0,60).map(function(s){return card(s,null,true)}).join('');return;}
+      say('「'+q+'」の近くのお店を探しています…');list.innerHTML='';
+      /* 当てはまるお店が1〜2件のときは、そのお店（駅名が一致するお店を優先）の場所を中心に周辺を近い順に表示する。
+         地名だけを住所検索にかけると、同じ地名の別の土地に飛ぶことがあるため */
+      var st=rows.filter(function(s){return w2.length>=2&&nq(s.st).indexOf(w2)>=0}),base=st[0]||rows[0];
+      (base?geocode(base):Promise.resolve(null)).then(function(c){
+        if(c){save();showNear([c[0],c[1]],q,rows);return;}
+        /* 当てはまるお店がない：地名・駅名として国土地理院で場所を調べ、その周りのお店を近い順に */
+        gsi(q).then(function(j){return j.length?j:(w2!==w?gsi(q.replace(/駅$/,'')):[])}).then(function(j){
+          if(!j.length){if(rows.length){say('「'+q+'」のビリヤード場 '+rows.length+'件');list.innerHTML=rows.map(function(s){return card(s,null,true)}).join('');}else{say('「'+q+'」に当てはまるお店は見つかりませんでした。市区町村名や駅名で探すか、Googleマップのボタンから探してください。',true);}return;}
+          var c=j[0].geometry.coordinates;showNear([+c[1],+c[0]],q,rows);
+        });
+      });
+    });
+  }
+  document.getElementById('nr-q').addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('nr-qi').value.trim();if(!v)return;try{history.replaceState(null,'','?q='+encodeURIComponent(v))}catch(x){}search(v);});
+  go.addEventListener('click',locate);
+  var qs=new URLSearchParams(location.search);
+  if(qs.get('auto')==='1')locate();
+  else if(qs.get('pref'))prefMode(qs.get('pref'));
+  else if(qs.get('q'))search(qs.get('q'));
+})();

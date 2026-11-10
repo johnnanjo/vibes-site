@@ -1,0 +1,45 @@
+{%- comment -%} ホーム：ビリヤード場を探す（現在地・キーワード） {%- endcomment -%}
+{%- assign sr = blogs['shop-status'] -%}
+<style>
+.vb #halls{--neo:#00E1FF;padding-top:30px}
+.vb .hf{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding:20px 18px;border-radius:22px;background:#fff;box-shadow:inset 0 0 0 2px #00E1FF,0 0 26px rgba(0,225,255,.18)}
+.vb .hf>*{min-width:0}
+.vb .hf-go{display:flex;align-items:center;justify-content:center;gap:10px;min-height:58px;padding:0 14px;text-align:center;border-radius:999px;background:#0A0A09;color:#00E1FF;font-weight:900;font-size:17px;text-decoration:none;box-shadow:0 0 18px rgba(0,225,255,.35)}
+.vb .hf-go svg{width:22px;height:22px;flex:0 0 22px}
+.vb .hf-q{display:flex;gap:8px}
+.vb .hf-q input{flex:1;width:100%;min-width:0;min-height:50px;padding:0 16px;border:2px solid #0A0A09;border-radius:999px;font:700 16px/1 var(--jp);background:#fff;color:#0A0A09}
+.vb .hf-q button{flex:0 0 auto;min-height:50px;padding:0 20px;border:0;border-radius:999px;background:#00E1FF;color:#0A0A09;font:900 15px/1 var(--jp);cursor:pointer}
+.vb .hf-hint{margin:-4px 0 0;font-size:13px;line-height:1.6;color:#4A4A46}
+.vb .hf-new{margin:6px 0 0;padding:14px 16px;border-radius:16px;background:#0A0A09;color:#F4F4F0}
+.vb .hf-new h3{margin:0 0 6px;font-family:var(--jp);font-size:14px;font-weight:900;color:#00E1FF;text-transform:none;letter-spacing:0}
+.vb .hf-new ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:14px;line-height:1.6}
+.vb .hf-new em{font-style:normal;font-size:12px;font-weight:900;padding:1px 8px;border-radius:999px;margin-right:6px;background:#C6FF1F;color:#0A0A09}
+.vb .hf-new em.cl{background:#FF2E93}
+.vb .hf-new time{font-size:12px;color:#BDBDB6;margin-left:6px}
+.vb .hf-foot{margin:0;font-size:13px;line-height:1.7;color:#4A4A46;overflow-wrap:anywhere}
+.vb .hf-foot a{color:#0A0A09;font-weight:900;text-decoration:underline;text-decoration-color:#06C755;text-decoration-thickness:3px}
+</style>
+<section id="halls">
+<div class="h2"><div class="en">Find a hall</div><span class="ja">ビリヤード場を探す ─ 現在地から、または店名・駅・市区町村で</span></div>
+<div class="hf">
+  <a class="hf-go" href="/pages/near?auto=1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg>現在地から近いお店を探す</a>
+  <form class="hf-q" role="search" action="/pages/near">
+    <input type="search" name="q" placeholder="店名・駅・市区町村で探す" aria-label="店名・駅・市区町村で探す" autocomplete="off">
+    <button type="submit">検索</button>
+  </form>
+  <p class="hf-hint">例：「志木市」「新宿」「WIND」。地名で検索すると、その周辺のお店を近い順に表示します。</p>
+  {%- if sr.articles_count > 0 -%}
+  <div class="hf-new">
+    <h3>読者から届いた最新情報</h3>
+    <ul>
+      {%- for a in sr.articles limit: 3 -%}
+        {%- assign k = '' -%}
+        {%- if a.tags contains 'closed' -%}{%- assign k = '閉店' -%}{%- elsif a.tags contains 'open' -%}{%- assign k = '新店' -%}{%- elsif a.tags contains 'moved' -%}{%- assign k = '移転' -%}{%- elsif a.tags contains 'reopen' -%}{%- assign k = '営業中' -%}{%- endif -%}
+        <li><em{% if k == '閉店' %} class="cl"{% endif %}>{{ k }}</em>{{ a.title | escape }}<time datetime="{{ a.published_at | date: '%Y-%m-%d' }}">{{ a.published_at | date: '%-m/%-d' }}</time></li>
+      {%- endfor -%}
+    </ul>
+  </div>
+  {%- endif -%}
+  <p class="hf-foot">新しいお店や閉店・移転を見つけたら、<a href="https://line.me/R/ti/p/@361mehjz" target="_blank" rel="noopener">公式LINE</a>に「閉店　店名:○○」のように送ってください。すぐにサイトに反映します。</p>
+</div>
+</section>

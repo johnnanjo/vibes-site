@@ -1,0 +1,18 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@700&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-media.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+<div class="vb">
+<div class="wrap vb-after">
+  <div class="h2"><div class="en" style="font-size:1.6rem">More info</div><span class="ja">ほかのビリヤード情報</span></div>
+  <nav class="othr" aria-label="情報カテゴリ">
+    <a href="/blogs/news"><b>NEWS</b><span>公式戦・エントリー</span></a>
+    <a href="/blogs/results"><b>RESULTS</b><span>試合結果</span></a>
+    <a href="/blogs/house-tournament"><b>TOURNAMENT</b><span>ハウストーナメント</span></a>
+  </nav>
+  {%- render 'vibes-line' -%}
+</div>
+</div>
+{% schema %}
+{ "name": "Vibes After (LINE + nav)", "settings": [], "presets": [{ "name": "Vibes After" }] }
+{% endschema %}

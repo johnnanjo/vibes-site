@@ -1,0 +1,58 @@
+{%- comment -%} ホーム用：パターンオーダーシャフト専用ページ(/pages/shaft)へのバナー。モノクロ＋ピンク1色。 {%- endcomment -%}
+<style>
+.vb .sb{display:block;position:relative;overflow:hidden;margin:44px 0 0;border-radius:22px;background:#FF2E93;color:#0A0A09;text-decoration:none;min-height:440px;isolation:isolate;-webkit-tap-highlight-color:transparent}
+.vb .sb:focus-visible{outline:3px solid #0A0A09;outline-offset:3px}
+.vb .sb .art{position:absolute;inset:0;z-index:1;pointer-events:none}
+.vb .sb .art svg{position:absolute;right:-10%;top:-10%;width:88%;height:auto}
+.vb .sb .k{position:absolute;left:20px;top:18px;z-index:2;font-family:var(--jp);font-weight:900;font-size:14px;line-height:1.55;color:#0A0A09;max-width:12em}
+.vb .sb .k i{display:block;font-style:normal;font-family:var(--anton);font-size:11px;letter-spacing:.14em;color:#fff;margin-bottom:4px}
+.vb .sb .vt{position:absolute;right:16px;top:18px;z-index:2;writing-mode:vertical-rl;font-family:var(--anton);font-size:18px;letter-spacing:.08em;line-height:1;color:#0A0A09}
+.vb .sb .vt b{font-weight:400;color:#fff}
+.vb .sb .big{position:absolute;left:18px;bottom:104px;z-index:2;font-family:var(--anton);font-size:clamp(58px,17vw,112px);line-height:.86;letter-spacing:.01em;text-transform:uppercase;color:#fff;-webkit-text-stroke:1.5px #0A0A09;text-shadow:5px 5px 0 #0A0A09}
+.vb .sb .sub{position:absolute;left:20px;right:168px;bottom:24px;z-index:2;font-family:var(--jp);font-weight:900;font-size:12.5px;line-height:1.6;color:#0A0A09}
+.vb .sb .sub b{display:block;font-size:18px;font-family:var(--anton);font-weight:400;letter-spacing:.02em;color:#fff;text-shadow:2px 2px 0 #0A0A09}
+.vb .sb .cta{position:absolute;right:18px;bottom:22px;z-index:2;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border-radius:999px;background:#0A0A09;color:#fff;font-family:var(--jp);font-weight:900;font-size:14px;white-space:nowrap}
+.vb .sb .cta::after{content:"→";font-family:var(--anton)}
+.vb .sb:hover .cta{background:#fff;color:#0A0A09}
+@media (min-width:760px){
+  .vb .sb{min-height:480px;border-radius:28px}
+  .vb .sb .art svg{right:2%;top:-14%;width:62%}
+  .vb .sb .k{left:36px;top:32px;font-size:17px}
+  .vb .sb .k i{font-size:13px}
+  .vb .sb .vt{right:30px;top:30px;font-size:26px}
+  .vb .sb .big{left:34px;bottom:104px;font-size:clamp(96px,12vw,164px);text-shadow:7px 7px 0 #0A0A09}
+  .vb .sb .sub{left:36px;right:240px;bottom:36px;font-size:14px}
+  .vb .sb .sub b{font-size:22px}
+  .vb .sb .cta{right:36px;bottom:36px;min-height:56px;padding:0 26px;font-size:16px}
+}
+@media (prefers-reduced-motion:no-preference){.vb .sb .cta{transition:background .15s,color .15s}}
+/* index row SHAFT: same pink / mono look */
+.vb #top .v-index a.shop{background:#FF2E93;color:#0A0A09;box-shadow:none;border-radius:14px;padding-inline:14px;margin-top:8px}
+.vb #top .v-index a.shop b{color:#fff;text-shadow:3px 3px 0 #0A0A09;-webkit-text-stroke:.5px #0A0A09}
+.vb #top .v-index a.shop span{color:#0A0A09;font-weight:900}
+.vb #top .v-index a.shop svg{color:#0A0A09}
+.vb #top .v-index a.shop:active{background:#E8207F}
+</style>
+<a class="sb" href="/pages/shaft" aria-label="パターンオーダー・カーボンシャフトの専用ページを見る">
+  <span class="art" aria-hidden="true">
+    <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="sb-ball" cx="36%" cy="30%" r="70%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".42" stop-color="#ECECEC"/><stop offset=".72" stop-color="#8E8E8E"/><stop offset="1" stop-color="#101010"/></radialGradient>
+        <pattern id="sb-dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1.9" fill="#0A0A09"/></pattern>
+        <linearGradient id="sb-fade" x1="0" y1="0" x2="1" y2="1"><stop offset=".38" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient>
+        <mask id="sb-mask"><rect width="600" height="600" fill="#000"/><circle cx="330" cy="310" r="200" fill="url(#sb-fade)"/></mask>
+      </defs>
+      <circle cx="330" cy="310" r="200" fill="url(#sb-ball)"/>
+      <circle cx="330" cy="310" r="200" fill="url(#sb-dots)" mask="url(#sb-mask)"/>
+      <polygon points="20,596 46,562 526,64 536,82" fill="#0A0A09"/>
+      <line x1="40" y1="578" x2="528" y2="74" stroke="#FFFFFF" stroke-width="2.2" opacity=".55"/>
+      <polygon points="526,64 536,82 556,62 546,44" fill="#FFFFFF"/>
+      <polygon points="556,62 546,44 562,36 570,52" fill="#0A0A09"/>
+    </svg>
+  </span>
+  <span class="k"><i>PATTERN ORDER</i>パターンオーダー<br>カーボンシャフト</span>
+  <span class="vt">VIBES <b>CARBON SHAFT</b></span>
+  <span class="big">Build<br>your<br>one.</span>
+  <span class="sub"><b>¥25,000</b>税込・送料込｜1本から・名入れ込み｜納期3〜4週間</span>
+  <span class="cta">専用ページへ</span>
+</a>

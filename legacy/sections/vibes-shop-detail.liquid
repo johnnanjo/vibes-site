@@ -1,0 +1,114 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{%- render 'vibes-t-style' -%}
+{%- assign sp = metaobject -%}
+{%- assign tel = sp.phone.value | remove: '-' | remove: ' ' -%}
+{%- capture addr -%}{%- if sp.address.value != blank -%}{{ sp.address.value }}{%- else -%}{{ sp.prefecture.value }}{{ sp.city.value }}{%- endif -%}{%- endcapture -%}
+{%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+<style>
+.vb .sd{padding:14px 0 120px;max-width:760px}
+.vb .sd h1{font-family:var(--jp);font-size:clamp(24px,6.6vw,32px);font-weight:900;line-height:1.3;margin:10px 0 4px;text-transform:none;letter-spacing:0}
+.vb .sd-area{font-size:14px;font-weight:700;color:var(--muted)}
+.vb .sd .td-dl{display:grid;grid-template-columns:6.5em 1fr;margin:18px 0 0;font-size:15px;line-height:1.65}
+.vb .sd .td-dl dt{font-weight:900;color:#4A4A46;padding:9px 0;border-bottom:1px solid var(--line,#E2E2DE)}
+.vb .sd .td-dl dd{margin:0;padding:9px 0;border-bottom:1px solid var(--line,#E2E2DE);white-space:pre-line;overflow-wrap:anywhere}
+.vb .sd-sec{margin:26px 0 0}
+.vb .sd-sec h2{font-family:var(--jp);font-size:17px;font-weight:900;margin:0 0 6px;padding-bottom:6px;border-bottom:2px solid #0A0A09;text-transform:none;letter-spacing:0}
+.vb .sd-btns{display:flex;gap:8px;margin:18px 0 0}
+.vb .sd-btns a{flex:1;display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:999px;font-weight:900;font-size:15px;text-decoration:none;border:2px solid #0A0A09;color:#0A0A09;background:#fff}
+.vb .sd-btns a.main{background:#FA4E02;border-color:#FA4E02}
+.vb .sd-closed{margin:14px 0 0;padding:14px 16px;border-radius:14px;background:#0A0A09;color:#fff;font-size:14px;font-weight:700;line-height:1.7;box-shadow:inset 0 0 0 2px #FF2E93}
+.vb .sd-closed b{display:block;font-size:16px;color:#FF2E93}
+.vb .sd-note{margin:14px 0 0;padding:12px 14px;border-radius:12px;background:#F2F2EF;font-size:13px;line-height:1.7;white-space:pre-line}
+.vb .sd-report{margin:26px 0 0;padding:16px;border-radius:16px;background:#F2F2EF;font-size:14px;line-height:1.7}
+.vb .sd-report a{color:#0A0A09;font-weight:900;text-decoration:underline;text-decoration-color:#06C755;text-decoration-thickness:3px}
+.vb .sd-src{margin:14px 0 0;font-size:12px;color:var(--muted)}
+.vb .sd-src a{color:inherit}
+</style>
+<div class="vb">
+<div class="wrap">
+<article class="sd">
+  <div class="crumbs"><a href="/">Vibes Billiards</a> ／ <a href="/pages/near">近くのビリヤード場</a> ／ 店舗</div>
+  <h1>{{ sp.name.value | escape }}</h1>
+  <div class="sd-area">{{ sp.prefecture.value }}{{ sp.city.value }}{%- if sp.station.value != blank -%}・{{ sp.station.value | escape }}{%- endif -%}</div>
+  <div id="sd-live" data-n="{{ sp.name.value | escape }}" data-p="{{ sp.prefecture.value | escape }}"></div>
+  {%- if sp.status.value == 'closed' -%}
+  <div class="sd-closed" id="sd-st"><b>閉店の情報があります</b>{{ sp.status_note.value | escape }}</div>
+  {%- elsif sp.status_note.value != blank -%}
+  <div class="sd-note" id="sd-st">{{ sp.status_note.value | escape }}</div>
+  {%- endif -%}
+  <div class="sd-btns">
+    {%- if tel.size >= 9 -%}<a class="main" href="tel:{{ tel }}">電話する</a>{%- endif -%}
+    {%- if addr != blank -%}<a href="https://www.google.com/maps/search/?api=1&amp;query={{ sp.name.value | append: ' ' | append: addr | url_encode }}" target="_blank" rel="noopener">地図</a>{%- endif -%}
+    {%- if sp.line_url.value != blank -%}<a href="{{ sp.line_url.value }}" target="_blank" rel="noopener">LINE</a>{%- endif -%}
+  </div>
+  <dl class="td-dl">
+    {%- if addr != blank -%}<dt>住所</dt><dd>{{ addr | escape }}</dd>{%- endif -%}
+    {%- if sp.phone.value != blank -%}<dt>電話</dt><dd>{{ sp.phone.value | escape }}</dd>{%- endif -%}
+    {%- if sp.hours_note.value != blank -%}<dt>営業時間</dt><dd>{{ sp.hours_note.value | escape }}</dd>{%- elsif sp.hours.value != blank -%}<dt>営業時間</dt><dd>{{ sp.hours.value | escape }}</dd>{%- endif -%}
+    {%- if sp.tables.value.size > 0 -%}<dt>台</dt><dd>{{ sp.tables.value | join: '・' | escape }}</dd>{%- endif -%}
+    {%- if sp.fees.value != blank -%}<dt>料金</dt><dd>{{ sp.fees.value | escape }}</dd>{%- endif -%}
+    {%- if sp.access.value != blank -%}<dt>アクセス</dt><dd>{{ sp.access.value | escape }}</dd>{%- endif -%}
+    {%- if sp.parking.value != blank -%}<dt>駐車場</dt><dd>{{ sp.parking.value | escape }}</dd>{%- endif -%}
+    {%- if sp.regular_events.value != blank -%}<dt>定期大会</dt><dd>{{ sp.regular_events.value | escape }}</dd>{%- endif -%}
+    {%- if sp.website.value != blank -%}<dt>Web</dt><dd><a href="{{ sp.website.value }}" target="_blank" rel="noopener">{{ sp.website.value }}</a></dd>{%- endif -%}
+  </dl>
+
+  {%- assign up = 0 -%}{%- assign past = 0 -%}
+  {%- assign up_html = '' -%}{%- assign past_html = '' -%}
+  {%- paginate shop.metaobjects.tournament.values by 250 -%}
+  {%- for o in shop.metaobjects.tournament.values -%}
+    {%- if o.shop.value.system.handle == sp.system.handle -%}
+      {%- assign od = o.ends_at.value | default: o.starts_at.value | date: '%Y%m%d' | plus: 0 -%}
+      {%- capture c -%}{%- render 'vibes-t-card', t: o -%}{%- endcapture -%}
+      {%- assign k = o.starts_at.value | date: '%Y%m%d%H%M' -%}
+      {%- if od >= today -%}{%- assign up = up | plus: 1 -%}{%- assign up_html = up_html | append: k | append: '§' | append: c | append: '¶' -%}
+      {%- elsif o.winner.value != blank -%}{%- assign past = past | plus: 1 -%}{%- assign past_html = past_html | append: k | append: '§' | append: c | append: '¶' -%}{%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- endpaginate -%}
+
+  <section class="sd-sec">
+    <h2>これからの大会{%- if up > 0 -%}（{{ up }}件）{%- endif -%}</h2>
+    {%- if up > 0 -%}
+      {%- assign rows = up_html | split: '¶' | sort -%}
+      {%- for r in rows limit: 20 -%}{{ r | split: '§' | last }}{%- endfor -%}
+    {%- else -%}
+      <p class="tdb-empty">いま掲載中の大会はありません。店舗の方は<a href="/pages/tournament-form">掲載フォーム</a>から無料で掲載できます。</p>
+    {%- endif -%}
+  </section>
+  {%- if past > 0 -%}
+  <section class="sd-sec">
+    <h2>過去の大会結果</h2>
+    {%- assign rows = past_html | split: '¶' | sort | reverse -%}
+    {%- for r in rows limit: 10 -%}{{ r | split: '§' | last }}{%- endfor -%}
+  </section>
+  {%- endif -%}
+  <div class="sd-report">このお店の閉店・移転・営業時間の変更などを見つけたら、<a href="https://line.me/R/ti/p/@361mehjz" target="_blank" rel="noopener">公式LINE</a>に「閉店　店名:{{ sp.name.value | escape }}」のように送ってください。すぐにサイトに反映します。</div>
+  <p class="sd-src">{%- if sp.source_url.value != blank -%}店舗情報の出典：<a href="{{ sp.source_url.value }}" target="_blank" rel="noopener">{% if sp.source.value == 'billi-walker' %}ビリウォーカー{% else %}情報元{% endif %}</a>。{%- endif -%}料金・営業時間は変わることがあります。お出かけ前に各店舗へご確認ください。</p>
+</article>
+<script>
+(function(){
+  var box=document.getElementById('sd-live');if(!box)return;
+  function nrm(t){return String(t||'').replace(/[Ａ-Ｚａ-ｚ０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248)}).toLowerCase().replace(/[\s・･.&＆_\-ー－—'’"「」()（）]/g,'').replace(/ビリヤード|billiards?|プール|pool|ダーツ|darts/g,'').replace(/店$/,'')}
+  function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  var me=nrm(box.getAttribute('data-n')),mp=box.getAttribute('data-p')||'';if(!me)return;
+  fetch('/blogs/shop-status?view=data',{credentials:'same-origin'}).then(function(r){return r.json()}).then(function(j){
+    var hit=null;(j.items||[]).some(function(it){var o={};String(it.b||'').replace(/<\/p>/g,'\n').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').split('\n').forEach(function(l){var i=l.indexOf(':');if(i>0)o[l.slice(0,i).trim()]=l.slice(i+1).trim()});
+      var w=nrm(o['店名']||it.t);if(w!==me)return false;if(o['都道府県']&&mp&&o['都道府県']!==mp)return false;o.d=it.d;hit=o;return true;});
+    if(!hit)return;var k=hit['種類'],old=document.getElementById('sd-st'),src='（'+(hit['受付日']||hit.d||'')+' 公式LINEで読者から）';
+    var h='';
+    if(k==='closed')h='<div class="sd-closed"><b>閉店の情報があります</b>'+esc(src)+'</div>';
+    else if(k==='moved')h='<div class="sd-note">移転の情報があります'+(hit['住所']?'。新しい住所：'+esc(hit['住所']):'')+esc(src)+'</div>';
+    else h='<div class="sd-note">営業中の情報があります'+esc(src)+'</div>';
+    if(old)old.remove();box.innerHTML=h;
+  }).catch(function(){});
+})();
+</script>
+</div>
+</div>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":{{ sp.name.value | json }},"address":{{ addr | json }}{%- if sp.phone.value != blank -%},"telephone":{{ sp.phone.value | json }}{%- endif -%},"url":{{ shop.url | append: sp.system.url | json }}}</script>
+{% schema %}
+{ "name": "Vibes Shop", "settings": [] }
+{% endschema %}

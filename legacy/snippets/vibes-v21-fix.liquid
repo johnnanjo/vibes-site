@@ -1,0 +1,41 @@
+<style>
+.vb h1,.vb h2,.vb h3,.vb .v-lead,.vb .v-sub,.vb-line h3,.vb-line p,.vb .tracks b,.vb .tracks span{word-break:auto-phrase}
+@media (max-width:759px){.vb .v-h1{font-size:clamp(1.6rem,7vw,2.4rem)}.vb .v-cloth{padding-top:46px}.vb .v-cloth::after{width:24px;height:24px;top:14px;right:16px}.vb-tab a[aria-current="page"]::before{top:-6px}}
+.vb .card.dark > .tag{display:none}
+.vb .tee-order{margin-top:22px;padding:24px 20px;border-radius:18px;background:#F2F2EF}
+.vb .tee-order h3{font-family:var(--jp);font-size:1.25rem;font-weight:900;margin:0 0 8px;line-height:1.4;text-transform:none;letter-spacing:0}
+.vb .tee-order p{font-size:15px;color:var(--muted);margin:0}
+.vb .tee-order .btns{margin-top:16px}
+.pay span.soon{border-style:dashed!important;border-color:#8A8A8A!important;color:#5E5E5E!important;background:transparent!important;font-weight:700}
+@media (min-width:860px){.vb .tees{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:749px){
+  .header{grid-template-columns:40px 40px minmax(0,1fr) 80px!important;padding:8px 6px!important;column-gap:0!important}
+  .header__icons{justify-self:end}
+  .header__heading,.header__heading-link{width:100%;max-width:none;display:flex;justify-content:center;padding:0;margin:0}
+  .header__heading-logo-wrapper{width:100%;height:auto!important;max-height:none!important;display:flex;justify-content:center}
+  .header__heading-logo{content:url('https://cdn.shopify.com/s/files/1/0792/5533/9107/files/Official_LOGO.png?v=1793876805&width=720');width:min(100%,190px)!important;max-width:none!important;height:auto!important;max-height:none!important;aspect-ratio:717/406;object-fit:contain}
+}
+/* v59: white VIBES + lime BILLIARDS logo (bg #171A22) — header background matches the logo image */
+html body .section-header,html body .header-wrapper,html body .header-wrapper .header,html body .header-wrapper .color-scheme-4,html body .shopify-section-header-sticky .header-wrapper{background:#171A22!important;background-color:#171A22!important}
+html body .header-wrapper .header .header__heading-logo{width:220px!important;aspect-ratio:717/406!important;max-height:none!important;height:auto!important}
+html body .shopify-section-header-sticky .header-wrapper .header .header__heading-logo{width:170px!important}
+@media (max-width:749px){
+  html body .header-wrapper .header .header__heading-logo{width:min(100%,190px)!important}
+  html body .shopify-section-header-sticky .header-wrapper .header .header__heading-logo{width:min(100%,150px)!important}
+}
+/* v61: shaft page — WIND contact buttons stay on one line */
+.sx .mt .shop .btns{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)!important}
+.sx .mt .shop .btns .btn{white-space:nowrap;min-width:0;padding:0 10px;font-size:clamp(14px,3.9vw,16px)}
+/* concept highlight: big neon text */
+.vb .quote .txt.concept{display:block;margin:30px 0 0;color:#C6FF1F;font-family:var(--jp);font-weight:900;line-height:1.4}
+.vb .quote .txt.concept .c1{display:block;font-size:clamp(24px,6.6vw,38px);letter-spacing:0;word-break:keep-all;overflow-wrap:anywhere;color:#C6FF1F}
+.vb .quote .txt.concept .c2{display:block;margin-top:8px;font-size:clamp(18px,4.8vw,26px);word-break:keep-all;overflow-wrap:anywhere;color:#C6FF1F}
+/* price rows: keep label and amount on one line */
+.vb .card .rows li{align-items:center}
+.vb .card .rows li > span:last-child{white-space:nowrap;flex-shrink:0}
+.vb .card .rows li:first-child > span:first-child{font-size:0;line-height:0}
+.vb .card .rows li:first-child > span:first-child::before{content:"シャフト本体";display:block;font-size:16px;line-height:1.5}
+.vb .card .rows li:first-child > span:first-child::after{content:"パターンオーダー・刻印込み";display:block;font-size:12px;line-height:1.5;opacity:.65;margin-top:2px}
+</style>
+{%- comment -%} v46: トップページは新パレット（vibes-v46.css）。ネオンレイヤーはその他のページだけ {%- endcomment -%}
+{%- unless request.page_type == 'index' or template.suffix == 'wear' -%}{%- render 'vibes-neon' -%}{%- endunless -%}

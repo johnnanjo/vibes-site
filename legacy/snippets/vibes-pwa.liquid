@@ -1,0 +1,37 @@
+{%- comment -%} Vibes Billiards: PWA / home-screen app settings + header tweaks {%- endcomment -%}
+<link rel="manifest" href="{{ 'manifest.json' | asset_url }}" crossorigin="anonymous">
+<meta name="application-name" content="Vibes Billiards">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vibes">
+<link rel="apple-touch-icon" sizes="180x180" href="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-icon-official-512.png?v=1793790888&width=180">
+<link rel="icon" type="image/png" sizes="32x32" href="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-icon-official-512.png?v=1793790888&width=32">
+<link rel="icon" type="image/png" sizes="192x192" href="https://cdn.shopify.com/s/files/1/0792/5533/9107/files/vibes-icon-official-512.png?v=1793790888&width=192">
+{%- if template.name == 'index' -%}
+<meta name="description" content="ポケット、スリークッション用カーボンシャフト「Vibes Carbon Shaft」のパターンオーダー。長さ・テーパー・先端径・ジョイント・ウェイト・刻印を1本から。¥25,000（税込・送料込）、納期3〜4週間。">
+{%- endif -%}
+<script>
+  (function(){
+    var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (standalone) { document.documentElement.classList.add('vb-standalone'); }
+    window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); window.vbInstallPrompt = e; document.documentElement.classList.add('vb-can-install'); });
+  })();
+</script>
+<style>
+  html.vb-standalone .announcement-bar-section { padding-top: env(safe-area-inset-top, 0px); }
+  /* header: menu + logo + cart only, compact */
+  .header__icons .header__search, .header__icons .header__icon--account, .header__icons account-icon, .header__icons a[href*="/account"] { display: none !important; }
+  .header__icons details-disclosure { display: none !important; }
+  .header { padding-top: 6px !important; padding-bottom: 6px !important; }
+  .header__heading-logo-wrapper { max-width: none !important; }
+  .header__heading-logo { max-height: 84px; width: auto; max-width: min(210px, 56vw); }
+  .shopify-section-header-sticky .header { padding-top: 4px !important; padding-bottom: 4px !important; }
+  .shopify-section-header-sticky .header__heading-logo { max-height: 56px; }
+  .announcement-bar__message { font-size: 1.3rem; padding: 6px 0; letter-spacing: 0; color: #C6FF1F; }
+  .announcement-bar__link .announcement-bar__message, .announcement-bar__link { color: #C6FF1F; }
+  @media (max-width: 749px) { .announcement-bar__message { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; } }
+  /* typography floor */
+  .rte, .product__description, .product__text { font-size: 1.5rem; }
+  .product__info-container .vbo small { color: #5A595A; font-size: 1.3rem; }
+</style>

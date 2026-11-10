@@ -1,0 +1,72 @@
+{%- comment -%} ビリヤード情報 3カラム（NEWS / RESULTS / ハウストーナメント） {%- endcomment -%}
+{%- assign b_news = blogs['news'] -%}
+{%- assign b_res = blogs['results'] -%}
+{%- assign b_ht = blogs['house-tournament'] -%}
+<style>
+.vb .qk{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 0 14px;padding:2px 0}
+.vb .qk::-webkit-scrollbar{display:none}
+.vb .qk a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #0A0A09;background:#fff;color:#0A0A09;font-weight:900;font-size:15px;text-decoration:none;white-space:nowrap}
+.vb .qk a.hot{background:#0A0A09;color:#C6FF1F}
+.vb .qk a.of{background:#FA4E02;border-color:#FA4E02}
+.vb .qk a.nr{background:#00E1FF;border-color:#00E1FF;color:#0A0A09}
+#info .qk a.nr{background:#00E1FF;border-color:#00E1FF;color:#0A0A09;box-shadow:0 0 14px rgba(0,225,255,.5)}
+.vb .qk-all{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px;padding:16px 18px;border-radius:16px;background:#0A0A09;color:#FAFAFA;text-decoration:none}
+.vb .qk-all b{font-size:17px;font-weight:900}
+.vb .qk-all span{font-size:13px;color:#C6FF1F;font-weight:700}
+</style>
+<nav class="qk" aria-label="大会をすぐさがす">
+  <a class="nr" href="/pages/near">📍 近くのビリヤード場</a>
+  <a class="hot" href="/pages/tournaments?date=today">今日の大会</a>
+  <a class="hot" href="/pages/tournaments?date=weekend">今週末</a>
+  <a class="of" href="/pages/tournaments?type=official">公式戦</a>
+  <a href="/pages/tournaments?type=house">ハウス大会</a>
+  <a href="/pages/tournaments?women=1">女性限定</a>
+  <a href="/pages/tournaments?open=1">受付中</a>
+</nav>
+<a class="qk-all" href="/pages/tournaments"><b>大会をさがす</b><span>日付・地域・種目・クラスで絞り込み →</span></a>
+{%- render 'vibes-install', card: true -%}
+<div class="vb-info">
+  <div class="col">
+    <a class="colhead" href="{{ b_news.url | default: '/blogs/news' }}"><span class="k">News</span><span class="j">公式戦・エントリー情報</span></a>
+    {%- render 'vibes-months', compact: true -%}
+    {%- assign n = 0 -%}
+    {%- for article in b_news.articles limit: 4 -%}
+      {%- assign n = n | plus: 1 -%}
+      <a class="post" href="{{ article.url }}" data-game="{%- render 'vibes-game-tag', article: article -%}">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%-m/%-d' }}</time>
+        <span class="t"><span class="bd of">公式戦</span>{{ article.title | remove: '【公式戦】' | escape }}</span>
+      </a>
+    {%- endfor -%}
+    {%- if n == 0 -%}<p class="empty">準備中です。</p>{%- endif -%}
+    <a class="more" href="{{ b_news.url | default: '/blogs/news' }}">NEWSをすべて見る →</a>
+  </div>
+  <div class="col">
+    <a class="colhead" href="{{ b_res.url | default: '/blogs/results' }}"><span class="k">Results</span><span class="j">試合結果（公式戦・ハウス）</span></a>
+    {%- assign n = 0 -%}
+    {%- for article in b_res.articles limit: 4 -%}
+      {%- assign n = n | plus: 1 -%}
+      {%- if article.title contains '【公式戦】' -%}{%- assign bd = 'of' -%}{%- assign bdl = '公式戦' -%}{%- else -%}{%- assign bd = 'ht' -%}{%- assign bdl = 'ハウス' -%}{%- endif -%}
+      <a class="post" href="{{ article.url }}" data-game="{%- render 'vibes-game-tag', article: article -%}">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%-m/%-d' }}</time>
+        <span class="t"><span class="bd {{ bd }}">{{ bdl }}</span>{{ article.title | remove: '【公式戦】' | remove: '【ハウストーナメント結果】' | remove: '【ハウストーナメント】' | escape }}</span>
+      </a>
+    {%- endfor -%}
+    {%- if n == 0 -%}<p class="empty">準備中です。</p>{%- endif -%}
+    <a class="more" href="{{ b_res.url | default: '/blogs/results' }}">RESULTSをすべて見る →</a>
+  </div>
+  <div class="col">
+    <a class="colhead" href="{{ b_ht.url | default: '/blogs/house-tournament' }}"><span class="k">Tournament</span><span class="j">ハウストーナメント（各店舗の大会）</span></a>
+    {%- assign n = 0 -%}
+    {%- for article in b_ht.articles limit: 8 -%}
+      {%- unless article.tags contains 'お知らせ' or n >= 4 -%}
+        {%- assign n = n | plus: 1 -%}
+        <a class="post" href="{{ article.url }}" data-game="{%- render 'vibes-game-tag', article: article -%}">
+          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%-m/%-d' }}</time>
+          <span class="t"><span class="bd ht">ハウス</span>{{ article.title | remove: '【ハウストーナメント】' | escape }}</span>
+        </a>
+      {%- endunless -%}
+    {%- endfor -%}
+    {%- if n == 0 -%}<p class="empty">店舗からの大会情報を募集中です。掲載は無料。<a href="/pages/tournament-form">掲載フォーム →</a></p>{%- endif -%}
+    <a class="more" href="{{ b_ht.url | default: '/blogs/house-tournament' }}">ハウストーナメントをすべて見る →</a>
+  </div>
+</div>

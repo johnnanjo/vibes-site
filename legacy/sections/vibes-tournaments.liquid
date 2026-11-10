@@ -1,0 +1,150 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{%- render 'vibes-t-style' -%}
+{%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+{%- assign ncards = 0 -%}
+{%- capture cards_html -%}
+{%- paginate shop.metaobjects.tournament.values by 250 -%}
+  {%- for t in shop.metaobjects.tournament.values -%}
+    {%- assign endd = t.starts_at.value | date: '%Y%m%d' | plus: 0 -%}
+    {%- if t.ends_at.value != blank -%}
+      {%- assign endh = t.ends_at.value | date: '%H' | plus: 0 -%}
+      {%- if endh < 6 -%}{%- assign endd = t.ends_at.value | date: '%s' | minus: 21600 | date: '%Y%m%d' | plus: 0 -%}{%- else -%}{%- assign endd = t.ends_at.value | date: '%Y%m%d' | plus: 0 -%}{%- endif -%}
+    {%- endif -%}
+    {%- if endd >= today -%}
+      {%- assign ncards = ncards | plus: 1 -%}
+      {%- render 'vibes-t-card', t: t -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endpaginate -%}
+{%- endcapture -%}
+{%- assign wd = '日,月,火,水,木,金,土' | split: ',' -%}
+<style>.vb .tdb-dh.ongoing small{color:#FA4E02}</style>
+<div class="vb">
+<div class="wrap">
+  <section class="tdb-head">
+    <div class="crumbs"><a href="/">Vibes Billiards</a> ／ 大会をさがす</div>
+    <h1 class="h1x">Tournaments</h1>
+    <p>公式戦とハウストーナメントを、日付・地域・種目・クラスで絞り込み</p>
+  </section>
+
+  <div class="tdb-search">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b6b66" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="tdb-q" type="search" inputmode="search" placeholder="大会名・店名・駅名・選手名" aria-label="大会を検索" autocomplete="off">
+  </div>
+
+  <div class="tdb-bar" id="tdb-bar">
+    <div class="tdb-row tdb-day" id="tdb-days" role="group" aria-label="日付"></div>
+    <div class="tdb-row" id="tdb-filters" role="group" aria-label="絞り込み">
+      <button class="chip" data-f="type" data-v="official" type="button">公式戦</button>
+      <button class="chip" data-f="type" data-v="house" type="button">ハウス</button>
+      <button class="chip sel" data-sheet="pref" type="button">地域</button>
+      <button class="chip sel" data-sheet="game" type="button">種目</button>
+      <button class="chip sel" data-sheet="cls" type="button">クラス</button>
+      <button class="chip" data-f="women" data-v="1" type="button">女性限定</button>
+      <button class="chip" data-f="open" data-v="1" type="button">受付中</button>
+    </div>
+  </div>
+
+  <div class="tdb-count" aria-live="polite"><span><b id="tdb-n">{{ ncards }}</b>件・開催日が近い順</span><button type="button" id="tdb-clear" hidden>条件をクリア</button></div>
+
+  <div class="tdb-list" id="tdb-list">
+    {{ cards_html }}
+    <div class="tdb-empty" id="tdb-empty"{% if ncards > 0 %} hidden{% endif %}>
+      <span id="tdb-empty-msg">この条件の大会はまだありません。</span><br>
+      <button type="button" id="tdb-empty-clear">条件をクリアする</button>　／　<a href="/pages/tournament-form">店舗の方は大会を掲載（無料）</a>
+    </div>
+  </div>
+
+  <p class="tdb-note">公式戦は各団体の公式発表をもとに掲載しています（JPBF＝スリークッションのプロ公式戦／NBA関東支部＝関東のスリークッション公式戦・アマチュア・オープン戦／JPBA＝ポケットのプロ公式戦／JAPA＝日本のアマチュアポケット公式戦／JHBA＝日本HeyBall協会のHEYBALL公式戦）。ハウストーナメントは店舗からの掲載依頼と公開情報（すけどん：ポケットのアマチュア向け）をもとに毎日更新。開始日が過ぎた複数日程の大会は「開催中」と表示します。参加の前に、主催者へ最新の情報をご確認ください。</p>
+</div>
+
+<div class="tdb-sheet" id="tdb-sheet" aria-hidden="true">
+  <div class="bg" data-close></div>
+  <div class="pane" role="dialog" aria-modal="true" aria-labelledby="tdb-sheet-h">
+    <h3 id="tdb-sheet-h"></h3>
+    <div id="tdb-sheet-body"></div>
+    <button class="done" type="button" data-close>この条件で見る</button>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var list=document.getElementById('tdb-list'); if(!list) return;
+  var WD=['日','月','火','水','木','金','土'];
+  (function(){ /* 日付順に並べ替え＋日付見出し（Liquidのハンドル参照は20件までのため、並べ替えはここで行う） */
+    var cs=[].slice.call(list.querySelectorAll('.tc')); if(!cs.length) return;
+    cs.sort(function(a,b){ var ka=a.dataset.date+a.dataset.time, kb=b.dataset.date+b.dataset.time; return ka<kb?-1:ka>kb?1:0; });
+    var empty=document.getElementById('tdb-empty'), last='', frag=document.createDocumentFragment();
+    cs.forEach(function(c){ var d=c.dataset.date; if(d!==last){ var p=d.split('-'), w=new Date(Date.UTC(+p[0],+p[1]-1,+p[2])).getUTCDay(); var h=document.createElement('h2'); h.className='tdb-dh'; h.setAttribute('data-dh',d); h.innerHTML=(+p[1])+'月'+(+p[2])+'日（'+WD[w]+'）<small></small>'; frag.appendChild(h); last=d; } frag.appendChild(c); });
+    list.insertBefore(frag, empty);
+  })();
+  var cards=[].slice.call(list.querySelectorAll('.tc')), heads=[].slice.call(list.querySelectorAll('.tdb-dh'));
+  var GAMES=[['pocket','ポケット（すべて）'],['9ball','9ボール'],['10ball','10ボール'],['8ball','8ボール'],['14-1','14-1'],['heyball','HEYBALL（ヘイボール）'],['carom','キャロム（すべて）'],['3cushion','スリークッション'],['1cushion','ワンクッション'],['balkline','ボークライン'],['4ball','四つ球'],['band','バンド'],['snooker','スヌーカー']];
+  var CLS=[['beginner','ビギナー'],['C','C級'],['B','B級'],['A','A級'],['SA','SA級'],['pro','プロ'],['ladies','レディース'],['senior','シニア'],['student','学生'],['junior','ジュニア']];
+  var REG=[['kanto','関東',['東京都','神奈川県','埼玉県','千葉県','茨城県','栃木県','群馬県']],['hokkaido','北海道・東北',['北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県']],['chubu','中部',['新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県']],['kinki','近畿',['三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県']],['west','中国・四国',['鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県']],['kyushu','九州・沖縄',['福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県']]];
+  function jst(off){var d=new Date(Date.now()+9*36e5+(off||0)*864e5);return d.toISOString().slice(0,10);}
+  function dow(s){return new Date(s+'T00:00:00Z').getUTCDay();}
+  var S={date:'',type:'',pref:[],game:[],cls:[],women:'',open:'',q:''};
+  var KEY='vibes-tdb-my';
+  function readURL(){var p=new URLSearchParams(location.search),has=false;['date','type','women','open','q'].forEach(function(k){if(p.get(k)!==null){S[k]=p.get(k);has=true;}});['pref','game','cls'].forEach(function(k){if(p.get(k)){S[k]=p.get(k).split(',');has=true;}});
+    if(!has){try{var m=JSON.parse(localStorage.getItem(KEY)||'null');if(m){S.pref=m.pref||[];S.game=m.game||[];S.cls=m.cls||[];}}catch(e){}}}
+  function writeURL(){var p=new URLSearchParams();['date','type','women','open','q'].forEach(function(k){if(S[k])p.set(k,S[k]);});['pref','game','cls'].forEach(function(k){if(S[k].length)p.set(k,S[k].join(','));});var u=location.pathname+(p.toString()?'?'+p:'');history.replaceState(null,'',u);
+    try{localStorage.setItem(KEY,JSON.stringify({pref:S.pref,game:S.game,cls:S.cls}));}catch(e){}}
+  function range(){var t=jst(0);if(!S.date)return null;if(S.date==='today')return[t,t];if(S.date==='tomorrow'){var m=jst(1);return[m,m];}
+    if(S.date==='weekend'){var w=dow(t),sat=w===0?jst(-1):jst(6-w),sun=w===0?t:jst(7-w);return[sat<t?t:sat,sun];}
+    if(S.date==='week')return[t,jst(6)];if(S.date==='month'){var e=new Date(Date.UTC(+t.slice(0,4),+t.slice(5,7),0)).toISOString().slice(0,10);return[t,e];}
+    if(/^\d{4}-\d{2}-\d{2}$/.test(S.date))return[S.date,S.date];return null;}
+  function match(c,skipDate){var d=c.dataset,r=skipDate?null:range();
+    if(r&&(d.end<r[0]||d.date>r[1]))return false;
+    if(S.type&&d.cat!==S.type)return false;
+    if(S.pref.length&&S.pref.indexOf(d.pref)<0)return false;
+    if(S.game.length){var g=' '+d.games+' ';if(!S.game.some(function(x){return g.indexOf(' '+x+' ')>=0;}))return false;}
+    if(S.cls.length){var k=' '+d.classes+' ';if(k.indexOf(' open ')<0&&!S.cls.some(function(x){return k.indexOf(' '+x+' ')>=0;}))return false;}
+    if(S.women&&d.women!=='1')return false;
+    if(S.open&&d.status!=='open')return false;
+    if(S.q){var q=d.q;if(!S.q.toLowerCase().split(/\s+/).filter(Boolean).every(function(w){return q.indexOf(w)>=0;}))return false;}
+    return true;}
+  function days(){var box=document.getElementById('tdb-days'),h='';var opts=[['','すべて'],['weekend','今週末']];
+    opts.forEach(function(o){h+='<button class="chip'+(S.date===o[0]?' on':'')+'" data-date="'+o[0]+'" type="button">'+o[1]+'</button>';});
+    var base=cards.filter(function(c){return match(c,true);});
+    for(var i=0;i<7;i++){var s=jst(i),w=dow(s),n=base.filter(function(c){return c.dataset.date<=s&&c.dataset.end>=s;}).length;
+      h+='<button class="chip'+(w===6?' sat':w===0?' sun':'')+(S.date===s||(i===0&&S.date==='today')?' on':'')+'" data-date="'+s+'" type="button"><span>'+(i===0?'今日':i===1?'明日':WD[w])+'</span><b>'+(+s.slice(8))+'</b><small>'+n+'件</small></button>';}
+    box.innerHTML=h;}
+  function chips(){[].forEach.call(document.querySelectorAll('#tdb-filters .chip'),function(b){var f=b.dataset.f,sh=b.dataset.sheet;
+      if(f)b.classList.toggle('on',S[f]===b.dataset.v);
+      if(sh){var n=S[sh].length,lab={pref:'地域',game:'種目',cls:'クラス'}[sh];b.classList.toggle('on',n>0);b.textContent=n?lab+'（'+(n===1?label(sh,S[sh][0]):n)+'）':lab;}});}
+  function label(k,v){var L=k==='game'?GAMES:k==='cls'?CLS:null;if(!L)return v.replace(/[都府県]$/,'');for(var i=0;i<L.length;i++)if(L[i][0]===v)return L[i][1];return v;}
+  function apply(){var n=0,seen={},r=range(),t0=jst(0);cards.forEach(function(c){var ok=match(c,false);c.hidden=!ok;if(ok){n++;seen[c.dataset.date]=(seen[c.dataset.date]||0)+1;}});
+    heads.forEach(function(h){var k=seen[h.dataset.dh]||0;h.hidden=!k;var from=r?r[0]:t0,going=k&&h.dataset.dh<from;h.classList.toggle('ongoing',!!going);h.querySelector('small').textContent=k?(going?'開催中（'+k+'件）':k+'件'):'';});
+    document.getElementById('tdb-n').textContent=n;document.getElementById('tdb-empty').hidden=n>0;
+    var any=S.date||S.type||S.pref.length||S.game.length||S.cls.length||S.women||S.open||S.q;document.getElementById('tdb-clear').hidden=!any;
+    days();chips();writeURL();
+    var bar=document.getElementById('tdb-bar');document.documentElement.style.setProperty('--tdb-bar-h',(bar.offsetHeight)+'px');}
+  function clear(){S={date:'',type:'',pref:[],game:[],cls:[],women:'',open:'',q:''};document.getElementById('tdb-q').value='';apply();}
+  var sheet=document.getElementById('tdb-sheet'),cur='';
+  function openSheet(k){cur=k;var body='',H={pref:'地域をえらぶ',game:'種目をえらぶ',cls:'参加クラスをえらぶ'}[k];
+    if(k==='pref'){var have={};cards.forEach(function(c){if(c.dataset.pref)have[c.dataset.pref]=1;});
+      REG.forEach(function(r){var ps=r[2].filter(function(p){return have[p];});if(!ps.length)return;body+='<div class="grp">'+r[1]+'</div><div class="opts">';ps.forEach(function(p){body+=opt(k,p,p);});body+='</div>';});
+      if(!body)body='<p>まだ地域のデータがありません。</p>';}
+    else{var L=k==='game'?GAMES:CLS;body='<div class="opts">';L.forEach(function(o){body+=opt(k,o[0],o[1]);});body+='</div>';if(k==='cls')body+='<p class="tdb-note">「オープン（どなたでも）」の大会は、どのクラスを選んでも表示されます。</p>';}
+    document.getElementById('tdb-sheet-h').textContent=H;document.getElementById('tdb-sheet-body').innerHTML=body;sheet.classList.add('open');sheet.setAttribute('aria-hidden','false');}
+  function opt(k,v,t){return '<button class="chip'+(S[k].indexOf(v)>=0?' on':'')+'" data-k="'+k+'" data-v="'+v+'" type="button">'+t+'</button>';}
+  function closeSheet(){sheet.classList.remove('open');sheet.setAttribute('aria-hidden','true');apply();}
+  document.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+    if(b.closest('#tdb-days')){S.date=b.dataset.date===jst(0)?'today':b.dataset.date;apply();return;}
+    if(b.dataset.f){S[b.dataset.f]=S[b.dataset.f]===b.dataset.v?'':b.dataset.v;apply();return;}
+    if(b.dataset.sheet){openSheet(b.dataset.sheet);return;}
+    if(b.dataset.k){var a=S[b.dataset.k],i=a.indexOf(b.dataset.v);if(i<0)a.push(b.dataset.v);else a.splice(i,1);b.classList.toggle('on',i<0);return;}
+    if(b.hasAttribute('data-close')){closeSheet();return;}
+    if(b.id==='tdb-clear'||b.id==='tdb-empty-clear'){clear();return;}});
+  sheet.querySelector('.bg').addEventListener('click',closeSheet);
+  var qi=document.getElementById('tdb-q'),tm;qi.addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(function(){S.q=qi.value.trim();apply();},150);});
+  readURL();qi.value=S.q;apply();
+})();
+</script>
+{% schema %}
+{ "name": "Vibes Tournaments", "settings": [], "presets": [{ "name": "Vibes Tournaments" }] }
+{% endschema %}

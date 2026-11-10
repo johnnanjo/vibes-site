@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@700&family=Noto+Sans+JP:wght@400;700;900&display=swap">
+{{ 'vibes-home.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-media.css' | asset_url | stylesheet_tag }}
+{{ 'vibes-v21.css' | asset_url | stylesheet_tag }}
+{%- case blog.handle -%}
+  {%- when 'news' -%}{%- assign en = 'News' -%}{%- assign desc = '各団体（JPBA・JPBF・NBA・NBA関東・JAPA）の公式発表をもとにした公式戦のスケジュール、エントリー情報、締切のまとめ。毎月更新しています。' -%}
+  {%- when 'results' -%}{%- assign en = 'Results' -%}{%- assign desc = '公式戦の試合結果と、各店舗から届いたハウストーナメントの結果。公式戦は【公式戦】、店舗の大会は【ハウストーナメント結果】のラベルで区別しています。' -%}
+  {%- when 'house-tournament' -%}{%- assign en = 'Tournament' -%}{%- assign desc = '全国のビリヤード店で開催されるハウストーナメントの情報。店舗の皆さまから掲載フォーム・公式LINEで届いた情報を、そのまま自動で掲載しています。' -%}
+  {%- else -%}{%- assign en = blog.title -%}{%- assign desc = '' -%}
+{%- endcase -%}
+<div class="vb">
+<div class="wrap">
+  <section class="bloghead">
+    <div class="crumbs"><a href="/">Vibes Billiards</a> ／ ビリヤード情報</div>
+    <div class="h1x">{{ en }}</div>
+    <h1 class="h2 ja" style="font-size:15px;font-weight:700;margin:6px 0 0;color:var(--ink)">{{ blog.title | escape }}</h1>
+    {%- if desc != '' -%}<p class="desc">{{ desc }}</p>{%- endif -%}
+    <nav class="tabs" aria-label="情報カテゴリ">
+      <a href="/blogs/news" {% if blog.handle == 'news' %}class="on"{% endif %}>NEWS<small>公式戦・エントリー</small></a>
+      <a href="/blogs/results" {% if blog.handle == 'results' %}class="on"{% endif %}>RESULTS<small>試合結果</small></a>
+      <a href="/blogs/house-tournament" {% if blog.handle == 'house-tournament' %}class="on"{% endif %}>TOURNAMENT<small>ハウストーナメント</small></a>
+    </nav>
+    {%- if blog.handle == 'house-tournament' -%}
+      <div class="storebox"><b>店舗の皆さまへ</b><span>大会情報・試合結果の掲載は無料。フォーム送信で即掲載、公式LINE配信（月・水・金）にも載ります。</span><a href="/pages/tournament-form">掲載フォーム →</a></div>
+    {%- elsif blog.handle == 'results' -%}
+      <div class="legend"><span><span class="bd of">公式戦</span>各団体の公式戦</span><span><span class="bd ht">ハウス</span>店舗のハウストーナメント</span></div>
+    {%- endif -%}
+  </section>
+
+  {%- if blog.handle == 'news' -%}{%- render 'vibes-months' -%}{%- endif -%}
+
+  {%- paginate blog.articles by 12 -%}
+  <section class="bloggrid">
+    {%- for article in blog.articles -%}
+      {%- assign t = article.title -%}
+      {%- if t contains '【公式戦】' -%}{%- assign bd = 'of' -%}{%- assign bdl = '公式戦' -%}
+      {%- elsif t contains '【ハウストーナメント' -%}{%- assign bd = 'ht' -%}{%- assign bdl = 'ハウス' -%}
+      {%- elsif article.tags contains 'お知らせ' -%}{%- assign bd = 'in' -%}{%- assign bdl = 'お知らせ' -%}
+      {%- else -%}{%- assign bd = '' -%}{%- assign bdl = '' -%}{%- endif -%}
+      <a class="entry" href="{{ article.url }}" data-game="{%- render 'vibes-game-tag', article: article -%}">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%Y.%m' }}<b>{{ article.published_at | date: '%d' }}</b></time>
+        <div>
+          <div class="ttl">{%- if bdl != '' -%}<span class="bd {{ bd }}">{{ bdl }}</span>{%- endif -%}{{ t | remove: '【公式戦】' | remove: '【ハウストーナメント結果】' | remove: '【ハウストーナメント】' | escape }}</div>
+          {%- assign ex = article.excerpt_or_content | strip_html | strip_newlines | truncate: 110 -%}
+          {%- if ex != '' -%}<div class="ex">{{ ex }}</div>{%- endif -%}
+          {%- if article.tags.size > 0 -%}<div class="tg">{%- for tag in article.tags limit: 4 -%}<span>#{{ tag | escape }}</span>{%- endfor -%}</div>{%- endif -%}
+        </div>
+      </a>
+    {%- else -%}
+      <p class="note" style="padding:24px 0">まだ記事がありません。</p>
+    {%- endfor -%}
+  </section>
+  {%- if paginate.pages > 1 -%}
+    <nav class="pgn" aria-label="ページ">
+      {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">←</a>{%- endif -%}
+      {%- for part in paginate.parts -%}
+        {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>{%- else -%}<span class="cur">{{ part.title }}</span>{%- endif -%}
+      {%- endfor -%}
+      {%- if paginate.next -%}<a href="{{ paginate.next.url }}">→</a>{%- endif -%}
+    </nav>
+  {%- endif -%}
+  {%- endpaginate -%}
+
+  <section id="line-sec" style="border-top:0;padding-top:28px">
+    {%- render 'vibes-line' -%}
+  </section>
+</div>
+</div>
+{% schema %}
+{ "name": "Vibes Blog", "settings": [], "presets": [{ "name": "Vibes Blog" }] }
+{% endschema %}

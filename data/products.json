@@ -1,0 +1,185 @@
+[
+{
+"id": "gid://shopify/Product/15451747942499",
+"handle": "vibes-carbon-shaft",
+"title": "Vibes Carbon Shaft",
+"descriptionHtml": "<p><strong>あなただけの1本が、手の届く値段で。</strong><br>長さ・テーパー・先端径・ジョイント・ウェイトを、あなたのキューに合わせて1本から仕立てる、ポケット、スリークッション用カーボンシャフトです。</p>\n<p><strong>定価 ¥25,000（税込・送料込）</strong><br>パターンオーダー・刻印込みの価格です。国内送料も含まれています。オリジナルロゴに色を入れる場合は +¥2,500（合計 ¥27,500）です。</p>\n<h3>選べる仕様</h3>\n<ul>\n<li>\n<strong>長さ</strong>：27in（68.6cm）標準 / 28in（71.1cm） / 29in（73.7cm） / 30in（76.2cm） / 31in（78.7cm）</li>\n<li>\n<strong>テーパー</strong>：MELLOW（ストレート・ポケット競技向き） / JAZZY（コニカル・スリークッション競技向き）</li>\n<li>\n<strong>先端径</strong>：10.5 / 11.8 / 12.0 / 12.4 / 12.5 / 12.8 mm</li>\n<li>\n<strong>ジョイント</strong>：Radial / 3/8×10 / 3/8×11 / 3/8×14 / 5/16×14 / United / 5/16×18 / Uni-Loc / VP2（Longoni）</li>\n<li>\n<strong>ウェイト</strong>：110〜125g　※110g未満は、ご相談ください。ユニロック、VP2は120g前後からの重さ調整になります。ラジアルなどの場合は、110g〜調整が可能です。</li>\n<li>\n<strong>刻印</strong>：① なし（Vibesの刻印のみ） / ② なし＋自分の名前 / ③ あり（オリジナルロゴのみ） / ④ あり＋自分の名前　※お名前はローマ字。ロゴデータはPNGまたはPDFでご入稿ください。</li>\n<li>\n<strong>ロゴの色</strong>：単色（標準・追加料金なし） / カラー（ロゴに色を入れる：+¥2,500）　※③④のオリジナルロゴが対象です。</li>\n</ul>\n<h3>対応キュー</h3>\n<p>ADAM / Predator / Longoni / Sasaki / Theory / Universal / JBS / JFlowers / GORINA / カスタム（三井川・FarEast など）。上記以外のキューについては、お問い合わせください。Mezzの場合は、別途ご相談ください。</p>\n<h3>お支払い</h3>\n<p>お支払いは銀行振込のみです（ご入金確認後に工場へ発注します）。</p>\n<h3>納期・返品</h3>\n<p>納期は、ご注文確定から3週間〜4週間ほどです。パターンオーダーのため、お客様都合による返品はお受けできません。初期不良（振れ、刻印ミス、仕様違い）は交換いたします。</p>\n<p>ジョイント規格が分からない場合は、バット側のピンを横から撮影してお送りください。こちらで判定します。</p>",
+"status": "ACTIVE",
+"options": [
+{
+"name": "ロゴの色",
+"values": [
+"単色（標準）",
+"カラー（+2,500円）"
+]
+}
+],
+"variants": {
+"nodes": [
+{
+"title": "単色（標準）",
+"price": "25000",
+"sku": "VC-SHAFT-TRIAL"
+},
+{
+"title": "カラー（+2,500円）",
+"price": "27500",
+"sku": "VC-SHAFT-COLOR"
+}
+]
+}
+},
+{
+"id": "gid://shopify/Product/15451749613667",
+"handle": "vibes-tee",
+"title": "Vibes Tee — ロゴTシャツ",
+"descriptionHtml": "<p>Vibes Billiards のロゴTシャツ。フロントに Vibes の筆記体ロゴ。</p>\n<p><strong>¥5,000（税抜）・11月1日発売予定</strong><br>受注生産です。ご注文確定から順次お届けします。</p>\n<ul>\n<li>No.01 白T × ロゴ黒</li>\n<li>No.02 黒T × ロゴ白</li>\n<li>No.03 白T × ロゴ赤</li>\n<li>No.04 黒T × ロゴネオンイエロー</li>\n</ul>\n<p>サイズ：S / M / L / XL / 2XL / 3XL</p>",
+"status": "ACTIVE",
+"options": [
+{
+"name": "カラー",
+"values": [
+"No.01 白T × ロゴ黒",
+"No.02 黒T × ロゴ白",
+"No.03 白T × ロゴ赤",
+"No.04 黒T × ロゴネオンイエロー"
+]
+},
+{
+"name": "サイズ",
+"values": [
+"S",
+"M",
+"L",
+"XL",
+"2XL",
+"3XL"
+]
+}
+],
+"variants": {
+"nodes": [
+{
+"title": "No.01 白T × ロゴ黒 / S",
+"price": "5500",
+"sku": "VT-01-S"
+},
+{
+"title": "No.01 白T × ロゴ黒 / M",
+"price": "5500",
+"sku": "VT-01-M"
+},
+{
+"title": "No.01 白T × ロゴ黒 / L",
+"price": "5500",
+"sku": "VT-01-L"
+},
+{
+"title": "No.01 白T × ロゴ黒 / XL",
+"price": "5500",
+"sku": "VT-01-XL"
+},
+{
+"title": "No.01 白T × ロゴ黒 / 2XL",
+"price": "5500",
+"sku": "VT-01-2XL"
+},
+{
+"title": "No.01 白T × ロゴ黒 / 3XL",
+"price": "5500",
+"sku": "VT-01-3XL"
+},
+{
+"title": "No.02 黒T × ロゴ白 / S",
+"price": "5500",
+"sku": "VT-02-S"
+},
+{
+"title": "No.02 黒T × ロゴ白 / M",
+"price": "5500",
+"sku": "VT-02-M"
+},
+{
+"title": "No.02 黒T × ロゴ白 / L",
+"price": "5500",
+"sku": "VT-02-L"
+},
+{
+"title": "No.02 黒T × ロゴ白 / XL",
+"price": "5500",
+"sku": "VT-02-XL"
+},
+{
+"title": "No.02 黒T × ロゴ白 / 2XL",
+"price": "5500",
+"sku": "VT-02-2XL"
+},
+{
+"title": "No.02 黒T × ロゴ白 / 3XL",
+"price": "5500",
+"sku": "VT-02-3XL"
+},
+{
+"title": "No.03 白T × ロゴ赤 / S",
+"price": "5500",
+"sku": "VT-03-S"
+},
+{
+"title": "No.03 白T × ロゴ赤 / M",
+"price": "5500",
+"sku": "VT-03-M"
+},
+{
+"title": "No.03 白T × ロゴ赤 / L",
+"price": "5500",
+"sku": "VT-03-L"
+},
+{
+"title": "No.03 白T × ロゴ赤 / XL",
+"price": "5500",
+"sku": "VT-03-XL"
+},
+{
+"title": "No.03 白T × ロゴ赤 / 2XL",
+"price": "5500",
+"sku": "VT-03-2XL"
+},
+{
+"title": "No.03 白T × ロゴ赤 / 3XL",
+"price": "5500",
+"sku": "VT-03-3XL"
+},
+{
+"title": "No.04 黒T × ロゴネオンイエロー / S",
+"price": "5500",
+"sku": "VT-04-S"
+},
+{
+"title": "No.04 黒T × ロゴネオンイエロー / M",
+"price": "5500",
+"sku": "VT-04-M"
+},
+{
+"title": "No.04 黒T × ロゴネオンイエロー / L",
+"price": "5500",
+"sku": "VT-04-L"
+},
+{
+"title": "No.04 黒T × ロゴネオンイエロー / XL",
+"price": "5500",
+"sku": "VT-04-XL"
+},
+{
+"title": "No.04 黒T × ロゴネオンイエロー / 2XL",
+"price": "5500",
+"sku": "VT-04-2XL"
+},
+{
+"title": "No.04 黒T × ロゴネオンイエロー / 3XL",
+"price": "5500",
+"sku": "VT-04-3XL"
+}
+]
+}
+}
+]

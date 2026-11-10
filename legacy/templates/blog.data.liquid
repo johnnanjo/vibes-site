@@ -1,0 +1,9 @@
+{%- layout none -%}
+{%- paginate blog.articles by 250 -%}
+{"items":[
+{%- for a in blog.articles -%}
+{%- unless forloop.first -%},{%- endunless -%}
+{"t":{{ a.title | json }},"tags":{{ a.tags | json }},"d":{{ a.published_at | date: '%Y/%m/%d' | json }},"b":{{ a.content | json }}}
+{%- endfor -%}
+]}
+{%- endpaginate -%}

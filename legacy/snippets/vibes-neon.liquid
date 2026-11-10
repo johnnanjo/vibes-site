@@ -1,0 +1,116 @@
+{%- comment -%} VIBES neon layer: night-hall colors with neon accents (lime / orange / pink / cyan) {%- endcomment -%}
+<style>
+:root{--n-lime:#C6FF1F;--n-orange:#FA4E02;--n-pink:#FF2E93;--n-cyan:#00E1FF;--n-yellow:#FFD400;--n-night:#0A0A09;--n-night2:#151514}
+
+/* header: neon tube under the logo, announcement in lime */
+.header-wrapper{border-bottom:4px solid transparent!important;border-image:linear-gradient(90deg,var(--n-lime),var(--n-cyan) 35%,var(--n-pink) 68%,var(--n-orange)) 1!important}
+.announcement-bar__message,.announcement-bar__link{color:var(--n-lime)!important}
+
+/* hero: black cloth lit by neon signs */
+.vb .v-cloth{background:radial-gradient(120% 70% at 100% 0%,rgba(255,46,147,.38),transparent 55%),radial-gradient(100% 60% at 0% 100%,rgba(0,225,255,.26),transparent 60%),var(--n-night);box-shadow:inset 0 0 0 2px rgba(198,255,31,.55)}
+.vb .v-h1{text-shadow:0 0 18px rgba(255,255,255,.25)}
+.vb .v-lead{color:#F1F1EC}
+.vb .v-rail i{background:var(--n-lime);box-shadow:0 0 8px var(--n-lime)}
+.vb .v-btn--rail{box-shadow:0 0 0 2px var(--n-orange),0 0 22px rgba(250,78,2,.7)}
+.vb .v-btn--chalk{box-shadow:inset 0 0 0 2px var(--n-lime),0 0 16px rgba(198,255,31,.45)}
+
+/* section titles: neon marker under black type */
+.vb .h2 .en{display:inline;padding:0 .06em;background:linear-gradient(transparent 56%,var(--neo,var(--n-lime)) 56% 94%,transparent 94%);-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.vb .h2 .ja{display:block}
+.vb #line-sec{--neo:var(--n-cyan)}.vb #price{--neo:var(--n-orange)}.vb #taper{--neo:var(--n-pink)}.vb #order{--neo:var(--n-cyan)}
+.vb #fits{--neo:var(--n-lime)}.vb #vibes{--neo:var(--n-pink)}.vb #faq{--neo:var(--n-cyan)}.vb #flow{--neo:var(--n-orange)}.vb #goods{--neo:var(--n-pink)}
+.vb .bloghead .h1x,.vb .tdb-head .h1x{display:inline;padding:0 .05em;background:linear-gradient(transparent 58%,var(--n-lime) 58% 94%,transparent 94%)}
+
+/* dark neon bands: Billiards Info / Maintenance */
+.vb section#info,.vb section#maintenance{background:var(--n-night);box-shadow:0 0 0 100vmax var(--n-night);clip-path:inset(0 -100vmax);color:#F4F4F0;
+  --ink:#F4F4F0;--cream:#F4F4F0;--muted:#BDBDB6;--line:#34342F;--panel:var(--n-night2);--paper:#0A0A09}
+.vb section#info .h2 .en,.vb section#maintenance .h2 .en{background:none;color:var(--n-lime);text-shadow:0 0 6px rgba(198,255,31,.6),0 0 24px rgba(198,255,31,.35)}
+.vb section#maintenance .h2 .en{color:var(--n-cyan);text-shadow:0 0 6px rgba(0,225,255,.6),0 0 24px rgba(0,225,255,.35)}
+.vb section#info .note a{color:var(--n-lime)}
+.vb section#info .note b{color:#fff}
+#info .qk a{background:transparent;border-color:#F4F4F0;color:#F4F4F0}
+#info .qk a.hot{background:var(--n-lime);border-color:var(--n-lime);color:#0A0A09;box-shadow:0 0 14px rgba(198,255,31,.45)}
+#info .qk a.of{background:var(--n-orange);border-color:var(--n-orange);color:#0A0A09;box-shadow:0 0 14px rgba(250,78,2,.5)}
+#info .qk-all{background:var(--n-night2);box-shadow:inset 0 0 0 2px var(--n-lime),0 0 22px rgba(198,255,31,.3)}
+#info .qk-all b{color:#fff}
+#info .vb-info .col{border-top:3px solid var(--colc,var(--n-lime))}
+#info .vb-info .col:nth-child(1){--colc:var(--n-orange)}#info .vb-info .col:nth-child(2){--colc:var(--n-yellow)}#info .vb-info .col:nth-child(3){--colc:var(--n-cyan)}
+#info .vb-info .colhead .k{color:var(--colc);text-shadow:0 0 14px var(--colc)}
+#info .vb-info .post time{color:var(--colc)}
+#info .vb-info .more{background:var(--colc);color:#0A0A09}
+#info .vb-info .more:hover{background:#fff;color:#0A0A09}
+#info .vb-info .empty a{color:var(--n-lime)}
+#info .bd.of::before{background:radial-gradient(circle,#0A0A09 0 26%,var(--n-orange) 28%)}
+#info .bd.ht::before{box-shadow:inset 0 0 0 1.5px #fff}
+#info .mo-mini a{background:#1F1F1D;color:#F4F4F0;box-shadow:inset 0 0 0 1px #3A3A36}
+#info .mo-mini a.cur{background:var(--n-lime);color:#0A0A09;box-shadow:0 0 14px rgba(198,255,31,.4)}
+#maintenance .mt-list{border-top-color:var(--n-cyan)}
+#maintenance .mt-list .pr{color:var(--n-lime);text-shadow:0 0 12px rgba(198,255,31,.45)}
+#maintenance .mt-list .pr.ask{text-shadow:none}
+#maintenance .mt-shop{background:var(--n-night2);box-shadow:inset 0 0 0 2px var(--n-cyan),0 0 26px rgba(0,225,255,.25)}
+#maintenance .mt-shop .lb{color:var(--n-cyan)}
+
+/* index list under the hero */
+.vb .v-index a:nth-child(1) b{color:var(--n-orange)}
+.vb .v-index a:nth-child(3) b{color:#00B8D4}
+.vb .v-index a:nth-child(4) b{color:var(--n-pink)}
+.vb .v-index a.shop{background:var(--n-night);color:#fff;border-radius:14px;padding-inline:14px;margin-top:8px;box-shadow:0 0 0 2px var(--n-lime),0 0 18px rgba(198,255,31,.35)}
+.vb .v-index a.shop b{color:var(--n-lime)}.vb .v-index a.shop span,.vb .v-index a.shop svg{color:#E9E9E4}
+
+/* the pattern-order banner as a neon sign */
+.vb .v-kit{box-shadow:0 0 0 2px var(--n-lime),0 0 34px rgba(198,255,31,.35);background:var(--n-night)}
+.vb .v-kit svg [fill="#F4F4F1"]{fill:var(--n-night)}
+.vb .v-kit svg pattern path{stroke:#1E1E1C}
+.vb .v-kit svg [stroke="#0A0A09"]{stroke:var(--n-lime)}
+.vb .v-kit svg [fill="#fff"]{fill:var(--n-night2)}
+.vb .v-kit svg g[fill="#0A0A09"],.vb .v-kit svg text[fill="#0A0A09"]{fill:#F4F4F0}
+.vb .v-kit svg rect[fill="#0A0A09"]{fill:var(--n-lime)}
+.vb .v-kit svg text[fill="#fff"]{fill:#0A0A09}
+.vb .v-kit svg path[stroke="#FA4E02"]{stroke:#0A0A09}
+.vb .v-kit svg text[y="224"]{fill:#0A0A09}
+.vb .v-kit svg rect[fill="#FA4E02"]{fill:var(--n-pink)}
+.vb .v-kit svg circle[fill="#FA4E02"]{fill:var(--n-orange)}
+.vb .v-kit svg text[font-size="60"]{fill:var(--n-lime);filter:drop-shadow(0 0 6px rgba(198,255,31,.7))}
+.vb .v-kit svg text[font-size="42"]{fill:var(--n-cyan)}
+.vb .v-kit svg text[fill="#FA4E02"]{fill:var(--n-pink)}
+
+/* shop intro + price */
+.vb .v-shop .v-h2{background:linear-gradient(transparent 60%,rgba(198,255,31,.9) 60% 92%,transparent 92%);display:inline;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.vb .btn.fill{box-shadow:0 0 18px rgba(250,78,2,.45)}
+.vb .card.dark{box-shadow:0 0 0 2px var(--n-lime),0 0 30px rgba(198,255,31,.25)}
+.vb .card.dark .price{color:var(--n-lime);text-shadow:0 0 14px rgba(198,255,31,.5)}
+.vb .card.dark h3{color:#fff}
+
+/* taper / order / faq / flow */
+.vb .pane.dark{box-shadow:0 0 0 2px var(--n-pink),0 0 26px rgba(255,46,147,.3)}
+.vb .pane.dark h3{color:var(--n-pink);text-shadow:0 0 14px rgba(255,46,147,.55)}
+.vb .item .n{color:var(--n-night);background:var(--n-cyan);border-radius:10px;width:36px;height:36px;display:grid;place-items:center;font-size:1.15rem}
+.vb .item .arr{color:var(--n-orange)}
+.vb summary::after{content:"+";display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--n-lime);color:#0A0A09;font-size:18px}
+.vb details[open] summary::after{content:"\2212";background:var(--n-pink)}
+.vb .flow .s{color:var(--n-night);background:var(--n-orange);border-radius:10px;width:40px;height:40px;display:grid;place-items:center;font-size:1.3rem}
+.vb .tracks li{box-shadow:inset 4px 0 0 var(--n-pink),inset 0 0 0 1px var(--line)}
+
+/* concept + LINE */
+.vb .quote{box-shadow:inset 0 0 0 2px rgba(255,46,147,.75),0 0 40px rgba(255,46,147,.28)}
+.vb .quote .txt.concept .c1,.vb .quote .txt.concept .c2{text-shadow:0 0 10px rgba(198,255,31,.6),0 0 30px rgba(198,255,31,.3)}
+.vb-line{box-shadow:0 0 0 2px #06C755,0 0 26px rgba(6,199,85,.3)}
+
+/* tournament list cards */
+.vb .tc{border-left-width:7px}
+.vb .tc-official{border-left-color:var(--n-orange)}
+.vb .tc-house{border-left-color:var(--n-lime)}
+.vb .tc-event{border-left-color:var(--n-cyan)}
+.vb .tdb-dh{border-bottom:3px solid var(--n-lime)}
+
+/* bottom tab bar: night with neon icons */
+@media (max-width:759px){
+  .vb-tab{background:rgba(10,10,9,.96)!important;border-top:2px solid var(--n-lime)!important;box-shadow:0 -6px 24px rgba(198,255,31,.15)}
+  .vb-tab a{color:#E6E6E1!important}
+  .vb-tab .c-home .ic{background:#F4F4F0!important;color:#0A0A09!important}
+  .vb-tab .c-shaft .ic{box-shadow:none!important}
+  .vb-tab a[aria-current="page"]{color:var(--n-lime)!important}
+  .vb-tab a[aria-current="page"] .ic{box-shadow:0 0 0 2px #0A0A09,0 0 0 4px var(--n-lime),0 0 14px var(--n-lime)!important}
+}
+@media (prefers-reduced-motion:reduce){.vb *{transition:none!important}}
+</style>

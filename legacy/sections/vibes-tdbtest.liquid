@@ -1,0 +1,20 @@
+<pre id="tdbtest">
+{%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+{%- assign keys = '' -%}
+{%- paginate shop.metaobjects.tournament.values by 250 -%}
+  {%- for t in shop.metaobjects.tournament.values -%}
+    {%- assign endd = t.starts_at.value | date: '%Y%m%d' | plus: 0 -%}
+    {%- if endd >= today -%}
+      {%- assign k = t.starts_at.value | date: '%Y%m%d%H%M' -%}
+      {%- assign keys = keys | append: k | append: '~' | append: t.system.handle | append: ',' -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endpaginate -%}
+{%- assign keys = keys | split: ',' | sort -%}
+{%- for key in keys -%}
+  {%- assign h = key | split: '~' | last -%}
+  {%- assign t = shop.metaobjects.tournament[h] -%}
+{{ forloop.index }} key={{ key }} -> h={{ h }} t={{ t.system.handle }} d={{ t.starts_at.value | date: '%Y-%m-%d' }}
+{%- endfor -%}
+</pre>
+{% schema %}{ "name": "tdbtest", "settings": [] }{% endschema %}

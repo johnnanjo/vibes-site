@@ -1,0 +1,423 @@
+{%- assign shaft = all_products['vibes-carbon-shaft'] -%}
+{%- assign shaft_url = shaft.url | default: '/products/vibes-carbon-shaft' -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+.sx{--paper:#F4F4F2;--ink:#0A0A09;--grey:#E7E7E3;--line:#D6D6D1;--muted:#5C5C58;--acc:#FA4E02;--white:#FFFFFF;
+  --lat:"Inter Tight","Noto Sans JP",system-ui,sans-serif;--jp:"Noto Sans JP",system-ui,sans-serif;
+  --r:24px;--rs:16px;
+  background:var(--paper);color:var(--ink);font-family:var(--jp);font-size:15px;line-height:1.8;letter-spacing:0;
+  -webkit-font-smoothing:antialiased;margin:0;padding:0 0 110px}
+.sx *,.sx *::before,.sx *::after{box-sizing:border-box}
+.sx a{color:inherit}
+.sx h1,.sx h2,.sx h3{color:inherit;margin:0}
+.sx p{margin:0}
+.sx .w{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* type */
+.sx .lat{font-family:var(--lat);font-weight:600;letter-spacing:-.035em;line-height:.95}
+.sx .t-xl{font-family:var(--lat);font-weight:600;letter-spacing:-.04em;line-height:.92;font-size:clamp(54px,15vw,132px);margin:0}
+.sx .t-l{font-family:var(--lat);font-weight:600;letter-spacing:-.035em;line-height:.95;font-size:clamp(40px,10vw,84px);margin:0}
+.sx .t-jp{font-family:var(--jp);font-weight:700;letter-spacing:-.02em;line-height:1.3;font-size:clamp(24px,6.2vw,44px);margin:0}
+.sx .t-m{font-family:var(--jp);font-weight:700;letter-spacing:-.01em;line-height:1.3;font-size:clamp(18px,4.6vw,24px);margin:0}
+.sx .mono{font-family:var(--lat);font-weight:600;letter-spacing:-.02em}
+.sx .micro{font-size:11px;font-weight:500;line-height:1.5;color:var(--muted)}
+.sx .idx{display:block;font-family:var(--lat);font-weight:500;font-size:11px;letter-spacing:0;color:var(--muted);margin-bottom:6px}
+.sx .lead{font-size:15px;line-height:1.85;color:var(--ink)}
+.sx .sm{font-size:13.5px;line-height:1.8;color:var(--muted)}
+.sx .ast{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--ink);color:var(--acc);font-family:var(--lat);font-size:30px;line-height:1;font-weight:600}
+.sx .ast.on-dark{background:transparent;color:var(--acc);font-size:38px;width:auto;height:auto}
+/* meta band */
+.sx .meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;padding:14px 0 10px;border-bottom:1px solid var(--line);font-size:11px;font-weight:500;color:var(--ink);line-height:1.45}
+.sx .meta span{display:block;color:var(--muted);font-size:10.5px}
+.sx .meta .yr{text-align:right;font-family:var(--lat);font-size:13px;font-weight:600;letter-spacing:-.02em}
+@media (min-width:760px){.sx .meta{grid-template-columns:1.2fr 1fr 1fr auto;padding:18px 0 12px}}
+/* cards */
+.sx .card{border-radius:var(--r);padding:22px 20px;background:var(--grey);color:var(--ink);min-width:0}
+.sx .card.ink{background:var(--ink);color:var(--white)}
+.sx .card.ink .sm,.sx .card.ink .micro,.sx .card.ink .idx{color:#B9B9B4}
+.sx .card.acc{background:var(--acc);color:var(--white)}
+.sx .card.acc .sm,.sx .card.acc .micro,.sx .card.acc .idx{color:rgba(255,255,255,.85)}
+.sx .card.paper{background:var(--white);box-shadow:inset 0 0 0 1px var(--line)}
+.sx .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;line-height:1.3;background:var(--white);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.sx .pill.acc{background:var(--acc);color:var(--white);box-shadow:none}
+.sx .pill.ink{background:var(--ink);color:var(--white);box-shadow:none}
+/* buttons */
+.sx .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 26px;border-radius:999px;font-family:var(--jp);font-size:16px;font-weight:700;text-decoration:none;letter-spacing:-.01em;transition:transform .15s ease}
+.sx .btn:active{transform:scale(.98)}
+.sx .btn.acc{background:var(--acc);color:var(--white)}
+.sx .btn.ink{background:var(--ink);color:var(--white)}
+.sx .btn.line{box-shadow:inset 0 0 0 1.5px var(--ink);color:var(--ink)}
+.sx .btn.line.on-dark{box-shadow:inset 0 0 0 1.5px var(--white);color:var(--white)}
+.sx .btns{display:grid;gap:10px;margin-top:22px}
+@media (min-width:560px){.sx .btns{grid-template-columns:auto auto;justify-content:start}}
+/* section rhythm */
+.sx section{padding:46px 0 0}
+.sx .head{display:grid;gap:14px;margin-bottom:22px}
+@media (min-width:860px){.sx .head.two{grid-template-columns:1fr 1fr;align-items:end;gap:32px}}
+/* hero */
+.sx .hero{padding-top:26px}
+.sx .hero .tag{font-size:16px;font-weight:500;line-height:1.6;color:var(--muted);max-width:26em}
+.sx .hero .tag b{font-weight:700;color:var(--ink)}
+.sx .stats{display:flex;flex-wrap:wrap;gap:8px 30px;margin:18px 0 6px}
+.sx .stats div{line-height:1.1}
+.sx .stats b{display:block;font-family:var(--lat);font-weight:600;font-size:clamp(30px,7.8vw,44px);letter-spacing:-.04em}
+.sx .stats small{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-top:6px}
+.sx .hero .t-xl{margin-top:10px}
+@media (min-width:860px){.sx .hero .top{display:grid;grid-template-columns:1fr 1.3fr;gap:32px;align-items:end}.sx .hero .t-xl{margin-top:0;text-align:right}}
+.sx .board{position:relative;overflow:hidden;margin-top:22px;padding:26px 22px 120px;display:grid;gap:18px}
+.sx .board .ast{position:absolute;right:20px;top:18px}
+.sx .board .ball{position:absolute;right:-50px;bottom:-96px;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,#FFFFFF 0 5%,#E6E6E1 6% 26%,#BDBDB8 44%,#73736F 66%,#2E2E2C 86%,#141413 100%);
+  box-shadow:0 30px 60px rgba(0,0,0,.6)}
+.sx .board .t-jp{max-width:14em;position:relative;z-index:1}
+.sx .board .cols{display:grid;gap:12px;position:relative;z-index:1}
+.sx .board .cols p{font-size:13px;line-height:1.75;color:#D5D5D0;max-width:26em}
+@media (min-width:760px){.sx .board{padding:40px 300px 44px 44px;grid-template-columns:1.15fr .85fr;align-items:end}.sx .board .cols{grid-template-columns:1fr;gap:12px}.sx .board .t-jp{font-size:36px}.sx .board .ball{width:340px;height:340px;right:-50px;bottom:-130px}}
+/* index 01-04 */
+.sx .ix{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sx .ix a{display:flex;flex-direction:column;justify-content:space-between;min-height:190px;padding:18px 16px 16px;border-radius:var(--r);text-decoration:none;position:relative;overflow:hidden}
+.sx .ix .n{font-family:var(--lat);font-weight:600;font-size:52px;letter-spacing:-.05em;line-height:1;margin-top:28px;padding-bottom:8px;border-bottom:2px solid currentColor;align-self:start}
+.sx .ix .t{font-size:16px;font-weight:700;line-height:1.3}
+.sx .ix .d{font-size:12px;line-height:1.65;margin-top:6px;opacity:.78}
+.sx .ix .b2{position:absolute;right:-40px;top:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle at 40% 36%,#4A4A46 0 8%,#1E1E1C 50%,#0A0A09 100%);box-shadow:inset -10px -14px 30px rgba(255,255,255,.08)}
+@media (min-width:760px){.sx .ix{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.sx .ix a{min-height:250px;padding:22px 20px 20px}.sx .ix .n{font-size:64px}}
+/* why: stacked boxes */
+.sx .why{display:grid;gap:22px}
+.sx .why .boxes{display:grid;gap:10px}
+.sx .why .box{border-radius:var(--rs);padding:16px 16px 14px}
+.sx .why .box b{display:block;font-size:15px;font-weight:700;line-height:1.4;margin-bottom:4px}
+.sx .why .box p{font-size:12.5px;line-height:1.7;opacity:.85}
+@media (min-width:860px){.sx .why{grid-template-columns:1fr 1fr;align-items:center;gap:40px}.sx .why .boxes{order:-1}}
+/* price */
+.sx .price-g{display:grid;gap:12px}
+@media (min-width:860px){.sx .price-g{grid-template-columns:1.05fr .95fr}}
+.sx .big{font-family:var(--lat);font-weight:600;font-size:clamp(52px,14vw,88px);letter-spacing:-.05em;line-height:.95;margin:16px 0 4px}
+.sx .big small{font-family:var(--jp);font-size:12px;font-weight:700;letter-spacing:0;margin-left:10px;color:#B9B9B4}
+.sx .rows{list-style:none;margin:16px 0 0;padding:0;font-size:14px}
+.sx .rows li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid rgba(255,255,255,.14)}
+.sx .rows li:last-child{border-bottom:1px solid rgba(255,255,255,.14);font-weight:700}
+.sx .rows li span:last-child{font-family:var(--lat);font-weight:600;letter-spacing:-.02em;font-size:15px;white-space:nowrap}
+.sx .cmp{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+.sx .cmp th,.sx .cmp td{text-align:left;padding:10px 6px;border-top:1px solid var(--line);vertical-align:top;line-height:1.5}
+.sx .cmp th{color:var(--muted);font-weight:500;width:26%}
+.sx .cmp thead th{border-top:0;font-size:11px;font-weight:500;padding-top:0}
+.sx .cmp td.me{font-weight:700}
+.sx .cmp td.me::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--acc);margin-right:8px;vertical-align:1px}
+.sx .cmp .num{font-family:var(--lat);font-weight:600;font-size:15px;letter-spacing:-.02em}
+/* taper */
+.sx .tp{display:grid;gap:12px}
+@media (min-width:760px){.sx .tp{grid-template-columns:1fr 1fr}}
+.sx .tp .card{display:grid;gap:8px;align-content:start}
+.sx .tp h3{font-family:var(--lat);font-weight:600;font-size:clamp(38px,10vw,64px);letter-spacing:-.04em;line-height:.95;margin:4px 0 2px}
+.sx .tp svg{display:block;width:100%;height:auto;margin:6px 0 4px}
+.sx .tp p{font-size:14px;line-height:1.7}
+.sx .cmpfig{margin-top:12px;padding:18px 20px 14px}
+.sx .cmpfig svg{display:block;width:100%;height:auto}
+.sx .cmpfig .lg{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;font-weight:700;margin-top:8px}
+.sx .cmpfig .lg span::before{content:"";display:inline-block;width:14px;height:3px;margin-right:6px;vertical-align:middle;border-radius:2px}
+.sx .cmpfig .lg .a::before{background:var(--ink)}.sx .cmpfig .lg .b::before{background:var(--acc)}
+.sx .after{display:grid;gap:16px;margin-top:22px;align-items:end}
+@media (min-width:860px){.sx .after{grid-template-columns:1fr auto}}
+/* build yours */
+.sx .by{display:grid;gap:22px}
+@media (min-width:860px){.sx .by{grid-template-columns:.9fr 1.1fr;gap:40px;align-items:start}}
+.sx .opts{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.sx .opts a{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:14px 2px;border-bottom:1px solid var(--line);text-decoration:none}
+.sx .opts .k{font-family:var(--lat);font-weight:500;font-size:12px;color:var(--muted)}
+.sx .opts .t{font-size:15.5px;font-weight:700;line-height:1.3}
+.sx .opts .d{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:2px}
+.sx .opts .arr{width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--white);display:grid;place-items:center;font-family:var(--lat);font-size:16px}
+.sx .opts a:hover .arr{background:var(--acc);color:var(--white)}
+.sx .badge{display:inline-grid;align-content:center;justify-items:start;padding:14px 16px;border-radius:18px;background:var(--acc);color:var(--white);line-height:1}
+.sx .badge b{font-family:var(--lat);font-weight:600;font-size:36px;letter-spacing:-.04em}
+.sx .badge small{font-size:11px;font-weight:500;margin-top:4px}
+/* fits */
+.sx .chips{display:flex;flex-wrap:wrap;gap:8px}
+.sx .chips span{padding:10px 16px;border-radius:999px;background:var(--white);box-shadow:inset 0 0 0 1px var(--line);font-size:14px;font-weight:700;line-height:1.3}
+.sx .chips span small{font-weight:500;color:var(--muted);margin-left:6px;font-size:11px}
+/* flow */
+.sx .flow{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.sx .flow li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:16px 16px;border-radius:var(--rs);background:var(--white);box-shadow:inset 0 0 0 1px var(--line)}
+.sx .flow .s{font-family:var(--lat);font-weight:600;font-size:24px;letter-spacing:-.04em;line-height:1;color:var(--acc)}
+.sx .flow .t{font-size:15.5px;font-weight:700;line-height:1.35}
+.sx .flow .d{font-size:13px;color:var(--muted);line-height:1.7;margin-top:3px}
+.sx .pay{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.sx .pay span{font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--grey)}
+.sx .pay .soon{background:transparent;box-shadow:inset 0 0 0 1px var(--line);color:var(--muted)}
+@media (min-width:860px){.sx .flow{grid-template-columns:repeat(5,minmax(0,1fr))}.sx .flow li{grid-template-columns:1fr;gap:10px;padding:18px 16px 20px;align-content:start}.sx .flow .s{font-size:34px}}
+.sx .notice{margin-top:12px;padding:16px 18px;border-radius:var(--rs);background:var(--grey)}
+.sx .notice b{font-weight:700}
+.sx .notice p{font-size:13px;line-height:1.75}
+.sx .notice p+p{margin-top:6px;font-size:12px;color:var(--muted)}
+/* faq */
+.sx details{border-bottom:1px solid var(--line)}
+.sx details:first-of-type{border-top:1.5px solid var(--ink)}
+.sx summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 2px;font-size:15.5px;font-weight:700;line-height:1.4}
+.sx summary::-webkit-details-marker{display:none}
+.sx summary::after{content:"+";font-family:var(--lat);font-weight:500;font-size:24px;line-height:1;flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--grey);display:grid;place-items:center}
+.sx details[open] summary::after{content:"\2212";background:var(--acc);color:var(--white)}
+.sx details p{font-size:14px;color:var(--muted);line-height:1.8;padding:0 2px 18px}
+/* maintenance */
+.sx .mt{display:grid;gap:14px}
+@media (min-width:860px){.sx .mt{grid-template-columns:1fr 1fr;gap:24px;align-items:start}}
+.sx .mtl{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.sx .mtl li{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
+.sx .mtl .nm{font-weight:700;font-size:15.5px;line-height:1.4}
+.sx .mtl .nm small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.sx .mtl .pr{font-family:var(--lat);font-weight:600;font-size:24px;letter-spacing:-.03em;white-space:nowrap}
+.sx .mtl .pr i{font-style:normal;font-family:var(--jp);font-weight:700;font-size:13px;margin-left:2px}
+.sx .mtl .pr.ask{font-size:12px;letter-spacing:0;padding:6px 14px;border-radius:999px;background:var(--acc);color:var(--white);align-self:center}
+.sx .mt .shop dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:14px 0 18px;font-size:14px;line-height:1.6}
+.sx .mt .shop dt{color:#B9B9B4;font-weight:500;white-space:nowrap}
+.sx .mt .shop dd{margin:0;font-weight:700}
+.sx .mt .shop .btns{margin-top:0;grid-template-columns:1fr 1fr}
+/* assure microcopy */
+.sx .assure{margin:12px 0 0;padding:12px 14px;border-radius:14px;background:var(--grey);font-size:13px;line-height:1.75;color:var(--ink)}
+.sx .assure b{font-weight:700}
+.sx .assure a{display:inline-block;margin-top:4px;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:#06C755;text-decoration-thickness:3px;text-underline-offset:3px}
+.sx .card.ink .assure{background:rgba(255,255,255,.08);color:#fff}
+.sx .card.ink .assure a{color:#fff}
+.sx .fin .assure{grid-column:1 / -1;margin-top:0}
+/* final cta */
+.sx .fin{position:relative;overflow:hidden;margin-top:46px;padding:34px 22px 30px;display:grid;gap:18px}
+.sx .fin .t-jp{font-size:clamp(28px,7.4vw,56px);max-width:12em}
+.sx .fin .ast{position:absolute;right:20px;top:20px}
+.sx .fin .sm{color:#C9C9C4}
+@media (min-width:760px){.sx .fin{padding:60px 56px 56px;grid-template-columns:1fr auto;align-items:center}}
+@media (max-width:759px){body{padding-bottom:calc(66px + env(safe-area-inset-bottom,0px))}}
+@media (prefers-reduced-motion:reduce){.sx *{transition:none!important}}
+</style>
+
+<div class="sx">
+<div class="w">
+
+  <div class="meta">
+    <div>©VIBES BILLIARDS<span>ビリヤードWIND ／ 埼玉県志木市</span></div>
+    <div class="yr">2026</div>
+    <div>Vibes Carbon Shaft<span>Pattern Order ／ パターンオーダー</span></div>
+    <div>¥25,000<span>定価・税込・送料込</span></div>
+  </div>
+
+  <section class="hero">
+    <div class="top">
+      <div>
+        <p class="tag">長さ・テーパー・先端径・ジョイント・ウェイト・刻印を、<b>あなたのキューに合わせて1本から。</b></p>
+        <div class="stats">
+          <div><b>¥25,000</b><small>定価・税込・送料込</small></div>
+          <div><b>3–4<span style="font-size:.5em;margin-left:2px">wk</span></b><small>納期の目安</small></div>
+          <div><b>1<span style="font-size:.5em;margin-left:2px">本〜</span></b><small>最低本数</small></div>
+        </div>
+      </div>
+      <h1 class="t-xl">Carbon<br>-Shaft</h1>
+    </div>
+
+    <div class="card ink board">
+      <span class="ast on-dark" aria-hidden="true">✱</span>
+      <span class="ball" aria-hidden="true"></span>
+      <div>
+        <span class="pill" style="margin-bottom:14px">Pattern Order</span>
+        <h2 class="t-jp">あなただけの1本が、<br>手の届く値段で。</h2>
+      </div>
+      <div class="cols">
+        <p>ポケット・スリークッション用カーボンシャフト。工場と直接組み、在庫を持たず、注文ごとに1本ずつ作ります。</p>
+        <p>Vibesの刻印、お名前（ローマ字）、オリジナルロゴまで追加料金なし。ロゴに色を入れる場合だけ +¥2,500。</p>
+      </div>
+    </div>
+    <div class="btns">
+      <a class="btn acc" href="{{ shaft_url }}">1本をつくる</a>
+      <a class="btn line" href="#taper">仕様を見る</a>
+    </div>
+    <p class="assure">「自分のバットに合うか分からない」という方も、<b>バット側のピンの写真を公式LINEで送るだけ</b>でスタッフが規格を判定してご案内します（平日対応）。<a href="https://line.me/R/oaMessage/@361mehjz/?%E3%82%B7%E3%83%A3%E3%83%95%E3%83%88%E3%81%AE%E3%82%B8%E3%83%A7%E3%82%A4%E3%83%B3%E3%83%88%E8%A6%8F%E6%A0%BC%E3%82%92%E7%A2%BA%E8%AA%8D%E3%81%97%E3%81%9F%E3%81%84%E3%81%A7%E3%81%99%E3%80%82%E3%83%90%E3%83%83%E3%83%88%E5%81%B4%E3%81%AE%E3%83%94%E3%83%B3%E3%81%AE%E5%86%99%E7%9C%9F%E3%82%92%E9%80%81%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82" target="_blank" rel="noopener">LINEでピンの写真を送る →</a></p>
+  </section>
+
+  <section id="index" aria-label="目次">
+    <div class="ix">
+      <a class="card acc" href="#price"><div><div class="t">価格</div><div class="d">定価 ¥25,000。税込・送料込・刻印込み。なぜこの値段か。</div></div><div class="n">01</div></a>
+      <a class="card" href="#taper"><div><div class="t">テーパー</div><div class="d">MELLOW（ストレート）とJAZZY（コニカル）。競技で選ぶ。</div></div><div class="n">02</div></a>
+      <a class="card ink" href="#order"><span class="b2" aria-hidden="true"></span><div><div class="t">仕様を選ぶ</div><div class="d">長さ・先端径・ジョイント・ウェイト・刻印・ロゴの色。</div></div><div class="n">03</div></a>
+      <a class="card" href="#flow"><div><div class="t">注文の流れ</div><div class="d">商品ページで選んで送信。確認後に工場へ発注、3〜4週間でお届け。</div></div><div class="n">04</div></a>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="why">
+      <div>
+        <h2 class="t-l">Why<br>Vibes</h2>
+        <p class="sm" style="margin-top:14px;max-width:30em">高級カーボンシャフトが7〜10万円台で売られる中で、Vibesは¥25,000。理由は、作り方にあります。</p>
+      </div>
+      <div class="boxes">
+        <div class="box card ink"><span class="idx">(01)</span><b>1本から、あなたの仕様で</b><p>長さ27〜31in、先端径10.5〜12.8mm、ウェイト110〜125g。注文ごとに1本ずつ作ります。</p></div>
+        <div class="box card acc"><span class="idx">(02)</span><b>2つのテーパー</b><p>ポケット向きのMELLOW（ストレート）と、スリークッション向きのJAZZY（コニカル）。</p></div>
+        <div class="box card"><span class="idx">(03)</span><b>刻印込みの定価</b><p>Vibesの刻印はもちろん、お名前（ローマ字）やオリジナルロゴも追加料金なし。ロゴに色を入れる場合だけ +¥2,500。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="price">
+    <div class="head two">
+      <h2 class="t-l">Price</h2>
+      <div><p class="t-m">定価・税込・送料込</p><p class="sm" style="margin-top:6px">パターンオーダー・刻印込み。送料も含まれています。納期は、ご注文確定から3〜4週間ほど。</p></div>
+    </div>
+    <div class="price-g">
+      <div class="card ink">
+        <span class="pill">Vibes Carbon Shaft</span>
+        <div class="big">¥25,000<small>税込・送料込</small></div>
+        <p class="sm">ポケット、スリークッション用カーボンシャフト・パターンオーダー・刻印込み<br>27–31in · MELLOW / JAZZY · 9 joints</p>
+        <ul class="rows">
+          <li><span>シャフト本体（パターンオーダー・刻印込み）</span><span>¥25,000</span></li>
+          <li><span>消費税</span><span>込み</span></li>
+          <li><span>送料（国内）</span><span>¥0</span></li>
+          <li><span>ロゴのカラー刻印（オプション）</span><span>+¥2,500</span></li>
+          <li><span>お支払い合計</span><span>¥25,000〜</span></li>
+        </ul>
+        <div class="btns"><a class="btn acc" href="{{ shaft_url }}">1本をつくる</a></div>
+        <p class="assure">「自分のバットに合うか分からない」という方も、<b>バット側のピンの写真を公式LINEで送るだけ</b>でスタッフが規格を判定してご案内します（平日対応）。<a href="https://line.me/R/oaMessage/@361mehjz/?%E3%82%B7%E3%83%A3%E3%83%95%E3%83%88%E3%81%AE%E3%82%B8%E3%83%A7%E3%82%A4%E3%83%B3%E3%83%88%E8%A6%8F%E6%A0%BC%E3%82%92%E7%A2%BA%E8%AA%8D%E3%81%97%E3%81%9F%E3%81%84%E3%81%A7%E3%81%99%E3%80%82%E3%83%90%E3%83%83%E3%83%88%E5%81%B4%E3%81%AE%E3%83%94%E3%83%B3%E3%81%AE%E5%86%99%E7%9C%9F%E3%82%92%E9%80%81%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82" target="_blank" rel="noopener">LINEでピンの写真を送る →</a></p>
+      </div>
+      <div class="card">
+        <span class="idx">(Why this price)</span>
+        <p class="t-m">なぜ、この値段か</p>
+        <p class="sm" style="margin-top:6px">工場と直接組み、在庫を持たず、1本ずつ作る。だから、この価格です。</p>
+        <table class="cmp">
+          <thead><tr><th></th><th>Vibes</th><th>一般的な高級カーボン（参考）</th></tr></thead>
+          <tbody>
+            <tr><th>価格</th><td class="me"><span class="num">¥25,000</span> 税込</td><td><span class="num">7〜10</span>万円台</td></tr>
+            <tr><th>納期</th><td class="me"><span class="num">3〜4</span>週間</td><td>在庫次第</td></tr>
+            <tr><th>刻印</th><td class="me">名入れ込み</td><td>原則なし</td></tr>
+            <tr><th>最低本数</th><td class="me"><span class="num">1</span>本から</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="taper">
+    <div class="tp">
+      <div class="card">
+        <span class="idx">(01) Straight ／ ストレート</span>
+        <h3>Mellow</h3>
+        <svg viewBox="0 0 600 80" role="img" aria-label="MELLOW：ストレートテーパー"><line x1="230" y1="4" x2="230" y2="76" stroke="#0A0A09" stroke-width="1" stroke-dasharray="4 4"/><rect x="16" y="26" width="16" height="28" rx="3" fill="#FA4E02"/><path d="M32 30H300L584 20V60L300 50H32Z" fill="#0A0A09"/></svg>
+        <p>ストレートテーパー。ポケット競技向き。</p>
+      </div>
+      <div class="card acc">
+        <span class="idx">(02) Conical ／ コニカル</span>
+        <h3>Jazzy</h3>
+        <svg viewBox="0 0 600 80" role="img" aria-label="JAZZY：先端からゆるやかに太くなる"><line x1="230" y1="4" x2="230" y2="76" stroke="#0A0A09" stroke-width="1" stroke-dasharray="4 4"/><rect x="16" y="26" width="16" height="28" rx="3" fill="#0A0A09"/><path d="M32 31L584 16V64L32 49Z" fill="#0A0A09"/></svg>
+        <p>スリークッション競技向き。現代キャロムカーボンシャフトのテーパー。</p>
+      </div>
+    </div>
+    <div class="card paper cmpfig">
+      <svg viewBox="0 0 600 90" role="img" aria-label="2つのテーパーの重ね比較"><line x1="230" y1="4" x2="230" y2="86" stroke="#9A9A96" stroke-width="1" stroke-dasharray="4 4"/><text x="236" y="16" fill="#9A9A96" font-size="11" font-family="Inter Tight,sans-serif">30cm</text><rect x="16" y="31" width="16" height="28" rx="3" fill="#D6D6D1"/><path d="M32 35H300L584 25V65L300 55H32Z" fill="none" stroke="#0A0A09" stroke-width="2.5"/><path d="M32 36L584 20V70L32 54Z" fill="none" stroke="#FA4E02" stroke-width="2.5"/></svg>
+      <div class="lg"><span class="a">MELLOW（ストレート）</span><span class="b">JAZZY（コニカル）</span></div>
+    </div>
+    <div class="after">
+      <div>
+        <h2 class="t-jp">打感は、2つから。</h2>
+        <p class="sm" style="margin-top:10px;max-width:40em">点線は先端から約30cm、ブリッジ位置の目安。手球のトビを決めるのは先端数cmの質量で、テーパーはほぼ影響しません。テーパーが変えるのは打感・剛性・ブリッジとの相性です。</p>
+      </div>
+      <span class="ast" aria-hidden="true">✱</span>
+    </div>
+  </section>
+
+  <section id="order">
+    <div class="by">
+      <div>
+        <h2 class="t-l">Build<br>yours</h2>
+        <p class="sm" style="margin:14px 0 18px;max-width:28em">選べる仕様は7つ。すべて注文画面で選ぶだけ。項目をタップすると、注文画面の該当欄へ移動します。</p>
+        <span class="badge"><b>7</b><small>options ／ 選べる仕様</small></span>
+      </div>
+      <ul class="opts">
+        <li><a href="{{ shaft_url }}#vb-len"><span class="k">(01)</span><span><span class="t">長さ</span><span class="d" style="display:block">27–31in（68.6–78.7cm）・27in が標準</span></span><span class="arr">→</span></a></li>
+        <li><a href="{{ shaft_url }}#vb-taper"><span class="k">(02)</span><span><span class="t">テーパー</span><span class="d" style="display:block">MELLOW（ストレート） / JAZZY（コニカル）の2種</span></span><span class="arr">→</span></a></li>
+        <li><a href="{{ shaft_url }}#vb-tip"><span class="k">(03)</span><span><span class="t">先端径</span><span class="d" style="display:block">10.5–12.8mm・6サイズ</span></span><span class="arr">→</span></a></li>
+        <li><a href="{{ shaft_url }}#vb-joint"><span class="k">(04)</span><span><span class="t">ジョイント</span><span class="d" style="display:block">9規格（Radial / 3/8×10 / Uni-Loc / VP2 など）</span></span><span class="arr">→</span></a></li>
+        <li><a href="{{ shaft_url }}#vb-weight"><span class="k">(05)</span><span><span class="t">ウェイト</span><span class="d" style="display:block">110–125g・110g未満はご相談ください</span></span><span class="arr">→</span></a></li>
+        <li><a href="{{ shaft_url }}#vb-engrave"><span class="k">(06)</span><span><span class="t">刻印</span><span class="d" style="display:block">4パターン・名入れはローマ字</span></span><span class="arr">→</span></a></li>
+        <li><a href="{{ shaft_url }}#vb-color"><span class="k">(07)</span><span><span class="t">ロゴの色</span><span class="d" style="display:block">単色（標準）／カラー +¥2,500・オリジナルロゴ（③④）が対象</span></span><span class="arr">→</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="fits">
+    <div class="head two">
+      <h2 class="t-l">Your cue</h2>
+      <p class="sm">対応キュー。上記以外のキューについては、お問い合わせください。Mezzの場合は、別途ご相談ください。</p>
+    </div>
+    <div class="chips">
+      <span>ADAM</span><span>Predator</span><span>Longoni</span><span>Sasaki</span><span>Theory</span><span>Universal</span><span>JBS</span><span>JFlowers</span><span>GORINA</span><span>Custom<small>三井川 / FarEast など</small></span>
+    </div>
+  </section>
+
+  <section id="flow">
+    <div class="head two">
+      <h2 class="t-l">Order flow</h2>
+      <p class="sm">ご注文の流れ。商品ページで仕様を選んで送信するだけ。確認メールのあと、工場へ発注します。</p>
+    </div>
+    <ol class="flow">
+      <li><span class="s">01</span><div><div class="t">パターンオーダーを決定</div><div class="d">商品ページで、長さ・テーパー・先端径・ジョイント・ウェイト・刻印を選びます。</div></div></li>
+      <li><span class="s">02</span><div><div class="t">内容を送信</div><div class="d">ご注文を確定します。お支払いは銀行振込のみです。<div class="pay"><span>銀行振込のみ</span><span class="soon">カード決済は12月から</span></div></div></div></li>
+      <li><span class="s">03</span><div><div class="t">確認メール</div><div class="d">ご注文内容の確認メールが自動で届きます。相違があれば、そのメールにご返信ください。</div></div></li>
+      <li><span class="s">04</span><div><div class="t">発注</div><div class="d">内容確認後、ご入金を確認してから工場へ発注します。</div></div></li>
+      <li><span class="s">05</span><div><div class="t">お届け</div><div class="d">発送時に発送完了メールをお送りします。納期は、ご注文確定から3〜4週間ほどです。</div></div></li>
+    </ol>
+    <div class="notice">
+      <span class="idx">(営業日についてのお願い)</span>
+      <p>お問い合わせへのご返信、ご注文内容の確認、工場への発注のご連絡は、<b>平日のみ</b>対応しております。<b>土日祝日の対応は致しかねますので、ご了承ください。</b>土日祝日にいただいたご注文・お問い合わせは、翌営業日以降に順次ご対応いたします。</p>
+      <p>パターンオーダーのため、仕様（ジョイント規格・刻印データなど）の確認にお時間をいただく場合があります。納期（3〜4週間）は、内容確認後の発注日からの目安です。パターンオーダーのため、お客様都合による返品はお受けできません。初期不良は交換いたします。</p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="head two">
+      <h2 class="t-l">FAQ</h2>
+      <p class="sm">ご注文前に。分からないことは、バット側のピンの写真を添えて info@vibesbilliards.com へ。</p>
+    </div>
+    <details><summary>自分のジョイント規格が分かりません</summary><p>バット側のピンを横から撮影して送ってください。こちらで判定します。同じ呼び径でも寸法が微妙に違う規格があるため、確認してからの製作をおすすめします。</p></details>
+    <details><summary>返品はできますか</summary><p>パターンオーダーのため、お客様都合の返品・交換はお受けできません。到着時の初期不良（振れ、刻印ミス、仕様違い）は交換いたします。</p></details>
+    <details><summary>刻印はどんなデータが必要ですか</summary><p>刻印は4種類から選べます。① なし（Vibes の刻印のみ）、② なし＋自分の名前、③ あり（オリジナルロゴのみ）、④ あり＋自分の名前。お名前はローマ字でご記入ください。オリジナルロゴのデータは PNG または PDF での入稿となります。ロゴの刻印は単色が標準です。ロゴに色を入れる場合は +2,500円（合計 ¥27,500）で承ります。注文画面の「07 · ロゴの色」で選んでください。</p></details>
+    <details><summary>ウェイトは何gから選べますか</summary><p>110g〜125g です。110g未満は、ご相談ください。ユニロック、VP2 は120g前後からの重さ調整になります。</p></details>
+    <details><summary>Mezzのキューに合わせられますか</summary><p>Mezzの場合は、別途ご相談ください。バット側のピンを横から撮影してお送りいただければ、対応可否をお答えします。</p></details>
+    <details><summary>土日祝日も対応していますか</summary><p>お問い合わせへのご返信、ご注文内容の確認、工場への発注のご連絡は、平日のみ対応しております。土日祝日の対応は致しかねますので、ご了承ください。土日祝日にいただいたご注文・お問い合わせは、翌営業日以降に順次ご対応いたします。</p></details>
+  </section>
+
+  <section id="maintenance">
+    <div class="head two">
+      <h2 class="t-l">Maintenance</h2>
+      <p class="sm">メンテナンス。お店に旋盤があるので、その場でやります。価格はすべて税込みです。</p>
+    </div>
+    <div class="mt">
+      <ul class="mtl">
+        <li><span class="nm">タップ交換</span><span class="pr">¥1,000<i>〜</i></span></li>
+        <li><span class="nm">先角交換</span><span class="pr">¥5,000<i>〜</i></span></li>
+        <li><span class="nm">木のシャフト テーパー整備<small>旋盤で行います</small></span><span class="pr">¥3,000<i>〜</i></span></li>
+        <li><span class="nm">シャフトのジョイント交換</span><span class="pr ask">ASK</span></li>
+      </ul>
+      <div class="card ink shop">
+        <span class="idx">(お問い合わせ)</span>
+        <p class="t-m">ビリヤードWIND　阿部まで。</p>
+        <dl>
+          <dt>受付時間</dt><dd>18:00〜深夜</dd>
+          <dt>電話</dt><dd><a href="tel:0484872801" style="text-decoration:none">048-487-2801</a></dd>
+          <dt>住所</dt><dd>埼玉県志木市本町5-20-12<br>サンシャイン志木ビル 3F</dd>
+        </dl>
+        <div class="btns"><a class="btn acc" href="tel:0484872801">電話で問い合わせる</a><a class="btn line on-dark" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%83%93%E3%83%AA%E3%83%A4%E3%83%BC%E3%83%89WIND%20%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%BF%97%E6%9C%A8%E5%B8%82%E6%9C%AC%E7%94%BA5-20-12%20%E3%82%B5%E3%83%B3%E3%82%B7%E3%83%A3%E3%82%A4%E3%83%B3%E5%BF%97%E6%9C%A8%E3%83%93%E3%83%AB%203F" target="_blank" rel="noopener">地図を見る</a></div>
+      </div>
+    </div>
+  </section>
+
+  {%- render 'vibes-gallery' -%}
+
+  <div class="card ink fin">
+    <span class="ast on-dark" aria-hidden="true">✱</span>
+    <div>
+      <h2 class="t-jp">さあ、<br>あなたの1本を。</h2>
+      <p class="sm" style="margin-top:12px">¥25,000 税込・送料込｜パターンオーダー・刻印込み｜納期3〜4週間</p>
+    </div>
+    <a class="btn acc" href="{{ shaft_url }}">1本をつくる</a>
+    <p class="assure">「自分のバットに合うか分からない」という方も、<b>バット側のピンの写真を公式LINEで送るだけ</b>でスタッフが規格を判定してご案内します（平日対応）。<a href="https://line.me/R/oaMessage/@361mehjz/?%E3%82%B7%E3%83%A3%E3%83%95%E3%83%88%E3%81%AE%E3%82%B8%E3%83%A7%E3%82%A4%E3%83%B3%E3%83%88%E8%A6%8F%E6%A0%BC%E3%82%92%E7%A2%BA%E8%AA%8D%E3%81%97%E3%81%9F%E3%81%84%E3%81%A7%E3%81%99%E3%80%82%E3%83%90%E3%83%83%E3%83%88%E5%81%B4%E3%81%AE%E3%83%94%E3%83%B3%E3%81%AE%E5%86%99%E7%9C%9F%E3%82%92%E9%80%81%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82" target="_blank" rel="noopener">LINEでピンの写真を送る →</a></p>
+  </div>
+
+</div>
+</div>
+{% schema %}
+{ "name": "Vibes Shaft Page", "settings": [] }
+{% endschema %}

@@ -1,0 +1,415 @@
+<title>Nine Drop</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Layout: one-screen arcade. Score strip / rack (1–9) + next pair / felt well / thumb controls */
+:root{
+  --paper:#F4F4F2; --ink:#0A0A09; --muted:#5C5C58; --line:#D6D6D1; --card:#FFFFFF;
+  --acc:#FA4E02; --felt:#0F4A38; --rail:#0A0A09;
+  --lat:"Inter Tight","Noto Sans JP",system-ui,sans-serif;
+  --jp:"Noto Sans JP","Hiragino Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#121211;--ink:#F2F2EE;--muted:#9C9C96;--line:#2C2C29;--card:#1B1B19;--rail:#000000;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#121211;--ink:#F2F2EE;--muted:#9C9C96;--line:#2C2C29;--card:#1B1B19;--rail:#000000;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--jp);margin:0;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.app{box-sizing:border-box;max-width:520px;height:100%;margin:0 auto;display:flex;flex-direction:column;gap:10px;padding-block:10px 12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.brand{line-height:1}
+.brand small{display:block;font-family:var(--lat);font-weight:600;font-size:11px;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+.brand h1{margin:0;font-family:var(--lat);font-weight:700;font-size:30px;letter-spacing:-.045em}
+.brand h1 span{color:var(--acc)}
+.stats{display:flex;gap:14px;align-items:flex-end}
+.stat{text-align:right;line-height:1.05}
+.stat b{display:block;font-family:var(--lat);font-weight:600;font-size:20px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat small{font-size:10px;color:var(--muted);font-weight:500}
+.iconbtn{width:38px;height:38px;border-radius:50%;border:0;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink);font:600 15px var(--lat);cursor:pointer}
+.row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:stretch}
+.panel{background:var(--card);box-shadow:inset 0 0 0 1px var(--line);border-radius:16px;padding:8px 10px;min-width:0}
+.panel .lbl{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.panel .lbl em{font-style:normal;color:var(--acc)}
+canvas{display:block}
+#rackc{width:100%;height:34px}
+#nextc{width:64px;height:34px}
+.stage{position:relative;flex:1;min-height:0;display:grid;place-items:center;touch-action:none}
+#board{border-radius:14px;box-shadow:0 0 0 6px var(--rail)}
+.toast{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);pointer-events:none;text-align:center;font-family:var(--lat);font-weight:700;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.45);opacity:0;white-space:nowrap}
+.toast b{display:block;font-size:30px;letter-spacing:-.03em}
+.toast small{display:block;font-family:var(--jp);font-size:13px;font-weight:700;margin-top:4px}
+.toast.on{animation:pop 1.1s ease-out forwards}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-30%) scale(.85)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%)}}
+.ov{position:absolute;inset:0;display:grid;place-items:center;padding:8px}
+.sheet{background:var(--card);color:var(--ink);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,.35);padding:20px 18px 18px;max-width:340px;width:100%;max-height:100%;overflow:auto;box-sizing:border-box}
+.sheet h2{margin:0 0 4px;font-family:var(--lat);font-weight:700;font-size:28px;letter-spacing:-.04em}
+.sheet p{margin:0;font-size:13px;line-height:1.7;color:var(--muted)}
+.sheet ol{margin:12px 0 14px;padding:0;list-style:none;display:grid;gap:8px;counter-reset:s}
+.sheet li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:13px;line-height:1.6}
+.sheet li::before{counter-increment:s;content:counter(s);font-family:var(--lat);font-weight:700;font-size:12px;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;margin-top:1px}
+.sheet li b{font-weight:700}
+.big{font-family:var(--lat);font-weight:700;font-size:48px;letter-spacing:-.05em;line-height:1;margin:10px 0 2px;font-variant-numeric:tabular-nums}
+.go{display:flex;gap:8px;margin-top:14px}
+.btn{flex:1;min-height:50px;border:0;border-radius:999px;background:var(--acc);color:#fff;font:700 16px var(--jp);cursor:pointer}
+.btn.sub{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.keys{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6}
+.ctrl{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.ctrl button{min-height:58px;border:0;border-radius:16px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink);font:700 22px var(--lat);cursor:pointer;touch-action:none}
+.ctrl button small{display:block;font:700 10px var(--jp);color:var(--muted);margin-top:2px}
+.ctrl button.hd{background:var(--ink);color:var(--paper);box-shadow:none}
+.ctrl button.hd small{color:inherit;opacity:.7}
+.ctrl button:active{transform:scale(.96)}
+button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.toast.on{animation-duration:.01s;animation-delay:0s}.ctrl button:active{transform:none}}
+</style>
+
+<div class="app">
+  <div class="top">
+    <div class="brand"><small>VIBES BILLIARDS</small><h1>Nine<span>.</span>Drop</h1></div>
+    <div class="stats">
+      <div class="stat"><b id="sc">0</b><small>スコア</small></div>
+      <div class="stat"><b id="rk">1</b><small>ラック</small></div>
+      <div class="stat"><b id="bs">0</b><small>ベスト</small></div>
+      <button class="iconbtn" id="pauseBtn" aria-label="一時停止">II</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="panel"><div class="lbl"><span>ラック（狙う球は <em id="tg">1番</em>）</span></div><canvas id="rackc"></canvas></div>
+    <div class="panel"><div class="lbl"><span>NEXT</span></div><canvas id="nextc"></canvas></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="board"></canvas>
+    <div class="toast" id="toast"><b></b><small></small></div>
+    <div class="ov" id="ov">
+      <div class="sheet" id="sheet"></div>
+    </div>
+  </div>
+
+  <div class="ctrl" id="ctrl">
+    <button id="bL" aria-label="左へ">◀<small>左</small></button>
+    <button id="bR" aria-label="右へ">▶<small>右</small></button>
+    <button id="bRot" aria-label="回転">↻<small>回転</small></button>
+    <button id="bD" aria-label="ゆっくり落とす">▼<small>下へ</small></button>
+    <button id="bH" class="hd" aria-label="一気に落とす">⤓<small>落とす</small></button>
+  </div>
+</div>
+
+<script>
+(function(){
+const COLS=6, ROWS=12;
+const OFF=[[-1,0],[0,1],[1,0],[0,-1]];
+const DIRS=[[1,0],[-1,0],[0,1],[0,-1]];
+const BC={1:'#F2C200',2:'#1D4ED8',3:'#D7262E',4:'#5B2A86',5:'#F06A12',6:'#14804A',7:'#7B1E22',8:'#151515',9:'#F2C200'};
+const FELT='#0F4A38', ACC='#FA4E02';
+
+const $=id=>document.getElementById(id);
+const board=$('board'), bctx=board.getContext('2d');
+const rackc=$('rackc'), rctx=rackc.getContext('2d');
+const nextc=$('nextc'), nctx=nextc.getContext('2d');
+const stage=$('stage'), ov=$('ov'), sheet=$('sheet');
+
+let grid, piece, nextP, target, rack, score, best=0, state='title', acc=0, last=0, soft=false, pieces=0, cell=40, flash=null, dpr=1;
+try{ best=+localStorage.getItem('ninedrop-best')||0 }catch(e){}
+
+/* ---------- drawing ---------- */
+function ball(ctx,x,y,R,n,o){
+  o=o||{};
+  ctx.save(); ctx.globalAlpha=o.alpha==null?1:o.alpha;
+  ctx.beginPath(); ctx.arc(x,y+R*0.08,R,0,Math.PI*2); ctx.fillStyle='rgba(0,0,0,.35)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(x,y,R,0,Math.PI*2);
+  if(n===9){ ctx.fillStyle='#F7F5EE'; ctx.fill(); ctx.save(); ctx.clip(); ctx.fillStyle=BC[9]; ctx.fillRect(x-R,y-R*0.56,R*2,R*1.12); ctx.restore(); }
+  else { ctx.fillStyle=BC[n]; ctx.fill(); }
+  ctx.beginPath(); ctx.arc(x,y,R*0.47,0,Math.PI*2); ctx.fillStyle='#FFFFFF'; ctx.fill();
+  ctx.fillStyle='#111'; ctx.font='700 '+Math.round(R*0.66)+'px "Inter Tight",system-ui,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(String(n),x,y+R*0.05);
+  const g=ctx.createRadialGradient(x-R*.42,y-R*.48,R*.04,x-R*.1,y-R*.1,R*1.08);
+  g.addColorStop(0,'rgba(255,255,255,.6)'); g.addColorStop(.3,'rgba(255,255,255,.1)'); g.addColorStop(1,'rgba(0,0,0,.32)');
+  ctx.beginPath(); ctx.arc(x,y,R,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+  if(o.ring){ ctx.globalAlpha=1; ctx.beginPath(); ctx.arc(x,y,R+2.5,0,Math.PI*2); ctx.lineWidth=2.5; ctx.strokeStyle=o.ring; ctx.stroke(); }
+  ctx.restore();
+}
+
+function sizeAll(){
+  dpr=Math.min(window.devicePixelRatio||1,3);
+  const w=stage.clientWidth-12, h=stage.clientHeight-12;
+  cell=Math.max(18,Math.floor(Math.min(w/COLS,h/ROWS)));
+  board.style.width=cell*COLS+'px'; board.style.height=cell*ROWS+'px';
+  board.width=cell*COLS*dpr; board.height=cell*ROWS*dpr;
+  bctx.setTransform(dpr,0,0,dpr,0,0);
+  [[rackc,rctx],[nextc,nctx]].forEach(([c,x])=>{ c.width=c.clientWidth*dpr; c.height=c.clientHeight*dpr; x.setTransform(dpr,0,0,dpr,0,0); });
+  draw();
+}
+
+function drawBoard(now){
+  const W=cell*COLS, H=cell*ROWS, R=cell*0.44;
+  bctx.fillStyle=FELT; bctx.fillRect(0,0,W,H);
+  bctx.strokeStyle='rgba(255,255,255,.05)'; bctx.lineWidth=1;
+  for(let c=1;c<COLS;c++){ bctx.beginPath(); bctx.moveTo(c*cell+.5,0); bctx.lineTo(c*cell+.5,H); bctx.stroke(); }
+  for(let r=1;r<ROWS;r++){ bctx.beginPath(); bctx.moveTo(0,r*cell+.5); bctx.lineTo(W,r*cell+.5); bctx.stroke(); }
+  // head string line
+  bctx.strokeStyle='rgba(255,255,255,.12)'; bctx.setLineDash([4,5]); bctx.beginPath(); bctx.moveTo(0,cell*2+.5); bctx.lineTo(W,cell*2+.5); bctx.stroke(); bctx.setLineDash([]);
+  if(!grid) return;
+  const pulse=0.55+0.45*Math.sin(now/220);
+  const fl=flash? new Set(flash.cells.map(([r,c])=>r+','+c)) : null;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    const n=grid[r][c]; if(!n) continue;
+    const x=c*cell+cell/2, y=r*cell+cell/2;
+    if(fl && fl.has(r+','+c)){
+      const t=(now-flash.t)/280;
+      ball(bctx,x,y,R*(1+t*0.25),n,{alpha:Math.max(0,1-t),ring:'#FFFFFF'});
+      continue;
+    }
+    const dead=n<target;
+    ball(bctx,x,y,R,n,{alpha:dead?0.32:1,ring:n===target?'rgba(250,78,2,'+pulse.toFixed(2)+')':null});
+  }
+  if(piece && state==='play'){
+    // ghost
+    let g={...piece}; while(fits({...g,r:g.r+1})) g.r++;
+    if(g.r!==piece.r){
+      bctx.save(); bctx.strokeStyle='rgba(255,255,255,.35)'; bctx.lineWidth=2; bctx.setLineDash([3,4]);
+      cellsOf(g).forEach(([r,c])=>{ if(r<0) return; bctx.beginPath(); bctx.arc(c*cell+cell/2,r*cell+cell/2,R*0.92,0,Math.PI*2); bctx.stroke(); });
+      bctx.restore();
+    }
+    cellsOf(piece).forEach(([r,c,n])=>{ if(r<0) return; ball(bctx,c*cell+cell/2,r*cell+cell/2,R,n,{ring:n===target?ACC:null}); });
+  }
+}
+
+function drawRack(){
+  const W=rackc.clientWidth, H=rackc.clientHeight;
+  rctx.clearRect(0,0,W,H);
+  const step=W/9, R=Math.min(H/2-3,step/2-3);
+  for(let n=1;n<=9;n++){
+    const x=step*(n-0.5), y=H/2;
+    ball(rctx,x,y,R,n,{alpha:n<target?0.22:1,ring:n===target?ACC:null});
+  }
+}
+function drawNext(){
+  const W=nextc.clientWidth, H=nextc.clientHeight;
+  nctx.clearRect(0,0,W,H);
+  if(!nextP) return;
+  const R=Math.min(H/2-3,W/4-3);
+  ball(nctx,W/2-R-2,H/2,R,nextP.b); ball(nctx,W/2+R+2,H/2,R,nextP.a);
+}
+function draw(now){ drawBoard(now||performance.now()); drawRack(); drawNext(); }
+
+/* ---------- rules ---------- */
+function cellsOf(p){ return [[p.r,p.c,p.a],[p.r+OFF[p.rot][0],p.c+OFF[p.rot][1],p.b]]; }
+function fits(p){ return cellsOf(p).every(([r,c])=>c>=0&&c<COLS&&r<ROWS&&(r<0||!grid[r][c])); }
+function rndBall(){
+  const t=target, x=Math.random();
+  if(x<0.11) return 9;
+  if(x<0.56) return Math.min(9,t+Math.floor(Math.random()*3));
+  return t+Math.floor(Math.random()*(10-t));
+}
+function makePiece(){ return {r:1,c:2,rot:0,a:rndBall(),b:rndBall()}; }
+function spawn(){
+  piece=nextP; piece.r=1; piece.c=2; piece.rot=0;
+  nextP=makePiece(); pieces++;
+  if(!fits(piece)){ gameOver(); return; }
+  state='play'; acc=0;
+}
+function speed(){ return Math.max(140, 820-(rack-1)*90-Math.floor(pieces/20)*25); }
+
+function move(dc){ if(state!=='play') return; const p={...piece,c:piece.c+dc}; if(fits(p)) piece=p; }
+function rotate(){
+  if(state!=='play') return;
+  const rot=(piece.rot+1)%4;
+  for(const [dr,dc] of [[0,0],[0,-1],[0,1],[-1,0]]){ const p={...piece,rot,r:piece.r+dr,c:piece.c+dc}; if(fits(p)){ piece=p; return; } }
+  // swap balls if fully blocked (vertical in narrow gap)
+  piece={...piece,a:piece.b,b:piece.a};
+}
+function stepDown(){
+  const p={...piece,r:piece.r+1};
+  if(fits(p)){ piece=p; return true; }
+  lock(); return false;
+}
+function hardDrop(){
+  if(state!=='play') return;
+  let d=0; while(fits({...piece,r:piece.r+1})){ piece.r++; d++; }
+  addScore(d*2); lock();
+}
+function lock(){
+  const cs=cellsOf(piece);
+  if(cs.some(([r])=>r<0)){ gameOver(); return; }
+  cs.forEach(([r,c,n])=>grid[r][c]=n);
+  piece=null; state='resolve';
+  gravity();
+  resolve(0);
+}
+function gravity(){
+  for(let c=0;c<COLS;c++){
+    const col=[]; for(let r=ROWS-1;r>=0;r--) if(grid[r][c]) col.push(grid[r][c]);
+    for(let r=ROWS-1,i=0;r>=0;r--,i++) grid[r][c]=col[i]||0;
+  }
+}
+function longest(r,c){
+  const v=grid[r][c]; let bestP=[[r,c]];
+  if(v===9) return bestP;
+  for(const [dr,dc] of DIRS){
+    const nr=r+dr, nc=c+dc;
+    if(nr<0||nr>=ROWS||nc<0||nc>=COLS) continue;
+    if(grid[nr][nc]===v+1){ const p=longest(nr,nc); if(p.length+1>bestP.length) bestP=[[r,c],...p]; }
+  }
+  return bestP;
+}
+function findShot(){
+  let best=null, bestVal=0;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    if(grid[r][c]!==target) continue;
+    const p=longest(r,c), lastN=grid[p[p.length-1][0]][p[p.length-1][1]];
+    let kind=null;
+    if(target===9) kind='nine';
+    else if(lastN===9 && p.length>=2) kind='runout';
+    else if(p.length>=3) kind='run';
+    if(kind){ const val=p.length+(lastN===9?10:0); if(val>bestVal){ bestVal=val; best={kind,cells:p}; } }
+    if(target<8){
+      for(const [dr,dc] of DIRS){
+        const nr=r+dr, nc=c+dc;
+        if(nr<0||nr>=ROWS||nc<0||nc>=COLS) continue;
+        if(grid[nr][nc]===9 && 11>bestVal){ bestVal=11; best={kind:'combo',cells:[[r,c],[nr,nc]]}; }
+      }
+    }
+  }
+  return best;
+}
+function fullRows(){ const rs=[]; for(let r=0;r<ROWS;r++) if(grid[r].every(v=>v)) rs.push(r); return rs; }
+
+function resolve(chain){
+  const shot=findShot();
+  const rows=fullRows();
+  if(!shot && !rows.length){ spawn(); return; }
+  const cells=[]; const mult=1+chain*0.5;
+  let title='', sub='';
+  if(shot){
+    cells.push(...shot.cells);
+    const nums=shot.cells.map(([r,c])=>grid[r][c]);
+    if(shot.kind==='run'){ addScore(Math.round(nums.length*nums.length*20*mult)); title=nums.join('→'); sub=nums.length+'球つないでポケット'; target=nums[nums.length-1]+1; }
+    else if(shot.kind==='runout'){ addScore(Math.round((900+nums.length*60)*mult)); title='RUN OUT!'; sub=nums.join('→')+'　ラッククリア'; nextRack(); }
+    else if(shot.kind==='combo'){ addScore(Math.round(500*mult)); title='COMBINATION!'; sub=nums[0]+'番から9番をポケット　ラッククリア'; nextRack(); }
+    else { addScore(Math.round(300*mult)); title='9-BALL IN!'; sub='9番をポケット　ラッククリア'; nextRack(); }
+  }
+  if(rows.length){
+    rows.forEach(r=>{ for(let c=0;c<COLS;c++) if(!cells.some(([a,b])=>a===r&&b===c)) cells.push([r,c]); });
+    addScore(Math.round(150*rows.length*rows.length*mult));
+    if(!title){ title=rows.length>1?rows.length+' LINES':'LINE'; sub='横一列をクリア'; }
+    else sub+='＋ライン';
+  }
+  if(chain>0) sub+='　'+(chain+1)+'連鎖';
+  toast(title,sub);
+  flash={cells,t:performance.now()};
+  setTimeout(()=>{
+    cells.forEach(([r,c])=>grid[r][c]=0);
+    flash=null; gravity(); hud();
+    setTimeout(()=>resolve(chain+1),90);
+  },280);
+}
+function nextRack(){ rack++; target=1; }
+function addScore(n){ score+=n; if(score>best){ best=score; try{localStorage.setItem('ninedrop-best',best)}catch(e){} } hud(); }
+function hud(){ $('sc').textContent=score.toLocaleString(); $('rk').textContent=rack; $('bs').textContent=best.toLocaleString(); $('tg').textContent=target+'番'; drawRack(); drawNext(); }
+
+const toastEl=$('toast');
+function toast(t,s){ toastEl.querySelector('b').textContent=t; toastEl.querySelector('small').textContent=s; toastEl.classList.remove('on'); void toastEl.offsetWidth; toastEl.classList.add('on'); }
+
+/* ---------- flow ---------- */
+function newGame(){
+  grid=Array.from({length:ROWS},()=>Array(COLS).fill(0));
+  target=1; rack=1; score=0; pieces=0;
+  // opening rack: a few balls on the felt
+  const seed=[[11,0,3],[11,1,1],[11,4,5],[11,5,7],[10,0,4],[10,5,2]];
+  seed.forEach(([r,c,n])=>grid[r][c]=n);
+  nextP=makePiece(); ov.hidden=true; hud(); spawn();
+}
+function gameOver(){
+  state='over'; piece=null;
+  sheet.innerHTML='<h2>GAME OVER</h2><p>球がヘッドラインの上まで積み上がりました。</p>'+
+    '<div class="big">'+score.toLocaleString()+'</div><p>ラック '+rack+'　／　ベスト '+best.toLocaleString()+'</p>'+
+    '<div class="go"><button class="btn" id="again">もう一度</button><button class="btn sub" id="howto">ルール</button></div>';
+  ov.hidden=false; $('again').onclick=newGame; $('howto').onclick=showTitle;
+}
+function showTitle(){
+  state='title';
+  sheet.innerHTML='<h2>Nine Drop</h2><p>ナインボールのルールで遊ぶ落ち物パズル。</p>'+
+    '<ol>'+
+    '<li><span>球が<b>2個ずつ</b>落ちてきます。左右に動かし、回転させて積みます。</span></li>'+
+    '<li><span>狙うのは<b>いちばん小さい番号の球</b>。そこから<b>1→2→3</b>のように番号順に<b>3球以上</b>たて・よこにつながると、ポケットされて消えます。</span></li>'+
+    '<li><span><b>9番</b>までつなげたら<b>ランアウト</b>。ラッククリアで高得点、狙う球は1番に戻ります。</span></li>'+
+    '<li><span>狙う球の<b>となりに9番</b>を置くと<b>コンビネーション</b>。9番が落ちてラッククリアです。</span></li>'+
+    '<li><span>横一列がそろうと、その列も消えます。狙う球より小さい番号（薄い球）は、列消しで片づけます。</span></li>'+
+    '<li><span>点線（ヘッドライン）より上まで積み上がるとゲームオーバー。</span></li>'+
+    '</ol>'+
+    '<button class="btn" id="start" style="width:100%">ブレイクショット</button>'+
+    '<p class="keys">スマホ：盤面を左右になぞって移動・タップで回転・下にはらうと一気に落とす<br>キーボード：← → 移動／↑ Z 回転／↓ 下へ／Space 落とす／P 一時停止</p>';
+  ov.hidden=false; $('start').onclick=newGame;
+}
+function togglePause(){
+  if(state==='play'){ state='pause'; sheet.innerHTML='<h2>一時停止</h2><p>狙う球は '+target+'番です。</p><div class="go"><button class="btn" id="resume">再開する</button><button class="btn sub" id="quit">はじめから</button></div>'; ov.hidden=false; $('resume').onclick=togglePause; $('quit').onclick=newGame; }
+  else if(state==='pause'){ state='play'; ov.hidden=true; last=performance.now(); }
+}
+document.addEventListener('visibilitychange',()=>{ if(document.hidden&&state==='play') togglePause(); });
+
+function loop(now){
+  const dt=now-(last||now); last=now;
+  if(state==='play'){
+    acc+=dt;
+    const iv=soft?45:speed();
+    if(acc>=iv){ acc=0; stepDown(); }
+  }
+  drawBoard(now);
+  requestAnimationFrame(loop);
+}
+
+/* ---------- input ---------- */
+function hold(el,fn,repeat){
+  let t1,t2;
+  const stop=()=>{ clearTimeout(t1); clearInterval(t2); if(el===$('bD')) soft=false; };
+  el.addEventListener('pointerdown',e=>{ e.preventDefault(); el.setPointerCapture&&el.setPointerCapture(e.pointerId); fn(); if(repeat){ t1=setTimeout(()=>{ t2=setInterval(fn,65); },170); } });
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,stop));
+}
+hold($('bL'),()=>move(-1),true);
+hold($('bR'),()=>move(1),true);
+hold($('bRot'),rotate,false);
+hold($('bD'),()=>{ soft=true; },false);
+hold($('bH'),hardDrop,false);
+$('pauseBtn').onclick=togglePause;
+
+let tp=null;
+board.addEventListener('pointerdown',e=>{ tp={x:e.clientX,y:e.clientY,t:performance.now(),mx:0,moved:false}; board.setPointerCapture(e.pointerId); });
+board.addEventListener('pointermove',e=>{
+  if(!tp) return;
+  const dx=e.clientX-tp.x-tp.mx*cell;
+  if(Math.abs(dx)>=cell*0.8){ const s=Math.sign(dx); move(s); tp.mx+=s; tp.moved=true; }
+});
+board.addEventListener('pointerup',e=>{
+  if(!tp) return;
+  const dy=e.clientY-tp.y, dt=performance.now()-tp.t;
+  if(dy>cell*1.5 && dt<450 && Math.abs(e.clientX-tp.x)<cell*1.5) hardDrop();
+  else if(!tp.moved && Math.abs(dy)<10 && dt<300) rotate();
+  tp=null;
+});
+board.addEventListener('pointercancel',()=>tp=null);
+
+document.addEventListener('keydown',e=>{
+  const k=e.key;
+  if(k==='p'||k==='P'||k==='Escape'){ togglePause(); return; }
+  if(state!=='play') { if((k==='Enter'||k===' ')&&(state==='title'||state==='over')){ e.preventDefault(); newGame(); } return; }
+  if(k==='ArrowLeft'){ move(-1); e.preventDefault(); }
+  else if(k==='ArrowRight'){ move(1); e.preventDefault(); }
+  else if(k==='ArrowUp'||k==='z'||k==='Z'||k==='x'||k==='X'){ rotate(); e.preventDefault(); }
+  else if(k==='ArrowDown'){ soft=true; e.preventDefault(); }
+  else if(k===' '){ hardDrop(); e.preventDefault(); }
+});
+document.addEventListener('keyup',e=>{ if(e.key==='ArrowDown') soft=false; });
+
+window.addEventListener('resize',sizeAll);
+// sample position behind the rules sheet
+grid=Array.from({length:ROWS},()=>Array(COLS).fill(0)); target=1; rack=1; score=0;
+[[11,0,1],[11,1,2],[10,1,3],[11,2,6],[11,3,9],[11,4,4],[10,4,5],[11,5,8],[10,5,7]].forEach(([r,c,n])=>grid[r][c]=n);
+nextP={a:3,b:2};
+hud();
+sizeAll();
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>draw());
+showTitle();
+requestAnimationFrame(loop);
+})();
+</script>

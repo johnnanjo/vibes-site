@@ -1,0 +1,93 @@
+{%- comment -%} v46 ホーム：大会情報 3カード（NEWS / RESULTS / TOURNAMENT）。PCは3カラム、スマホはタブ切り替え {%- endcomment -%}
+{%- assign b_news = blogs['news'] -%}
+{%- assign b_res = blogs['results'] -%}
+{%- assign b_ht = blogs['house-tournament'] -%}
+<div class="gt" role="group" aria-label="競技で絞り込み">
+  <button type="button" data-g="">All</button>
+  <button type="button" data-g="pocket">Pocket</button>
+  <button type="button" data-g="carom">Carom</button>
+  <button type="button" data-g="heyball">Hey Ball</button>
+  <a class="gt-go" data-g="pocket" href="/pages/pocket">ポケットのページ →</a>
+  <a class="gt-go" data-g="carom" href="/pages/carom">3Cのページ →</a>
+  <a class="gt-go" data-g="heyball" href="/pages/heyball-news">ヘイボールのページ →</a>
+</div>
+<div class="nf-tabs" role="tablist" aria-label="情報の種類">
+  <button type="button" role="tab" class="on" data-tab="news" aria-selected="true">NEWS</button>
+  <button type="button" role="tab" data-tab="results" aria-selected="false">RESULTS</button>
+  <button type="button" role="tab" data-tab="house" aria-selected="false">TOURNAMENT</button>
+</div>
+
+<div class="nf-grid" data-show="news">
+  <article class="nf-card" data-tab="news">
+    <a class="colhead" href="{{ b_news.url | default: '/blogs/news' }}"><span class="k">News</span><span class="j">公式戦・エントリー情報</span></a>
+    {%- render 'vibes-months', compact: true -%}
+    {%- assign n = 0 -%}
+    {%- for article in b_news.articles limit: 4 -%}
+      {%- assign n = n | plus: 1 -%}
+      <a class="post" href="{{ article.url }}" data-game="{%- render 'vibes-game-tag', article: article -%}">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%-m/%-d' }}</time>
+        <span class="t"><span class="bd of">公式戦</span>{{ article.title | remove: '【公式戦】' | escape }}</span>
+      </a>
+    {%- endfor -%}
+    {%- if n == 0 -%}<p class="empty">準備中です。</p>{%- endif -%}
+    <a class="more" href="{{ b_news.url | default: '/blogs/news' }}">NEWSをすべて見る →</a>
+  </article>
+
+  <article class="nf-card" data-tab="results">
+    <a class="colhead" href="{{ b_res.url | default: '/blogs/results' }}"><span class="k">Results</span><span class="j">試合結果（公式戦・ハウス）</span></a>
+    {%- assign n = 0 -%}
+    {%- for article in b_res.articles limit: 5 -%}
+      {%- assign n = n | plus: 1 -%}
+      {%- if article.title contains '【公式戦】' -%}{%- assign bd = 'of' -%}{%- assign bdl = '公式戦' -%}{%- else -%}{%- assign bd = 'ht' -%}{%- assign bdl = 'ハウス' -%}{%- endif -%}
+      <a class="post" href="{{ article.url }}" data-game="{%- render 'vibes-game-tag', article: article -%}">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%-m/%-d' }}</time>
+        <span class="t"><span class="bd {{ bd }}">{{ bdl }}</span>{{ article.title | remove: '【公式戦】' | remove: '【ハウストーナメント結果】' | remove: '【ハウストーナメント】' | escape }}</span>
+      </a>
+    {%- endfor -%}
+    {%- if n == 0 -%}<p class="empty">準備中です。</p>{%- endif -%}
+    <a class="more" href="{{ b_res.url | default: '/blogs/results' }}">RESULTSをすべて見る →</a>
+  </article>
+
+  <article class="nf-card" data-tab="house">
+    <a class="colhead" href="{{ b_ht.url | default: '/blogs/house-tournament' }}"><span class="k">Tournament</span><span class="j">ハウストーナメント（各店舗の大会）</span></a>
+    {%- assign n = 0 -%}
+    {%- for article in b_ht.articles limit: 10 -%}
+      {%- unless article.tags contains 'お知らせ' or article.title contains '0件' or n >= 5 -%}
+        {%- assign n = n | plus: 1 -%}
+        <a class="post nt" href="{{ article.url }}" data-game="{%- render 'vibes-game-tag', article: article -%}">
+          <span class="t"><span class="bd ht">ハウス</span>{{ article.title | remove: '【ハウストーナメント】' | escape }}</span>
+        </a>
+      {%- endunless -%}
+    {%- endfor -%}
+    {%- if n == 0 -%}<p class="empty">店舗からの大会情報を募集中です。掲載は無料。<a href="/pages/tournament-form">掲載フォーム →</a></p>{%- endif -%}
+    <a class="more" href="{{ b_ht.url | default: '/blogs/house-tournament' }}">ハウストーナメントをすべて見る →</a>
+  </article>
+</div>
+<div class="qk-wrap">
+<nav class="qk" aria-label="大会をすぐさがす">
+  <a class="hot" href="/pages/tournaments?date=today">今日の大会</a>
+  <a class="hot" href="/pages/tournaments?date=weekend">今週末</a>
+  <a class="of" href="/pages/tournaments?type=official">公式戦</a>
+  <a class="ht" href="/pages/tournaments?type=house">ハウス大会</a>
+  <a href="/pages/tournaments?women=1">女性限定</a>
+  <a href="/pages/tournaments?open=1">受付中</a>
+  <a href="/pages/heyball">🎱 ヘイボールとは</a>
+</nav>
+<a class="qk-all" href="/pages/tournaments"><b>大会をさがす</b><span>日付・地域・種目・クラスで絞り込み →</span></a>
+</div>
+<script>
+(function(){
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.gt button[data-g]');if(!b)return;
+    var g=b.getAttribute('data-g')||'';
+    if(window.VBGAME&&window.VBGAME.set){window.VBGAME.set(g);}
+    else{try{if(g)localStorage.setItem('vibes_game',g);else localStorage.removeItem('vibes_game');}catch(x){}location.reload();}
+  });
+  var tabs=document.querySelector('.nf-tabs'),grid=document.querySelector('.nf-grid');if(!tabs||!grid)return;
+  tabs.addEventListener('click',function(e){
+    var b=e.target.closest('[data-tab]');if(!b)return;
+    tabs.querySelectorAll('[data-tab]').forEach(function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-selected',on?'true':'false');});
+    grid.setAttribute('data-show',b.getAttribute('data-tab'));
+  });
+})();
+</script>

@@ -1,0 +1,147 @@
+{%- comment -%}
+  トップ：今日の開催大会バッジ＋今日の天気（キューケース持ち運び向け）＋7日間ミニカレンダー（大会件数＋天気）。
+  大会データは /pages/tournaments?view=tfeed（templates/page.tfeed.liquid）。
+  天気は Open-Meteo（APIキー不要・CC BY 4.0）。地域は localStorage（vb_wx）に保存、既定は東京。
+  v56: 先頭に乗換案内（snippets/vibes-transit.liquid）を表示。
+  v57: 今日の天気に「最高／最低」を表記、7日ストリップにも各日の最高／最低気温。
+{%- endcomment -%}
+{%- render 'vibes-transit' -%}
+<style>
+.vb.v46 .wk{margin:14px 0 0;display:grid;gap:8px}
+.vb.v46 .wk[hidden]{display:none}
+.vb.v46 .wk-today{display:flex;align-items:center;gap:10px;min-height:54px;padding:8px 16px;border-radius:14px;background:var(--vb-ink);color:#fff;text-decoration:none}
+.vb.v46 .wk-today .lb{font-size:13px;font-weight:900;white-space:nowrap}
+.vb.v46 .wk-today .lb::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--vb-mint);margin-right:8px;vertical-align:middle;box-shadow:0 0 0 3px rgba(0,229,163,.25)}
+.vb.v46 .wk-today .n{display:inline-flex;align-items:baseline;white-space:nowrap;font-family:var(--vb-num);font-size:24px;font-weight:800;line-height:1;color:var(--vb-cta)}
+.vb.v46 .wk-today .n small{font-family:var(--vb-jp);font-size:12px;font-weight:800;color:#fff;margin-left:2px}
+.vb.v46 .wk-today .sub{font-size:12px;font-weight:700;color:var(--vb-dark-sub);white-space:nowrap}
+.vb.v46 .wk-today .go{margin-left:auto;font-size:12px;font-weight:900;color:var(--vb-mint);white-space:nowrap}
+/* 今日の天気 */
+.vb.v46 .wx{display:none;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;min-height:54px;padding:8px 12px 8px 14px;border-radius:14px;background:#fff;border:1px solid var(--vb-border)}
+.vb.v46 .wx.on{display:grid}
+.vb.v46 .wx-ic{font-size:30px;line-height:1;grid-row:1 / span 2}
+.vb.v46 .wx-l1{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;min-width:0}
+.vb.v46 .wx-l1 .pl{font-size:12px;font-weight:800;color:var(--vb-sub);white-space:nowrap}
+.vb.v46 .wx-l1 .tp{font-family:var(--vb-num);font-size:17px;font-weight:800;line-height:1;white-space:nowrap}
+.vb.v46 .wx-l1 .tp i{font-style:normal;font-size:12px;font-weight:700;color:var(--vb-sub);margin-left:2px}
+.vb.v46 .wx-l1 .tp .hi,.vb.v46 .wx-l1 .tp .lo{display:inline-flex;align-items:baseline;gap:2px;margin-right:8px}
+.vb.v46 .wx-l1 .tp .hi small,.vb.v46 .wx-l1 .tp .lo small{font-family:var(--vb-jp);font-size:11px;font-weight:800}
+.vb.v46 .wx-l1 .tp .hi{color:#B91C1C}
+.vb.v46 .wx-l1 .tp .lo{color:var(--vb-of)}
+.vb.v46 .wx-l1 .tp i{margin-left:0}
+.vb.v46 .wx-l1 .rp{font-size:12px;font-weight:900;white-space:nowrap;padding:1px 7px;border-radius:6px;background:var(--vb-of-bg);color:var(--vb-of)}
+.vb.v46 .wx-l1 .rp.hi{background:#FEE2E2;color:#B91C1C}
+.vb.v46 .wx-l2{grid-column:2;font-size:12.5px;font-weight:700;line-height:1.5;color:var(--vb-ink);min-width:0}
+.vb.v46 .wx-l2.warn{color:#B91C1C}
+.vb.v46 .wx-sel{grid-column:3;grid-row:1 / span 2;position:relative}
+.vb.v46 .wx-sel select{appearance:none;-webkit-appearance:none;min-height:36px;padding:0 24px 0 10px;border:1px solid var(--vb-border);border-radius:999px;background:var(--vb-bg);color:var(--vb-ink);font:800 12px/1 var(--vb-jp);cursor:pointer}
+.vb.v46 .wx-sel::after{content:"";position:absolute;right:10px;top:50%;width:6px;height:6px;border-right:2px solid var(--vb-sub);border-bottom:2px solid var(--vb-sub);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.vb.v46 .wx-cr{grid-column:1 / -1;font-size:10px;color:#9CA3AF;text-align:right;margin:-2px 0 0}
+.vb.v46 .wx-cr a{color:inherit}
+/* 7日ストリップ */
+.vb.v46 .wk-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:4px;background:#fff;border:1px solid var(--vb-border);border-radius:14px}
+.vb.v46 .wk-days a{display:grid;justify-items:center;gap:1px;min-width:0;padding:7px 0 6px;border-radius:10px;text-decoration:none;color:var(--vb-ink)}
+.vb.v46 .wk-days a span{font-size:11px;font-weight:800;color:var(--vb-sub)}
+.vb.v46 .wk-days a.sat span{color:var(--vb-of)}
+.vb.v46 .wk-days a.sun span{color:#B91C1C}
+.vb.v46 .wk-days a b{font-family:var(--vb-num);font-size:17px;font-weight:800;line-height:1.1}
+.vb.v46 .wk-days a i{font-style:normal;font-size:15px;line-height:1.2;min-height:18px}
+.vb.v46 .wk-days a i:empty{display:none}
+.vb.v46 .wk-days a em{font-style:normal;font-family:var(--vb-num);font-size:10px;font-weight:800;line-height:1;color:var(--vb-of)}
+.vb.v46 .wk-days a em.hi{color:#B91C1C}
+.vb.v46 .wk-days a em:empty{display:none}
+.vb.v46 .wk-days a u{display:block;text-decoration:none;font-family:var(--vb-num);font-size:10.5px;font-weight:800;line-height:1.2;color:#B91C1C;white-space:nowrap}
+.vb.v46 .wk-days a u s{text-decoration:none;color:var(--vb-of)}
+.vb.v46 .wk-days a u:empty{display:none}
+.vb.v46 .wk-days a.today u{color:#FCA5A5}
+.vb.v46 .wk-days a.today u s{color:#93C5FD}
+.vb.v46 .wk-days a small{font-family:var(--vb-num);font-size:11px;font-weight:700;color:var(--vb-sub)}
+.vb.v46 .wk-days a.has small{color:var(--vb-ink)}
+.vb.v46 .wk-days a.today{background:var(--vb-ink);color:#fff}
+.vb.v46 .wk-days a.today span,.vb.v46 .wk-days a.today small{color:#fff}
+.vb.v46 .wk-days a.today b{color:var(--vb-cta)}
+.vb.v46 .wk-days a.today em{color:#93C5FD}
+.vb.v46 .wk-days a.today em.hi{color:#FCA5A5}
+.vb.v46 .wk-days a.zero{opacity:.55}
+@media (min-width:760px){
+  .vb.v46 .wk{grid-template-columns:auto 1fr;gap:10px;align-items:stretch}
+  .vb.v46 .wk-today{min-height:64px;padding:8px 20px}
+  .vb.v46 .wx{min-height:64px}
+  .vb.v46 .wk-days{grid-column:1 / -1}
+  .vb.v46 .wk-days a{padding:8px 0}
+}
+</style>
+<div class="wk" id="vb-week" hidden aria-label="今日の大会・天気・今後7日間">
+  <a class="wk-today" href="/pages/tournaments?date=today"><span class="lb">今日の大会</span><span class="n" data-wk-n>–<small>件</small></span><span class="sub" data-wk-sub></span><span class="go">一覧 →</span></a>
+  <div class="wx" id="vb-wx" aria-live="polite">
+    <span class="wx-ic" data-wx-ic></span>
+    <div class="wx-l1"><span class="pl" data-wx-pl></span><span class="tp" data-wx-tp></span><span class="rp" data-wx-rp></span></div>
+    <div class="wx-l2" data-wx-msg></div>
+    <label class="wx-sel"><span class="visually-hidden">天気の地域</span><select data-wx-sel aria-label="天気の地域を選ぶ"></select></label>
+    <div class="wx-cr">天気：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></div>
+  </div>
+  <div class="wk-days" data-wk-days></div>
+</div>
+<script>
+(function(){
+  var box=document.getElementById('vb-week');if(!box)return;
+  var KANTO={'東京都':1,'神奈川県':1,'埼玉県':1,'千葉県':1,'茨城県':1,'栃木県':1,'群馬県':1};
+  var WD=['日','月','火','水','木','金','土'];
+  var AREAS=[['tokyo','東京',35.69,139.69],['saitama','さいたま',35.86,139.65],['yokohama','横浜',35.44,139.64],['chiba','千葉',35.61,140.12],['sapporo','札幌',43.06,141.35],['sendai','仙台',38.27,140.87],['nagoya','名古屋',35.18,136.91],['osaka','大阪',34.69,135.50],['hiroshima','広島',34.39,132.46],['fukuoka','福岡',33.59,130.40],['naha','那覇',26.21,127.68],['geo','現在地',0,0]];
+  function jst(off){var d=new Date(Date.now()+9*36e5+(off||0)*864e5);return d.toISOString().slice(0,10);}
+  function dow(s){return new Date(s+'T00:00:00Z').getUTCDay();}
+  function ico(c){c=+c;if(c===0)return'☀️';if(c<=2)return'🌤️';if(c===3)return'☁️';if(c<=48)return'🌫️';if(c<=57)return'🌦️';if(c<=67)return'🌧️';if(c<=77)return'🌨️';if(c<=82)return'🌧️';if(c<=86)return'🌨️';return'⛈️';}
+  function lbl(c){c=+c;if(c===0)return'快晴';if(c<=2)return'晴れ';if(c===3)return'くもり';if(c<=48)return'霧';if(c<=57)return'霧雨';if(c<=67)return'雨';if(c<=77)return'雪';if(c<=82)return'にわか雨';if(c<=86)return'雪';return'雷雨';}
+  function rainy(c){c=+c;return c>=51;}
+
+  /* --- 大会件数 --- */
+  var tf=fetch('/pages/tournaments?view=tfeed',{credentials:'same-origin'}).then(function(r){return r.ok?r.text():Promise.reject();}).then(function(t){var l=JSON.parse(t.trim());return Array.isArray(l)?l:[];}).catch(function(){return null;});
+
+  /* --- 天気 --- */
+  var sel=box.querySelector('[data-wx-sel]'),wx=document.getElementById('vb-wx');
+  var cur=null;try{cur=JSON.parse(localStorage.getItem('vb_wx')||'null');}catch(e){}
+  if(!cur||!cur.id)cur={id:'tokyo'};
+  AREAS.forEach(function(a){var o=document.createElement('option');o.value=a[0];o.textContent=a[1];if(a[0]===cur.id)o.selected=true;sel.appendChild(o);});
+  function coords(){var a=AREAS.filter(function(x){return x[0]===cur.id;})[0]||AREAS[0];if(a[0]==='geo'&&cur.lat)return {name:'現在地',lat:cur.lat,lon:cur.lon};if(a[0]==='geo')return null;return {name:a[1],lat:a[2],lon:a[3]};}
+  function loadWx(){var c=coords();if(!c)return Promise.resolve(null);
+    var u='https://api.open-meteo.com/v1/forecast?latitude='+c.lat+'&longitude='+c.lon+'&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current=temperature_2m,weather_code&timezone=Asia%2FTokyo&forecast_days=7';
+    return fetch(u).then(function(r){return r.ok?r.json():Promise.reject();}).then(function(j){j._name=c.name;return j;}).catch(function(){return null;});}
+  function paintWx(j){if(!j||!j.daily){wx.classList.remove('on');return;}
+    var d=j.daily,c=j.current||{},code=d.weather_code[0],pp=d.precipitation_probability_max[0];pp=pp==null?0:pp;
+    box.querySelector('[data-wx-ic]').textContent=ico(code);
+    box.querySelector('[data-wx-pl]').textContent=j._name+'・今日 '+lbl(code);
+    box.querySelector('[data-wx-tp]').innerHTML='<span class="hi"><small>最高</small>'+Math.round(d.temperature_2m_max[0])+'°</span><span class="lo"><small>最低</small>'+Math.round(d.temperature_2m_min[0])+'°</span>'+(c.temperature_2m!=null?'<i>いま '+Math.round(c.temperature_2m)+'°</i>':'');
+    var rp=box.querySelector('[data-wx-rp]');rp.textContent='降水 '+pp+'%';rp.className='rp'+(pp>=50||rainy(code)?' hi':'');
+    var m=box.querySelector('[data-wx-msg]'),snow=(+code>=71&&+code<=77)||(+code>=85&&+code<=86);
+    if(snow){m.textContent='雪の予報。ケースは防水カバー、足元は滑りにくい靴で。';m.className='wx-l2 warn';}
+    else if(pp>=50||rainy(code)){m.textContent='雨の可能性が高め。キューケースは防水カバー＋傘を。';m.className='wx-l2 warn';}
+    else if(pp>=30){m.textContent='にわか雨の可能性あり。念のためケースカバーを。';m.className='wx-l2';}
+    else{m.textContent='キューケースの持ち運びは問題なさそうです。';m.className='wx-l2';}
+    wx.classList.add('on');
+    /* 7日ストリップに天気を反映 */
+    var cells=box.querySelectorAll('[data-wk-days] a');
+    for(var i=0;i<cells.length;i++){var k=d.time.indexOf(cells[i].getAttribute('data-d'));if(k<0)continue;var p=d.precipitation_probability_max[k];p=p==null?0:p;
+      cells[i].querySelector('i').textContent=ico(d.weather_code[k]);cells[i].querySelector('u').innerHTML=Math.round(d.temperature_2m_max[k])+'°<s>/'+Math.round(d.temperature_2m_min[k])+'°</s>';var em=cells[i].querySelector('em');em.textContent=p>=30?p+'%':'';em.className=p>=50?'hi':'';
+      cells[i].title=(cells[i].title||'')+'／'+lbl(d.weather_code[k])+' 最高'+Math.round(d.temperature_2m_max[k])+'° 最低'+Math.round(d.temperature_2m_min[k])+'° 降水'+p+'%';}
+  }
+  sel.addEventListener('change',function(){var id=sel.value;
+    if(id==='geo'){if(!navigator.geolocation){sel.value=cur.id;return;}
+      navigator.geolocation.getCurrentPosition(function(p){cur={id:'geo',lat:+p.coords.latitude.toFixed(2),lon:+p.coords.longitude.toFixed(2)};try{localStorage.setItem('vb_wx',JSON.stringify(cur));}catch(e){}loadWx().then(paintWx);},function(){sel.value=cur.id;});return;}
+    cur={id:id};try{localStorage.setItem('vb_wx',JSON.stringify(cur));}catch(e){}loadWx().then(paintWx);});
+
+  /* --- 描画 --- */
+  Promise.all([tf,loadWx()]).then(function(res){var list=res[0],j=res[1];
+    var t0=jst(0),all=0,kanto=0,days='';
+    if(list){list.forEach(function(x){if(x.d<=t0&&x.e>=t0){all++;if(KANTO[x.p])kanto++;}});
+      box.querySelector('[data-wk-n]').innerHTML=all+'<small>件</small>';
+      box.querySelector('[data-wk-sub]').textContent='全国 '+all+'件・関東 '+kanto+'件';}
+    else{box.querySelector('[data-wk-n]').innerHTML='–<small>件</small>';}
+    for(var i=0;i<7;i++){var s=jst(i),w=dow(s),n=0;if(list)list.forEach(function(x){if(x.d<=s&&x.e>=s)n++;});
+      days+='<a href="/pages/tournaments?date='+(i===0?'today':s)+'" data-d="'+s+'" title="'+s+' 大会'+n+'件" class="'+(i===0?'today ':'')+(w===6?'sat ':w===0?'sun ':'')+(n?'has':'zero')+'"><span>'+(i===0?'今日':i===1?'明日':WD[w])+'</span><b>'+(+s.slice(8))+'</b><i></i><u></u><em></em><small>'+n+'件</small></a>';}
+    box.querySelector('[data-wk-days]').innerHTML=days;
+    box.hidden=false;
+    paintWx(j);
+    if(window.VBGAME&&window.VBGAME.apply)window.VBGAME.apply();
+  });
+})();
+</script>
