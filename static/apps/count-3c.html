@@ -112,8 +112,8 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 <div class="board" id="board">
   <div class="top">
     <a href="/" aria-label="VIBES BILLIARDS home"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
-    <span class="ttl">3-CUSHION SCOREBOARD</span>
-    <span style="display:flex;gap:.8vw"><button type="button" id="bPl">PLAYERS</button><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
+    <span class="ttl" id="ttl">3-CUSHION SCOREBOARD</span>
+    <span style="display:flex;gap:.8vw"><button type="button" id="bKey" hidden>KEYS (K)</button><button type="button" id="bPl">PLAYERS</button><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
   </div>
   <div class="main">
     <section class="side p0" id="s0" aria-label="Player 1">
@@ -175,6 +175,9 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 <div class="over-l" id="wzL" hidden>
   <div class="panel wz" role="dialog" aria-label="Player entry"><h2 id="wzH"></h2><div id="wzB"></div><div class="keys" id="wzK"></div></div>
 </div>
+<div class="over-l" id="kmL" hidden>
+  <div class="panel wz" role="dialog" aria-label="Key setup"><h2 id="kmH"></h2><div class="inp"><span id="kmT"></span></div><p class="note" id="kmN"></p><div class="keys"><span><kbd>Esc</kbd>CANCEL</span></div></div>
+</div>
 <div class="over-l" id="prL" hidden>
   <div class="panel pt" id="prP" role="dialog" aria-label="Warm-up timer">
     <h2>WARM-UP <span id="prWho" style="color:var(--sub);font-size:.7em"></span></h2>
@@ -186,7 +189,8 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 
 <script>
 (function () {
-  var KEY = 'vibes-count-3c-v1';
+  var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
+  var KEY = 'vibes-count-3c-v1' + (TB ? '-t' + TB : '');
   var $ = function (id) { return document.getElementById(id); };
   var def = function () { return { cfg: { n: ['PLAYER 1', 'PLAYER 2'], g: [25, 25], lim: 0, t: 40, eq: 1, snd: 1, pm: 5 }, sc: [0, 0], inn: [[], []], run: 0, typed: false, turn: 0, over: false }; };
   var S = def(), hist = [], tLeft = 0, tOn = false, tId = null, dotAt = 0, actx = null;
@@ -291,7 +295,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   var W = null;
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function keysHelp(list) { var k = $('wzK'); k.textContent = ''; list.forEach(function (a) { var sp = el('span'); sp.appendChild(el('kbd', '', a[0])); sp.appendChild(document.createTextNode(a[1])); k.appendChild(sp); }); }
-  function wzOpen(p) { tStop(); $('setL').hidden = true; W = { p: p || 0, step: 'mode', guest: [false, false], done: [null, null] }; $('wzL').hidden = false; wzDraw(); }
+  function wzOpen(p) { try { players = JSON.parse(localStorage.getItem(PK) || '[]') || players; } catch (e) {} tStop(); $('setL').hidden = true; W = { p: p || 0, step: 'mode', guest: [false, false], done: [null, null] }; $('wzL').hidden = false; wzDraw(); }
   function wzClose() { W = null; $('wzL').hidden = true; render(); }
   function wzFinish() {
     for (var p = 0; p < 2; p++) { var d = W.done[p]; if (d) { S.cfg.n[p] = d.name; S.cfg.g[p] = Math.max(d.g, S.sc[p]); } }
@@ -434,9 +438,46 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   $('bNew').onclick = function () { closeSet(true); newGame(true); wzOpen(0); };
   $('bAgain').onclick = function () { newGame(false); wzOpen(0); }; $('bBack').onclick = undo;
 
+  /* ===== several tables on one PC: each keypad's key codes are learned per table and routed to that table's window ===== */
+  var MK = 'vibes-count-3c-keymap-v1', LOGI = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', 'Enter', 'Backspace', '*', '/', '.'], KM = null, chan = null;
+  var NAMES = { '+': '+ (PLUS)', '-': '- (MINUS)', '*': '* (TIMER)', '/': '/ (SETTINGS)', '.': '. (NEW GAME)', 'Backspace': 'BackSpace (UNDO)', 'Enter': 'Enter' };
+  var loadMaps = function () { try { return JSON.parse(localStorage.getItem(MK) || '{}') || {}; } catch (e) { return {}; } };
+  var noop = { preventDefault: function () {}, target: {} };
+  if (TB) {
+    $('ttl').textContent = 'TABLE ' + TB; document.title = 'TABLE ' + TB + ' | 3-CUSHION SCOREBOARD'; $('bKey').hidden = false;
+    try { chan = new BroadcastChannel('vibes-count-3c'); chan.onmessage = function (ev) { var m = ev.data || {}; if (m.t === TB && m.k) { if (!$('setL').hidden) closeSet(false); onKey(m.k, noop); } }; } catch (e) {}
+  }
+  function kmOpen() { if (!TB) return; KM = { i: 0, map: {} }; $('kmL').hidden = false; kmDraw(''); }
+  function kmDraw(msg) { $('kmH').textContent = 'TABLE ' + TB + ' KEY SETUP  (' + (KM.i + 1) + ' / ' + LOGI.length + ')'; $('kmT').textContent = 'PRESS THE KEY FOR:  ' + (NAMES[LOGI[KM.i]] || LOGI[KM.i]); $('kmN').textContent = msg || 'Use the keypad that belongs to this table.'; }
+  function kmKey(e) {
+    if (e.key === 'Escape') { KM = null; $('kmL').hidden = true; return; }
+    var code = e.code, maps = loadMaps(), other = 0;
+    if (!code || /^(Shift|Control|Alt|Meta|NumLock|CapsLock)/.test(code)) return;
+    Object.keys(maps).forEach(function (t) { if (+t !== TB && maps[t][code]) other = t; });
+    if (other) return kmDraw('THIS KEY IS ALREADY USED BY TABLE ' + other + '. PRESS A DIFFERENT KEY.');
+    if (KM.map[code]) return kmDraw('THIS KEY IS ALREADY SET ON THIS KEYPAD. PRESS A DIFFERENT KEY.');
+    KM.map[code] = LOGI[KM.i]; KM.i++;
+    if (KM.i >= LOGI.length) { maps[TB] = KM.map; try { localStorage.setItem(MK, JSON.stringify(maps)); } catch (x) {} KM = null; $('kmL').hidden = true; toast('KEYS SAVED FOR TABLE ' + TB); return; }
+    kmDraw('');
+  }
+  $('bKey').onclick = kmOpen;
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    var k = e.key;
+    if (KM) { e.preventDefault(); kmKey(e); return; }
+    if (TB) {
+      var maps = loadMaps(), hitT = 0, lk = null;
+      Object.keys(maps).forEach(function (t) { if (maps[t][e.code]) { hitT = +t; lk = maps[t][e.code]; } });
+      if (hitT && hitT !== TB) { e.preventDefault(); if (chan) chan.postMessage({ t: hitT, k: lk }); return; }
+      if (hitT === TB) {
+        if (!$('setL').hidden) { if (lk === 'Enter' || (lk >= '0' && lk <= '9')) return; e.preventDefault(); return; }
+        e.preventDefault(); onKey(lk, noop); return;
+      }
+      if (Object.keys(maps).length && (e.code.indexOf('Numpad') === 0 || e.code === 'Backspace') && $('setL').hidden) { e.preventDefault(); toast('THIS KEYPAD IS NOT SET UP. PRESS K FOR KEY SETUP.'); return; }
+      if ((e.key === 'k' || e.key === 'K') && $('setL').hidden && !W) { e.preventDefault(); kmOpen(); return; }
+    }
+    onKey(e.key, e);
+  });
+  function onKey(k, e) {
     if (!$('setL').hidden) { if (k === 'Escape') { e.preventDefault(); closeSet(false); } else if (k === '/' && e.target.type === 'number') e.preventDefault(); return; }
     if (W) { if (wzKey(k)) e.preventDefault(); return; }
     if (!$('prL').hidden) {
@@ -459,7 +500,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
     else if (k === 'f' || k === 'F') goFull();
     else hit = false;
     if (hit) e.preventDefault();
-  });
+  }
   render(); if (S.over) showWin(); else if (S.cfg.n[0] === 'PLAYER 1' && S.cfg.n[1] === 'PLAYER 2' && !S.inn[0].length && !S.run) wzOpen(0);
 })();
 </script>
