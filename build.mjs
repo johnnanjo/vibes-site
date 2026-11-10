@@ -504,5 +504,17 @@ fs.writeFileSync(path.join(DIST, '_redirects'), [
   '/blogs/ニュース /blogs/news 301', '/blogs/house /blogs/house-tournament 301', '/pages/pour-femme / 302', '/pages/near-data /data/near.json 302', '/search /pages/tournaments 302',
   '/zh-CN/* /zh/:splat 301', '/zh-cn/* /zh/:splat 301',
 ].join('\n') + '\n');
+/* static hosts without _redirects (GitHub Pages): stub pages for exact redirects, JS for wildcards in 404 */
+const STUBS = { '/products/vibes-tee': '/pages/wear', '/collections': '/pages/shaft', '/cart': '/pages/shaft', '/account': '/', '/blogs/ニュース': '/blogs/news', '/blogs/house': '/blogs/house-tournament', '/pages/pour-femme': '/', '/pages/near-data': '/data/near.json', '/search': '/pages/tournaments' };
+for (const [from, to] of Object.entries(STUBS)) {
+  const f = path.join(DIST, from.slice(1), 'index.html');
+  if (fs.existsSync(f)) continue;
+  write(DIST, from, `<!doctype html><meta charset="utf-8"><title>移動しました</title><link rel="canonical" href="${SITE}${to}"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=${to}"><script>location.replace(${JSON.stringify(to)}+location.search+location.hash)</script><a href="${to}">${to}</a>`);
+}
+{
+  const f = path.join(DIST, '404.html');
+  const js = `<script>(function(){var p=location.pathname,m;if(/^\\/collections(\\/|$)/.test(p))return location.replace('/pages/shaft');if(/^\\/account/.test(p))return location.replace('/');if((m=p.match(/^\\/zh-cn(\\/.*)?$/i)))return location.replace('/zh'+(m[1]||'/')+location.search);if(p.length>1&&p.slice(-1)==='/')return location.replace(p.slice(0,-1)+location.search);})()</script>`;
+  fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace('<head>', '<head>' + js));
+}
 fs.writeFileSync(path.join(DIST, '_headers'), `/data/*\n  Cache-Control: public, max-age=300\n/css/*\n  Cache-Control: public, max-age=31536000, immutable\n/js/*\n  Cache-Control: public, max-age=31536000, immutable\n`);
 console.log(`built ${n} pages (${out.size} unique) · ${tours.length} tournaments · ${shops.length} venues · ${articles.length} articles · ${players.size} players`);
