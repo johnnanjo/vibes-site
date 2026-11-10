@@ -153,7 +153,9 @@ function tDetail(t) {
   add('問い合わせ', esc(t.contact));
   add('備考', esc(t.notes));
   if (t.features.length) add('特徴', esc(t.features.map((f) => FEAT[f] || f).join('・')));
-  if (t.source_url && !/cdn\.shopify\.com/.test(t.source_url)) add('出典', `<a href="${esc(t.source_url)}" target="_blank" rel="noopener">${esc(t.source_name || '大会要項')}</a>`);
+  const flyer = t.source_url && /^\/img\/.+\.(jpe?g|png|webp)$/i.test(t.source_url) ? t.source_url : '';
+  if (flyer) add('出典', esc(t.source_name || '大会要項'));
+  else if (t.source_url && !/cdn\.shopify\.com/.test(t.source_url)) add('出典', `<a href="${esc(t.source_url)}" target="_blank" rel="noopener">${esc(t.source_name || '大会要項')}</a>`);
   else if (t.source_name) add('出典', esc(t.source_name));
   const same = upcoming.filter((x) => x !== t && x.cat === t.cat && x.disc === t.disc && x.d >= today && !x.dead).slice(0, 5);
   const daysTo = daysBetween(today, t.d);
@@ -172,6 +174,7 @@ function tDetail(t) {
 <div style="display:flex;flex-direction:column;gap:14px;padding-top:20px">
 ${t.dead ? `<div class="msg ng">この大会は「${st}」となっています。最新情報は主催者にご確認ください。</div>` : ''}
 <dl class="card dl">${rows.join('')}</dl>
+${flyer ? `<a href="${flyer}" target="_blank" rel="noopener" class="card" style="display:block;overflow:hidden"><img src="${flyer}" alt="${esc(t.title)}の大会要項" loading="lazy" style="display:block;width:100%"></a>` : ''}
 <div class="btns"><a class="btn btn-dark" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t.title)}&dates=${t.starts_at.replace(/[-:]/g, '').slice(0, 15)}/${(t.ends_at || t.starts_at).replace(/[-:]/g, '').slice(0, 15)}&ctz=Asia/Tokyo&location=${encodeURIComponent(t.venue)}" target="_blank" rel="noopener">${svg('cal', 18)}予定に追加</a><a class="btn btn-line" href="https://line.me/R/share?text=${encodeURIComponent(t.title + ' ' + SITE + t.url)}" target="_blank" rel="noopener">LINEで送る</a></div>
 ${res}
 </div>
