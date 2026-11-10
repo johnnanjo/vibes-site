@@ -113,7 +113,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   <div class="top">
     <a href="/" aria-label="VIBES BILLIARDS home"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
     <span class="ttl" id="ttl">3-CUSHION SCOREBOARD</span>
-    <span style="display:flex;gap:.8vw"><button type="button" id="bKey" hidden>KEYS (K)</button><button type="button" id="bPl">PLAYERS</button><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
+    <span style="display:flex;gap:.8vw"><button type="button" id="bRm">REMOTE</button><button type="button" id="bKey" hidden>KEYS (K)</button><button type="button" id="bPl">PLAYERS</button><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
   </div>
   <div class="main">
     <section class="side p0" id="s0" aria-label="Player 1">
@@ -175,6 +175,15 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 <div class="over-l" id="wzL" hidden>
   <div class="panel wz" role="dialog" aria-label="Player entry"><h2 id="wzH"></h2><div id="wzB"></div><div class="keys" id="wzK"></div></div>
 </div>
+<div class="over-l" id="rmL" hidden>
+  <div class="panel wz" role="dialog" aria-label="Remote control">
+    <h2>REMOTE CONTROL <small id="rmS"></small></h2>
+    <p class="note" style="font-size:2.6vh;color:var(--chalk)">Open this page on a tablet or phone and enter the code:</p>
+    <div class="inp" style="justify-content:center"><span id="rmU" style="font-size:4.4vh"></span></div>
+    <div class="inp" style="justify-content:center"><span class="num" id="rmC" style="font-size:16vh;letter-spacing:.08em"></span></div>
+    <div class="acts"><button type="button" class="btn" id="rmOff">TURN OFF REMOTE</button><button type="button" class="btn go" id="rmOk">CLOSE (Enter)</button></div>
+  </div>
+</div>
 <div class="over-l" id="kmL" hidden>
   <div class="panel wz" role="dialog" aria-label="Key setup"><h2 id="kmH"></h2><div class="inp"><span id="kmT"></span></div><p class="note" id="kmN"></p><div class="keys"><span><kbd>Esc</kbd>CANCEL</span></div></div>
 </div>
@@ -225,7 +234,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
     $('inn').textContent = S.inn[S.turn].length + (S.over ? 0 : 1);
     $('lim').textContent = S.cfg.lim ? 'LIMIT ' + S.cfg.lim : '';
     $('tbox').hidden = !S.cfg.t;
-    drawTimer(); save();
+    drawTimer(); save(); if (typeof rmPush === 'function') rmPush();
   }
   function drawTimer() {
     var T = S.cfg.t || 1, v = tOn ? Math.max(0, Math.ceil(tLeft)) : S.cfg.t;
@@ -438,6 +447,55 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   $('bNew').onclick = function () { closeSet(true); newGame(true); wzOpen(0); };
   $('bAgain').onclick = function () { newGame(false); wzOpen(0); }; $('bBack').onclick = undo;
 
+  /* ===== remote control from a tablet / phone (relay: Cloudflare Worker + Durable Object) ===== */
+  var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+  var RMK = 'vibes-count-3c-remote' + (TB ? '-t' + TB : ''), rm = null, rws = null, rTry = 0, rPing = null;
+  try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
+  function rmState() { return JSON.stringify({ type: 'state', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: [S.inn[0].length, S.inn[1].length], hr: [hi(0), hi(1)], av: [avg(0), avg(1)], last: [S.inn[0].slice(-12), S.inn[1].slice(-12)], t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W }); }
+  function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); } catch (e) {} } }
+  function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'CONNECTED' : 'CONNECTING…') : 'OFF'; $('bRm').textContent = rm && rm.on ? 'REMOTE ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'REMOTE'; }
+  function rmConnect() {
+    if (!rm || !rm.on) return; if (rws && rws.readyState <= 1) return;
+    try { rws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { rws = null; return; }
+    rws.onopen = function () { rTry = 0; rmStatus(); rmPush(); clearInterval(rPing); rPing = setInterval(function () { if (rws && rws.readyState === 1) rws.send('ping'); }, 25000); };
+    rws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } rmHandle(m); };
+    rws.onclose = function () { clearInterval(rPing); rmStatus(); if (rm && rm.on) setTimeout(rmConnect, Math.min(15000, 1000 * Math.pow(2, rTry++))); };
+    rws.onerror = function () { try { rws.close(); } catch (e) {} };
+    rmStatus();
+  }
+  function rmHandle(m) {
+    if (m.type === 'hello') return rmPush();
+    if (KM) return;
+    if (!$('setL').hidden) closeSet(false);
+    if (!$('rmL').hidden) $('rmL').hidden = true;
+    if (m.type === 'players' && m.p && m.p.length === 2) {
+      if (W) { W = null; $('wzL').hidden = true; }
+      for (var p = 0; p < 2; p++) { var n = String(m.p[p].n || '').slice(0, 20).trim() || 'PLAYER ' + (p + 1), g = Math.max(1, Math.min(999, parseInt(m.p[p].g, 10) || 25)); S.cfg.n[p] = n; S.cfg.g[p] = Math.max(g, S.sc[p]); }
+      if (S.run > room()) S.run = Math.max(0, room());
+      return render();
+    }
+    if (m.type !== 'cmd') return;
+    var c = m.c;
+    if (W && c !== 'players') { W = null; $('wzL').hidden = true; }
+    if (c === 'warmup') { if ($('prL').hidden) { prOpen(); prToggle(); } else prClose(); return rmPush(); }
+    if (c === 'warmupToggle') { if (!$('prL').hidden) prToggle(); return; }
+    if (!$('prL').hidden) prClose();
+    if (c === 'newgame') { newGame(true); return; }
+    if (c === 'undo') { undo(); return; }
+    if (!$('winL').hidden) return;
+    if (c === 'add') add(1); else if (c === 'sub') add(-1); else if (c === 'commit') commit();
+    else if (c === 'clock') { if (tOn) tStop(); else tStart(); rmPush(); }
+    else if (c === 'set' && typeof m.v === 'number') { S.run = Math.max(0, Math.min(room(), m.v | 0)); S.typed = false; render(); }
+  }
+  function rmOpen() {
+    if (!rm || !rm.code) { var c = ''; for (var i = 0; i < 6; i++) c += Math.floor(Math.random() * 10); rm = { code: c, on: true }; }
+    rm.on = true; try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {}
+    $('rmU').textContent = 'vibesbilliards.com/pages/count-remote'; $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3);
+    $('rmL').hidden = false; rmConnect(); rmStatus();
+  }
+  $('bRm').onclick = rmOpen; $('rmOk').onclick = function () { $('rmL').hidden = true; };
+  $('rmOff').onclick = function () { if (rm) { rm.on = false; try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} } if (rws) { try { rws.close(); } catch (e) {} } $('rmL').hidden = true; rmStatus(); };
+  rmStatus(); rmConnect();
   /* ===== several tables on one PC: each keypad's key codes are learned per table and routed to that table's window ===== */
   var MK = 'vibes-count-3c-keymap-v1', LOGI = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', 'Enter', 'Backspace', '*', '/', '.'], KM = null, chan = null;
   var NAMES = { '+': '+ (PLUS)', '-': '- (MINUS)', '*': '* (TIMER)', '/': '/ (SETTINGS)', '.': '. (NEW GAME)', 'Backspace': 'BackSpace (UNDO)', 'Enter': 'Enter' };
@@ -464,6 +522,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (KM) { e.preventDefault(); kmKey(e); return; }
+    if (!$('rmL').hidden) { if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); $('rmL').hidden = true; } return; }
     if (TB) {
       var maps = loadMaps(), hitT = 0, lk = null;
       Object.keys(maps).forEach(function (t) { if (maps[t][e.code]) { hitT = +t; lk = maps[t][e.code]; } });

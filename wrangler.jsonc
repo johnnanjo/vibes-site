@@ -1,9 +1,13 @@
 {
   "name": "vibes-site",
+  "main": "worker.mjs",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "drop-trailing-slash"
-  }
+  },
+  "durable_objects": { "bindings": [{ "name": "COUNT_ROOM", "class_name": "CountRoom" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CountRoom"] }]
 }

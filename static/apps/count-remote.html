@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ja" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>スリークッション デジタルカウント リモコン（タブレット・スマホ）｜VIBES BILLIARDS</title>
+<meta name="description" content="タブレットやスマホから、モニターのスリークッション デジタルカウントを操作するリモコン。">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://vibesbilliards.com/pages/count-remote">
+<link rel="icon" href="/img/favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap">
+<style>
+:root{--night:#171A22;--night2:#262A35;--line:#3A3F4C;--lime:#C0FC09;--chalk:#F3F4EF;--sub:#A3A8B5;--felt:#1E5AA8;--yellow:#F2C200;--red:#D7262E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--night);color:var(--chalk);font-family:"Noto Sans JP",system-ui,sans-serif;touch-action:manipulation}
+[hidden]{display:none!important}
+.num{font-family:Anton,Impact,"Arial Narrow",sans-serif;font-variant-numeric:tabular-nums;line-height:1}
+.wrap{max-width:820px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;min-height:100vh}
+.top{display:flex;align-items:center;gap:10px}
+.top img{height:34px;width:auto}
+.st{margin-left:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--sub)}
+.st i{width:12px;height:12px;border-radius:50%;background:var(--red)}
+.st.ok i{background:var(--lime)}
+button{font:inherit;color:inherit;cursor:pointer;border:0}
+.sm{background:var(--night2);border:1px solid var(--line);border-radius:999px;padding:9px 14px;font-weight:700;font-size:14px}
+.card{background:var(--night2);border-radius:18px;padding:16px}
+h1{font-size:22px;margin:0 0 6px}
+p{margin:0 0 12px;color:var(--sub);font-size:15px;line-height:1.7}
+label{display:block;font-weight:700;font-size:14px;margin:0 0 6px}
+input{width:100%;min-width:0;font:inherit;font-size:20px;font-weight:700;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:12px;padding:12px}
+input:focus{outline:none;border-color:var(--lime)}
+.code{font-family:Anton,Impact,sans-serif;font-size:44px;letter-spacing:.14em;text-align:center}
+.go{background:var(--lime);color:var(--night);font-weight:900;font-size:20px;border-radius:14px;padding:16px;width:100%}
+.err{color:#FF8A8F;font-weight:700;font-size:14px;min-height:20px;margin:8px 0 0}
+.pl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.p{background:var(--felt);border-radius:16px;padding:12px;border:4px solid transparent;opacity:.6;min-width:0}
+.p.on{opacity:1;border-color:var(--lime)}
+.p .nm{display:flex;align-items:center;gap:8px;font-weight:900;font-size:16px;min-width:0}
+.p .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.p .nm i{width:16px;height:16px;border-radius:50%;flex:none}
+.p .sc{font-size:76px;text-align:center;margin:6px 0 2px}
+.p0 .sc{color:#fff}.p1 .sc{color:var(--yellow)}
+.p small{display:block;text-align:center;font-weight:700;font-size:12px;color:#DCE3F0}
+.run{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.run b{font-size:54px}
+.run small{font-weight:700;color:var(--sub);font-size:13px}
+.pad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.k{border-radius:18px;font-weight:900;font-size:22px;padding:18px 8px;background:var(--night2);border:2px solid var(--line);min-height:76px}
+.k:active{transform:scale(.97);background:#313644}
+.k.big{grid-column:1/-1;font-size:40px;min-height:130px;background:var(--lime);color:var(--night);border-color:var(--lime)}
+.k.big:active{background:#A8DC08}
+.k.end{grid-column:1/-1;font-size:28px;min-height:96px;background:var(--chalk);color:var(--night);border-color:var(--chalk)}
+.k.on{border-color:var(--lime)}
+.k small{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-top:2px}
+.k.big small,.k.end small{color:#3A3F4C}
+.note{font-size:13px;color:var(--sub);text-align:center;margin:0}
+.row2{display:grid;grid-template-columns:1fr 110px;gap:10px;margin-bottom:10px}
+.sv{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
+.sv button{background:var(--night);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-weight:700;font-size:14px}
+.ph{display:flex;align-items:center;gap:8px;font-weight:900;font-size:17px;margin:0 0 10px}
+.ph i{width:16px;height:16px;border-radius:50%}
+.ph button{margin-left:auto}
+.over{background:var(--chalk);color:var(--night);border-radius:14px;padding:12px;text-align:center;font-weight:900;font-size:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/" aria-label="VIBES BILLIARDS home"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
+    <span class="st" id="st"><i></i><span id="stT">NOT CONNECTED</span></span>
+    <button type="button" class="sm" id="bCode" hidden>CHANGE TABLE</button>
+  </div>
+
+  <section class="card" id="vJoin">
+    <h1>REMOTE CONTROL</h1>
+    <p>Enter the 6-digit code shown on the scoreboard monitor (press REMOTE on the monitor page).</p>
+    <form id="fJoin">
+      <label for="iCode">CODE</label>
+      <input id="iCode" class="code" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="000 000">
+      <p class="err" id="eJoin"></p>
+      <button class="go" type="submit">CONNECT</button>
+    </form>
+  </section>
+
+  <section id="vMain" hidden style="display:flex;flex-direction:column;gap:12px">
+    <div class="over" id="over" hidden></div>
+    <div class="pl">
+      <div class="p p0" id="p0"><div class="nm"><i style="background:#fff"></i><span id="n0"></span></div><div class="sc num" id="s0">0</div><small id="d0"></small></div>
+      <div class="p p1" id="p1"><div class="nm"><i style="background:#F2C200"></i><span id="n1"></span></div><div class="sc num" id="s1">0</div><small id="d1"></small></div>
+    </div>
+    <div class="card run"><small>RUN</small><b class="num" id="run">0</b><small id="inn"></small></div>
+    <div class="pad">
+      <button type="button" class="k big" data-c="add">+1<small>POINT</small></button>
+      <button type="button" class="k end" data-c="commit">END INNING<small>CHANGE PLAYER</small></button>
+      <button type="button" class="k" data-c="sub">−1</button>
+      <button type="button" class="k" data-c="undo">UNDO</button>
+      <button type="button" class="k" data-c="clock" id="kClock">SHOT CLOCK<small id="kClockS"></small></button>
+      <button type="button" class="k" data-c="warmup" id="kWarm">WARM-UP<small id="kWarmS"></small></button>
+      <button type="button" class="k" id="kPlayers">PLAYERS</button>
+      <button type="button" class="k" id="kNew">NEW GAME<small>TAP TWICE</small></button>
+    </div>
+    <p class="note" id="foot"></p>
+  </section>
+
+  <section class="card" id="vPl" hidden>
+    <h1>PLAYERS</h1>
+    <p>Type the names with this device's keyboard. Saved players appear below each name.</p>
+    <form id="fPl">
+      <div class="ph"><i style="background:#fff"></i>PLAYER 1 (WHITE)<button type="button" class="sm" data-guest="0">GUEST</button></div>
+      <div class="row2"><div><label for="pn0">NAME</label><input id="pn0" maxlength="20" autocomplete="off"></div><div><label for="pg0">TARGET</label><input id="pg0" type="number" inputmode="numeric" min="1" max="999"></div></div>
+      <div class="sv" id="sv0"></div>
+      <div class="ph"><i style="background:#F2C200"></i>PLAYER 2 (YELLOW)<button type="button" class="sm" data-guest="1">GUEST</button></div>
+      <div class="row2"><div><label for="pn1">NAME</label><input id="pn1" maxlength="20" autocomplete="off"></div><div><label for="pg1">TARGET</label><input id="pg1" type="number" inputmode="numeric" min="1" max="999"></div></div>
+      <div class="sv" id="sv1"></div>
+      <button class="go" type="submit">SEND TO SCOREBOARD</button>
+      <p class="err"></p>
+      <button type="button" class="k" id="bPlBack" style="width:100%;min-height:56px;font-size:18px">BACK</button>
+    </form>
+  </section>
+</div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+  var CK = 'vibes-count-remote-code', PK = 'vibes-count-remote-players';
+  var code = '', ws = null, tries = 0, ping = null, last = null, newAt = 0, gotState = false, joinT = null;
+  var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
+  var show = function (v) { ['vJoin', 'vMain', 'vPl'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin'; };
+  var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
+  function connect() {
+    if (!code) return; if (ws && ws.readyState <= 1) return;
+    status(false, 'CONNECTING…');
+    try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'NOT CONNECTED'); return; }
+    ws.onopen = function () { tries = 0; status(true, 'TABLE ' + code.slice(0, 3) + ' ' + code.slice(3)); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; draw(); if (!$('vJoin').hidden) show('vMain'); } };
+    ws.onclose = function () { clearInterval(ping); status(false, 'RECONNECTING…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
+    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+  }
+  function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'NOT CONNECTED'); connect(); return false; }
+  function draw() {
+    var m = last; if (!m) return;
+    for (var p = 0; p < 2; p++) {
+      $('n' + p).textContent = m.n[p] + ' (' + m.g[p] + ')';
+      $('s' + p).textContent = m.sc[p] + (p === m.turn && !m.over ? m.run : 0);
+      $('d' + p).textContent = 'INN ' + m.inn[p] + ' · HR ' + m.hr[p] + ' · AVG ' + m.av[p];
+      $('p' + p).classList.toggle('on', p === m.turn && !m.over);
+    }
+    $('run').textContent = m.run; $('inn').textContent = 'INNING ' + (m.inn[m.turn] + (m.over ? 0 : 1));
+    $('over').hidden = !m.over; if (m.over) { var a = m.sc[0] / m.g[0], b = m.sc[1] / m.g[1]; $('over').textContent = 'GAME OVER — ' + (a === b ? 'DRAW' : 'WINNER: ' + m.n[a > b ? 0 : 1]); }
+    $('kClock').classList.toggle('on', !!m.tOn); $('kClockS').textContent = m.t ? (m.tOn ? 'RUNNING · ' + m.t + ' SEC' : m.t + ' SEC') : 'OFF IN SETTINGS';
+    $('kWarm').classList.toggle('on', !!m.pr); $('kWarmS').textContent = m.pr ? 'TAP TO CLOSE' : m.pm + ' MIN';
+    $('foot').textContent = m.table ? 'TABLE ' + m.table : '';
+  }
+  $('fJoin').addEventListener('submit', function (e) {
+    e.preventDefault(); var v = $('iCode').value.replace(/\D/g, '');
+    if (v.length !== 6) { $('eJoin').textContent = 'ENTER THE 6-DIGIT CODE.'; return; }
+    $('eJoin').textContent = ''; code = v; gotState = false; try { localStorage.setItem(CK, code); } catch (x) {}
+    if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; }
+    connect(); clearTimeout(joinT);
+    joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'NO SCOREBOARD FOUND FOR THIS CODE. CHECK THE CODE AND THAT REMOTE IS ON AT THE MONITOR.'; }, 5000);
+  });
+  $('iCode').addEventListener('input', function () { var v = this.value.replace(/\D/g, '').slice(0, 6); this.value = v.length > 3 ? v.slice(0, 3) + ' ' + v.slice(3) : v; });
+  $('bCode').onclick = function () { code = ''; try { localStorage.removeItem(CK); } catch (x) {} if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; } last = null; status(false, 'NOT CONNECTED'); show('vJoin'); };
+  Array.prototype.forEach.call(document.querySelectorAll('.k[data-c]'), function (b) { b.addEventListener('click', function () { send({ type: 'cmd', c: b.getAttribute('data-c') }); if (navigator.vibrate) navigator.vibrate(15); }); });
+  $('kNew').onclick = function () { var n = Date.now(); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); this.querySelector('small').textContent = 'TAP TWICE'; } else { newAt = n; this.querySelector('small').textContent = 'TAP AGAIN TO CONFIRM'; var el = this; setTimeout(function () { el.querySelector('small').textContent = 'TAP TWICE'; }, 2000); } };
+  function chips(p) {
+    var box = $('sv' + p), q = $('pn' + p).value.trim(); box.textContent = '';
+    players.filter(function (o) { return !q || o.n.indexOf(q) >= 0 || (o.y || '').indexOf(q) >= 0; }).slice(0, 12).forEach(function (o) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = o.n + ' (' + o.g + ')';
+      b.onclick = function () { $('pn' + p).value = o.n; $('pg' + p).value = o.g; chips(p); }; box.appendChild(b);
+    });
+  }
+  $('kPlayers').onclick = function () {
+    var m = last || { n: ['', ''], g: [25, 25] };
+    for (var p = 0; p < 2; p++) { $('pn' + p).value = /^PLAYER [12]$/.test(m.n[p]) ? '' : m.n[p]; $('pg' + p).value = m.g[p]; chips(p); }
+    show('vPl');
+  };
+  [0, 1].forEach(function (p) { $('pn' + p).addEventListener('input', function () { chips(p); }); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-guest]'), function (b) { b.onclick = function () { var p = +b.getAttribute('data-guest'); $('pn' + p).value = 'GUEST'; chips(p); }; });
+  $('bPlBack').onclick = function () { show('vMain'); };
+  $('fPl').addEventListener('submit', function (e) {
+    e.preventDefault(); var out = [];
+    for (var p = 0; p < 2; p++) { var n = $('pn' + p).value.trim() || 'GUEST', g = Math.max(1, Math.min(999, parseInt($('pg' + p).value, 10) || 25)); out.push({ n: n, g: g }); }
+    var gs = out.map(function (o) { return /^GUEST( \d)?$/i.test(o.n); });
+    if (gs[0] && gs[1]) { out[0].n = 'GUEST 1'; out[1].n = 'GUEST 2'; } else { if (gs[0]) out[0].n = 'GUEST'; if (gs[1]) out[1].n = 'GUEST'; }
+    out.forEach(function (o, i) { if (gs[i]) return; var hit = null; players.forEach(function (x) { if (x.n === o.n) hit = x; }); if (hit) hit.g = o.g; else players.unshift({ n: o.n, g: o.g }); });
+    if (players.length > 300) players.length = 300; try { localStorage.setItem(PK, JSON.stringify(players)); } catch (x) {}
+    if (send({ type: 'players', p: out })) show('vMain');
+  });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) connect(); });
+  var q = /[?&]r=(\d{6})/.exec(location.search); try { code = q ? q[1] : (localStorage.getItem(CK) || ''); } catch (e) {}
+  if (code) { $('iCode').value = code.slice(0, 3) + ' ' + code.slice(3); connect(); joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'WAITING FOR THE SCOREBOARD. PRESS REMOTE ON THE MONITOR PAGE.'; }, 5000); }
+  show('vJoin');
+})();
+</script>
+</body>
+</html>
