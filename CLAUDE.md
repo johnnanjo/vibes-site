@@ -12,6 +12,7 @@
 - `data/shops.json` ビリヤード場
 - `data/articles.json` NEWS・試合結果・ハウストーナメント・試合速報の記事（`blog.handle` で振り分け）
 - `data/pages.json` 規約などの固定ページ本文、`data/products.json` 商品
+- `data/inbox/{articles,tournaments,shops}/*.json` 自動化（Make）が1件1ファイルで書き込む追加分。同じhandleは上書き
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック
 
 ## URL
