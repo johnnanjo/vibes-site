@@ -35,7 +35,10 @@ function home() {
   const lastDay = recentOff[0]?.d;
   const housePending = tours.filter((t) => t.cat === 'house' && !t.results && !t.winner && t.d < today && t.d >= addDays(today, -7) && !t.dead).length;
   const month = today.slice(0, 7);
-  const ps = [...players.values()].filter((p) => p.wins[0].d.startsWith(month)).concat([...players.values()].filter((p) => !p.wins[0].d.startsWith(month))).slice(0, 8);
+  const prevMonth = addDays(month + '-01', -1).slice(0, 7);
+  const inMonth = (m) => [...players.values()].filter((p) => p.wins[0].d.startsWith(m)).sort((a, b) => (a.wins[0].d < b.wins[0].d ? 1 : -1));
+  let ps = inMonth(month), psLabel = `${+month.slice(5)}月の優勝者`;
+  if (!ps.length) { ps = inMonth(prevMonth); psLabel = `${+prevMonth.slice(5)}月の優勝者`; }
   const news = artsOf('news').slice(0, 5);
   const prefs = ['東京都', '神奈川県', '千葉県', '埼玉県', '大阪府', '愛知県', '福岡県', '北海道'];
   const wind = shops.find((s) => s.handle === 'billiard-wind');
@@ -72,7 +75,7 @@ ${days.map(([d, l]) => `<div data-daypanel="${d}"${d === firstWeekend ? '' : ' h
 <div style="display:flex;flex-direction:column;gap:12px"><div class="sec-h"><h2>NEWS</h2><a href="/blogs/news">すべて</a></div><div class="card list">${news.map(nRow).join('')}</div></div>
 </div></section>
 
-${ps.length ? `<section class="sec"><div class="sec-h"><h2>今月の優勝者</h2><a href="/pages/players">選手一覧</a></div><div class="hscroll">${ps.map(pCard).join('')}</div></section>` : ''}
+${ps.length ? `<section class="sec"><div class="sec-h"><h2>${psLabel}</h2><a href="/pages/players">選手一覧</a></div><div class="hscroll">${ps.map(pCard).join('')}</div></section>` : ''}
 
 <section class="sec"><div class="sec-h"><h2>種目から探す</h2></div>${discTiles()}</section>
 
