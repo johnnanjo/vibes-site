@@ -74,6 +74,29 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .win table{width:100%;border-collapse:collapse;font-size:2.4vh;margin-top:1.6vh}
 .win td,.win th{padding:.8vh .6vw;border-bottom:1px solid var(--line);text-align:center}
 .win th{color:var(--sub);font-weight:700}
+.wz{width:min(96vw,1500px);padding:2.4vh 2.4vw}
+.wz h2{display:flex;align-items:center;gap:1vw;font-size:3.6vh;margin:0 0 1.4vh}
+.wz h2 i{width:3.6vh;height:3.6vh;border-radius:50%;display:inline-block}
+.wz h2 small{font-size:2.2vh;color:var(--sub);font-weight:700;margin-left:auto}
+.wz .inp{background:var(--night);border:.4vh solid var(--lime);border-radius:1.6vh;min-height:9vh;padding:1vh 1.4vw;font-size:6vh;font-weight:900;display:flex;align-items:center;gap:1vw;margin-bottom:1.6vh}
+.wz .inp small{font-size:2.2vh;color:var(--sub);font-weight:700;white-space:nowrap}
+.wz .inp .cur{width:.4vw;height:6vh;background:var(--lime);animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+.kg{display:grid;grid-template-columns:1fr 1fr;gap:1vh 1.6vw}
+.kr{display:grid;grid-template-columns:7vh repeat(5,1fr);gap:.5vw;align-items:center;background:var(--night);border-radius:1.4vh;padding:.7vh .6vw;border:.3vh solid transparent}
+.kr.on{border-color:var(--lime);background:#10131A}
+.kr.dim{opacity:.35}
+.kr kbd,.opt kbd{font:inherit;font-family:Anton,Impact,sans-serif;font-size:4vh;color:var(--night);background:var(--chalk);border-radius:1vh;text-align:center;line-height:6vh;height:6vh;min-width:6vh;display:inline-block}
+.kr span{font-size:4.4vh;font-weight:900;text-align:center;position:relative;line-height:6vh}
+.kr span em{display:none;font-style:normal;font-family:Anton,Impact,sans-serif;font-size:2.2vh;color:var(--night);background:var(--lime);border-radius:.6vh;position:absolute;top:-.6vh;left:50%;transform:translateX(-50%);line-height:2.6vh;min-width:2.6vh}
+.kr.on span em{display:block}
+.opts{display:grid;gap:1vh}.opts.c3{grid-template-columns:repeat(3,1fr)}
+.opt{display:flex;align-items:center;gap:1.2vw;background:var(--night);border-radius:1.4vh;padding:1vh 1vw;font-size:4vh;font-weight:900;border:.4vh solid transparent;min-width:0}
+.opt.sel{border-color:var(--lime)}
+.opt span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opt small{margin-left:auto;font-size:2.4vh;color:var(--sub);font-weight:700;white-space:nowrap}
+.wz .keys{margin-top:1.8vh;font-size:2.1vh}
+.wz .note{color:var(--sub);font-size:2.2vh;margin:1vh 0 0}
 .toast{position:fixed;left:50%;bottom:9vh;transform:translateX(-50%);background:var(--chalk);color:var(--night);font-weight:900;font-size:2.4vh;border-radius:999px;padding:1vh 2vw;z-index:6}
 @media (max-width:760px){
   html,body{overflow:auto}.board{height:auto;min-height:100vh}
@@ -90,7 +113,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   <div class="top">
     <a href="/" aria-label="VIBES BILLIARDS home"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
     <span class="ttl">3-CUSHION SCOREBOARD</span>
-    <span style="display:flex;gap:.8vw"><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
+    <span style="display:flex;gap:.8vw"><button type="button" id="bPl">PLAYERS</button><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
   </div>
   <div class="main">
     <section class="side p0" id="s0" aria-label="Player 1">
@@ -149,6 +172,9 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
     <div class="acts"><button type="button" class="btn" id="bBack">UNDO (BackSpace)</button><button type="button" class="btn go" id="bAgain">NEW GAME (Enter)</button></div>
   </div>
 </div>
+<div class="over-l" id="wzL" hidden>
+  <div class="panel wz" role="dialog" aria-label="Player entry"><h2 id="wzH"></h2><div id="wzB"></div><div class="keys" id="wzK"></div></div>
+</div>
 <div class="over-l" id="prL" hidden>
   <div class="panel pt" id="prP" role="dialog" aria-label="Warm-up timer">
     <h2>WARM-UP <span id="prWho" style="color:var(--sub);font-size:.7em"></span></h2>
@@ -167,7 +193,8 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   try { var raw = localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); if (o && o.cfg && o.sc) { S = Object.assign(def(), o); S.cfg = Object.assign(def().cfg, o.cfg); if (S.cfg.n[0] === '先攻') S.cfg.n[0] = 'PLAYER 1'; if (S.cfg.n[1] === '後攻') S.cfg.n[1] = 'PLAYER 2'; } } } catch (e) {}
   var RK = 'vibes-count-3c-roster-v1', roster = {};
   try { roster = JSON.parse(localStorage.getItem(RK) || '{}') || {}; } catch (e) { roster = {}; }
-  function drawRoster() { var dl = $('roster'); dl.textContent = ''; Object.keys(roster).sort().forEach(function (n) { var o = document.createElement('option'); o.value = n; o.label = 'Target ' + roster[n]; dl.appendChild(o); }); }
+  function drawRoster() { var dl = $('roster'); dl.textContent = ''; players.forEach(function (o) { var n0 = o.mei ? o.sei + ' ' + o.mei : o.sei; if (!roster[n0]) roster[n0] = o.g; });
+    Object.keys(roster).sort().forEach(function (n) { var o = document.createElement('option'); o.value = n; o.label = 'Target ' + roster[n]; dl.appendChild(o); }); }
   function remember() { for (var p = 0; p < 2; p++) { var n = S.cfg.n[p]; if (n && n !== 'PLAYER 1' && n !== 'PLAYER 2') roster[n] = S.cfg.g[p]; } var ks = Object.keys(roster); if (ks.length > 300) delete roster[ks[0]]; try { localStorage.setItem(RK, JSON.stringify(roster)); } catch (e) {} drawRoster(); }
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
   var snap = function () { hist.push(JSON.stringify(S)); if (hist.length > 400) hist.shift(); };
@@ -252,6 +279,138 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
     }
     $('setL').hidden = true; tStop(); render();
   }
+  /* ===== player entry by numeric keypad ===== */
+  var PK = 'vibes-count-3c-players-v2', players = [];
+  try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) { players = []; }
+  var savePlayers = function () { try { localStorage.setItem(PK, JSON.stringify(players)); } catch (e) {} };
+  var full = function (o) { return o.mei ? o.sei + ' ' + o.mei : o.sei; };
+  var KROWS = { 1: 'あいうえお', 2: 'かきくけこ', 3: 'さしすせそ', 4: 'たちつてと', 5: 'なにぬねの', 6: 'はひふへほ', 7: 'まみむめも', 8: 'やゆよ', 9: 'らりるれろ', 0: 'わをんー' };
+  var KORDER = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+  var CYC = ['かが', 'きぎ', 'くぐ', 'けげ', 'こご', 'さざ', 'しじ', 'すず', 'せぜ', 'そぞ', 'ただ', 'ちぢ', 'つっづ', 'てで', 'とど', 'はばぱ', 'ひびぴ', 'ふぶぷ', 'へべぺ', 'ほぼぽ', 'やゃ', 'ゆゅ', 'よょ', 'あぁ', 'いぃ', 'うぅ', 'えぇ', 'おぉ', 'わゎ'];
+  var kata = function (t) { return t.replace(/[ぁ-ゖ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); }); };
+  var W = null;
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function keysHelp(list) { var k = $('wzK'); k.textContent = ''; list.forEach(function (a) { var sp = el('span'); sp.appendChild(el('kbd', '', a[0])); sp.appendChild(document.createTextNode(a[1])); k.appendChild(sp); }); }
+  function wzOpen(p) { tStop(); $('setL').hidden = true; W = { p: p || 0, step: 'mode', guest: [false, false], done: [null, null] }; $('wzL').hidden = false; wzDraw(); }
+  function wzClose() { W = null; $('wzL').hidden = true; render(); }
+  function wzFinish() {
+    for (var p = 0; p < 2; p++) { var d = W.done[p]; if (d) { S.cfg.n[p] = d.name; S.cfg.g[p] = Math.max(d.g, S.sc[p]); } }
+    var g0 = W.done[0] ? W.done[0].guest : /^GUEST/.test(S.cfg.n[0]), g1 = W.done[1] ? W.done[1].guest : /^GUEST/.test(S.cfg.n[1]);
+    if (g0 && g1) { S.cfg.n[0] = 'GUEST 1'; S.cfg.n[1] = 'GUEST 2'; } else { if (g0) S.cfg.n[0] = 'GUEST'; if (g1) S.cfg.n[1] = 'GUEST'; }
+    if (S.run > room()) S.run = Math.max(0, room());
+    wzClose();
+  }
+  function wzNext() { if (W.p === 0) { W.p = 1; W.step = 'mode'; wzDraw(); } else wzFinish(); }
+  function kanaStart(purpose, part) { W.step = 'kana'; W.purpose = purpose; W.part = part; W.kana = ''; W.row = null; wzDraw(); }
+  function kanaKey(d) {
+    if (W.row === null) { W.row = d; }
+    else { var r = KROWS[W.row]; if (d >= 1 && d <= r.length) { if (W.kana.length < 12) W.kana += r.charAt(d - 1); W.row = null; } else W.row = d; }
+    wzDraw();
+  }
+  function kanaVar() { if (!W.kana) return; var c = W.kana.slice(-1); for (var i = 0; i < CYC.length; i++) { var k = CYC[i].indexOf(c); if (k >= 0) { W.kana = W.kana.slice(0, -1) + CYC[i].charAt((k + 1) % CYC[i].length); break; } } wzDraw(); }
+  function candLoad() {
+    var q = W.kana, base = [q, kata(q)]; W.step = 'cand'; W.cands = base.slice(); W.sel = 0; W.page = 0; W.loading = true; wzDraw();
+    var fin = function (list) { if (!W || W.step !== 'cand' || W.kana !== q) return; var seen = {}, out = []; list.concat(base).forEach(function (v) { if (v && !seen[v] && !/[A-Za-z]/.test(v)) { seen[v] = 1; out.push(v); } }); W.cands = out; W.loading = false; wzDraw(); };
+    try {
+      fetch('https://inputtools.google.com/request?itc=ja-t-i0-und&num=27&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage&text=' + encodeURIComponent(q))
+        .then(function (r) { return r.json(); }).then(function (j) { fin(j && j[0] === 'SUCCESS' && j[1] && j[1][0] && j[1][0][0] === q ? j[1][0][1] : []); }).catch(function () { fin([]); });
+    } catch (e) { fin([]); }
+  }
+  function pickLoad() {
+    var q = W.kana; W.step = 'pick'; W.sel = 0; W.page = 0;
+    W.list = players.filter(function (o) { var y = (o.ys || '') + (o.ym || ''); return !q || y.indexOf(q) === 0 || (o.ym || '').indexOf(q) === 0; })
+      .sort(function (a, b) { return ((a.ys || a.sei) + (a.ym || '')).localeCompare((b.ys || b.sei) + (b.ym || ''), 'ja'); });
+    wzDraw();
+  }
+  function targetStart(g) { W.step = 'target'; W.num = String(g || 25); W.fresh = true; wzDraw(); }
+  function targetDone() {
+    var g = Math.max(1, Math.min(999, parseInt(W.num, 10) || 25)), c = W.cur;
+    if (c.guest) W.done[W.p] = { name: 'GUEST', g: g, guest: true };
+    else {
+      var hit = null; players.forEach(function (o) { if (o.sei === c.sei && (o.mei || '') === (c.mei || '')) hit = o; });
+      if (hit) { hit.g = g; if (c.ys) { hit.ys = c.ys; hit.ym = c.ym || ''; } } else { players.push({ sei: c.sei, mei: c.mei || '', ys: c.ys || '', ym: c.ym || '', g: g }); if (players.length > 500) players.shift(); }
+      savePlayers(); W.done[W.p] = { name: full(c), g: g, guest: false };
+    }
+    wzNext();
+  }
+  function listDraw(b, items, label) {
+    var per = 9, pages = Math.max(1, Math.ceil(items.length / per)); if (W.page >= pages) W.page = 0;
+    var box = el('div', 'opts c3'), st = W.page * per;
+    items.slice(st, st + per).forEach(function (it, i) { var o = el('div', 'opt' + (st + i === W.sel ? ' sel' : '')); o.appendChild(el('kbd', '', String(i + 1))); o.appendChild(el('span', '', label(it))); if (it && it.g) o.appendChild(el('small', '', '(' + it.g + ')')); box.appendChild(o); });
+    b.appendChild(box);
+    if (pages > 1) b.appendChild(el('p', 'note', 'PAGE ' + (W.page + 1) + ' / ' + pages));
+    return pages;
+  }
+  function wzDraw() {
+    var h = $('wzH'), b = $('wzB'); h.textContent = ''; b.textContent = '';
+    var dot = el('i'); dot.style.background = W.p ? '#F2C200' : '#fff'; h.appendChild(dot);
+    h.appendChild(document.createTextNode('PLAYER ' + (W.p + 1) + (W.p ? ' (YELLOW)' : ' (WHITE)')));
+    var cur = S.cfg.n[W.p], isDef = /^PLAYER [12]$/.test(cur);
+    if (W.step === 'mode') {
+      h.appendChild(el('small', '', isDef ? '' : 'NOW: ' + cur + ' (' + S.cfg.g[W.p] + ')'));
+      var box = el('div', 'opts');
+      [['1', 'SEARCH REGISTERED PLAYER', players.length + ' PLAYERS'], ['2', 'NEW PLAYER', ''], ['3', 'GUEST', '']].forEach(function (a) { var o = el('div', 'opt'); o.appendChild(el('kbd', '', a[0])); o.appendChild(el('span', '', a[1])); if (a[2]) o.appendChild(el('small', '', a[2])); box.appendChild(o); });
+      b.appendChild(box);
+      keysHelp([['1-3', 'SELECT']].concat(isDef ? [] : [['Enter', 'KEEP ' + cur]]).concat([['BackSpace', 'BACK']]));
+    } else if (W.step === 'kana') {
+      h.appendChild(el('small', '', W.purpose === 'search' ? 'SEARCH BY READING' : (W.part === 'sei' ? 'FAMILY NAME' : 'GIVEN NAME') + (W.cur && W.cur.sei && W.part === 'mei' ? ' — ' + W.cur.sei : '')));
+      var inp = el('div', 'inp'); inp.appendChild(el('span', '', W.kana)); inp.appendChild(el('span', 'cur')); b.appendChild(inp);
+      var g = el('div', 'kg');
+      KORDER.forEach(function (n) { var r = el('div', 'kr' + (W.row === n ? ' on' : W.row !== null ? ' dim' : '')); r.appendChild(el('kbd', '', String(n))); KROWS[n].split('').forEach(function (c, i) { var sp = el('span', '', c); sp.appendChild(el('em', '', String(i + 1))); r.appendChild(sp); }); g.appendChild(r); });
+      b.appendChild(g);
+      keysHelp(W.row === null ? [['0-9', 'ROW'], ['*', 'が ぱ っ ゃ (CHANGE LAST)'], ['BackSpace', 'DELETE'], ['Enter', W.purpose === 'search' ? 'SEARCH' : (W.part === 'mei' && !W.kana ? 'SKIP' : 'KANJI')]] : [['1-5', 'CHARACTER'], ['BackSpace', 'CANCEL ROW']]);
+    } else if (W.step === 'cand') {
+      h.appendChild(el('small', '', (W.part === 'sei' ? 'FAMILY NAME' : 'GIVEN NAME') + ' — ' + W.kana + (W.loading ? ' …' : '')));
+      var pg = listDraw(b, W.cands, function (v) { return v; });
+      keysHelp([['1-9', 'SELECT']].concat(pg > 1 ? [['0', 'NEXT PAGE']] : []).concat([['Enter', 'OK'], ['BackSpace', 'BACK']]));
+    } else if (W.step === 'pick') {
+      h.appendChild(el('small', '', 'REGISTERED PLAYERS' + (W.kana ? ' — ' + W.kana : '')));
+      if (!W.list.length) b.appendChild(el('p', 'note', 'NO PLAYER FOUND. PRESS BackSpace TO GO BACK.'));
+      var pg2 = listDraw(b, W.list, function (o) { return full(o); });
+      keysHelp([['1-9', 'SELECT']].concat(pg2 > 1 ? [['0', 'NEXT PAGE']] : []).concat([['Enter', 'OK'], ['BackSpace', 'BACK']]));
+    } else if (W.step === 'target') {
+      h.appendChild(el('small', '', 'TARGET POINTS — ' + (W.cur.guest ? 'GUEST' : full(W.cur))));
+      var inp2 = el('div', 'inp'); inp2.appendChild(el('span', 'num', W.num)); inp2.appendChild(el('span', 'cur')); inp2.appendChild(el('small', '', 'POINTS')); b.appendChild(inp2);
+      keysHelp([['0-9', 'ENTER POINTS'], ['Enter', 'OK'], ['BackSpace', 'DELETE / BACK']]);
+    }
+  }
+  function wzKey(k) {
+    var d = k >= '0' && k <= '9' ? +k : -1;
+    if (k === 'Escape') { if (!/^PLAYER [12]$/.test(S.cfg.n[0]) || W.done[0]) wzFinish(); else wzClose(); return true; }
+    if (W.step === 'mode') {
+      if (d === 1) kanaStart('search', 'sei'); else if (d === 2) { W.cur = { sei: '', mei: '', ys: '', ym: '' }; kanaStart('new', 'sei'); }
+      else if (d === 3) { W.cur = { guest: true }; targetStart(S.cfg.g[W.p]); }
+      else if (k === 'Enter' && !/^PLAYER [12]$/.test(S.cfg.n[W.p])) wzNext();
+      else if (k === 'Backspace' && W.p === 1) { W.p = 0; wzDraw(); }
+      else return k === 'Enter' || k === 'Backspace';
+    } else if (W.step === 'kana') {
+      if (d >= 0) kanaKey(d); else if (k === '*') kanaVar();
+      else if (k === 'Backspace') { if (W.row !== null) W.row = null; else if (W.kana) W.kana = W.kana.slice(0, -1); else if (W.purpose === 'new' && W.part === 'mei') { kanaStart('new', 'sei'); return true; } else { W.step = 'mode'; } wzDraw(); }
+      else if (k === 'Enter') {
+        W.row = null;
+        if (W.purpose === 'search') pickLoad();
+        else if (!W.kana) { if (W.part === 'mei') targetStart(25); }
+        else candLoad();
+      } else return false;
+    } else if (W.step === 'cand' || W.step === 'pick') {
+      var items = W.step === 'cand' ? W.cands : W.list, per = 9, pages = Math.max(1, Math.ceil(items.length / per));
+      if (d >= 1 && d <= 9) { var ix = W.page * per + d - 1; if (ix < items.length) { W.sel = ix; wzDraw(); } }
+      else if (d === 0) { W.page = (W.page + 1) % pages; W.sel = W.page * per; wzDraw(); }
+      else if (k === 'Backspace') { var q = W.kana; kanaStart(W.purpose, W.part); W.kana = q; wzDraw(); }
+      else if (k === 'Enter') {
+        var it = items[W.sel]; if (!it) return true;
+        if (W.step === 'pick') { W.cur = { sei: it.sei, mei: it.mei || '', ys: it.ys || '', ym: it.ym || '' }; targetStart(it.g); }
+        else if (W.part === 'sei') { W.cur.sei = it; W.cur.ys = W.kana; kanaStart('new', 'mei'); }
+        else { W.cur.mei = it; W.cur.ym = W.kana; var old = null; players.forEach(function (o) { if (o.sei === W.cur.sei && (o.mei || '') === it) old = o; }); targetStart(old ? old.g : 25); }
+      } else return false;
+    } else if (W.step === 'target') {
+      if (d >= 0) { W.num = (W.fresh ? '' : W.num) + d; W.fresh = false; if (W.num.length > 3) W.num = W.num.slice(-3); W.num = String(parseInt(W.num, 10) || 0); wzDraw(); }
+      else if (k === 'Backspace') { if (W.fresh || W.num.length <= 1) { if (W.fresh) { W.step = 'mode'; } else { W.num = '0'; W.fresh = true; } } else W.num = W.num.slice(0, -1); wzDraw(); }
+      else if (k === 'Enter') targetDone();
+      else return false;
+    }
+    return true;
+  }
   var pLeft = 0, pOn = false, pId = null;
   function prDraw() { var v = Math.max(0, Math.ceil(pLeft)), m = Math.floor(v / 60), s = v % 60; $('prC').textContent = m + ':' + (s < 10 ? '0' : '') + s; $('prP').classList.toggle('warn', v <= 30 && v > 0); $('prP').classList.toggle('over', v <= 0); }
   function prStop() { pOn = false; clearInterval(pId); pId = null; }
@@ -263,27 +422,29 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   }
   function prOpen() { $('setL').hidden = true; tStop(); $('prWho').textContent = S.cfg.n[0] + ' / ' + S.cfg.n[1]; $('prL').hidden = false; prReset(); }
   function prClose() { prStop(); $('prL').hidden = true; render(); }
-  function full() { var d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {}); }
+  function goFull() { var d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {}); }
 
   $('setF').addEventListener('submit', function (e) { e.preventDefault(); closeSet(true); });
   [0, 1].forEach(function (p) { $('fn' + p).addEventListener('input', function () { var v = this.value.trim(); if (roster[v]) $('fg' + p).value = roster[v]; }); });
   drawRoster();
+  $('bPl').onclick = function () { wzOpen(0); };
   $('bPr').onclick = prOpen; $('bPr2').onclick = function () { closeSet(true); prOpen(); };
-  $('bSet').onclick = openSet; $('bFull').onclick = full;
+  $('bSet').onclick = openSet; $('bFull').onclick = goFull;
   $('bSwap').onclick = function () { var a = $('fn0').value; $('fn0').value = $('fn1').value; $('fn1').value = a; a = $('fg0').value; $('fg0').value = $('fg1').value; $('fg1').value = a; };
-  $('bNew').onclick = function () { closeSet(true); newGame(true); toast('New game'); };
-  $('bAgain').onclick = function () { newGame(false); }; $('bBack').onclick = undo;
+  $('bNew').onclick = function () { closeSet(true); newGame(true); wzOpen(0); };
+  $('bAgain').onclick = function () { newGame(false); wzOpen(0); }; $('bBack').onclick = undo;
 
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     var k = e.key;
     if (!$('setL').hidden) { if (k === 'Escape') { e.preventDefault(); closeSet(false); } else if (k === '/' && e.target.type === 'number') e.preventDefault(); return; }
+    if (W) { if (wzKey(k)) e.preventDefault(); return; }
     if (!$('prL').hidden) {
       if (k === '+' || k === ' ') prToggle(); else if (k === '/') prReset(); else if (k === 'Enter' || k === 'Escape') prClose();
       else if (k >= '1' && k <= '9' && !pOn) { S.cfg.pm = +k; save(); prReset(); }
       else return; e.preventDefault(); return;
     }
-    if (!$('winL').hidden) { if (k === 'Enter') { e.preventDefault(); newGame(false); } else if (k === 'Backspace') { e.preventDefault(); undo(); } return; }
+    if (!$('winL').hidden) { if (k === 'Enter') { e.preventDefault(); newGame(false); wzOpen(0); } else if (k === 'Backspace') { e.preventDefault(); undo(); } return; }
     var hit = true;
     if (k >= '0' && k <= '9') digit(+k);
     else if (k === '+' || k === 'ArrowUp') add(1);
@@ -294,12 +455,12 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
     else if (k === 'Backspace') undo();
     else if (k === '*') { if (tOn) tStop(); else tStart(); }
     else if (k === '/') openSet();
-    else if (k === '.' || k === 'Delete' || k === ',') { var n = Date.now(); if (n - dotAt < 1500) { dotAt = 0; newGame(true); toast('New game (BackSpace to undo)'); } else { dotAt = n; toast('Press . again for a new game'); } }
-    else if (k === 'f' || k === 'F') full();
+    else if (k === '.' || k === 'Delete' || k === ',') { var n = Date.now(); if (n - dotAt < 1500) { dotAt = 0; newGame(true); wzOpen(0); } else { dotAt = n; toast('Press . again for a new game'); } }
+    else if (k === 'f' || k === 'F') goFull();
     else hit = false;
     if (hit) e.preventDefault();
   });
-  render(); if (S.over) showWin(); else if (S.cfg.n[0] === 'PLAYER 1' && S.cfg.n[1] === 'PLAYER 2' && !S.inn[0].length && !S.run) openSet();
+  render(); if (S.over) showWin(); else if (S.cfg.n[0] === 'PLAYER 1' && S.cfg.n[1] === 'PLAYER 2' && !S.inn[0].length && !S.run) wzOpen(0);
 })();
 </script>
 </body>
