@@ -7,6 +7,9 @@
 <meta name="description" content="PCのモニターとテンキーで使えるスリークッションのデジタルカウント。得点・イニング・ハイラン・アベレージ・40秒タイマー。無料。">
 <link rel="canonical" href="https://vibesbilliards.com/pages/count-3c">
 <link rel="icon" href="/img/favicon-64.png">
+<link rel="manifest" href="/count-3c.webmanifest">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#171A22">
+<link rel="apple-touch-icon" href="/img/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap">
 <style>
@@ -560,6 +563,15 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
     else hit = false;
     if (hit) e.preventDefault();
   }
+  /* offline: cache this page and what it loaded; keep the screen awake */
+  if ('serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.href)) {
+    navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count-3c' }).then(function () { return navigator.serviceWorker.ready; }).then(function (reg) {
+      var send = function () { try { var urls = performance.getEntriesByType('resource').map(function (r) { return r.name; }).filter(function (u) { return /fonts\.(googleapis|gstatic)\.com|\/img\//.test(u); }); if (reg.active) reg.active.postMessage({ type: 'cache', urls: urls }); } catch (e) {} };
+      setTimeout(send, 3000); if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(send, 500); });
+    }).catch(function () {});
+  }
+  var wl = null, wake = function () { try { if (navigator.wakeLock && document.visibilityState === 'visible') navigator.wakeLock.request('screen').then(function (l) { wl = l; }).catch(function () {}); } catch (e) {} };
+  wake(); document.addEventListener('visibilitychange', wake); document.addEventListener('keydown', function once() { if (!wl) wake(); document.removeEventListener('keydown', once); });
   render(); if (S.over) showWin(); else if (S.cfg.n[0] === 'PLAYER 1' && S.cfg.n[1] === 'PLAYER 2' && !S.inn[0].length && !S.run) wzOpen(0);
 })();
 </script>
