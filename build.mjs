@@ -379,6 +379,7 @@ function contentPages() {
     .replace('{% layout none %}', '').replace(/\{\{\s*canonical_url\s*\}\}/g, SITE + '/pages/kids').replace(/\{%-? if settings\.favicon[\s\S]*?endif -?%\}/, '<link rel="icon" href="/img/favicon-64.png">').replace('{{ content_for_header }}', '')
     .replace(/https:\/\/cdn\.shopify\.com\/s\/files\/1\/0792\/5533\/9107\/files\/vibes-kids-v2\.css\?v=\d+/, '/apps/kids/vibes-kids-v2.css').replace(/https:\/\/cdn\.shopify\.com\/s\/files\/1\/0792\/5533\/9107\/files\/vibes-kids-v2\.js\?v=\d+/, '/apps/kids/vibes-kids-v2.js');
   put('/pages/kids', { raw: fixHtml(kids) });
+  put('/pages/count-3c', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-3c.html'), 'utf8') });
   const nd = fs.readFileSync(path.join(ROOT, 'static/apps/nine-drop.html'), 'utf8');
   put('/pages/nine-drop', { raw: `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/img/favicon-64.png"><link rel="canonical" href="${SITE}/pages/nine-drop"><meta name="description" content="ナインボールのルールで遊ぶ落ち物パズル。"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style></head><body>${nd.replace('<title>Nine Drop</title>', '<title>NINE DROP｜VIBES BILLIARDS</title>')}</body></html>` });
 
