@@ -215,7 +215,7 @@ page(11, '試合の流れ',
   ('持ち点に届いたら試合終了', f'「GAME OVER」と結果が出ます。{kbd("Enter")} で次の試合（選手の登録）へ進みます。'),
  ]) + '<div class="two imgs">' + f'<figure>{img("play")}<figcaption>試合中：{kbd("+")} を2回押した所。得点が2になり、TIMEの下に「RUN 2」と出ます</figcaption></figure><figure>{img("win")}<figcaption>試合終了：勝った選手（WINNER）と成績が出ます</figcaption></figure></div>' +
  note('裏撞き（うらづき）について', '誰かが先に持ち点に届いても、その回の最後の選手まで撞いてから試合終了になります。いらない時は、設定（<b class="in">16章</b>）の「EQUALIZING INNING」を OFF にします。'),
- '上から順に押していけば、1試合ができます。')
+ 'スリークッションでは、座っている人（相手）がカウントします。撞き終わった人は、席にもどって交代のキーを押します。')
 
 # ---------- 12 players 1 ----------
 kana = '<div class="kana">' + ''.join(f'<div><kbd>{k}</kbd>' + ''.join(f'<span>{c}<em>{i+1}</em></span>' for i, c in enumerate(r)) + '</div>' for k, r in [(1,'あいうえお'),(6,'はひふへほ'),(2,'かきくけこ'),(7,'まみむめも'),(3,'さしすせそ'),(8,'やゆよ'),(4,'たちつてと'),(9,'らりるれろ'),(5,'なにぬねの'),(0,'わをんー')]) + '</div>'
@@ -255,7 +255,9 @@ page(15, 'タブレット・スマホで操作する（リモコン）',
   ('カウントの画面で「REMOTE」を押す', '画面右上の <b class="in">REMOTE</b> をマウスで押します。6けたの数字（コード）が出ます。'),
   ('タブレットでリモコンのページを開く', f'タブレットのブラウザで <b class="in">{RURL}</b> を開きます。'),
   ('6けたのコードを入れる', 'カウントの画面に出ている数字を入れて、<b class="in">CONNECT</b> を押します。'),
-  ('ボタンで操作する', '<b class="in">+1</b>＝1点　<b class="in">END INNING</b>＝交代　<b class="in">UNDO</b>＝もどす　<b class="in">SHOT CLOCK</b>＝残り秒数　<b class="in">WARM-UP</b>＝練習タイマー　<b class="in">PLAYERS</b>＝名前と持ち点　<b class="in">NEW GAME</b>＝新しい試合（2回押す）'),
+  ('得点は、スコアの数字を押す', '座っている人（相手）がカウントします。<b class="in">どちらのスコアを押しても</b>、今撞いている選手に1点入ります。自分の側のスコアを押せば大丈夫です。'),
+  ('交代は「PLAYER CHANGE」を押す', '撞き終わった人が席にもどって押します。<b class="in">どちらの PLAYER CHANGE を押しても</b>、次の選手の番になります。'),
+  ('そのほかのボタン', '<b class="in">−1</b>＝1点へらす　<b class="in">UNDO</b>＝もどす　<b class="in">SHOT CLOCK</b>＝残り秒数　<b class="in">WARM-UP</b>＝練習タイマー　<b class="in">PLAYERS</b>＝名前と持ち点　<b class="in">NEW GAME</b>＝新しい試合（2回押す）'),
  ]) + img('rmcode') + '</div><div class="phones">' + img('remote_main','phone') + '</div></div>' +
  note('使う時の注意', '<ul><li>パソコンとタブレットの<b class="in">両方</b>が、インターネットにつながっている必要があります。</li><li>コードは台ごとに違います。次に使う時も、同じコードでつながります。</li><li>3人・4人の試合では、リモコンには「今の選手」と「次の選手」が出ます。3人・4人の名前は、カウントの画面で登録してください。</li></ul>'),
  '離れた場所から、タブレットやスマホで得点を入れられます。インターネットが必要です。')

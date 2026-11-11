@@ -34,12 +34,21 @@ input:focus{outline:none;border-color:var(--lime)}
 .go{background:var(--lime);color:var(--night);font-weight:900;font-size:20px;border-radius:14px;padding:16px;width:100%}
 .err{color:#FF8A8F;font-weight:700;font-size:14px;min-height:20px;margin:8px 0 0}
 .pl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.p{background:var(--felt);border-radius:16px;padding:12px;border:4px solid transparent;opacity:.6;min-width:0}
-.p.on{opacity:1;border-color:var(--lime)}
+.p{background:var(--felt);border-radius:16px;padding:12px;border:4px solid transparent;min-width:0;display:flex;flex-direction:column;gap:8px;position:relative}
+.p.on{border-color:var(--lime)}
+.p .at{display:none;font-style:normal;align-self:flex-start;background:var(--lime);color:var(--night);font-weight:900;font-size:11px;letter-spacing:.08em;padding:1px 10px;border-radius:99px}
+.p.on .at{display:block}.p:not(.on) .at{display:block;visibility:hidden}
+.p .tap{display:block;width:100%;background:rgba(10,16,30,.45);border:2px solid rgba(255,255,255,.28);border-radius:14px;padding:10px 4px 8px;color:inherit;font:inherit;cursor:pointer;touch-action:manipulation}
+.p .tap:active{background:rgba(255,255,255,.22);transform:scale(.98)}
+.p .tap small{color:#fff;font-size:12px;letter-spacing:.06em}
+.p:not(.on) .tap .sc{opacity:.7}
+.p .chg{width:100%;min-height:58px;border-radius:14px;border:0;background:var(--chalk);color:var(--night);font:inherit;font-weight:900;font-size:16px;letter-spacing:.02em;cursor:pointer;touch-action:manipulation}
+.p .chg:active{background:#D9DBD3;transform:scale(.98)}
+.p .tap:focus-visible,.p .chg:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
 .p .nm{display:flex;align-items:center;gap:8px;font-weight:900;font-size:16px;min-width:0}
 .p .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .p .nm i{width:16px;height:16px;border-radius:50%;flex:none}
-.p .sc{font-size:76px;text-align:center;margin:6px 0 2px}
+.p .sc{display:block;font-size:72px;text-align:center;line-height:1.05}
 .p0 .sc{color:#fff}.p1 .sc{color:var(--yellow)}
 .p small{display:block;text-align:center;font-weight:700;font-size:12px;color:#DCE3F0}
 .run{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -86,13 +95,11 @@ input:focus{outline:none;border-color:var(--lime)}
   <section id="vMain" hidden style="display:flex;flex-direction:column;gap:12px">
     <div class="over" id="over" hidden></div>
     <div class="pl">
-      <div class="p p0" id="p0"><div class="nm"><i style="background:#fff"></i><span id="n0"></span></div><div class="sc num" id="s0">0</div><small id="d0"></small></div>
-      <div class="p p1" id="p1"><div class="nm"><i style="background:#F2C200"></i><span id="n1"></span></div><div class="sc num" id="s1">0</div><small id="d1"></small></div>
+      <div class="p p0" id="p0"><div class="nm"><i style="background:#fff"></i><span id="n0"></span></div><em class="at">AT THE TABLE</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s0">0</span><small>TAP = +1 POINT</small></button><small id="d0"></small><button type="button" class="chg" data-c="commit">PLAYER CHANGE</button></div>
+      <div class="p p1" id="p1"><div class="nm"><i style="background:#F2C200"></i><span id="n1"></span></div><em class="at">AT THE TABLE</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s1">0</span><small>TAP = +1 POINT</small></button><small id="d1"></small><button type="button" class="chg" data-c="commit">PLAYER CHANGE</button></div>
     </div>
     <div class="card run"><small>RUN</small><b class="num" id="run">0</b><small id="inn"></small></div>
     <div class="pad">
-      <button type="button" class="k big" data-c="add">+1<small>POINT</small></button>
-      <button type="button" class="k end" data-c="commit">END INNING<small>CHANGE PLAYER</small></button>
       <button type="button" class="k" data-c="sub">−1</button>
       <button type="button" class="k" data-c="undo">UNDO</button>
       <button type="button" class="k" data-c="clock" id="kClock">SHOT CLOCK<small id="kClockS"></small></button>
@@ -163,7 +170,7 @@ input:focus{outline:none;border-color:var(--lime)}
   });
   $('iCode').addEventListener('input', function () { var v = this.value.replace(/\D/g, '').slice(0, 6); this.value = v.length > 3 ? v.slice(0, 3) + ' ' + v.slice(3) : v; });
   $('bCode').onclick = function () { code = ''; try { localStorage.removeItem(CK); } catch (x) {} if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; } last = null; status(false, 'NOT CONNECTED'); show('vJoin'); };
-  Array.prototype.forEach.call(document.querySelectorAll('.k[data-c]'), function (b) { b.addEventListener('click', function () { send({ type: 'cmd', c: b.getAttribute('data-c') }); if (navigator.vibrate) navigator.vibrate(15); }); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-c]'), function (b) { b.addEventListener('click', function () { send({ type: 'cmd', c: b.getAttribute('data-c') }); if (navigator.vibrate) navigator.vibrate(15); }); });
   $('kNew').onclick = function () { var n = Date.now(); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); this.querySelector('small').textContent = 'TAP TWICE'; } else { newAt = n; this.querySelector('small').textContent = 'TAP AGAIN TO CONFIRM'; var el = this; setTimeout(function () { el.querySelector('small').textContent = 'TAP TWICE'; }, 2000); } };
   function chips(p) {
     var box = $('sv' + p), q = $('pn' + p).value.trim(); box.textContent = '';
