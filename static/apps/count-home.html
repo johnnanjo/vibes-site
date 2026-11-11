@@ -30,7 +30,18 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 .ring.n2 .tile b{font-size:min(6.4vh,2.6vw);white-space:nowrap}.ring.n2 .tile{overflow:hidden}.ring.n2 .tile span{font-size:2.3vh}.ring.n2 .logo img{height:22vh;max-width:30vw}
 .ring.n3{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto minmax(0,40vh);align-content:center}
 .ring.n3 .logo{grid-column:1/-1;grid-row:1}
-.logo{grid-column:1/-1;display:grid;place-items:center;padding:1vh 0}
+.ring.n4{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-rows:minmax(0,33vh) minmax(0,33vh);align-content:center}
+.ring.n4 .logo{grid-column:2;grid-row:1/3;padding:0 2.4vw}.ring.n4 .logo img{height:24vh;max-width:30vw}
+.ring.n4 .tile:nth-of-type(1){grid-column:1;grid-row:1}.ring.n4 .tile:nth-of-type(2){grid-column:3;grid-row:1}.ring.n4 .tile:nth-of-type(3){grid-column:1;grid-row:2}.ring.n4 .tile:nth-of-type(4){grid-column:3;grid-row:2}
+.ring.n4 .tile b{font-size:min(5.4vh,2.9vw);white-space:nowrap}.ring.n4 .tile{overflow:hidden}.ring.n4 .tile span{font-size:2.1vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.logo{grid-column:1/-1;display:grid;place-items:center;align-content:center;padding:1vh 0}
+.lab{margin-top:1.6vh;padding-top:1.4vh;border-top:.35vh solid var(--lime);font-family:Unbounded,Anton,sans-serif;font-weight:900;font-size:2.7vh;letter-spacing:.34em;text-indent:.34em;color:var(--chalk);white-space:nowrap}
+.solo .lab{font-size:4.6vh;margin-top:2.4vh;padding-top:2vh;justify-self:center}.solo .lg{display:grid;justify-items:center;align-self:center}
+.pf{display:grid;grid-template-columns:1fr 1fr;gap:1.2vh 1.4vw;text-align:left}.pf label{display:block;font-weight:700;font-size:1.8vh;margin-bottom:.4vh;color:var(--chalk)}
+.pf input,.pf select,.rof input{width:100%;font:inherit;font-weight:700;font-size:2.4vh;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:1.2vh;padding:1vh 1vw}
+.rof{display:grid;grid-template-columns:1fr 1fr 9vw auto;gap:1vw;align-items:end;text-align:left}.rof label{display:block;font-weight:700;font-size:1.7vh;margin-bottom:.4vh}
+.rol{margin-top:1.6vh;max-height:42vh;overflow:auto;display:grid;gap:.6vh;text-align:left}.rol div{display:grid;grid-template-columns:1fr auto auto;gap:1vw;align-items:center;background:var(--night);border-radius:1.2vh;padding:.8vh 1vw;font-weight:900;font-size:2.3vh}
+.rol small{color:var(--sub);font-weight:700;font-size:1.6vh;margin-left:.8vw}.rol i{font-style:normal;color:var(--sub);font-size:1.9vh}.rol button{font:inherit;font-weight:700;font-size:1.6vh;color:var(--chalk);background:transparent;border:1px solid var(--line);border-radius:999px;padding:.4vh 1vw;cursor:pointer}
 .logo img{height:24vh;width:auto;max-width:70vw;filter:drop-shadow(0 1.4vh 3vh rgba(0,0,0,.5))}
 .tile{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:.6vh;text-align:left;text-decoration:none;color:#fff;font:inherit;border:0;cursor:pointer;border-radius:2.4vh;padding:2.2vh 1.8vw;min-height:0;min-width:0;
   background:radial-gradient(120% 90% at 28% 0%,rgba(255,255,255,.16),transparent 56%),repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 4px),linear-gradient(180deg,var(--a) 0%,var(--b) 46%,var(--c) 100%);
@@ -83,7 +94,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 </div>
 <img id="logoSrc" src="/img/vibes-logo-t.png" alt="" hidden>
 <div class="solo" id="solo" hidden>
-  <img id="soloLogo" alt="VIBES BILLIARDS">
+  <div class="lg"><img id="soloLogo" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LAB</div></div>
   <div class="soloq"><div class="qr sm" id="soloQ"></div><div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div></div>
 </div>
 <div class="ov" id="zipL" hidden style="z-index:9">
@@ -93,6 +104,11 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     <p style="text-align:left;font-size:2.1vh;line-height:1.9">1. この画面を閉じます。<br>2. <b>VIBES-COUNT-USB.zip</b> を右クリックして「すべて展開」を選び、「展開」を押します。<br>3. 出てきた <b>VIBES-COUNT</b> フォルダの中の「1_スタート」をダブルクリックします。</p>
   </div>
 </div>
+<div class="ov" id="ntL" hidden><div class="panel" role="alertdialog"><p id="ntT"></p><div class="acts"><button type="button" class="btn go" id="ntOk">OK (Enter)</button></div></div></div>
+<div class="ov" id="cfL" hidden><div class="panel" role="dialog" aria-label="各種設定"><h2>各種設定</h2><p style="font-size:1.9vh;color:var(--sub)">ここで決めた内容が、次の試合から使われます。</p><form id="cfF"><div class="pf" id="cfR"></div><div class="acts"><button type="button" class="btn" id="cfX">閉じる (Esc)</button><button type="submit" class="btn go">保存する</button></div></form></div></div>
+<div class="ov" id="roL" hidden><div class="panel" role="dialog" aria-label="選手登録"><h2>選手登録</h2><p style="font-size:1.9vh;color:var(--sub)">一度登録した選手は、ずっと残ります。持ち点はスリークッションの持ち点です。スマホ・タブレットからも登録できます。</p>
+  <form class="rof" id="roF"><div><label for="roN">名前</label><input id="roN" maxlength="20" autocomplete="off" placeholder="山田 太郎"></div><div><label for="roY">よみがな</label><input id="roY" maxlength="30" autocomplete="off" placeholder="やまだたろう"></div><div><label for="roG">持ち点</label><input id="roG" type="number" min="1" max="999" value="25"></div><button type="submit" class="btn go">登録</button></form>
+  <div class="rol" id="roB"></div><div class="acts"><button type="button" class="btn" id="roX">閉じる (Esc)</button></div></div></div>
 <div class="ov" id="rmL" hidden>
   <div class="panel" role="dialog" aria-label="リモコン">
     <h2>リモコン（スマホで操作）</h2>
@@ -110,23 +126,30 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
   var U = { '3c': '/pages/count-3c/', pocket: '/pages/count-pocket/' };
   var MENU = {
-    top: { t: '', items: [{ id: 'carom', b: 'キャロム', s: 'CAROM', c: 'carom', d: 'スリークッション・バンド' }, { id: 'pocket', b: 'ポケット', s: 'POCKET', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }] },
-    carom: { t: 'キャロム', back: 'top', items: [{ id: '3c', b: 'スリークッション', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }, { id: 'band', b: 'バンド', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }] },
-    pocket: { t: 'ポケット', back: 'top', items: [{ id: 'bowlard', b: 'ボーラード', s: 'POCKET', c: 'pocket', d: '1〜4人・ボウリングのスコア', go: 1 }, { id: 'nine', b: '9ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-9' }, { id: 'ten', b: '10ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-10' }] },
+    top: { t: '', items: [{ id: 'game', b: 'ニューゲーム', s: 'NEW GAME', c: 'carom', d: '種目と選手を選んで始める' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }, { id: 'roster', b: '選手登録', s: 'PLAYERS', c: 'pocket', d: '選手の登録・持ち点の修正' }, { id: 'config', b: '各種設定', s: 'SETTINGS', c: 'pocket', d: '秒数・タイムアウト・イージーモード' }] },
+    game: { t: 'ニューゲーム', back: 'top', items: [{ id: 'carom', b: 'キャロム', s: 'CAROM', c: 'carom', d: 'スリークッション・バンド' }, { id: 'pocket', b: 'ポケット', s: 'POCKET', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }] },
+    carom: { t: 'キャロム', back: 'game', items: [{ id: '3c', b: 'スリークッション', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }, { id: 'band', b: 'バンド', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }] },
+    pocket: { t: 'ポケット', back: 'game', items: [{ id: 'bowlard', b: 'ボーラード', s: 'POCKET', c: 'pocket', d: '1〜4人・ボウリングのスコア', go: 1 }, { id: 'nine', b: '9ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-9' }, { id: 'ten', b: '10ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-10' }] },
     nine: { t: '9ボール', back: 'pocket', items: [{ id: 'nine-set', b: 'セットマッチ', s: '9-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g59', b: '5-9', s: '9-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] },
     ten: { t: '10ボール', back: 'pocket', items: [{ id: 'ten-set', b: 'セットマッチ', s: '10-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g510', b: '5-10', s: '10-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] }
   };
   var COL = { carom: ['#2468C0', '#1E5AA8', '#164482'], pocket: ['#6E7683', '#5A616C', '#434953'], purple: ['#8656C4', '#6A3FA0', '#4C2B78'], green: ['#1F9A5C', '#14804A', '#0D5C35'], yellow: ['#FFD83A', '#F2C200', '#C79E00', 1], blue: ['#3A66E8', '#1D4ED8', '#1539A3'], red: ['#E04A52', '#C4262E', '#8F1A21'] };
-  var KOL = { band: 'purple', bowlard: 'green', nine: 'yellow', ten: 'blue', 'nine-set': 'yellow', g59: 'red', 'ten-set': 'blue', g510: 'red' };
+  var KOL = { game: 'blue', again: 'green', roster: 'purple', config: 'pocket', band: 'purple', bowlard: 'green', nine: 'yellow', ten: 'blue', 'nine-set': 'yellow', g59: 'red', 'ten-set': 'blue', g510: 'red' };
   var colOf = function (it) { return COL[KOL[it.id] || it.c]; };
   var lv = 'top', tiles = [], sel = -1;
-  var url = function (id) { var u = id === '3c' ? U['3c'] + '?g=three' : id === 'band' ? U['3c'] + '?g=band' : U.pocket + '?m=' + id.replace('-set', ''); if (TB) u += (u.indexOf('?') < 0 ? '?' : '&') + 't=' + TB; return u; };
+  var url = function (id) { var u = id === '3c' ? U['3c'] + '?g=three' : id === 'band' ? U['3c'] + '?g=band' : U.pocket + '?m=' + id.replace('-set', ''); u += '&n=new'; if (TB) u += '&t=' + TB; return u; };
   function open(id) {
+    if (id === 'again') { var L = lastGame(); if (!L) return note('まだ試合の記録がありません。「ニューゲーム」から始めてください。'); location.href = L.u + (L.u.indexOf('?') < 0 ? '?' : '&') + 'n=again'; return; }
+    if (id === 'roster') return roPanel();
+    if (id === 'config') return cfPanel();
     if (id === 'back') { if (MENU[lv].back) { lv = MENU[lv].back; menu(); } return; }
     if (MENU[id] && id !== 'top') { if (MENU[lv].items.some(function (x) { return x.id === id; })) { lv = id; menu(); } return; }
     var it = null; Object.keys(MENU).forEach(function (k) { MENU[k].items.forEach(function (x) { if (x.id === id && x.go) it = x; }); }); if (it) location.href = url(id);
   }
+  function lastGame() { try { var L = JSON.parse(localStorage.getItem('vibes-count-last') || 'null'); return L && typeof L.u === 'string' && L.n && L.n.length ? L : null; } catch (e) { return null; } }
+  function note(t) { $('ntT').textContent = t; $('ntL').hidden = false; }
   function menu() {
+    var Lg = lastGame(); MENU.top.items[1].d = Lg ? Lg.n.join(' ・ ') + '（' + (Lg.title || '') + '）' : 'まだ試合の記録がありません';
     var m = MENU[lv], r = $('ring'); r.textContent = ''; r.className = 'ring n' + m.items.length; sel = -1; tiles = [];
     var cr = $('crumb'); cr.textContent = ''; if (m.back) { var bb = document.createElement('button'); bb.type = 'button'; bb.textContent = '← もどる (BackSpace)'; bb.onclick = function () { open('back'); }; cr.appendChild(bb); cr.appendChild(document.createTextNode(m.t)); }
     m.items.forEach(function (it, i) {
@@ -134,7 +157,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
       var kb = document.createElement('kbd'); kb.textContent = String(i + 1); var sm = document.createElement('small'); sm.textContent = it.s; var b = document.createElement('b'); b.textContent = it.b; var sp = document.createElement('span'); sp.textContent = it.d;
       a.appendChild(kb); a.appendChild(sm); a.appendChild(b); a.appendChild(sp); a.onclick = function () { open(it.id); }; r.appendChild(a); tiles.push(a);
     });
-    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
+    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LAB'; lg.appendChild(lb); r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
     var f = $('foot'); f.textContent = ''; [['1', '〜'], [String(m.items.length), '選ぶ'], ['Enter', '決定']].concat(m.back ? [['BackSpace', 'もどる']] : []).concat([['F', '全画面']]).forEach(function (x, i) { var sp2 = i === 1 ? f.lastChild : document.createElement('span'); var k2 = document.createElement('kbd'); k2.textContent = x[0]; sp2.appendChild(k2); sp2.appendChild(document.createTextNode(x[1])); if (i !== 1) f.appendChild(sp2); });
     if (typeof push === 'function') push();
   }
@@ -148,7 +171,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   var seen = false; try { seen = sessionStorage.getItem('vibes-remote-seen') === '1'; } catch (e) {}
   var sawPhone = function () { if (seen) return; seen = true; try { sessionStorage.setItem('vibes-remote-seen', '1'); } catch (e) {} showMenu = false; draw(); };
   var saveRm = function () { try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} };
-  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { var cl = colOf(x); return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d, col: cl.slice(0, 3), lt: cl[3] ? 1 : 0 }; }) }); };
+  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', cf: cfSchema(), table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { var cl = colOf(x); return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d, col: cl.slice(0, 3), lt: cl[3] ? 1 : 0 }; }) }); };
   var push = function () { if (ws && ws.readyState === 1) { try { ws.send(state()); } catch (e) {} } };
   function draw() {
     var on = !!(rm && rm.on), solo = on && seen && !showMenu; $('solo').hidden = !solo; $('home').hidden = solo; $('hq').hidden = !on; if (on && $('hqQ').getAttribute('data-c') !== rm.code) { $('hqQ').innerHTML = qrSvg(rm.code); $('hqQ').setAttribute('data-c', rm.code); $('hqC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); }
@@ -159,23 +182,43 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { ws = null; return; }
     ws.onopen = function () { tries = 0; draw(); push(); roPush(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } sawPhone(); if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } sawPhone(); if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
     ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
   function qrSvg(code) { try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + code); q.make(); return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { return ''; } }
   var PLK = 'vibes-players-v3';
   function roGet() { var a = null; try { a = JSON.parse(localStorage.getItem(PLK) || localStorage.getItem('vibes-count-3c-players-v2') || '[]'); } catch (e) {} a = Array.isArray(a) ? a : []; a.forEach(function (o) { if (!o.id) o.id = Math.random().toString(36).slice(2, 10); if (!o.gs) { o.gs = {}; if (o.g) o.gs.three = o.g; } delete o.g; }); return a; }
-  function roSet(a) { try { localStorage.setItem(PLK, JSON.stringify(a)); } catch (e) {} roPush(); }
+  function roSet(a) { try { localStorage.setItem(PLK, JSON.stringify(a)); } catch (e) {} roPush(); if (!$('roL').hidden) roList(); }
   var roFull = function (o) { return o.mei ? o.sei + ' ' + o.mei : o.sei; };
-  function roPush() { if (!(ws && ws.readyState === 1)) return; var L = roGet().map(function (o) { return { i: o.id, n: roFull(o), y: (o.ys || '') + (o.ym || ''), g: 0 }; }), of = Math.max(1, Math.ceil(L.length / 100)); try { for (var k = 0; k < of; k++) ws.send(JSON.stringify({ type: 'roster', gk: '', t: '', d: 0, part: k, of: of, list: L.slice(k * 100, k * 100 + 100) })); } catch (e) {} }
+  function roPush() { if (!(ws && ws.readyState === 1)) return; var L = roGet().map(function (o) { return { i: o.id, n: roFull(o), y: (o.ys || '') + (o.ym || ''), g: (o.gs && o.gs.three) || 0 }; }), of = Math.max(1, Math.ceil(L.length / 100)); try { for (var k = 0; k < of; k++) ws.send(JSON.stringify({ type: 'roster', gk: 'three', t: 'スリークッションの持ち点', d: 25, part: k, of: of, list: L.slice(k * 100, k * 100 + 100) })); } catch (e) {} }
   function roHandle(m) {
     var a = roGet(); if (m.op === 'del') return roSet(a.filter(function (o) { return o.id !== m.i; }));
     if (m.op !== 'save' || !m.p) return; var n = String(m.p.n || '').replace(/[\s\u3000]+/g, ' ').trim().slice(0, 20), i = n.indexOf(' '), sei = i > 0 ? n.slice(0, i) : n, mei = i > 0 ? n.slice(i + 1) : ''; if (!sei || /^GUEST/i.test(sei)) return roPush();
     var o = null; a.forEach(function (x) { if ((m.p.i && x.id === m.p.i) || (!m.p.i && x.sei === sei && (x.mei || '') === mei)) o = x; });
     if (!o) { o = { id: Math.random().toString(36).slice(2, 10), gs: {}, ys: '', ym: '' }; a.push(o); } o.sei = sei; o.mei = mei;
-    if (typeof m.p.y === 'string') { o.ys = m.p.y.replace(/\s+/g, '').slice(0, 30); o.ym = ''; } roSet(a);
+    if (typeof m.p.y === 'string') { o.ys = m.p.y.replace(/\s+/g, '').slice(0, 30); o.ym = ''; } var g = parseInt(m.p.g, 10); if (g >= 1 && g <= 999) { o.gs = o.gs || {}; o.gs.three = g; } roSet(a);
   }
+  var PFK = 'vibes-count-prefs', PFD = { lim: 0, t: 40, to: 3, pm: 5, eq: 1, snd: 1, easy: 0 };
+  function cfGet() { var o = {}, pf = null, st = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); if (!pf) { st = JSON.parse(localStorage.getItem('vibes-count-3c-v1') || 'null'); pf = st && st.cfg; } } catch (e) {} Object.keys(PFD).forEach(function (k) { o[k] = pf && typeof pf[k] === 'number' ? pf[k] : PFD[k]; }); return o; }
+  function cfSchema() { var c = cfGet(), yn = [[1, 'あり'], [0, 'なし']]; return [
+    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 't', l: '秒数カウント（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
+    { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
+    { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
+  function cfSave(v) { var c = cfGet(); cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = parseInt(v[f.k], 10); if (isNaN(x)) return; c[f.k] = f.t === 'n' ? Math.max(f.min, Math.min(f.max, x)) : (x ? 1 : 0); }); try { localStorage.setItem(PFK, JSON.stringify(c)); } catch (e) {} }
+  function cfPanel() { var R = $('cfR'); R.textContent = ''; cfSchema().forEach(function (f) { var d = document.createElement('div'), l = document.createElement('label'), i; l.textContent = f.l; l.htmlFor = 'c_' + f.k;
+      if (f.t === 's') { i = document.createElement('select'); f.o.forEach(function (o) { var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; i.appendChild(op); }); } else { i = document.createElement('input'); i.type = 'number'; i.min = f.min; i.max = f.max; }
+      i.value = f.v; i.id = 'c_' + f.k; i.setAttribute('data-k', f.k); d.appendChild(l); d.appendChild(i); R.appendChild(d); }); $('cfL').hidden = false; }
+  $('cfF').addEventListener('submit', function (e) { e.preventDefault(); var v = {}; Array.prototype.forEach.call(document.querySelectorAll('#cfR [data-k]'), function (i) { v[i.getAttribute('data-k')] = i.value; }); cfSave(v); $('cfL').hidden = true; push(); });
+  $('cfX').onclick = function () { $('cfL').hidden = true; }; $('roX').onclick = function () { $('roL').hidden = true; }; $('ntOk').onclick = function () { $('ntL').hidden = true; };
+  function roList() { var B = $('roB'), a = roGet().sort(function (x, y) { return ((x.ys || '') + (x.ym || '') || roFull(x)).localeCompare((y.ys || '') + (y.ym || '') || roFull(y), 'ja'); }); B.textContent = '';
+    a.forEach(function (o) { var d = document.createElement('div'), n = document.createElement('span'); n.textContent = roFull(o); var y = document.createElement('small'); y.textContent = (o.ys || '') + (o.ym || ''); n.appendChild(y); var g = document.createElement('i'); g.textContent = o.gs && o.gs.three ? '持ち点 ' + o.gs.three : ''; var x = document.createElement('button'); x.type = 'button'; x.textContent = '消す'; var at = 0;
+      x.onclick = function () { if (Date.now() - at < 2500) roSet(roGet().filter(function (q) { return q.id !== o.id; })); else { at = Date.now(); x.textContent = 'もう一度押す'; setTimeout(function () { x.textContent = '消す'; }, 2500); } };
+      n.style.cursor = 'pointer'; n.onclick = function () { $('roN').value = roFull(o); $('roY').value = (o.ys || '') + (o.ym || ''); $('roG').value = (o.gs && o.gs.three) || 25; $('roN').focus(); };
+      d.appendChild(n); d.appendChild(g); d.appendChild(x); B.appendChild(d); });
+    if (!a.length) { var e = document.createElement('p'); e.textContent = 'まだ誰も登録されていません。'; e.style.fontSize = '2vh'; B.appendChild(e); } }
+  function roPanel() { $('roL').hidden = false; roList(); $('roN').focus(); }
+  $('roF').addEventListener('submit', function (e) { e.preventDefault(); if (!$('roN').value.trim()) return; roHandle({ op: 'save', p: { n: $('roN').value, y: $('roY').value, g: $('roG').value } }); $('roN').value = ''; $('roY').value = ''; $('roN').focus(); });
   function rmOpen() {
     if (!rm || !/^\d{6}$/.test(rm.code || '')) rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true };
     rm.on = true; saveRm(); $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('rmQ').innerHTML = qrSvg(rm.code); $('rmL').hidden = false; showMenu = false; connect(); draw();
@@ -185,6 +228,8 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   $('soloMenu').onclick = function () { showMenu = true; draw(); };
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return; var k = e.key;
+    if (!$('ntL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('ntL').hidden = true; } return; }
+    if (!$('cfL').hidden || !$('roL').hidden) { if (k === 'Escape') { e.preventDefault(); $('cfL').hidden = true; $('roL').hidden = true; } return; }
     if (!$('rmL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('rmL').hidden = true; } return; }
     if (k === 'f' || k === 'F') { e.preventDefault(); goFull(); return; }
     if (!$('solo').hidden) { if (k === 'Escape' || k === 'Enter') { e.preventDefault(); showMenu = true; draw(); } return; }

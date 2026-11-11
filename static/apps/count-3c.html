@@ -144,6 +144,14 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 .goal b{font-size:3.4vh}
 .win .big{font-size:6.6vh}
 #pzB{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;font:inherit;font-weight:900;font-size:9vh;color:#171A22;background:#F3F4EF;border:0;border-radius:3vh;padding:4vh 6vw;box-shadow:0 0 0 100vmax rgba(10,12,18,.72);cursor:pointer}#pzB small{display:block;font-size:2.6vh;font-weight:700;color:#3A3F4C;margin-top:1vh}
+/* ---- inning numbers on the sheet ---- */
+.sheet .row span{display:grid;line-height:1.25!important;padding:.2vh 0 .3vh}.sheet .row span small{font-family:"Noto Sans JP",sans-serif;font-size:1.25vh;font-weight:700;color:var(--sub);line-height:1.3}
+.sheet .lab.ih{font-size:1.6vh!important;color:var(--sub)}.sheet .ihn{font-size:1.5vh;font-weight:700;color:var(--sub)}
+/* ---- easy mode: points, inning, names, high run only ---- */
+body.easy .time,body.easy .tos,body.easy .s-av,body.easy #tbox,body.easy .sheet,body.easy .keys{display:none!important}
+body.easy .mid{grid-template-rows:1fr}body.easy .inn b{font-size:min(30vh,13vw)!important}body.easy .inn small{font-size:3vh}
+body.easy .stats{grid-template-columns:1fr}body.easy .stat small{font-size:2.4vh}body.easy .stat b{font-size:7vh!important}
+body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh,15vw)}body.easy .name{font-size:6vh}
 /* ---- players 2-4, time-outs, game time ---- */
 .main{display:grid}
 .main.n3{grid-template-columns:repeat(3,1fr) minmax(12vw,14vw)}.main.n4{grid-template-columns:repeat(4,1fr) minmax(11vw,13vw)}
@@ -240,6 +248,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       <div class="f"><label for="fp">練習時間（分）</label><input id="fp" type="number" inputmode="numeric" min="1" max="60"></div>
       <div class="f" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="bPr2" style="width:100%">練習タイマーを開く</button></div>
       <div class="f"><label for="fe">裏撞き（全員が撞いてから終了）</label><select id="fe"><option value="1">あり</option><option value="0">なし</option></select></div>
+      <div class="f"><label for="fz">イージーモード（点数・イニング・名前・ハイランだけ）</label><select id="fz"><option value="0">なし</option><option value="1">あり</option></select></div>
       <div class="f"><label for="fs">音（残り10秒・時間切れ）</label><select id="fs"><option value="1">あり</option><option value="0">なし</option></select></div>
     </div>
     <datalist id="roster"></datalist>
@@ -254,7 +263,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     <h2>試合終了</h2>
     <div class="big" id="wName"></div>
     <table><thead><tr><th></th><th>得点</th><th>イニング</th><th>ハイラン</th><th>アベレージ</th></tr></thead><tbody id="wT"></tbody></table>
-    <div class="acts"><button type="button" class="btn" id="bBack">戻る (BackSpace)</button><button type="button" class="btn go" id="bAgain">新しい試合 (Enter)</button></div>
+    <div class="acts"><button type="button" class="btn" id="bBack">戻る (BackSpace)</button><button type="button" class="btn" id="bTop">トップへ戻る (0)</button><button type="button" class="btn go" id="bAgain">新しい試合 (Enter)</button></div>
   </div>
 </div>
 <div class="over-l" id="wzL" hidden>
@@ -333,9 +342,10 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       var who = el('div', 'who'), ball = el('span', 'ball'); ball.style.setProperty('--c', PCOL[p]); who.appendChild(ball); var nm = el('span', 'name'); nm.id = 'n' + p; who.appendChild(nm); sec.appendChild(who);
       var sc = el('div', 'score num', '0'); sc.id = 'sc' + p; sc.style.color = p ? PCOL[p] : '#fff'; sec.appendChild(sc);
       var foot = el('div', 'foot'), st = el('div', 'stats');
-      [['HIGH RUN', 'hr'], ['AVERAGE', 'av']].forEach(function (a) { var d = el('div', 'stat'); d.appendChild(el('small', '', a[0])); var b = el('b', '', '0'); b.id = a[1] + p; d.appendChild(b); st.appendChild(d); });
+      [['HIGH RUN', 'hr'], ['AVERAGE', 'av']].forEach(function (a) { var d = el('div', 'stat s-' + a[1]); d.appendChild(el('small', '', a[0])); var b = el('b', '', '0'); b.id = a[1] + p; d.appendChild(b); st.appendChild(d); });
       foot.appendChild(st); var to = el('div', 'stat tos'); to.appendChild(el('small', '', 'TIME-OUT')); var tw = el('span', 'tow'); tw.id = 'to' + p; to.appendChild(tw); foot.appendChild(to); sec.appendChild(foot);
       m.appendChild(sec);
+      if (!p) { sh.appendChild(el('span', 'lab ih', 'イニング')); sh.appendChild(el('span', 'ihn', '上の小さい数字がイニング、下が点数')); }
       var lab = el('span', 'lab'), dot = el('i'); dot.style.background = PCOL[p]; lab.appendChild(dot); var ln = el('span'); ln.id = 'ln' + p; lab.appendChild(ln); sh.appendChild(lab); var row = el('div', 'row'); row.id = 'r' + p; sh.appendChild(row);
     }
     mid.style.order = N === 2 ? 2 : 9; built = N;
@@ -367,8 +377,8 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       $('s' + p).classList.toggle('on', p === S.turn && !S.over);
       var tw = $('to' + p); tw.textContent = ''; tw.parentNode.hidden = !S.cfg.to;
       for (var k = 0; k < (S.cfg.to || 0); k++) { var c = el('i'); if (k >= S.to[p]) c.className = 'used'; tw.appendChild(c); }
-      var r = $('r' + p), a = S.inn[p].slice(-18); r.textContent = '';
-      a.forEach(function (v) { var s = document.createElement('span'); s.textContent = v; if (!v) s.className = 'z'; r.appendChild(s); });
+      var r = $('r' + p), a = S.inn[p].slice(-18), i0 = S.inn[p].length - a.length; r.textContent = '';
+      a.forEach(function (v, i) { var s = document.createElement('span'); var u = document.createElement('small'); u.textContent = i0 + i + 1; s.appendChild(u); s.appendChild(document.createTextNode(v)); if (!v) s.className = 'z'; r.appendChild(s); });
     }
     $('runS').textContent = S.run && !S.over ? 'RUN ' + S.run : '';
     $('inn').textContent = S.inn[S.turn].length + (S.over ? 0 : 1);
@@ -420,7 +430,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   function openSet() {
     for (var q = 0; q < 4; q++) { $('fn' + q).value = S.cfg.n[q] || 'PLAYER ' + (q + 1); $('fg' + q).value = S.cfg.g[q] || S.cfg.g[0]; }
     $('fnp').value = NP(); $('fnp').disabled = !fresh(); $('fto').value = S.cfg.to; setRows();
-    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd;
+    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0;
     $('setL').hidden = false; $('fn0').focus(); $('fn0').select();
   }
   function setRows() { var n = +$('fnp').value; for (var q = 0; q < 4; q++) Array.prototype.forEach.call(document.querySelectorAll('.pf' + q), function (e) { e.hidden = q >= n; }); }
@@ -430,7 +440,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       var nn = fresh() ? +$('fnp').value : NP(), oldTo = S.cfg.to; if (nn !== NP()) setN(nn);
       for (var q = 0; q < nn; q++) { S.cfg.n[q] = $('fn' + q).value.trim() || 'PLAYER ' + (q + 1); S.cfg.g[q] = num('fg' + q, 1, 999, 25); }
       S.cfg.to = num('fto', 0, 9, 3); if (S.cfg.to !== oldTo) S.to = S.to.map(function (v) { return Math.max(0, v + S.cfg.to - oldTo); }); S.cfg.lim = num('fl', 0, 999, 0); S.cfg.t = num('ft', 0, 180, 40); S.cfg.pm = num('fp', 1, 60, 5);
-      S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value;
+      S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value; S.cfg.easy = +$('fz').value; prefSave();
       remember();
       for (var p = 0; p < NP(); p++) if (S.sc[p] > S.cfg.g[p]) S.cfg.g[p] = S.sc[p];
       if (S.run > room()) S.run = Math.max(0, room());
@@ -440,7 +450,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   function cfSchema() { var c = S.cfg, yn = [[1, 'あり'], [0, 'なし']]; return [
     { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 't', l: '残り秒数（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
     { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
-    { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
+    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
   function cfApply(v) {
     var oldTo = S.cfg.to;
     cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = v[f.k];
@@ -449,7 +459,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       else if (f.t === 'x') { S.cfg[f.k] = String(x).slice(0, 60); } });
     if (S.cfg.to !== oldTo) S.to = S.to.map(function (z) { return Math.max(0, z + S.cfg.to - oldTo); });
     if (typeof cfAfter === 'function') cfAfter();
-    tStop(); render();
+    prefSave(); tStop(); render();
   }
   /* ===== player entry by numeric keypad ===== */
   var PK = 'vibes-players-v3', PK0 = 'vibes-count-3c-players-v2', players = [], plK = '';
@@ -665,7 +675,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   $('bSet').onclick = openSet; $('bFull').onclick = goFull;
   $('bSwap').onclick = function () { var a = $('fn0').value; $('fn0').value = $('fn1').value; $('fn1').value = a; a = $('fg0').value; $('fg0').value = $('fg1').value; $('fg1').value = a; };
   $('bNew').onclick = function () { closeSet(true); newGame(true); wzOpen(0); };
-  $('bAgain').onclick = function () { newGame(false); wzOpen(0); }; $('bBack').onclick = undo;
+  $('bAgain').onclick = function () { newGame(false); wzOpen(0); }; $('bBack').onclick = undo; $('bTop').onclick = function () { goHome(); };
 
   /* ===== remote control from a tablet / phone (relay: Cloudflare Worker + Durable Object) ===== */
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
@@ -683,10 +693,21 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     rws.onerror = function () { try { rws.close(); } catch (e) {} };
     rmStatus();
   }
+  var PFK = 'vibes-count-prefs', PFL = ['lim', 't', 'to', 'pm', 'eq', 'snd', 'easy'];
+  function prefSave() { if (S.cfg.mode) return; var o = {}; PFL.forEach(function (k) { o[k] = +S.cfg[k] || 0; }); try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
+  function menuInit() {
+    var q = /[?&]n=(new|again)/.exec(location.search); if (!q) return;
+    var c = S.cfg, pf = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); } catch (e) {}
+    if (pf) (c.mode ? ['t', 'to', 'pm', 'snd'] : PFL).forEach(function (k) { if (typeof pf[k] === 'number') c[k] = pf[k]; });
+    if (q[1] === 'new') c.n = c.n.map(function (x, i) { return 'PLAYER ' + (i + 1); });
+    S = def(c); hist = []; S.ready = !c.n.every(isDefName);
+    try { history.replaceState(null, '', location.pathname + location.search.replace(/([?&])n=(new|again)(&|$)/, '$1').replace(/[?&]$/, '')); } catch (e) {}
+  }
+  setInterval(function () { if (S.cfg.n.every(isDefName)) return; try { localStorage.setItem('vibes-count-last', JSON.stringify({ u: location.href.split('#')[0], n: S.cfg.n, title: JSON.parse(rmState()).title })); } catch (e) {} }, 3000);
   var tRem = 0, pzClock = 0;
   function pzOn() { if (S.over || S.ready || S.pz || !S.t0) return; S.pz = Date.now(); pzClock = tOn ? Math.max(1, tLeft) : 0; tStop(); render(); pzDraw(); }
   function pzOff() { if (!S.pz) return; if (S.t0) S.t0 += Date.now() - S.pz; S.pz = 0; var c = pzClock; pzClock = 0; if (c && !S.over) { tRem = c; tStart(); } render(); pzDraw(); }
-  function pzDraw() { var on = !!S.pz && !S.over; if ($('pzB').hidden === on) $('pzB').hidden = !on; $('bPz').textContent = on ? '再開' : '一時停止'; }
+  function pzDraw() { var ez = !!S.cfg.easy && !S.cfg.mode; if (document.body.classList.contains('easy') !== ez) document.body.classList.toggle('easy', ez); if (ez && tOn) tStop(); var on = !!S.pz && !S.over; if ($('pzB').hidden === on) $('pzB').hidden = !on; $('bPz').textContent = on ? '再開' : '一時停止'; }
   function endGame() { if (S.over || S.ready) return; if (S.pz) { if (S.t0) S.t0 += Date.now() - S.pz; S.pz = 0; pzClock = 0; } snap(); if (!S.cfg.mode && S.run > 0) { S.sc[S.turn] += S.run; S.inn[S.turn].push(S.run); S.run = 0; S.typed = false; } finish(); pzDraw(); }
   setInterval(pzDraw, 400);
   var tSent = -9; setInterval(function () { var v = tOn ? Math.max(0, Math.ceil(tLeft)) : -1; if (v === tSent || !(rws && rws.readyState === 1)) return; tSent = v; try { rws.send(JSON.stringify({ type: 't', v: v, l: tOn ? Math.max(0, tLeft) : -1 })); } catch (e) {} }, 100);
@@ -807,7 +828,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       else if (k === '.' || k === 'Delete' || k === ',') wzOpen(0); else return;
       e.preventDefault(); return;
     }
-    if (!$('winL').hidden) { if (k === 'Enter') { e.preventDefault(); newGame(false); wzOpen(0); } else if (k === 'Backspace') { e.preventDefault(); undo(); } return; }
+    if (!$('winL').hidden) { if (k === 'Enter') { e.preventDefault(); newGame(false); wzOpen(0); } else if (k === 'Backspace') { e.preventDefault(); undo(); } else if (k === '0') { e.preventDefault(); goHome(); } return; }
     var hit = true;
     if (k >= '0' && k <= '9') digit(+k);
     else if (k === '+' || k === 'ArrowUp') add(1);
@@ -834,6 +855,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   wake(); document.addEventListener('visibilitychange', wake); document.addEventListener('keydown', function once() { if (!wl) wake(); document.removeEventListener('keydown', once); });
   var qg = /[?&]g=(band|three)/.exec(location.search); if (qg && (S.cfg.game || 'three') !== qg[1]) { var cg = S.cfg; cg.game = qg[1]; S = def(cg); hist = []; S.ready = !cg.n.every(isDefName); }
   if (S.cfg.game === 'band') { $('ttl').textContent = (TB ? 'TABLE ' + TB + ' · ' : '') + 'BAND GAME'; document.title = 'バンド デジタルカウント｜VIBES BILLIARDS'; }
+  menuInit();
   render(); setInterval(drawTime, 500); if (S.over) showWin(); else if (S.cfg.n.every(isDefName) && fresh()) wzOpen(0);
 })();
 </script>

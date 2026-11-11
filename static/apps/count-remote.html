@@ -65,6 +65,8 @@ input:focus{outline:none;border-color:var(--lime)}
 .mt{border:0;border-radius:16px;padding:14px 8px;min-height:104px;color:#fff;font:inherit;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer;touch-action:manipulation;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
 .mt.carom{background:linear-gradient(180deg,#2468C0,#1E5AA8 46%,#164482)}.mt.pocket{background:linear-gradient(180deg,#6E7683,#5A616C 46%,#434953)}
 .mt:active{transform:scale(.97)}.mt small{font-size:10px;font-weight:700;letter-spacing:.14em;color:#DCE3F0}.mt b{font-size:17px;font-weight:900;line-height:1.25}
+.mg.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.mg.c2 .mt b{font-size:20px}
+.mlogo span{margin-top:10px;padding-top:9px;border-top:3px solid var(--lime);font-family:Unbounded,Anton,sans-serif;font-weight:900;font-size:15px;letter-spacing:.34em;text-indent:.34em;color:var(--chalk)}
 .mlogo{display:grid;place-items:center;padding:26px 0}.mlogo img{height:96px;width:auto}
 .pkh{display:grid;gap:10px}.pkh>small{font-weight:900;letter-spacing:.06em;color:var(--sub)}
 .pkp{display:grid;gap:8px}.pp{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#5A616C;border-radius:14px;padding:10px 14px;border:3px solid transparent}
@@ -141,10 +143,9 @@ input:focus{outline:none;border-color:var(--lime)}
   <section id="vMenu" hidden>
     <div class="mhead"><button type="button" class="sm" id="mBack" hidden>← もどる</button><b id="mTitle"></b></div>
     <div class="mg" id="mgTop"></div>
-    <div class="mlogo"><img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"></div>
+    <div class="mlogo"><img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"><span>DIGITAL LAB</span></div>
     <div class="mg" id="mgBot"></div>
     <p class="note" style="text-align:center">種目を押すと、モニターが切り替わります。</p>
-    <button type="button" class="k rob" style="width:100%;margin-top:14px">選手名簿<small>選手の登録・名前の修正</small></button>
   </section>
 
   <section id="vPk" hidden style="display:none;flex-direction:column;gap:12px">
@@ -197,7 +198,7 @@ input:focus{outline:none;border-color:var(--lime)}
     <button type="button" class="go" data-c="newgame" style="margin-top:14px">新しい試合（同じ選手）</button>
     <div class="pad" style="margin-top:10px">
       <button type="button" class="k prePl" style="font-size:18px">選手を変える</button>
-      <button type="button" class="k" data-c="home" style="font-size:18px">メニュー</button>
+      <button type="button" class="k" data-c="home" style="font-size:18px">トップへ戻る</button>
       <button type="button" class="k" data-c="undo" style="grid-column:1/-1;font-size:16px;min-height:56px">戻る<small>まちがえて終了した時</small></button>
     </div>
   </section>
@@ -284,8 +285,8 @@ input:focus{outline:none;border-color:var(--lime)}
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
   function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'つながっていません'); connect(); return false; }
-  function tile(it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'mt ' + (it.c === 'carom' ? 'carom' : 'pocket'); if (it.col && /^#[0-9A-Fa-f]{6}$/.test(it.col[0] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[1] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[2] + '')) b.style.background = 'linear-gradient(180deg,' + it.col[0] + ',' + it.col[1] + ' 46%,' + it.col[2] + ')'; if (it.lt) b.classList.add('lt'); var s1 = document.createElement('small'); s1.textContent = it.s; var b1 = document.createElement('b'); b1.textContent = it.b; b.appendChild(s1); b.appendChild(b1); if (it.d) { var e1 = document.createElement('em'); e1.textContent = it.d; b.appendChild(e1); } b.onclick = function () { send({ type: 'cmd', c: 'open', v: it.id }); if (navigator.vibrate) navigator.vibrate(15); }; return b; }
-  function drawMenu(m) { var a = $('mgTop'), b = $('mgBot'), n = (m.items || []).length; a.textContent = ''; b.textContent = ''; a.className = b.className = 'mg c' + (n === 3 ? 3 : n === 2 ? 1 : 3); (m.items || []).forEach(function (it, i) { (n === 3 ? b : (i < Math.ceil(n / 2) ? a : b)).appendChild(tile(it)); }); $('mTitle').textContent = m.title || ''; $('mBack').hidden = !m.back; }
+  function tile(it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'mt ' + (it.c === 'carom' ? 'carom' : 'pocket'); if (it.col && /^#[0-9A-Fa-f]{6}$/.test(it.col[0] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[1] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[2] + '')) b.style.background = 'linear-gradient(180deg,' + it.col[0] + ',' + it.col[1] + ' 46%,' + it.col[2] + ')'; if (it.lt) b.classList.add('lt'); var s1 = document.createElement('small'); s1.textContent = it.s; var b1 = document.createElement('b'); b1.textContent = it.b; b.appendChild(s1); b.appendChild(b1); if (it.d) { var e1 = document.createElement('em'); e1.textContent = it.d; b.appendChild(e1); } b.onclick = function () { if (it.id === 'roster') return roOpen(); if (it.id === 'config') return cfOpen(); send({ type: 'cmd', c: 'open', v: it.id }); if (navigator.vibrate) navigator.vibrate(15); }; return b; }
+  function drawMenu(m) { var a = $('mgTop'), b = $('mgBot'), n = (m.items || []).length; a.textContent = ''; b.textContent = ''; a.className = b.className = 'mg c' + (n === 3 ? 3 : n === 2 ? 1 : n === 4 ? 2 : 3); (m.items || []).forEach(function (it, i) { (n === 3 ? b : (i < Math.ceil(n / 2) ? a : b)).appendChild(tile(it)); }); $('mTitle').textContent = m.title || ''; $('mBack').hidden = !m.back; }
   function drawPk(m) {
     $('pkTitle').textContent = m.title + (m.table ? ' · ' + m.table + '番台' : ''); var P = $('pkP'); P.textContent = '';
     m.lab.forEach(function (x, i) { var d = document.createElement('div'); d.className = 'pp' + (i === m.turn && !m.over ? ' on' : ''); var n = document.createElement('span'); n.textContent = x; var v = document.createElement('b'); v.className = 'num'; v.textContent = m.score[i]; d.appendChild(n); d.appendChild(v); P.appendChild(d); });
@@ -367,10 +368,10 @@ input:focus{outline:none;border-color:var(--lime)}
   function roFilter(q) { q = kana(q); return ro.list.filter(function (o) { return !q || kana(o.n).indexOf(q) >= 0 || kana(o.y).indexOf(q) >= 0; }).sort(function (a, b) { return (a.y || a.n).localeCompare(b.y || b.n, 'ja'); }); }
   function roRows(box, q, fn) { box.textContent = ''; var L = roFilter(q); L.slice(0, 200).forEach(function (o) { var b = document.createElement('button'); b.type = 'button'; b.className = 'rr'; var a = document.createElement('span'); var n = document.createElement('b'); n.textContent = o.n; a.appendChild(n); if (o.y) { var y = document.createElement('small'); y.textContent = o.y; a.appendChild(y); } b.appendChild(a); if (ro.t && o.g) { var g = document.createElement('i'); g.textContent = o.g; b.appendChild(g); } b.onclick = function () { fn(o); }; box.appendChild(b); });
     if (!L.length) { var e = document.createElement('p'); e.className = 'note'; e.textContent = ro.list.length ? '見つかりません。' : 'まだ誰も登録されていません。'; box.appendChild(e); } return L.length; }
-  function roDraw() { if (cur === 'vRo') { roRows($('roList'), $('roQ').value, edOpen); $('roCnt').textContent = '登録 ' + ro.list.length + '人' + (ro.t ? '（右の数字は' + (last && last.title ? last.title + 'の' : '') + ro.t + '）' : ''); } if (cur === 'vPick') piDraw(); }
+  function roDraw() { if (cur === 'vRo') { roRows($('roList'), $('roQ').value, edOpen); $('roCnt').textContent = '登録 ' + ro.list.length + '人' + (ro.t ? '（右の数字は' + (last && last.kind !== 'menu' && last.title ? last.title + 'の' : '') + ro.t + '）' : ''); } if (cur === 'vPick') piDraw(); }
   function piDraw() { roRows($('piList'), $('piQ').value, function (o) { var i = $('pn' + piP); if (i) { i.value = o.n; if (ro.t && o.g && $('pg' + piP)) $('pg' + piP).value = o.g; chips(piP); } show('vPl'); }); }
   function roOpen() { if (cur !== 'vRo' && cur !== 'vEd') roFrom = cur; $('roQ').value = ''; show('vRo'); roDraw(); }
-  function edOpen(o) { edI = o ? o.i : ''; $('edH').textContent = o ? '選手を直す' : '新しい選手を登録'; $('edN').value = o ? o.n : $('roQ').value.trim(); $('edY').value = o ? o.y : ''; $('edGR').hidden = !ro.t; $('edGL').textContent = (last && last.title ? last.title + 'の' : '') + ro.t; $('edG').value = o && o.g ? o.g : (ro.d || ''); $('edNote').textContent = ro.t ? '' : '持ち点は、種目を選んだあとの「選手名簿」で直せます。'; $('edDel').hidden = !o; $('edErr').textContent = ''; delAt = 0; show('vEd'); }
+  function edOpen(o) { edI = o ? o.i : ''; $('edH').textContent = o ? '選手を直す' : '新しい選手を登録'; $('edN').value = o ? o.n : $('roQ').value.trim(); $('edY').value = o ? o.y : ''; $('edGR').hidden = !ro.t; $('edGL').textContent = (last && last.kind !== 'menu' && last.title ? last.title + 'の' : '') + ro.t; $('edG').value = o && o.g ? o.g : (ro.d || ''); $('edNote').textContent = ro.t ? (last && last.kind === 'menu' ? 'ほかの種目の持ち点は、その種目を選んだあとで直せます。' : '') : ''; $('edDel').hidden = !o; $('edErr').textContent = ''; delAt = 0; show('vEd'); }
   Array.prototype.forEach.call(document.querySelectorAll('.rob'), function (b) { b.onclick = roOpen; });
   $('roQ').addEventListener('input', roDraw); $('piQ').addEventListener('input', piDraw);
   $('roNew').onclick = function () { edOpen(null); };
