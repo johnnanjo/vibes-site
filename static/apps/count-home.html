@@ -21,7 +21,15 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 .bar button{font:inherit;font-weight:700;font-size:1.7vh;letter-spacing:.06em;color:var(--chalk);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:.8vh 1.6vw;cursor:pointer}
 .bar button:hover{background:rgba(255,255,255,.1)}
 .bar button:focus-visible,.tile:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
-.ring{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:1fr auto 1fr;gap:2.2vh 1.6vw;min-height:0;align-items:stretch;max-width:1500px;width:100%;margin:0 auto}
+.home{grid-template-rows:auto auto 1fr auto}
+.crumb{min-height:5vh;display:flex;align-items:center;justify-content:center;gap:1vw;font-weight:900;font-size:3.2vh;letter-spacing:.06em}
+.crumb button{font:inherit;font-weight:700;font-size:1.8vh;color:var(--chalk);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.7vh 1.6vw;cursor:pointer}
+.ring{display:grid;gap:2.4vh 2vw;min-height:0;align-items:stretch;max-width:1560px;width:100%;margin:0 auto}
+.ring.n2{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-rows:minmax(0,62vh);align-content:center}
+.ring.n2 .logo{grid-column:2;grid-row:1;padding:0 2vw}.ring.n2 .tile:first-child{grid-column:1;grid-row:1}.ring.n2 .tile:last-child{grid-column:3;grid-row:1}
+.ring.n2 .tile b{font-size:min(7.4vh,3.2vw);white-space:nowrap}.ring.n2 .tile span{font-size:2.3vh}.ring.n2 .logo img{height:22vh;max-width:30vw}
+.ring.n3{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto minmax(0,40vh);align-content:center}
+.ring.n3 .logo{grid-column:1/-1;grid-row:1}
 .logo{grid-column:1/-1;display:grid;place-items:center;padding:1vh 0}
 .logo img{height:24vh;width:auto;max-width:70vw;filter:drop-shadow(0 1.4vh 3vh rgba(0,0,0,.5))}
 .tile{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:.6vh;text-align:left;text-decoration:none;color:#fff;font:inherit;border:0;cursor:pointer;border-radius:2.4vh;padding:2.2vh 1.8vw;min-height:0;min-width:0;
@@ -62,17 +70,11 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 <body>
 <div class="home" id="home">
   <div class="bar"><button type="button" id="bRm">リモコン（スマホで操作）</button><button type="button" id="bFull">全画面 (F)</button></div>
-  <div class="ring" id="ring">
-    <a class="tile carom" data-id="3c" href="/pages/count-3c/"><kbd>1</kbd><small>CAROM</small><b>スリークッション</b><span>2〜4人・持ち点・タイムアウト</span></a>
-    <a class="tile pocket" data-id="bowlard" href="/pages/count-pocket/?m=bowlard"><kbd>2</kbd><small>POCKET</small><b>ボーラード</b><span>1〜4人・ボウリングのスコア</span></a>
-    <a class="tile pocket" data-id="nine" href="/pages/count-pocket/?m=nine"><kbd>3</kbd><small>POCKET</small><b>9ボール</b><span>セットマッチ・ハンデ対応</span></a>
-    <div class="logo"><img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"></div>
-    <a class="tile pocket" data-id="ten" href="/pages/count-pocket/?m=ten"><kbd>4</kbd><small>POCKET</small><b>10ボール</b><span>セットマッチ・ハンデ対応</span></a>
-    <a class="tile pocket" data-id="g59" href="/pages/count-pocket/?m=g59"><kbd>5</kbd><small>POCKET</small><b>5-9</b><span>2〜4人・かけ玉の点を自動計算</span></a>
-    <a class="tile pocket" data-id="g510" href="/pages/count-pocket/?m=g510"><kbd>6</kbd><small>POCKET</small><b>5-10</b><span>2〜4人・かけ玉の点を自動計算</span></a>
-  </div>
-  <div class="foot"><span><kbd>1</kbd>〜<kbd>6</kbd>種目を選ぶ</span><span><kbd>Enter</kbd>決定</span><span><kbd>F</kbd>全画面</span></div>
+  <div class="crumb" id="crumb"></div>
+  <div class="ring" id="ring"></div>
+  <div class="foot" id="foot"></div>
 </div>
+<img id="logoSrc" src="/img/vibes-logo-t.png" alt="" hidden>
 <div class="solo" id="solo" hidden>
   <img id="soloLogo" alt="VIBES BILLIARDS">
   <div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div>
@@ -91,19 +93,41 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   var $ = function (id) { return document.getElementById(id); };
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
   var U = { '3c': '/pages/count-3c/', pocket: '/pages/count-pocket/' };
-  var tiles = Array.prototype.slice.call(document.querySelectorAll('.tile')), sel = -1;
-  var url = function (id) { var u = id === '3c' ? U['3c'] : U.pocket + '?m=' + id; if (TB) u += (u.indexOf('?') < 0 ? '?' : '&') + 't=' + TB; return u; };
-  tiles.forEach(function (t) { t.setAttribute('href', url(t.getAttribute('data-id'))); });
-  function go(id) { location.href = url(id); }
+  var MENU = {
+    top: { t: '', items: [{ id: 'carom', b: 'キャロム', s: 'CAROM', c: 'carom', d: 'スリークッション・バンド' }, { id: 'pocket', b: 'ポケット', s: 'POCKET', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }] },
+    carom: { t: 'キャロム', back: 'top', items: [{ id: '3c', b: 'スリークッション', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }, { id: 'band', b: 'バンド', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }] },
+    pocket: { t: 'ポケット', back: 'top', items: [{ id: 'bowlard', b: 'ボーラード', s: 'POCKET', c: 'pocket', d: '1〜4人・ボウリングのスコア', go: 1 }, { id: 'nine', b: '9ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-9' }, { id: 'ten', b: '10ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-10' }] },
+    nine: { t: '9ボール', back: 'pocket', items: [{ id: 'nine-set', b: 'セットマッチ', s: '9-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g59', b: '5-9', s: '9-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] },
+    ten: { t: '10ボール', back: 'pocket', items: [{ id: 'ten-set', b: 'セットマッチ', s: '10-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g510', b: '5-10', s: '10-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] }
+  };
+  var lv = 'top', tiles = [], sel = -1;
+  var url = function (id) { var u = id === '3c' ? U['3c'] + '?g=three' : id === 'band' ? U['3c'] + '?g=band' : U.pocket + '?m=' + id.replace('-set', ''); if (TB) u += (u.indexOf('?') < 0 ? '?' : '&') + 't=' + TB; return u; };
+  function open(id) {
+    if (id === 'back') { if (MENU[lv].back) { lv = MENU[lv].back; menu(); } return; }
+    if (MENU[id] && id !== 'top') { if (MENU[lv].items.some(function (x) { return x.id === id; })) { lv = id; menu(); } return; }
+    var it = null; Object.keys(MENU).forEach(function (k) { MENU[k].items.forEach(function (x) { if (x.id === id && x.go) it = x; }); }); if (it) location.href = url(id);
+  }
+  function menu() {
+    var m = MENU[lv], r = $('ring'); r.textContent = ''; r.className = 'ring n' + m.items.length; sel = -1; tiles = [];
+    var cr = $('crumb'); cr.textContent = ''; if (m.back) { var bb = document.createElement('button'); bb.type = 'button'; bb.textContent = '← もどる (BackSpace)'; bb.onclick = function () { open('back'); }; cr.appendChild(bb); cr.appendChild(document.createTextNode(m.t)); }
+    m.items.forEach(function (it, i) {
+      var a = document.createElement('button'); a.type = 'button'; a.className = 'tile ' + it.c;
+      var kb = document.createElement('kbd'); kb.textContent = String(i + 1); var sm = document.createElement('small'); sm.textContent = it.s; var b = document.createElement('b'); b.textContent = it.b; var sp = document.createElement('span'); sp.textContent = it.d;
+      a.appendChild(kb); a.appendChild(sm); a.appendChild(b); a.appendChild(sp); a.onclick = function () { open(it.id); }; r.appendChild(a); tiles.push(a);
+    });
+    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
+    var f = $('foot'); f.textContent = ''; [['1', '〜'], [String(m.items.length), '選ぶ'], ['Enter', '決定']].concat(m.back ? [['BackSpace', 'もどる']] : []).concat([['F', '全画面']]).forEach(function (x, i) { var sp2 = i === 1 ? f.lastChild : document.createElement('span'); var k2 = document.createElement('kbd'); k2.textContent = x[0]; sp2.appendChild(k2); sp2.appendChild(document.createTextNode(x[1])); if (i !== 1) f.appendChild(sp2); });
+    if (typeof push === 'function') push();
+  }
   function pick(i) { sel = i; tiles.forEach(function (t, k) { t.classList.toggle('sel', k === i); }); }
   function goFull() { var d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {}); }
-  $('bFull').onclick = goFull; $('soloLogo').src = document.querySelector('.logo img').src;
+  $('bFull').onclick = goFull; $('soloLogo').src = $('logoSrc').src;
   /* remote: same room as the scoreboards, so the phone keeps its connection when the monitor changes page */
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), rm = null, ws = null, tries = 0, ping = null, showMenu = false;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
   var saveRm = function () { try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} };
-  var state = function () { return JSON.stringify({ type: 'state', kind: 'menu', table: TB, items: tiles.map(function (t) { return { id: t.getAttribute('data-id'), b: t.querySelector('b').textContent, s: t.querySelector('small').textContent, c: t.classList.contains('carom') ? 'carom' : 'pocket' }; }) }); };
+  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d }; }) }); };
   var push = function () { if (ws && ws.readyState === 1) { try { ws.send(state()); } catch (e) {} } };
   function draw() {
     var on = !!(rm && rm.on); $('solo').hidden = !on || showMenu; $('home').hidden = on && !showMenu;
@@ -114,7 +138,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { ws = null; return; }
     ws.onopen = function () { tries = 0; draw(); push(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'hello') return push(); if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^(3c|bowlard|nine|ten|g59|g510)$/.test(m.v)) go(m.v); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'hello') return push(); if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
     ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
@@ -130,13 +154,15 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!$('rmL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('rmL').hidden = true; } return; }
     if (k === 'f' || k === 'F') { e.preventDefault(); goFull(); return; }
     if (!$('solo').hidden) { if (k === 'Escape' || k === 'Enter') { e.preventDefault(); showMenu = true; draw(); } return; }
-    if (k >= '1' && k <= '6') { e.preventDefault(); var i = +k - 1; if (sel === i) go(tiles[i].getAttribute('data-id')); else pick(i); }
-    else if (k === 'Enter' && sel >= 0) { e.preventDefault(); go(tiles[sel].getAttribute('data-id')); }
-    else if (k === 'ArrowRight' || k === '+') { e.preventDefault(); pick((sel + 1) % tiles.length); }
-    else if (k === 'ArrowLeft' || k === '-') { e.preventDefault(); pick((sel + tiles.length - 1) % tiles.length); }
+    var n = tiles.length;
+    if (k >= '1' && k <= String(n)) { e.preventDefault(); var i2 = +k - 1; if (sel === i2) tiles[i2].click(); else pick(i2); }
+    else if (k === 'Enter' && sel >= 0) { e.preventDefault(); tiles[sel].click(); }
+    else if (k === 'Backspace') { e.preventDefault(); open('back'); }
+    else if (k === 'ArrowRight' || k === '+') { e.preventDefault(); pick((sel + 1) % n); }
+    else if (k === 'ArrowLeft' || k === '-') { e.preventDefault(); pick((sel + n - 1) % n); }
     else if (k === 'Escape' && rm && rm.on) { e.preventDefault(); showMenu = false; draw(); }
   });
-  draw(); connect();
+  menu(); draw(); connect();
   if ('serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.href)) navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count' }).catch(function () {});
 })();
 </script>

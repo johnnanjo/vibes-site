@@ -58,6 +58,9 @@ input:focus{outline:none;border-color:var(--lime)}
 .ord b{font-size:20px;font-weight:900;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 [hidden]{display:none!important}
 .mg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mg.c1{grid-template-columns:minmax(0,1fr)}.mg.c1 .mt{min-height:120px}.mg.c1 .mt b{font-size:26px}
+.mhead{display:flex;align-items:center;gap:10px;min-height:40px;margin-bottom:8px}.mhead b{font-size:20px;font-weight:900}
+.mt em{font-style:normal;font-size:11px;font-weight:700;color:#DCE3F0}
 .mt{border:0;border-radius:16px;padding:14px 8px;min-height:104px;color:#fff;font:inherit;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer;touch-action:manipulation;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
 .mt.carom{background:linear-gradient(180deg,#2468C0,#1E5AA8 46%,#164482)}.mt.pocket{background:linear-gradient(180deg,#6E7683,#5A616C 46%,#434953)}
 .mt:active{transform:scale(.97)}.mt small{font-size:10px;font-weight:700;letter-spacing:.14em;color:#DCE3F0}.mt b{font-size:17px;font-weight:900;line-height:1.25}
@@ -109,6 +112,7 @@ input:focus{outline:none;border-color:var(--lime)}
   </section>
 
   <section id="vMenu" hidden>
+    <div class="mhead"><button type="button" class="sm" id="mBack" hidden>← もどる</button><b id="mTitle"></b></div>
     <div class="mg" id="mgTop"></div>
     <div class="mlogo"><img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"></div>
     <div class="mg" id="mgBot"></div>
@@ -193,8 +197,8 @@ input:focus{outline:none;border-color:var(--lime)}
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
   function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'つながっていません'); connect(); return false; }
-  function tile(it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'mt ' + (it.c === 'carom' ? 'carom' : 'pocket'); var s1 = document.createElement('small'); s1.textContent = it.s; var b1 = document.createElement('b'); b1.textContent = it.b; b.appendChild(s1); b.appendChild(b1); b.onclick = function () { send({ type: 'cmd', c: 'open', v: it.id }); if (navigator.vibrate) navigator.vibrate(15); }; return b; }
-  function drawMenu(m) { var a = $('mgTop'), b = $('mgBot'); a.textContent = ''; b.textContent = ''; (m.items || []).forEach(function (it, i) { (i < Math.ceil(m.items.length / 2) ? a : b).appendChild(tile(it)); }); }
+  function tile(it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'mt ' + (it.c === 'carom' ? 'carom' : 'pocket'); var s1 = document.createElement('small'); s1.textContent = it.s; var b1 = document.createElement('b'); b1.textContent = it.b; b.appendChild(s1); b.appendChild(b1); if (it.d) { var e1 = document.createElement('em'); e1.textContent = it.d; b.appendChild(e1); } b.onclick = function () { send({ type: 'cmd', c: 'open', v: it.id }); if (navigator.vibrate) navigator.vibrate(15); }; return b; }
+  function drawMenu(m) { var a = $('mgTop'), b = $('mgBot'), n = (m.items || []).length; a.textContent = ''; b.textContent = ''; a.className = b.className = 'mg c' + (n === 3 ? 3 : n === 2 ? 1 : 3); (m.items || []).forEach(function (it, i) { (n === 3 ? b : (i < Math.ceil(n / 2) ? a : b)).appendChild(tile(it)); }); $('mTitle').textContent = m.title || ''; $('mBack').hidden = !m.back; }
   function drawPk(m) {
     $('pkTitle').textContent = m.title + (m.table ? ' · ' + m.table + '番台' : ''); var P = $('pkP'); P.textContent = '';
     m.lab.forEach(function (x, i) { var d = document.createElement('div'); d.className = 'pp' + (i === m.turn && !m.over ? ' on' : ''); var n = document.createElement('span'); n.textContent = x; var v = document.createElement('b'); v.className = 'num'; v.textContent = m.score[i]; d.appendChild(n); d.appendChild(v); P.appendChild(d); });
@@ -238,6 +242,7 @@ input:focus{outline:none;border-color:var(--lime)}
   $('iCode').addEventListener('input', function () { var v = this.value.replace(/\D/g, '').slice(0, 6); this.value = v.length > 3 ? v.slice(0, 3) + ' ' + v.slice(3) : v; });
   $('bCode').onclick = function () { code = ''; try { localStorage.removeItem(CK); } catch (x) {} if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; } last = null; status(false, 'つながっていません'); show('vJoin'); };
   Array.prototype.forEach.call(document.querySelectorAll('[data-c]'), function (b) { b.addEventListener('click', function () { send({ type: 'cmd', c: b.getAttribute('data-c') }); if (navigator.vibrate) navigator.vibrate(15); }); });
+  $('mBack').onclick = function () { send({ type: 'cmd', c: 'open', v: 'back' }); };
   $('pkNew').onclick = function () { var n = Date.now(), sm = this.querySelector('small'); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); sm.textContent = '2回押す'; } else { newAt = n; sm.textContent = 'もう一度押すと決定'; setTimeout(function () { sm.textContent = '2回押す'; }, 2000); } };
   $('kNew').onclick = function () { var n = Date.now(); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); this.querySelector('small').textContent = '2回押す'; } else { newAt = n; this.querySelector('small').textContent = 'もう一度押すと決定'; var el = this; setTimeout(function () { el.querySelector('small').textContent = '2回押す'; }, 2000); } };
   function chips(p) {
