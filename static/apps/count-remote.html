@@ -140,14 +140,15 @@ input:focus{outline:none;border-color:var(--lime)}
   function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'NOT CONNECTED'); connect(); return false; }
   function draw() {
     var m = last; if (!m) return;
-    for (var p = 0; p < 2; p++) {
-      $('n' + p).textContent = m.n[p] + ' (' + m.g[p] + ')';
-      $('s' + p).textContent = m.sc[p] + (p === m.turn && !m.over ? m.run : 0);
-      $('d' + p).textContent = 'INN ' + m.inn[p] + ' · HR ' + m.hr[p] + ' · AVG ' + m.av[p];
-      $('p' + p).classList.toggle('on', p === m.turn && !m.over);
+    var N = m.n.length, ix = N === 2 ? [0, 1] : [m.turn, (m.turn + 1) % N];
+    for (var c = 0; c < 2; c++) { var p = ix[c];
+      $('n' + c).textContent = (N > 2 ? (c ? 'NEXT: ' : '') : '') + m.n[p] + ' (' + m.g[p] + ')';
+      $('s' + c).textContent = m.sc[p] + (p === m.turn && !m.over ? m.run : 0);
+      $('d' + c).textContent = 'INN ' + m.inn[p] + ' · HR ' + m.hr[p] + ' · AVG ' + m.av[p];
+      $('p' + c).classList.toggle('on', p === m.turn && !m.over);
     }
     $('run').textContent = m.run; $('inn').textContent = 'INNING ' + (m.inn[m.turn] + (m.over ? 0 : 1));
-    $('over').hidden = !m.over; if (m.over) { var a = m.sc[0] / m.g[0], b = m.sc[1] / m.g[1]; $('over').textContent = 'GAME OVER — ' + (a === b ? 'DRAW' : 'WINNER: ' + m.n[a > b ? 0 : 1]); }
+    $('over').hidden = !m.over; if (m.over) { var w = 0, tie = false; m.n.forEach(function (x, i) { if (!i) return; var a = m.sc[i] / m.g[i], b = m.sc[w] / m.g[w]; if (a > b) { w = i; tie = false; } else if (a === b) tie = true; }); $('over').textContent = 'GAME OVER — ' + (tie ? 'DRAW' : 'WINNER: ' + m.n[w]); }
     $('kClock').classList.toggle('on', !!m.tOn); $('kClockS').textContent = m.t ? (m.tOn ? 'RUNNING · ' + m.t + ' SEC' : m.t + ' SEC') : 'OFF IN SETTINGS';
     $('kWarm').classList.toggle('on', !!m.pr); $('kWarmS').textContent = m.pr ? 'TAP TO CLOSE' : m.pm + ' MIN';
     $('foot').textContent = m.table ? 'TABLE ' + m.table : '';
@@ -172,8 +173,9 @@ input:focus{outline:none;border-color:var(--lime)}
     });
   }
   $('kPlayers').onclick = function () {
+    if (last && last.n.length > 2) { status(true, 'ENTER 3-4 PLAYERS AT THE MONITOR'); return; }
     var m = last || { n: ['', ''], g: [25, 25] };
-    for (var p = 0; p < 2; p++) { $('pn' + p).value = /^PLAYER [12]$/.test(m.n[p]) ? '' : m.n[p]; $('pg' + p).value = m.g[p]; chips(p); }
+    for (var p = 0; p < 2; p++) { $('pn' + p).value = /^PLAYER [1-4]$/.test(m.n[p]) ? '' : m.n[p]; $('pg' + p).value = m.g[p]; chips(p); }
     show('vPl');
   };
   [0, 1].forEach(function (p) { $('pn' + p).addEventListener('input', function () { chips(p); }); });
