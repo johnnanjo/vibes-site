@@ -143,10 +143,35 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 .kr span em{font-size:1.7vh}
 .goal b{font-size:3.4vh}
 .win .big{font-size:6.6vh}
+/* ---- players 2-4, time-outs, game time ---- */
+.main{display:grid}
+.main.n3{grid-template-columns:repeat(3,1fr) minmax(12vw,14vw)}.main.n4{grid-template-columns:repeat(4,1fr) minmax(11vw,13vw)}
+.ball{background:radial-gradient(circle at 32% 28%,#fff 0 9%,color-mix(in srgb,var(--c) 82%,#fff) 26%,var(--c) 52%,color-mix(in srgb,var(--c) 62%,#000) 100%)!important}
+.foot{display:grid;grid-template-columns:2fr 1fr;gap:.8vw}
+.stats{grid-template-columns:1fr 1fr}
+.tos{display:flex;flex-direction:column;justify-content:center}
+.tow{display:flex;justify-content:center;gap:.5vw;padding:.7vh 0 .5vh}
+.tow i{width:3vh;height:3vh;border-radius:50%;background:radial-gradient(circle at 34% 30%,#FFF4B8 0 12%,#F2C200 48%,#B88F00 100%);box-shadow:0 .2vh .5vh rgba(0,0,0,.4);transition:opacity .3s,transform .3s}
+.tow i.used{opacity:0;transform:scale(.4)}
+.time b{font-size:min(11vh,5vw);line-height:1;letter-spacing:-.02em;text-shadow:0 .4vh 0 rgba(0,0,0,.25);font-variant-numeric:tabular-nums}
+.time b.long{font-size:min(8vh,3.3vw)}
+.time #runS{min-height:2.6vh;margin-top:.8vh;color:var(--chalk);letter-spacing:.14em;font-size:2.2vh}
+.n3 .score{font-size:min(34vh,13.4vw)}.n3 .score.d3{font-size:min(24vh,9vw)}
+.n4 .score{font-size:min(30vh,10vw)}.n4 .score.d3{font-size:min(20vh,6.6vw)}
+.n3 .name{font-size:3.5vh}.n4 .name{font-size:2.9vh}.n3 .ball,.n4 .ball{width:3.6vh;height:3.6vh}
+.n3 .side,.n4 .side{padding:1.8vh 1vw}
+.n3 .foot,.n4 .foot{grid-template-columns:1fr;gap:.8vh}
+.n3 .tos,.n4 .tos{flex-direction:row;align-items:center;justify-content:space-between;padding:.5vh .8vw;order:-1}.n3 .tow,.n4 .tow{padding:0}.n3 .tow i,.n4 .tow i{width:2.4vh;height:2.4vh}
+.n3 .stat b{font-size:3.2vh}.n4 .stat b{font-size:2.5vh}.n4 .stat small{font-size:1.4vh;letter-spacing:.08em}
+.n3 .time b,.n4 .time b{font-size:min(8vh,3.2vw)}.n3 .time b.long,.n4 .time b.long{font-size:min(6vh,2.2vw)}
+.n3 .inn b,.n4 .inn b{font-size:min(19vh,6.4vw)}
+.n3 .turn,.n4 .turn{font-size:1.8vh}
+.sheet.n3,.sheet.n4{gap:.3vh 1vw;padding:.6vh 1vw}.sheet.n3 .lab,.sheet.n4 .lab{font-size:2vh}.sheet.n3 .row span,.sheet.n4 .row span{font-size:1.8vh;line-height:1.4}
+.f[hidden]{display:none}
 @media (prefers-reduced-motion:reduce){.side,.segs i{transition:none}}
 @media (max-width:760px){
   html,body{overflow:auto}.board{height:auto;min-height:100vh}
-  .main{grid-template-columns:1fr 1fr;grid-template-areas:"a b" "m m"}.p0{grid-area:a}.p1{grid-area:b}.mid{grid-area:m;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto}
+  .main,.main.n3,.main.n4{grid-template-columns:1fr 1fr}.mid{grid-column:1/-1;order:9!important;grid-template-columns:1fr 1fr;grid-template-rows:auto}.time b{font-size:10vw!important}
   .score{font-size:22vw}.score.d3{font-size:15vw}.stat b{font-size:3.4vw!important}.cd b{font-size:20vw!important}.name{font-size:5vw}.goal{font-size:2.6vw;padding:1vw 2vw}.goal b{font-size:5vw}.goal small{font-size:2.4vw}.who{flex-wrap:wrap}.sheet .lab{font-size:3.2vw;max-width:40vw}.ball{width:7vw;height:7vw}.stat b{font-size:6vw}.stat small{font-size:2.6vw}
   .run b,.inn b{font-size:11vw}.mid{grid-template-columns:1fr 1fr!important}.cd{height:22vw}.cd b{font-size:24vw;min-width:36vw}.box small,.keys,.sheet{font-size:3vw}.top .ttl{display:none}.turn{font-size:3vw;top:-3.4vw}
   .panel h2{font-size:5vw}.panel p,.f label{font-size:3.4vw}.f input,.f select,.btn{font-size:4vw}.grid2{grid-template-columns:1fr}
@@ -161,29 +186,17 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     <span class="ttl" id="ttl">3-CUSHION SCOREBOARD</span>
     <span style="display:flex;gap:.8vw"><button type="button" id="bRm">REMOTE</button><button type="button" id="bKey" hidden>KEYS (K)</button><button type="button" id="bPl">PLAYERS</button><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
   </div>
-  <div class="main">
-    <section class="side p0" id="s0" aria-label="Player 1">
-      <span class="turn">AT THE TABLE</span>
-      <div class="who"><span class="ball"></span><span class="name" id="n0"></span><span hidden><b id="g0"></b><small id="rm0"></small></span></div>
-      <div class="score num" id="sc0">0</div>
-      <div class="stats"><div class="stat"><small>INNINGS</small><b id="in0">0</b></div><div class="stat"><small>HIGH RUN</small><b id="hr0">0</b></div><div class="stat"><small>AVERAGE</small><b id="av0">0.000</b></div></div>
-    </section>
-    <div class="mid">
-      <div class="box run"><small>RUN</small><b class="num" id="run">0</b></div>
+  <div class="main" id="main">
+    <div class="mid" id="mid">
+      <div class="box time"><small>TIME</small><b class="num" id="gt">0:00</b><small id="runS"></small></div>
       <div class="box inn"><small>INNING</small><b class="num" id="inn">1</b><small id="lim"></small></div>
     </div>
-    <section class="side p1" id="s1" aria-label="Player 2">
-      <span class="turn">AT THE TABLE</span>
-      <div class="who"><span class="ball"></span><span class="name" id="n1"></span><span hidden><b id="g1"></b><small id="rm1"></small></span></div>
-      <div class="score num" id="sc1">0</div>
-      <div class="stats"><div class="stat"><small>INNINGS</small><b id="in1">0</b></div><div class="stat"><small>HIGH RUN</small><b id="hr1">0</b></div><div class="stat"><small>AVERAGE</small><b id="av1">0.000</b></div></div>
-    </section>
   </div>
   <div>
-    <div class="sheet"><span class="lab"><i style="background:#fff"></i><span id="ln0"></span></span><div class="row" id="r0"></div><span class="lab"><i style="background:#F2C200"></i><span id="ln1"></span></span><div class="row" id="r1"></div></div>
+    <div class="sheet" id="sheet"></div>
     <div class="cd" id="tbox" aria-label="Shot clock"><div class="segs" id="segs"></div><b class="num" id="tm">40</b></div>
     <div class="keys" style="margin-top:.8vh">
-      <span><kbd>+</kbd>+1 POINT</span><span><kbd>-</kbd>-1 POINT</span><span><kbd>0-9</kbd>ENTER RUN</span><span><kbd>Enter</kbd>END INNING</span><span><kbd>BackSpace</kbd>UNDO</span><span><kbd>*</kbd>SHOT CLOCK</span><span><kbd>-</kbd>WARM-UP (BEFORE START)</span><span><kbd>/</kbd>SETTINGS</span><span><kbd>.</kbd>×2 NEW GAME</span>
+      <span><kbd>+</kbd>+1 POINT</span><span><kbd>-</kbd>-1 POINT</span><span><kbd>0-9</kbd>ENTER POINTS</span><span><kbd>Enter</kbd>END INNING</span><span><kbd>BackSpace</kbd>UNDO</span><span><kbd>*</kbd>SHOT CLOCK</span><span><kbd>-</kbd>WARM-UP (BEFORE START)</span><span><kbd>/</kbd>SETTINGS</span><span><kbd>.</kbd>×2 NEW GAME</span>
     </div>
   </div>
 </div>
@@ -193,15 +206,21 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     <h2>GAME SETTINGS</h2>
     <p>Type player names on a full keyboard. Numbers can be entered on the keypad. Press Enter to save and start.</p>
     <div class="grid2">
-      <div class="f"><label for="fn0">PLAYER 1 (WHITE) NAME</label><input id="fn0" maxlength="14" autocomplete="off" list="roster"></div>
-      <div class="f"><label for="fn1">PLAYER 2 (YELLOW) NAME</label><input id="fn1" maxlength="14" autocomplete="off" list="roster"></div>
-      <div class="f"><label for="fg0">PLAYER 1 TARGET POINTS</label><input id="fg0" type="number" inputmode="numeric" min="1" max="999"></div>
-      <div class="f"><label for="fg1">PLAYER 2 TARGET POINTS</label><input id="fg1" type="number" inputmode="numeric" min="1" max="999"></div>
+      <div class="f"><label for="fnp">NUMBER OF PLAYERS</label><select id="fnp"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+      <div class="f"><label for="fto">TIME-OUTS PER PLAYER (0 = OFF)</label><input id="fto" type="number" inputmode="numeric" min="0" max="9"></div>
+      <div class="f pf0"><label for="fn0">PLAYER 1 (WHITE) NAME</label><input id="fn0" maxlength="14" autocomplete="off" list="roster"></div>
+      <div class="f pf0"><label for="fg0">PLAYER 1 TARGET POINTS</label><input id="fg0" type="number" inputmode="numeric" min="1" max="999"></div>
+      <div class="f pf1"><label for="fn1">PLAYER 2 (YELLOW) NAME</label><input id="fn1" maxlength="14" autocomplete="off" list="roster"></div>
+      <div class="f pf1"><label for="fg1">PLAYER 2 TARGET POINTS</label><input id="fg1" type="number" inputmode="numeric" min="1" max="999"></div>
+      <div class="f pf2"><label for="fn2">PLAYER 3 (RED) NAME</label><input id="fn2" maxlength="14" autocomplete="off" list="roster"></div>
+      <div class="f pf2"><label for="fg2">PLAYER 3 TARGET POINTS</label><input id="fg2" type="number" inputmode="numeric" min="1" max="999"></div>
+      <div class="f pf3"><label for="fn3">PLAYER 4 (GREEN) NAME</label><input id="fn3" maxlength="14" autocomplete="off" list="roster"></div>
+      <div class="f pf3"><label for="fg3">PLAYER 4 TARGET POINTS</label><input id="fg3" type="number" inputmode="numeric" min="1" max="999"></div>
       <div class="f"><label for="fl">INNING LIMIT (0 = NONE)</label><input id="fl" type="number" inputmode="numeric" min="0" max="999"></div>
       <div class="f"><label for="ft">SHOT CLOCK SECONDS (0 = OFF)</label><input id="ft" type="number" inputmode="numeric" min="0" max="180"></div>
       <div class="f"><label for="fp">WARM-UP TIME (MINUTES)</label><input id="fp" type="number" inputmode="numeric" min="1" max="60"></div>
       <div class="f" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="bPr2" style="width:100%">OPEN WARM-UP TIMER</button></div>
-      <div class="f"><label for="fe">EQUALIZING INNING FOR PLAYER 2</label><select id="fe"><option value="1">ON</option><option value="0">OFF</option></select></div>
+      <div class="f"><label for="fe">EQUALIZING INNING (FINISH THE ROUND)</label><select id="fe"><option value="1">ON</option><option value="0">OFF</option></select></div>
       <div class="f"><label for="fs">SOUND (10 SEC LEFT / TIME UP)</label><select id="fs"><option value="1">ON</option><option value="0">OFF</option></select></div>
     </div>
     <datalist id="roster"></datalist>
@@ -247,14 +266,20 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
   var KEY = 'vibes-count-3c-v1' + (TB ? '-t' + TB : '');
   var $ = function (id) { return document.getElementById(id); };
-  var def = function () { return { cfg: { n: ['PLAYER 1', 'PLAYER 2'], g: [25, 25], lim: 0, t: 40, eq: 1, snd: 1, pm: 5 }, sc: [0, 0], inn: [[], []], run: 0, typed: false, turn: 0, over: false }; };
+  var PCOL = ['#FFFFFF', '#F2C200', '#E5484D', '#35C486'], PCN = ['WHITE', 'YELLOW', 'RED', 'GREEN'];
+  var isDefName = function (v) { return /^PLAYER [1-4]$/.test(v || ''); };
+  var def = function (c) { c = c || { n: ['PLAYER 1', 'PLAYER 2'], g: [25, 25], lim: 0, t: 40, eq: 1, snd: 1, pm: 5, to: 3 }; var N = c.n.length, z = function (f) { var a = []; for (var i = 0; i < N; i++) a.push(f()); return a; };
+    return { cfg: c, sc: z(function () { return 0; }), inn: z(function () { return []; }), to: z(function () { return c.to; }), run: 0, typed: false, turn: 0, over: false, t0: 0, t1: 0 }; };
+  var NP = function () { return S.cfg.n.length; };
+  var fresh = function () { return !S.run && !S.over && S.inn.every(function (a) { return !a.length; }); };
+  function setN(n) { n = Math.max(2, Math.min(4, n)); var c = S.cfg; while (c.n.length < n) { c.n.push('PLAYER ' + (c.n.length + 1)); c.g.push(c.g[0] || 25); } c.n.length = n; c.g.length = n; var h = hist; S = def(c); hist = h; }
   var S = def(), hist = [], tLeft = 0, tOn = false, tId = null, dotAt = 0, actx = null;
-  try { var raw = localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); if (o && o.cfg && o.sc) { S = Object.assign(def(), o); S.cfg = Object.assign(def().cfg, o.cfg); if (S.cfg.n[0] === '先攻') S.cfg.n[0] = 'PLAYER 1'; if (S.cfg.n[1] === '後攻') S.cfg.n[1] = 'PLAYER 2'; } } } catch (e) {}
+  try { var raw = localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); if (o && o.cfg && o.sc) { var c0 = Object.assign(def().cfg, o.cfg); S = Object.assign(def(c0), o); S.cfg = c0; if (!S.to || S.to.length !== c0.n.length) S.to = c0.n.map(function () { return c0.to; }); if (S.sc.length !== c0.n.length || S.inn.length !== c0.n.length) S = def(c0); } } } catch (e) {}
   var RK = 'vibes-count-3c-roster-v1', roster = {};
   try { roster = JSON.parse(localStorage.getItem(RK) || '{}') || {}; } catch (e) { roster = {}; }
   function drawRoster() { var dl = $('roster'); dl.textContent = ''; players.forEach(function (o) { var n0 = o.mei ? o.sei + ' ' + o.mei : o.sei; if (!roster[n0]) roster[n0] = o.g; });
     Object.keys(roster).sort().forEach(function (n) { var o = document.createElement('option'); o.value = n; o.label = 'Target ' + roster[n]; dl.appendChild(o); }); }
-  function remember() { for (var p = 0; p < 2; p++) { var n = S.cfg.n[p]; if (n && n !== 'PLAYER 1' && n !== 'PLAYER 2') roster[n] = S.cfg.g[p]; } var ks = Object.keys(roster); if (ks.length > 300) delete roster[ks[0]]; try { localStorage.setItem(RK, JSON.stringify(roster)); } catch (e) {} drawRoster(); }
+  function remember() { for (var p = 0; p < NP(); p++) { var n = S.cfg.n[p]; if (n && !isDefName(n) && !/^GUEST/.test(n)) roster[n] = S.cfg.g[p]; } var ks = Object.keys(roster); if (ks.length > 300) delete roster[ks[0]]; try { localStorage.setItem(RK, JSON.stringify(roster)); } catch (e) {} drawRoster(); }
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
   var snap = function () { hist.push(JSON.stringify(S)); if (hist.length > 400) hist.shift(); };
   var hi = function (p) { return S.inn[p].length ? Math.max.apply(null, S.inn[p]) : 0; };
@@ -265,22 +290,45 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     if (!S.cfg.snd) return;
     try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); var o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = f; o.connect(g); g.connect(actx.destination); g.gain.value = .18; o.start(); o.stop(actx.currentTime + ms / 1000); } catch (e) {}
   }
+  var built = 0;
+  function build() {
+    var N = NP(), m = $('main'), mid = $('mid'), sh = $('sheet');
+    Array.prototype.slice.call(m.querySelectorAll('.side')).forEach(function (e) { e.remove(); });
+    m.className = 'main n' + N; sh.textContent = ''; sh.className = 'sheet n' + N;
+    for (var p = 0; p < N; p++) {
+      var sec = el('section', 'side p' + p); sec.id = 's' + p; sec.style.order = N === 2 ? (p ? 3 : 1) : p + 1;
+      sec.appendChild(el('span', 'turn', 'AT THE TABLE'));
+      var who = el('div', 'who'), ball = el('span', 'ball'); ball.style.setProperty('--c', PCOL[p]); who.appendChild(ball); var nm = el('span', 'name'); nm.id = 'n' + p; who.appendChild(nm); sec.appendChild(who);
+      var sc = el('div', 'score num', '0'); sc.id = 'sc' + p; sc.style.color = p ? PCOL[p] : '#fff'; sec.appendChild(sc);
+      var foot = el('div', 'foot'), st = el('div', 'stats');
+      [['HIGH RUN', 'hr'], ['AVERAGE', 'av']].forEach(function (a) { var d = el('div', 'stat'); d.appendChild(el('small', '', a[0])); var b = el('b', '', '0'); b.id = a[1] + p; d.appendChild(b); st.appendChild(d); });
+      foot.appendChild(st); var to = el('div', 'stat tos'); to.appendChild(el('small', '', 'TIME-OUT')); var tw = el('span', 'tow'); tw.id = 'to' + p; to.appendChild(tw); foot.appendChild(to); sec.appendChild(foot);
+      m.appendChild(sec);
+      var lab = el('span', 'lab'), dot = el('i'); dot.style.background = PCOL[p]; lab.appendChild(dot); var ln = el('span'); ln.id = 'ln' + p; lab.appendChild(ln); sh.appendChild(lab); var row = el('div', 'row'); row.id = 'r' + p; sh.appendChild(row);
+    }
+    mid.style.order = N === 2 ? 2 : 9; built = N;
+  }
+  function gtText() { if (!S.t0) return '0:00'; var v = Math.max(0, Math.floor(((S.over && S.t1 ? S.t1 : Date.now()) - S.t0) / 1000)), h = Math.floor(v / 3600), m = Math.floor(v % 3600 / 60), x = v % 60, z = function (n) { return (n < 10 ? '0' : '') + n; }; return h ? h + ':' + z(m) + ':' + z(x) : m + ':' + z(x); }
+  function drawTime() { var t = gtText(), e = $('gt'); if (e.textContent !== t) { e.textContent = t; e.classList.toggle('long', t.length > 5); } }
+  var begin = function () { if (!S.t0) S.t0 = Date.now(); };
   function render() {
-    for (var p = 0; p < 2; p++) {
-      $('n' + p).textContent = S.cfg.n[p] + ' (' + S.cfg.g[p] + ')'; $('g' + p).textContent = S.cfg.g[p];
-      var left = S.cfg.g[p] - S.sc[p] - (p === S.turn && !S.over ? S.run : 0); $('rm' + p).textContent = left > 0 ? left + ' TO GO' : 'FINISHED';
+    var N = NP(); if (built !== N) build();
+    for (var p = 0; p < N; p++) {
+      $('n' + p).textContent = S.cfg.n[p] + ' (' + S.cfg.g[p] + ')';
       $('ln' + p).textContent = S.cfg.n[p] + ' (' + S.cfg.g[p] + ')';
       $('sc' + p).textContent = S.sc[p] + (p === S.turn && !S.over ? S.run : 0); $('sc' + p).classList.toggle('d3', $('sc' + p).textContent.length > 2);
-      $('in' + p).textContent = S.inn[p].length; $('hr' + p).textContent = Math.max(hi(p), p === S.turn ? S.run : 0); $('av' + p).textContent = avg(p);
+      $('hr' + p).textContent = Math.max(hi(p), p === S.turn ? S.run : 0); $('av' + p).textContent = avg(p);
       $('s' + p).classList.toggle('on', p === S.turn && !S.over);
+      var tw = $('to' + p); tw.textContent = ''; tw.parentNode.hidden = !S.cfg.to;
+      for (var k = 0; k < (S.cfg.to || 0); k++) { var c = el('i'); if (k >= S.to[p]) c.className = 'used'; tw.appendChild(c); }
       var r = $('r' + p), a = S.inn[p].slice(-18); r.textContent = '';
       a.forEach(function (v) { var s = document.createElement('span'); s.textContent = v; if (!v) s.className = 'z'; r.appendChild(s); });
     }
-    $('run').textContent = S.run;
+    $('runS').textContent = S.run && !S.over ? 'RUN ' + S.run : '';
     $('inn').textContent = S.inn[S.turn].length + (S.over ? 0 : 1);
     $('lim').textContent = S.cfg.lim ? 'LIMIT ' + S.cfg.lim : '';
     $('tbox').hidden = !S.cfg.t;
-    drawTimer(); save(); if (typeof rmPush === 'function') rmPush();
+    drawTime(); drawTimer(); save(); if (typeof rmPush === 'function') rmPush();
   }
   function drawTimer() {
     var T = S.cfg.t || 1, v = tOn ? Math.max(0, Math.ceil(tLeft)) : S.cfg.t;
@@ -292,20 +340,21 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   }
   function tStop() { tOn = false; clearInterval(tId); tId = null; drawTimer(); }
   function tStart() {
-    if (!S.cfg.t || S.over) return; tStop(); tOn = true; tLeft = S.cfg.t; var last = Date.now(), warned = false, done = false;
-    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); } if (!done && tLeft <= 0) { done = true; beep(330, 900); } drawTimer(); }, 100);
+    if (!S.cfg.t || S.over) return; begin(); tStop(); tOn = true; tLeft = S.cfg.t; var last = Date.now(), warned = false, done = false;
+    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('TIME-OUT USED: ' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
     drawTimer();
   }
   var tKick = function () { if (tOn) tStart(); };
-  function add(n) { if (S.over) return; var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('Target reached. Press Enter to confirm'); return; } S.run = v; S.typed = false; tKick(); render(); }
-  function digit(d) { if (S.over) return; var v = S.typed ? S.run * 10 + d : d; if (v > room()) v = d > room() ? room() : d; S.run = v; S.typed = true; render(); }
-  function finish() { S.over = true; tStop(); render(); showWin(); }
+  function add(n) { if (S.over) return; begin(); var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('Target reached. Press Enter to confirm'); return; } S.run = v; S.typed = false; tKick(); render(); }
+  function digit(d) { if (S.over) return; begin(); var v = S.typed ? S.run * 10 + d : d; if (v > room()) v = d > room() ? room() : d; S.run = v; S.typed = true; render(); }
+  function finish() { S.over = true; S.t1 = Date.now(); tStop(); render(); showWin(); }
   function commit() {
-    if (S.over) return; snap();
-    var p = S.turn; S.sc[p] += S.run; S.inn[p].push(S.run); S.run = 0; S.typed = false;
-    var done0 = S.sc[0] >= S.cfg.g[0], done1 = S.sc[1] >= S.cfg.g[1];
-    if (p === 0) { if (done0 && !S.cfg.eq) return finish(); S.turn = 1; }
-    else { if (done0 || done1) return finish(); if (S.cfg.lim && S.inn[1].length >= S.cfg.lim) return finish(); S.turn = 0; }
+    if (S.over) return; begin(); snap();
+    var p = S.turn, N = NP(); S.sc[p] += S.run; S.inn[p].push(S.run); S.run = 0; S.typed = false;
+    var any = S.sc.some(function (v, i) { return v >= S.cfg.g[i]; });
+    if (S.sc[p] >= S.cfg.g[p] && !S.cfg.eq) return finish();
+    if (p === N - 1) { if (any) return finish(); if (S.cfg.lim && S.inn[p].length >= S.cfg.lim) return finish(); S.turn = 0; }
+    else S.turn = p + 1;
     tKick(); render();
   }
   function undo() {
@@ -313,27 +362,31 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     if (!hist.length) { toast('Nothing to undo'); return; }
     S = JSON.parse(hist.pop()); $('winL').hidden = true; render();
   }
-  function newGame(keep) { snap(); var c = S.cfg; S = def(); S.cfg = c; if (!keep) hist = []; tStop(); $('winL').hidden = true; render(); }
+  function newGame(keep) { snap(); var c = S.cfg; S = def(c); if (!keep) hist = []; tStop(); $('winL').hidden = true; render(); }
   function showWin() {
-    var pct = function (p) { return S.sc[p] / S.cfg.g[p]; }, w = pct(0) === pct(1) ? -1 : (pct(0) > pct(1) ? 0 : 1);
+    var pct = function (p) { return S.sc[p] / S.cfg.g[p]; }, w = 0, tie = false, ps = S.cfg.n.map(function (x, i) { return i; });
+    ps.forEach(function (p) { if (p && pct(p) > pct(w)) { w = p; tie = false; } else if (p && pct(p) === pct(w)) tie = true; }); if (tie) w = -1;
     $('wName').textContent = w < 0 ? 'DRAW' : 'WINNER: ' + S.cfg.n[w] + ' (' + S.cfg.g[w] + ')';
     var tb = $('wT'); tb.textContent = '';
-    [0, 1].forEach(function (p) { var tr = document.createElement('tr'); [S.cfg.n[p] + ' (' + S.cfg.g[p] + ')', S.sc[p] + ' / ' + S.cfg.g[p], S.inn[p].length, hi(p), avg(p)].forEach(function (v, i) { var c = document.createElement(i ? 'td' : 'th'); c.textContent = v; tr.appendChild(c); }); tb.appendChild(tr); });
+    ps.forEach(function (p) { var tr = document.createElement('tr'); [S.cfg.n[p] + ' (' + S.cfg.g[p] + ')', S.sc[p] + ' / ' + S.cfg.g[p], S.inn[p].length, hi(p), avg(p)].forEach(function (v, i) { var c = document.createElement(i ? 'td' : 'th'); c.textContent = v; tr.appendChild(c); }); tb.appendChild(tr); });
     $('winL').hidden = false;
   }
   function openSet() {
-    $('fn0').value = S.cfg.n[0]; $('fn1').value = S.cfg.n[1]; $('fg0').value = S.cfg.g[0]; $('fg1').value = S.cfg.g[1];
+    for (var q = 0; q < 4; q++) { $('fn' + q).value = S.cfg.n[q] || 'PLAYER ' + (q + 1); $('fg' + q).value = S.cfg.g[q] || S.cfg.g[0]; }
+    $('fnp').value = NP(); $('fnp').disabled = !fresh(); $('fto').value = S.cfg.to; setRows();
     $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd;
     $('setL').hidden = false; $('fn0').focus(); $('fn0').select();
   }
+  function setRows() { var n = +$('fnp').value; for (var q = 0; q < 4; q++) Array.prototype.forEach.call(document.querySelectorAll('.pf' + q), function (e) { e.hidden = q >= n; }); }
   function closeSet(apply) {
     if (apply) {
       var num = function (id, lo, hi, d) { var v = parseInt($(id).value, 10); return isNaN(v) ? d : Math.max(lo, Math.min(hi, v)); };
-      S.cfg.n = [$('fn0').value.trim() || 'PLAYER 1', $('fn1').value.trim() || 'PLAYER 2'];
-      S.cfg.g = [num('fg0', 1, 999, 25), num('fg1', 1, 999, 25)]; S.cfg.lim = num('fl', 0, 999, 0); S.cfg.t = num('ft', 0, 180, 40); S.cfg.pm = num('fp', 1, 60, 5);
+      var nn = fresh() ? +$('fnp').value : NP(), oldTo = S.cfg.to; if (nn !== NP()) setN(nn);
+      for (var q = 0; q < nn; q++) { S.cfg.n[q] = $('fn' + q).value.trim() || 'PLAYER ' + (q + 1); S.cfg.g[q] = num('fg' + q, 1, 999, 25); }
+      S.cfg.to = num('fto', 0, 9, 3); if (S.cfg.to !== oldTo) S.to = S.to.map(function (v) { return Math.max(0, v + S.cfg.to - oldTo); }); S.cfg.lim = num('fl', 0, 999, 0); S.cfg.t = num('ft', 0, 180, 40); S.cfg.pm = num('fp', 1, 60, 5);
       S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value;
       remember();
-      for (var p = 0; p < 2; p++) if (S.sc[p] > S.cfg.g[p]) S.cfg.g[p] = S.sc[p];
+      for (var p = 0; p < NP(); p++) if (S.sc[p] > S.cfg.g[p]) S.cfg.g[p] = S.sc[p];
       if (S.run > room()) S.run = Math.max(0, room());
     }
     $('setL').hidden = true; tStop(); render();
@@ -352,16 +405,16 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   var W = null;
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function keysHelp(list) { var k = $('wzK'); k.textContent = ''; list.forEach(function (a) { var sp = el('span'); sp.appendChild(el('kbd', '', a[0])); sp.appendChild(document.createTextNode(a[1])); k.appendChild(sp); }); }
-  function wzOpen(p) { try { players = JSON.parse(localStorage.getItem(PK) || '[]') || players; } catch (e) {} tStop(); $('setL').hidden = true; W = { p: p || 0, step: 'mode', guest: [false, false], done: [null, null] }; $('wzL').hidden = false; wzDraw(); }
+  function wzOpen(p) { try { players = JSON.parse(localStorage.getItem(PK) || '[]') || players; } catch (e) {} tStop(); $('setL').hidden = true; W = { p: p || 0, step: fresh() && !p ? 'count' : 'mode', done: [null, null, null, null] }; $('wzL').hidden = false; wzDraw(); }
   function wzClose() { W = null; $('wzL').hidden = true; render(); }
   function wzFinish() {
-    for (var p = 0; p < 2; p++) { var d = W.done[p]; if (d) { S.cfg.n[p] = d.name; S.cfg.g[p] = Math.max(d.g, S.sc[p]); } }
-    var g0 = W.done[0] ? W.done[0].guest : /^GUEST/.test(S.cfg.n[0]), g1 = W.done[1] ? W.done[1].guest : /^GUEST/.test(S.cfg.n[1]);
-    if (g0 && g1) { S.cfg.n[0] = 'GUEST 1'; S.cfg.n[1] = 'GUEST 2'; } else { if (g0) S.cfg.n[0] = 'GUEST'; if (g1) S.cfg.n[1] = 'GUEST'; }
+    var gs = [];
+    for (var p = 0; p < NP(); p++) { var d = W.done[p]; if (d) { S.cfg.n[p] = d.name; S.cfg.g[p] = Math.max(d.g, S.sc[p]); } if (d ? d.guest : /^GUEST/.test(S.cfg.n[p])) gs.push(p); }
+    gs.forEach(function (p, i) { S.cfg.n[p] = gs.length > 1 ? 'GUEST ' + (i + 1) : 'GUEST'; });
     if (S.run > room()) S.run = Math.max(0, room());
     wzClose();
   }
-  function wzNext() { if (W.p === 0) { W.p = 1; W.step = 'mode'; wzDraw(); } else wzFinish(); }
+  function wzNext() { if (W.p < NP() - 1) { W.p++; W.step = 'mode'; wzDraw(); } else wzFinish(); }
   function kanaStart(purpose, part) { W.step = 'kana'; W.purpose = purpose; W.part = part; W.kana = ''; W.row = null; wzDraw(); }
   function kanaKey(d) {
     var RW = W.abc ? AROWS : KROWS;
@@ -405,9 +458,15 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   }
   function wzDraw() {
     var h = $('wzH'), b = $('wzB'); h.textContent = ''; b.textContent = '';
-    var dot = el('i'); dot.style.background = W.p ? '#F2C200' : '#fff'; h.appendChild(dot);
-    h.appendChild(document.createTextNode('PLAYER ' + (W.p + 1) + (W.p ? ' (YELLOW)' : ' (WHITE)')));
-    var cur = S.cfg.n[W.p], isDef = /^PLAYER [12]$/.test(cur);
+    if (W.step === 'count') {
+      h.appendChild(document.createTextNode('NUMBER OF PLAYERS'));
+      var bx = el('div', 'opts c3');
+      [2, 3, 4].forEach(function (n) { var o = el('div', 'opt' + (n === NP() ? ' sel' : '')); o.appendChild(el('kbd', '', String(n))); o.appendChild(el('span', '', n + ' PLAYERS')); bx.appendChild(o); });
+      b.appendChild(bx); keysHelp([['2-4', 'SELECT'], ['Enter', 'KEEP ' + NP() + ' PLAYERS']]); return;
+    }
+    var dot = el('i'); dot.style.background = PCOL[W.p]; h.appendChild(dot);
+    h.appendChild(document.createTextNode('PLAYER ' + (W.p + 1) + ' (' + PCN[W.p] + ')'));
+    var cur = S.cfg.n[W.p], isDef = isDefName(cur);
     if (W.step === 'mode') {
       h.appendChild(el('small', '', isDef ? '' : 'NOW: ' + cur + ' (' + S.cfg.g[W.p] + ')'));
       var box = el('div', 'opts');
@@ -439,12 +498,18 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   }
   function wzKey(k) {
     var d = k >= '0' && k <= '9' ? +k : -1;
-    if (k === 'Escape') { if (!/^PLAYER [12]$/.test(S.cfg.n[0]) || W.done[0]) wzFinish(); else wzClose(); return true; }
+    if (k === 'Escape') { if (!isDefName(S.cfg.n[0]) || W.done[0]) wzFinish(); else wzClose(); return true; }
+    if (W.step === 'count') {
+      if (d >= 2 && d <= 4) { if (d !== NP()) { setN(d); render(); } W.step = 'mode'; wzDraw(); }
+      else if (k === 'Enter') { W.step = 'mode'; wzDraw(); }
+      return true;
+    }
     if (W.step === 'mode') {
       if (d === 1) kanaStart('search', 'sei'); else if (d === 2) { W.cur = { sei: '', mei: '', ys: '', ym: '' }; kanaStart('new', 'sei'); }
       else if (d === 3) { W.cur = { guest: true }; targetStart(S.cfg.g[W.p]); }
-      else if (k === 'Enter' && !/^PLAYER [12]$/.test(S.cfg.n[W.p])) wzNext();
-      else if (k === 'Backspace' && W.p === 1) { W.p = 0; wzDraw(); }
+      else if (k === 'Enter' && !isDefName(S.cfg.n[W.p])) wzNext();
+      else if (k === 'Backspace' && W.p > 0) { W.p--; wzDraw(); }
+      else if (k === 'Backspace' && fresh()) { W.step = 'count'; wzDraw(); }
       else return k === 'Enter' || k === 'Backspace';
     } else if (W.step === 'kana') {
       if (d >= 0) kanaKey(d); else if (k === '*') kanaVar();
@@ -496,12 +561,13 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     pOn = true; var last = Date.now(), w30 = pLeft <= 30, done = false;
     pId = setInterval(function () { var n = Date.now(); pLeft -= (n - last) / 1000; last = n; if (!w30 && pLeft <= 30) { w30 = true; beep(880, 200); } if (!done && pLeft <= 0) { done = true; pLeft = 0; beep(330, 1200); prStop(); } prDraw(); }, 200);
   }
-  function prOpen() { $('setL').hidden = true; tStop(); $('prWho').textContent = S.cfg.n[0] + ' / ' + S.cfg.n[1]; $('prL').hidden = false; prReset(); }
+  function prOpen() { $('setL').hidden = true; tStop(); $('prWho').textContent = S.cfg.n.join(' / '); $('prL').hidden = false; prReset(); }
   function prClose() { prStop(); $('prL').hidden = true; render(); }
   function goFull() { var d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {}); }
 
   $('setF').addEventListener('submit', function (e) { e.preventDefault(); closeSet(true); });
-  [0, 1].forEach(function (p) { $('fn' + p).addEventListener('input', function () { var v = this.value.trim(); if (roster[v]) $('fg' + p).value = roster[v]; }); });
+  $('fnp').addEventListener('change', setRows);
+  [0, 1, 2, 3].forEach(function (p) { $('fn' + p).addEventListener('input', function () { var v = this.value.trim(); if (roster[v]) $('fg' + p).value = roster[v]; }); });
   drawRoster();
   $('bPl').onclick = function () { wzOpen(0); };
   $('bPr').onclick = prOpen; $('bPr2').onclick = function () { closeSet(true); prOpen(); };
@@ -514,7 +580,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   var RMK = 'vibes-count-3c-remote' + (TB ? '-t' + TB : ''), rm = null, rws = null, rTry = 0, rPing = null;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
-  function rmState() { return JSON.stringify({ type: 'state', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: [S.inn[0].length, S.inn[1].length], hr: [hi(0), hi(1)], av: [avg(0), avg(1)], last: [S.inn[0].slice(-12), S.inn[1].slice(-12)], t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W }); }
+  function rmState() { return JSON.stringify({ type: 'state', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W }); }
   function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); } catch (e) {} } }
   function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'CONNECTED' : 'CONNECTING…') : 'OFF'; $('bRm').textContent = rm && rm.on ? 'REMOTE ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'REMOTE'; }
   function rmConnect() {
@@ -531,7 +597,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     if (KM) return;
     if (!$('setL').hidden) closeSet(false);
     if (!$('rmL').hidden) $('rmL').hidden = true;
-    if (m.type === 'players' && m.p && m.p.length === 2) {
+    if (m.type === 'players' && m.p && m.p.length === 2 && NP() === 2) {
       if (W) { W = null; $('wzL').hidden = true; }
       for (var p = 0; p < 2; p++) { var n = String(m.p[p].n || '').slice(0, 20).trim() || 'PLAYER ' + (p + 1), g = Math.max(1, Math.min(999, parseInt(m.p[p].g, 10) || 25)); S.cfg.n[p] = n; S.cfg.g[p] = Math.max(g, S.sc[p]); }
       if (S.run > room()) S.run = Math.max(0, room());
@@ -611,7 +677,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     var hit = true;
     if (k >= '0' && k <= '9') digit(+k);
     else if (k === '+' || k === 'ArrowUp') add(1);
-    else if (k === '-' && !S.over && !S.run && !S.inn[0].length && !S.inn[1].length) prOpen();
+    else if (k === '-' && fresh()) prOpen();
     else if (k === 'p' || k === 'P') prOpen();
     else if (k === '-' || k === 'ArrowDown') add(-1);
     else if (k === 'Enter' || k === ' ') commit();
@@ -632,7 +698,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   }
   var wl = null, wake = function () { try { if (navigator.wakeLock && document.visibilityState === 'visible') navigator.wakeLock.request('screen').then(function (l) { wl = l; }).catch(function () {}); } catch (e) {} };
   wake(); document.addEventListener('visibilitychange', wake); document.addEventListener('keydown', function once() { if (!wl) wake(); document.removeEventListener('keydown', once); });
-  render(); if (S.over) showWin(); else if (S.cfg.n[0] === 'PLAYER 1' && S.cfg.n[1] === 'PLAYER 2' && !S.inn[0].length && !S.run) wzOpen(0);
+  render(); setInterval(drawTime, 500); if (S.over) showWin(); else if (S.cfg.n.every(isDefName) && fresh()) wzOpen(0);
 })();
 </script>
 </body>

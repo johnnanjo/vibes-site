@@ -257,10 +257,10 @@
 <p class="cg-lead">画面の文字は英語です。選手の名前だけ日本語で出ます。</p>
 <div class="cg-scr" aria-hidden="true">
 <div class="top">
-<div class="cg-pl on"><span class="tag">AT THE TABLE</span><div class="nm">◯ 山田 太郎 (30)</div><div class="sc">12</div><div class="st"><i>INNINGS<b>8</b></i><i>HIGH RUN<b>4</b></i><i>AVERAGE<b>1.500</b></i></div>
+<div class="cg-pl on"><span class="tag">AT THE TABLE</span><div class="nm">◯ 山田 太郎 (30)</div><div class="sc">12</div><div class="st"><i>HIGH RUN<b>4</b></i><i>AVERAGE<b>1.500</b></i><i>TIME-OUT<b style="color:#F2C200;letter-spacing:.1em">●●●</b></i></div>
 <span class="cg-pin" style="top:-10px;left:6px">1</span><span class="cg-pin" style="top:26px;right:6px">2</span><span class="cg-pin" style="top:46%;left:8px">3</span><span class="cg-pin" style="bottom:28px;right:6px">6</span></div>
-<div class="cg-mid"><div style="position:relative">RUN<b>2</b><span class="cg-pin" style="top:4px;right:4px">4</span></div><div style="position:relative">INNING<b>9</b><span class="cg-pin" style="top:4px;right:4px">5</span></div></div>
-<div class="cg-pl y"><div class="nm">● GUEST (25)</div><div class="sc">9</div><div class="st"><i>INNINGS<b>8</b></i><i>HIGH RUN<b>3</b></i><i>AVERAGE<b>1.125</b></i></div></div>
+<div class="cg-mid"><div style="position:relative">TIME<b style="font-size:clamp(16px,3.6vw,30px);line-height:1.4">12:34</b><span class="cg-pin" style="top:4px;right:4px">4</span></div><div style="position:relative">INNING<b>9</b><span class="cg-pin" style="top:4px;right:4px">5</span></div></div>
+<div class="cg-pl y"><div class="nm">● GUEST (25)</div><div class="sc">9</div><div class="st"><i>HIGH RUN<b>3</b></i><i>AVERAGE<b>1.125</b></i><i>TIME-OUT<b style="color:#F2C200;letter-spacing:.1em">●●</b></i></div></div>
 </div>
 <div class="cg-sheet" style="position:relative">◯ 山田 太郎 (30)　1 0 2 4 0 3 1 1<br>● GUEST (25)　0 2 1 0 3 0 2 1<span class="cg-pin" style="top:6px;right:4px">7</span></div>
 <div class="cg-cd" style="position:relative"><div class="bar l"></div><div class="n">40</div><div class="bar r"></div><span class="cg-pin" style="top:-8px;left:58%">8</span></div>
@@ -269,9 +269,9 @@
 <li><i>1</i><span>ライムの枠＝今撞いている選手<small>AT THE TABLE と出ます</small></span></li>
 <li><i>2</i><span>名前（持ち点）<small>白丸＝白球、黄丸＝黄球</small></span></li>
 <li><i>3</i><span>今の得点</span></li>
-<li><i>4</i><span>RUN＝このイニングで当てた点<small><kbd>Enter</kbd> を押すと得点に入ります</small></span></li>
+<li><i>4</i><span>TIME＝試合時間<small>最初のキーを押した時から数えます。下に小さく、このイニングで当てた点（RUN）が出ます</small></span></li>
 <li><i>5</i><span>INNING＝今何イニング目か</span></li>
-<li><i>6</i><span>INNINGS 撞いた回数／HIGH RUN 最高連続点／AVERAGE アベレージ</span></li>
+<li><i>6</i><span>HIGH RUN 最高連続点／AVERAGE アベレージ／TIME-OUT 残りのタイムアウト<small>黄色の丸の数が、残りの回数です</small></span></li>
 <li><i>7</i><span>スコア表<small>イニングごとの点が並びます</small></span></li>
 <li><i>8</i><span>残り秒数<small>1秒ごとにバーが1本ずつ消えます</small></span></li>
 </ul>
@@ -284,17 +284,18 @@
 <li><div><b>選手を登録する</b><span>名前と持ち点を入れます。くわしくは下の「選手の登録」へ。</span></div><div class="k"><kbd>.</kbd><kbd>.</kbd></div></li>
 <li><div><b>練習タイマーを使う（使う時だけ）</b><span>試合前に <kbd>−</kbd> を押すと開きます。<kbd>+</kbd> で開始、<kbd>Enter</kbd> で閉じます。</span></div><div class="k"><kbd>−</kbd></div></li>
 <li><div><b>残り秒数を始める（使う時だけ）</b><span>はじめは40秒です。残り10秒と0秒で音が鳴ります。</span></div><div class="k"><kbd>*</kbd></div></li>
-<li><div><b>当たったら1点</b><span>当たるたびに1回。まん中の RUN が増えます。</span></div><div class="k"><kbd>+</kbd></div></li>
-<li><div><b>外したら交代</b><span>RUN の点が得点に入り、相手の番になります。0点の時もそのまま押します。</span></div><div class="k"><kbd>Enter</kbd></div></li>
+<li><div><b>当たったら1点</b><span>当たるたびに1回。得点がその場で増えます。</span></div><div class="k"><kbd>+</kbd></div></li>
+<li><div><b>外したら交代</b><span>次の選手の番になります。0点の時もそのまま押します。</span></div><div class="k"><kbd>Enter</kbd></div></li>
 <li><div><b>まちがえたら、もどす</b><span>交代のあとでも、ひとつずつ前にもどせます。</span></div><div class="k"><kbd>BackSpace</kbd></div></li>
 <li><div><b>持ち点に届いたら試合終了</b><span>GAME OVER と結果が出ます。<kbd>Enter</kbd> で次の試合（選手の登録）へ進みます。</span></div><div class="k"><kbd>Enter</kbd></div></li>
 </ol>
+<div class="cg-note"><b>タイムアウト（黄色の丸）について</b>選手ごとに、はじめは3回あります。残り秒数が0になると、丸が1つ自動で消えて、もう一度40秒が始まります。丸がなくなると、0秒で時間切れの表示になります。回数は設定の「TIME-OUTS PER PLAYER」で変えられます。</div>
 <div class="cg-note"><b>後攻の裏撞きについて</b>先攻が先に持ち点に届いても、後攻がそのイニングを撞いてから試合終了になります。いらない場合は、設定の「EQUALIZING INNING」を OFF にします。</div>
 </section>
 
 <section class="cg-sec" id="players">
 <h2>選手の登録</h2>
-<p class="cg-lead"><kbd>.</kbd> を2回押すと登録画面が開きます。まず、3つの中から数字で選びます。</p>
+<p class="cg-lead"><kbd>.</kbd> を2回押すと登録画面が開きます。最初に人数（<kbd>2</kbd>・<kbd>3</kbd>・<kbd>4</kbd>）を選びます。4人まで撞けます。<kbd>Enter</kbd> だけ押すと、前と同じ人数です。次に、選手ごとに3つの中から数字で選びます。</p>
 <table class="cg-tbl">
 <tr><th>キー</th><th>画面の表示</th><th>使う時</th></tr>
 <tr><td><kbd>1</kbd></td><td>SEARCH REGISTERED PLAYER</td><td>前に登録した選手を呼び出す</td></tr>
@@ -377,11 +378,13 @@
 <p class="cg-lead"><kbd>/</kbd> を押すと開きます。数字を入れて <kbd>Enter</kbd> で保存、<kbd>Esc</kbd> でやめます。</p>
 <table class="cg-tbl">
 <tr><th>画面の表示</th><th>意味</th></tr>
+<tr><td>NUMBER OF PLAYERS</td><td>人数（2〜4人）。試合が始まる前だけ変えられます</td></tr>
+<tr><td>TIME-OUTS PER PLAYER</td><td>1人あたりのタイムアウトの回数。0 は使わない</td></tr>
 <tr><td>NAME／TARGET POINTS</td><td>選手の名前と持ち点</td></tr>
 <tr><td>INNING LIMIT</td><td>イニング制限。0 は制限なし</td></tr>
 <tr><td>SHOT CLOCK SECONDS</td><td>1ショットの秒数。0 は使わない</td></tr>
 <tr><td>WARM-UP TIME</td><td>練習タイマーの分数</td></tr>
-<tr><td>EQUALIZING INNING</td><td>後攻の裏撞き。ON＝あり</td></tr>
+<tr><td>EQUALIZING INNING</td><td>裏撞き。ON＝誰かが持ち点に届いても、その回を全員が撞いてから終了</td></tr>
 <tr><td>SOUND</td><td>残り10秒・時間切れの音</td></tr>
 <tr><td>SWAP PLAYERS</td><td>先攻と後攻を入れ替える</td></tr>
 </table>
