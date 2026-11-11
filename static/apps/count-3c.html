@@ -102,6 +102,33 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .wz .keys{margin-top:1.8vh;font-size:2.1vh}
 .wz .note{color:var(--sub);font-size:2.2vh;margin:1vh 0 0}
 .toast{position:fixed;left:50%;bottom:9vh;transform:translateX(-50%);background:var(--chalk);color:var(--night);font-weight:900;font-size:2.4vh;border-radius:999px;padding:1vh 2vw;z-index:6}
+/* ---- v2 finish: cloth, light and depth. Colors stay on the brand tokens. ---- */
+html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;background:radial-gradient(120% 80% at 50% 0%,#1F2330 0%,#171A22 55%,#101218 100%) fixed}
+.top .ttl{letter-spacing:.24em;font-size:1.9vh}
+.top button,.top #bHelp{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.16);letter-spacing:.08em;font-size:1.6vh;transition:background .15s,border-color .15s}
+.top button:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.34)}
+.side{opacity:1;background:radial-gradient(120% 90% at 28% 0%,rgba(255,255,255,.16),transparent 56%),repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 4px),linear-gradient(180deg,#2468C0 0%,#1E5AA8 46%,#164482 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 -8vh 12vh rgba(6,18,44,.38),0 1.2vh 3vh rgba(0,0,0,.36);filter:saturate(.5) brightness(.6);transition:filter .22s,border-color .22s,box-shadow .22s}
+.side.on{filter:none;border-color:var(--lime);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 0 -8vh 12vh rgba(6,18,44,.3),0 0 0 .25vh rgba(192,252,9,.28),0 0 6vh rgba(192,252,9,.2),0 1.2vh 3vh rgba(0,0,0,.42)}
+.ball{box-shadow:inset -.5vh -.7vh 1.2vh rgba(0,0,0,.34),0 .4vh .9vh rgba(0,0,0,.4)}
+.p0 .ball{background:radial-gradient(circle at 32% 28%,#fff 0 16%,#F3F4EF 40%,#BFC3CC 100%)}
+.p1 .ball{background:radial-gradient(circle at 32% 28%,#FFF4B8 0 10%,#F2C200 44%,#A98300 100%)}
+.name{text-shadow:0 .3vh .8vh rgba(0,0,0,.35);letter-spacing:.01em}
+.score{text-shadow:0 .6vh 0 rgba(0,0,0,.2),0 1.6vh 3.4vh rgba(0,0,0,.3)}
+.stat{background:rgba(10,16,30,.5);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.stat small{letter-spacing:.14em;font-size:1.7vh}
+.turn{box-shadow:0 .5vh 1.4vh rgba(0,0,0,.4);letter-spacing:.1em}
+.box,.sheet,.cd{background:linear-gradient(180deg,#2C313D 0%,#22262F 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),0 1vh 2.4vh rgba(0,0,0,.3)}
+.box small{letter-spacing:.24em}
+.run b{text-shadow:0 .4vh 0 rgba(0,0,0,.25)}
+.sheet .row span{box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.segs i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),inset 0 1vh 0 rgba(255,255,255,.16),inset 0 -1.2vh 1.6vh rgba(0,0,0,.2)}
+.segs i.off{opacity:.09;box-shadow:none}
+.cd b{line-height:1;padding-top:.8vh;font-size:21vh;border-width:.5vh;box-shadow:0 0 0 .5vh #1B1E27,0 1.2vh 3vh rgba(0,0,0,.55);text-shadow:0 .4vh 0 rgba(0,0,0,.35)}
+.keys{letter-spacing:.06em}
+.keys kbd{box-shadow:0 .25vh 0 rgba(0,0,0,.45);border-radius:.7vh}
+.over-l{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.panel{background:linear-gradient(180deg,#2C313D,#232730);border-color:rgba(255,255,255,.12);box-shadow:0 3vh 8vh rgba(0,0,0,.55)}
+@media (prefers-reduced-motion:reduce){.side,.segs i{transition:none}}
 @media (max-width:760px){
   html,body{overflow:auto}.board{height:auto;min-height:100vh}
   .main{grid-template-columns:1fr 1fr;grid-template-areas:"a b" "m m"}.p0{grid-area:a}.p1{grid-area:b}.mid{grid-area:m;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto}
