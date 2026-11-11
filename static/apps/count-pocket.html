@@ -834,11 +834,12 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   function pzDraw() { var on = !!S.pz && !S.over; if ($('pzB').hidden === on) $('pzB').hidden = !on; $('bPz').textContent = on ? '再開' : '一時停止'; }
   function endGame() { if (S.over || S.ready) return; if (S.pz) { if (S.t0) S.t0 += Date.now() - S.pz; S.pz = 0; pzClock = 0; } snap(); if (!S.cfg.mode && S.run > 0) { S.sc[S.turn] += S.run; S.inn[S.turn].push(S.run); S.run = 0; S.typed = false; } finish(); pzDraw(); }
   setInterval(pzDraw, 400);
+  var tSent = -9; setInterval(function () { var v = tOn ? Math.max(0, Math.ceil(tLeft)) : -1; if (v === tSent || !(rws && rws.readyState === 1)) return; tSent = v; try { rws.send(JSON.stringify({ type: 't', v: v })); } catch (e) {} }, 200);
   $('bPz').onclick = function () { if (S.pz) pzOff(); else pzOn(); this.blur(); }; $('pzB').onclick = pzOff;
   function goHome() { location.href = U_HOME + (TB ? '?t=' + TB : ''); }
   function rmHandle(m) {
     try { sessionStorage.setItem('vibes-remote-seen', '1'); } catch (e) {}
-    if (m.type === 'hello') { toast('スマホがつながりました'); rmPush(); return roPush(); }
+    if (m.type === 'hello') { tSent = -9; toast('スマホがつながりました'); rmPush(); return roPush(); }
     if (m.type === 'roster') return roHandle(m);
     if (m.type === 'cmd' && m.c === 'home') { goHome(); return; }
     if (m.type === 'setup' && m.p && m.p.length >= 1 && m.p.length <= 4) {
