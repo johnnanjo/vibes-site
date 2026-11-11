@@ -238,6 +238,21 @@
     Array.prototype.forEach.call(document.querySelectorAll('.o-g5'), function (e) { e.hidden = !md.pb; });
     if (md.pb && $('fmd').value !== S.cfg.mode) $('fpb').value = md.pb;
   }
+  function cfSchema() { var c = S.cfg, yn = [[1, 'あり'], [0, 'なし']], a = [];
+    if (isSet()) a.push({ k: 'brk', l: 'ブレイク', t: 's', o: [['alt', '交互'], ['win', '勝った人']], v: c.brk });
+    if (isG5()) { a.push({ k: 'pb', l: 'かけ玉と点（例：5=1,9=2）', t: 'x', v: c.pb }); a.push({ k: 'dbl', l: 'サイド2倍', t: 's', o: yn, v: c.dbl }); a.push({ k: 'lim', l: 'ラック数の上限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }); }
+    return a.concat([{ k: 't', l: '残り秒数（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t }, { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]); }
+  function cfAfter() { if (isG5() && !Object.keys(pbMap()).length) S.cfg.pb = M().pb; }
+  function cfApply(v) {
+    var oldTo = S.cfg.to;
+    cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = v[f.k];
+      if (f.t === 'n') { x = parseInt(x, 10); if (isNaN(x)) return; S.cfg[f.k] = Math.max(f.min, Math.min(f.max, x)); }
+      else if (f.t === 's') { f.o.forEach(function (o) { if (String(o[0]) === String(x)) S.cfg[f.k] = o[0]; }); }
+      else if (f.t === 'x') { S.cfg[f.k] = String(x).slice(0, 60); } });
+    if (S.cfg.to !== oldTo) S.to = S.to.map(function (z) { return Math.max(0, z + S.cfg.to - oldTo); });
+    if (typeof cfAfter === 'function') cfAfter();
+    tStop(); render();
+  }
   function closeSet(apply) {
     if (apply) {
       var num = function (id, lo, hi, d) { var v = parseInt($(id).value, 10); return isNaN(v) ? d : Math.max(lo, Math.min(hi, v)); };

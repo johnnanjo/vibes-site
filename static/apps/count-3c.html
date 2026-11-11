@@ -290,6 +290,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 <div class="toast" id="toast" hidden></div>
 
 <script src="/js/qr.js"></script>
+<script src="/js/names.js"></script>
 <script>
 (function () {
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
@@ -434,6 +435,20 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     }
     $('setL').hidden = true; tStop(); render();
   }
+  function cfSchema() { var c = S.cfg, yn = [[1, 'あり'], [0, 'なし']]; return [
+    { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 't', l: '残り秒数（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
+    { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
+    { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
+  function cfApply(v) {
+    var oldTo = S.cfg.to;
+    cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = v[f.k];
+      if (f.t === 'n') { x = parseInt(x, 10); if (isNaN(x)) return; S.cfg[f.k] = Math.max(f.min, Math.min(f.max, x)); }
+      else if (f.t === 's') { f.o.forEach(function (o) { if (String(o[0]) === String(x)) S.cfg[f.k] = o[0]; }); }
+      else if (f.t === 'x') { S.cfg[f.k] = String(x).slice(0, 60); } });
+    if (S.cfg.to !== oldTo) S.to = S.to.map(function (z) { return Math.max(0, z + S.cfg.to - oldTo); });
+    if (typeof cfAfter === 'function') cfAfter();
+    tStop(); render();
+  }
   /* ===== player entry by numeric keypad ===== */
   var PK = 'vibes-count-3c-players-v2', players = [];
   try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) { players = []; }
@@ -468,8 +483,8 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   }
   function kanaVar() { if (!W.kana || W.abc) return; var c = W.kana.slice(-1); for (var i = 0; i < CYC.length; i++) { var k = CYC[i].indexOf(c); if (k >= 0) { W.kana = W.kana.slice(0, -1) + CYC[i].charAt((k + 1) % CYC[i].length); break; } } wzDraw(); }
   function candLoad() {
-    var q = W.kana, base = [q, kata(q)]; W.step = 'cand'; W.cands = base.slice(); W.sel = 0; W.page = 0; W.loading = true; wzDraw();
-    var fin = function (list) { if (!W || W.step !== 'cand' || W.kana !== q) return; var seen = {}, out = []; list.concat(base).forEach(function (v) { if (v && !seen[v] && !/[A-Za-z]/.test(v)) { seen[v] = 1; out.push(v); } }); W.cands = out; W.loading = false; wzDraw(); };
+    var q = W.kana, loc = typeof vnames === 'function' ? vnames(q, W.part) : [], base = loc.concat([q, kata(q)]); W.step = 'cand'; W.cands = base.slice(); W.sel = 0; W.page = 0; W.loading = true; wzDraw();
+    var fin = function (list) { if (!W || W.step !== 'cand' || W.kana !== q) return; var seen = {}, out = []; loc.concat(list, [q, kata(q)]).forEach(function (v) { if (v && !seen[v] && !/[A-Za-z]/.test(v)) { seen[v] = 1; out.push(v); } }); W.cands = out; W.loading = false; wzDraw(); };
     try {
       fetch('https://inputtools.google.com/request?itc=ja-t-i0-und&num=27&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage&text=' + encodeURIComponent(q))
         .then(function (r) { return r.json(); }).then(function (j) { fin(j && j[0] === 'SUCCESS' && j[1] && j[1][0] && j[1][0][0] === q ? j[1][0][1] : []); }).catch(function () { fin([]); });
@@ -626,7 +641,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), U_HOME = '/pages/count/', rm = null, rws = null, rTry = 0, rPing = null;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
-  function rmState() { var N3 = NP(); return JSON.stringify({ type: 'state', kind: N3 > 2 ? 'pocket' : '3c', su: { min: 2, max: 4, t: '持ち点', d: 25 }, title: S.cfg.game === 'band' ? 'バンド' : 'スリークッション', lab: S.cfg.n.map(function (x, i) { return x + ' (' + S.cfg.g[i] + ')'; }), score: S.cfg.n.map(function (x, i) { return String(S.sc[i] + (i === S.turn && !S.over ? S.run : 0)); }), midL: 'INNING', mid: $('inn').textContent, info: S.run && !S.over ? 'この回 ' + S.run + '点' : '', keys: [['+', '1点'], ['-', '1点へらす'], ['Enter', '交代'], ['BackSpace', '戻る']], win: S.over ? $('wName').textContent : '', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
+  function rmState() { var N3 = NP(); return JSON.stringify({ type: 'state', kind: N3 > 2 ? 'pocket' : '3c', su: { min: 2, max: 4, t: '持ち点', d: 25 }, title: S.cfg.game === 'band' ? 'バンド' : 'スリークッション', lab: S.cfg.n.map(function (x, i) { return x + ' (' + S.cfg.g[i] + ')'; }), score: S.cfg.n.map(function (x, i) { return String(S.sc[i] + (i === S.turn && !S.over ? S.run : 0)); }), midL: 'INNING', mid: $('inn').textContent, info: S.run && !S.over ? 'この回 ' + S.run + '点' : '', keys: [['+', '1点'], ['-', '1点へらす'], ['Enter', '交代'], ['BackSpace', '戻る']], win: S.over ? $('wName').textContent : '', cf: cfSchema(), table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
   function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); } catch (e) {} } }
   function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'つながっています' : '接続しています…') : '切'; $('bRm').textContent = rm && rm.on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'リモコン'; }
   function rmConnect() {
@@ -654,6 +669,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       if (fresh()) S.ready = true;
       return render();
     }
+    if (m.type === 'config' && m.v && typeof m.v === 'object') { if (KM) return; if (!$('setL').hidden) closeSet(false); cfApply(m.v); return; }
     if (m.type === 'key' && typeof m.k === 'string' && /^([0-9+\-*]|Enter|Backspace)$/.test(m.k)) { if (KM) return; if (!$('setL').hidden) closeSet(false); if (W) { W = null; $('wzL').hidden = true; } if (!$('prL').hidden) prClose(); if (S.ready && !S.over) return; onKey(m.k, noop); return; }
     if (KM) return;
     if (!$('setL').hidden) closeSet(false);

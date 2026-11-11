@@ -85,6 +85,7 @@ input:focus{outline:none;border-color:var(--lime)}
 .k.big small,.k.end small{color:#3A3F4C}
 .note{font-size:13px;color:var(--sub);text-align:center;margin:0}
 .row2{display:grid;grid-template-columns:1fr 110px;gap:10px;margin-bottom:10px}.row2.one{grid-template-columns:1fr}
+.cfr{margin-bottom:12px}.cfr label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}.cfr input,.cfr select{width:100%;font:inherit;font-size:18px;font-weight:700;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:12px;padding:12px}
 .npick{display:flex;gap:8px;margin:0 0 14px}.npick .sm{flex:1;min-height:46px;font-size:16px}.npick .sm.on{background:var(--lime);color:var(--night);border-color:var(--lime)}
 .ph .sm{margin-left:auto}
 .sv{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
@@ -136,6 +137,7 @@ input:focus{outline:none;border-color:var(--lime)}
       <button type="button" class="k" data-c="clock">残り秒数<small id="pkClockS"></small></button>
       <button type="button" class="k" data-c="warmup">練習時間<small id="pkWarmS"></small></button>
       <button type="button" class="k" id="pkPlayers">選手<small>名前を入れる</small></button>
+      <button type="button" class="k cfb">設定<small>秒数・回数など</small></button>
       <button type="button" class="k" id="pkNew">新しい試合<small>2回押す</small></button>
       <button type="button" class="k" data-c="home" style="grid-column:1/-1;min-height:60px">メニュー<small>種目を選び直す</small></button>
     </div>
@@ -161,9 +163,19 @@ input:focus{outline:none;border-color:var(--lime)}
       <button type="button" class="k" data-c="warmup" id="kWarm">練習時間<small id="kWarmS"></small></button>
       <button type="button" class="k" id="kPlayers">選手<small>名前と持ち点</small></button>
       <button type="button" class="k" id="kNew">新しい試合<small>2回押す</small></button>
-      <button type="button" class="k" data-c="home" style="grid-column:1/-1;min-height:60px">メニュー<small>種目を選び直す</small></button>
+      <button type="button" class="k cfb">設定<small>秒数・回数など</small></button>
+      <button type="button" class="k" data-c="home">メニュー<small>種目を選び直す</small></button>
     </div>
     <p class="note" id="foot"></p>
+  </section>
+
+  <section class="card" id="vCf" hidden>
+    <h1>設定</h1>
+    <p>変えたい所を直して「モニターに送る」を押してください。</p>
+    <form id="fCf"><div id="cfRows"></div>
+      <button class="go" type="submit">モニターに送る</button>
+      <button type="button" class="k" id="bCfBack" style="width:100%;min-height:56px;font-size:18px;margin-top:10px">戻る</button>
+    </form>
   </section>
 
   <section class="card" id="vPl" hidden>
@@ -185,14 +197,14 @@ input:focus{outline:none;border-color:var(--lime)}
   var CK = 'vibes-count-remote-code', PK = 'vibes-count-remote-players';
   var code = '', ws = null, tries = 0, ping = null, last = null, newAt = 0, gotState = false, joinT = null;
   var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
-  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin'; };
+  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin'; };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
   function connect() {
     if (!code) return; if (ws && ws.readyState <= 1) return;
     status(false, '接続しています…');
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'つながっていません'); return; }
     ws.onopen = function () { tries = 0; status(true, '番号 ' + code.slice(0, 3) + ' ' + code.slice(3)); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = m.kind === 'menu' ? 'vMenu' : m.kind === 'pocket' ? 'vPk' : 'vMain'; if (cur !== 'vPl' && cur !== tv) show(tv); if (cur === 'vPl' && tv === 'vMenu') show(tv); draw(); if (!m.wz) wzShown = false; if (m.wz && !wzShown && cur !== 'vPl' && tv !== 'vMenu') { wzShown = true; plOpen(true); } } };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = m.kind === 'menu' ? 'vMenu' : m.kind === 'pocket' ? 'vPk' : 'vMain'; if (cur !== 'vPl' && cur !== 'vCf' && cur !== tv) show(tv); if ((cur === 'vPl' || cur === 'vCf') && tv === 'vMenu') show(tv); draw(); if (!m.wz) wzShown = false; if (m.wz && !wzShown && cur !== 'vPl' && tv !== 'vMenu') { wzShown = true; plOpen(true); } } };
     ws.onclose = function () { clearInterval(ping); status(false, 'つなぎ直しています…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
@@ -273,6 +285,17 @@ input:focus{outline:none;border-color:var(--lime)}
     })(p);
   }
   function plOpen(auto) { var su = suOf(); plN = last && last.n ? last.n.length : su.min; plBackTo = cur === 'vPl' ? plBackTo : cur; $('plLead').textContent = (last && last.title ? last.title + '：' : '') + '名前を入れて「モニターに送る」を押してください。前に入れた選手は、名前の下に出ます。'; plBuild(false); show('vPl'); }
+  function cfOpen() {
+    var R = $('cfRows'), cf = (last && last.cf) || []; R.textContent = '';
+    cf.forEach(function (f) { var d = document.createElement('div'); d.className = 'cfr'; var l = document.createElement('label'); l.textContent = f.l; l.htmlFor = 'cf_' + f.k; var i;
+      if (f.t === 's') { i = document.createElement('select'); f.o.forEach(function (o) { var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; i.appendChild(op); }); i.value = f.v; }
+      else { i = document.createElement('input'); if (f.t === 'n') { i.type = 'number'; i.inputMode = 'numeric'; i.min = f.min; i.max = f.max; } else i.maxLength = 60; i.value = f.v; }
+      i.id = 'cf_' + f.k; i.setAttribute('data-k', f.k); d.appendChild(l); d.appendChild(i); R.appendChild(d); });
+    show('vCf');
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.cfb'), function (b) { b.onclick = cfOpen; });
+  $('bCfBack').onclick = function () { show(last && last.kind === 'pocket' ? 'vPk' : 'vMain'); };
+  $('fCf').addEventListener('submit', function (e) { e.preventDefault(); var v = {}; Array.prototype.forEach.call(document.querySelectorAll('#cfRows [data-k]'), function (i) { v[i.getAttribute('data-k')] = i.value; }); if (send({ type: 'config', v: v })) show(last && last.kind === 'pocket' ? 'vPk' : 'vMain'); });
   $('kPlayers').onclick = function () { plOpen(false); };
   $('pkPlayers').onclick = function () { plOpen(false); };
   $('bPlBack').onclick = function () { show(last && last.kind === 'pocket' ? 'vPk' : 'vMain'); };

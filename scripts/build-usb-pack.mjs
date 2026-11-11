@@ -14,6 +14,7 @@ function inline(src, links) {
   s = s.split('url(/fonts/unbounded-latin-900-normal.woff2)').join(`url(data:font/woff2;base64,${b64('static/fonts/unbounded-latin-900-normal.woff2')})`);
   s = s.split('href="/img/favicon-64.png"').join(`href="data:image/png;base64,${b64('static/img/favicon-64.png')}"`);
   s = s.split('src="/img/vibes-logo-t.png"').join(`src="data:image/png;base64,${b64('static/img/vibes-logo-t.png')}"`);
+  s = s.split('<script src="/js/names.js"></script>').join('<script>' + fs.readFileSync(path.join(ROOT, 'static/js/names.js'), 'utf8') + '</script>');
   s = s.split('<script src="/js/qr.js"></script>').join('<script>' + fs.readFileSync(path.join(ROOT, 'static/js/qr.js'), 'utf8') + '</script>');
   for (const [a, b] of links) s = s.split(a).join(b);
   if (/(src|href)="\/[^"]/.test(s) || /url\(\//.test(s) || /U_HOME = '\/pages/.test(s) || /= \{ '3c': '\/pages/.test(s)) throw new Error('absolute path left in ' + src);
