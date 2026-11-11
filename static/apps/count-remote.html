@@ -51,6 +51,12 @@ input:focus{outline:none;border-color:var(--lime)}
 .p .sc{display:block;font-size:72px;text-align:center;line-height:1.05}
 .p0 .sc{color:#fff}.p1 .sc{color:var(--yellow)}
 .p small{display:block;text-align:center;font-weight:700;font-size:12px;color:#DCE3F0}
+.rdy{display:grid;gap:10px}.rdy>small{font-weight:900;color:var(--sub);letter-spacing:.06em;font-size:13px}
+.ord{display:grid;gap:8px}.ord div{display:flex;align-items:center;gap:10px;background:var(--felt);border-radius:14px;padding:12px}
+.ord i{font-style:normal;flex:none;background:var(--lime);color:var(--night);font-weight:900;font-size:12px;padding:2px 10px;border-radius:99px}
+.ord div+div i{background:rgba(10,16,30,.5);color:#fff}
+.ord b{font-size:20px;font-weight:900;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+[hidden]{display:none!important}
 .run{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .run b{font-size:54px}
 .run small{font-weight:700;color:var(--sub);font-size:13px}
@@ -94,16 +100,22 @@ input:focus{outline:none;border-color:var(--lime)}
 
   <section id="vMain" hidden style="display:flex;flex-direction:column;gap:12px">
     <div class="over" id="over" hidden></div>
-    <div class="pl">
+    <div class="card rdy" id="rdy" hidden>
+      <small>LAG FOR BREAK · 先攻が左</small>
+      <div class="ord" id="rdyO"></div>
+      <button type="button" class="k" data-c="swap" id="rdySwap">SWAP<small>先攻・後攻を入れ替える</small></button>
+      <button type="button" class="k big" data-c="start">GAME START<small>試合開始</small></button>
+    </div>
+    <div class="pl" id="plBox">
       <div class="p p0" id="p0"><div class="nm"><i style="background:#fff"></i><span id="n0"></span></div><em class="at">AT THE TABLE</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s0">0</span><small>TAP = +1 POINT</small></button><small id="d0"></small><button type="button" class="chg" data-c="commit">PLAYER CHANGE</button></div>
       <div class="p p1" id="p1"><div class="nm"><i style="background:#F2C200"></i><span id="n1"></span></div><em class="at">AT THE TABLE</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s1">0</span><small>TAP = +1 POINT</small></button><small id="d1"></small><button type="button" class="chg" data-c="commit">PLAYER CHANGE</button></div>
     </div>
-    <div class="card run"><small>RUN</small><b class="num" id="run">0</b><small id="inn"></small></div>
+    <div class="card run" id="runBox"><small>RUN</small><b class="num" id="run">0</b><small id="inn"></small></div>
     <div class="pad">
       <button type="button" class="k" data-c="sub">−1</button>
-      <button type="button" class="k" data-c="undo">UNDO</button>
+      <button type="button" class="k" data-c="undo">UNDO<small>戻る</small></button>
       <button type="button" class="k" data-c="clock" id="kClock">SHOT CLOCK<small id="kClockS"></small></button>
-      <button type="button" class="k" data-c="warmup" id="kWarm">WARM-UP<small id="kWarmS"></small></button>
+      <button type="button" class="k" data-c="warmup" id="kWarm">WARM-UP<small>練習時間</small><small id="kWarmS"></small></button>
       <button type="button" class="k" id="kPlayers">PLAYERS</button>
       <button type="button" class="k" id="kNew">NEW GAME<small>TAP TWICE</small></button>
     </div>
@@ -147,6 +159,8 @@ input:focus{outline:none;border-color:var(--lime)}
   function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'NOT CONNECTED'); connect(); return false; }
   function draw() {
     var m = last; if (!m) return;
+    $('rdy').hidden = !m.rd; $('plBox').hidden = !!m.rd; $('runBox').hidden = !!m.rd;
+    if (m.rd) { var o = $('rdyO'); o.textContent = ''; m.n.forEach(function (x, i) { var d = document.createElement('div'); var a = document.createElement('i'); a.textContent = m.n.length === 2 ? (i ? '2ND' : '1ST') : String(i + 1); var b = document.createElement('b'); b.textContent = x + ' (' + m.g[i] + ')'; d.appendChild(a); d.appendChild(b); o.appendChild(d); }); $('rdySwap').firstChild.textContent = m.n.length === 2 ? 'SWAP' : 'ROTATE'; }
     var N = m.n.length, ix = N === 2 ? [0, 1] : [m.turn, (m.turn + 1) % N];
     for (var c = 0; c < 2; c++) { var p = ix[c];
       $('n' + c).textContent = (N > 2 ? (c ? 'NEXT: ' : '') : '') + m.n[p] + ' (' + m.g[p] + ')';

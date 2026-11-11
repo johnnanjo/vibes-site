@@ -207,13 +207,14 @@ page(10, '画面の見方',
 page(11, '試合の流れ',
  steps([
   ('人数を選び、選手を登録する', f'{kbd(".")} を2回押します。くわしくは <b class="in">12章</b>・<b class="in">13章</b>。名前を入れない時は「GUEST」で始められます。'),
-  ('練習タイマーを使う（使う時だけ）', f'試合の前に {kbd("−")} を押します。{kbd("+")} で開始、{kbd("Enter")} で閉じます（<b class="in">14章</b>）。'),
-  ('残り秒数を始める（使う時だけ）', f'{kbd("*")} を押すと40秒が始まります。'),
+  ('準備の画面が出る', 'VIBESのロゴと、選手の名前・持ち点が出ます。ここでバンキングをして、先攻と後攻を決めます。<b class="in">先攻が左、後攻が右</b>です。'),
+  ('先攻と後攻を入れ替える（必要な時だけ）', f'{kbd("/")} を押すと、左右が入れ替わります。練習タイマーは {kbd("−")} で開きます（<b class="in">14章</b>）。'),
+  ('先攻が初球を撞く時に GAME START', f'{kbd("Enter")} を押すと試合の画面になり、<b class="in">試合時間が動き始めます</b>。残り秒数を使う時は、続けて {kbd("*")} を押します。'),
   ('当たったら1点', f'当たるたびに {kbd("+")} を1回。得点がその場で増えます。'),
   ('外したら交代', f'{kbd("Enter")} を押します。次の選手の番になり、ライムの枠が移ります。0点の時も、そのまま {kbd("Enter")} です。'),
   ('まちがえたら、もどす', f'{kbd("BackSpace")} で、ひとつずつ前にもどります。交代のあとでももどせます。'),
   ('持ち点に届いたら試合終了', f'「GAME OVER」と結果が出ます。{kbd("Enter")} で次の試合（選手の登録）へ進みます。'),
- ]) + '<div class="two imgs">' + f'<figure>{img("play")}<figcaption>試合中：{kbd("+")} を2回押した所。得点が2になり、TIMEの下に「RUN 2」と出ます</figcaption></figure><figure>{img("win")}<figcaption>試合終了：勝った選手（WINNER）と成績が出ます</figcaption></figure></div>' +
+ ]) + '<div class="two imgs">' + f'<figure>{img("ready")}<figcaption>準備の画面：左が先攻（1ST · BREAK）、右が後攻（2ND）。{kbd("/")} で入れ替え、{kbd("Enter")} で試合開始</figcaption></figure><figure>{img("win")}<figcaption>試合終了：勝った選手（WINNER）と成績が出ます</figcaption></figure></div>' +
  note('裏撞き（うらづき）について', '誰かが先に持ち点に届いても、その回の最後の選手まで撞いてから試合終了になります。いらない時は、設定（<b class="in">16章</b>）の「EQUALIZING INNING」を OFF にします。'),
  'スリークッションでは、座っている人（相手）がカウントします。撞き終わった人は、席にもどって交代のキーを押します。')
 
@@ -255,9 +256,10 @@ page(15, 'タブレット・スマホで操作する（リモコン）',
   ('カウントの画面で「REMOTE」を押す', '画面右上の <b class="in">REMOTE</b> をマウスで押します。6けたの数字（コード）が出ます。'),
   ('タブレットでリモコンのページを開く', f'タブレットのブラウザで <b class="in">{RURL}</b> を開きます。'),
   ('6けたのコードを入れる', 'カウントの画面に出ている数字を入れて、<b class="in">CONNECT</b> を押します。'),
+  ('準備の画面では SWAP と GAME START', 'バンキングのあと、入れ替える時は <b class="in">SWAP</b>、先攻が初球を撞く時に <b class="in">GAME START</b> を押します。'),
   ('得点は、スコアの数字を押す', '座っている人（相手）がカウントします。<b class="in">どちらのスコアを押しても</b>、今撞いている選手に1点入ります。自分の側のスコアを押せば大丈夫です。'),
   ('交代は「PLAYER CHANGE」を押す', '撞き終わった人が席にもどって押します。<b class="in">どちらの PLAYER CHANGE を押しても</b>、次の選手の番になります。'),
-  ('そのほかのボタン', '<b class="in">−1</b>＝1点へらす　<b class="in">UNDO</b>＝もどす　<b class="in">SHOT CLOCK</b>＝残り秒数　<b class="in">WARM-UP</b>＝練習タイマー　<b class="in">PLAYERS</b>＝名前と持ち点　<b class="in">NEW GAME</b>＝新しい試合（2回押す）'),
+  ('そのほかのボタン', '<b class="in">−1</b>＝1点へらす　<b class="in">UNDO</b>＝戻る　<b class="in">SHOT CLOCK</b>＝残り秒数　<b class="in">WARM-UP</b>＝練習時間　<b class="in">PLAYERS</b>＝名前と持ち点　<b class="in">NEW GAME</b>＝新しい試合（2回押す）'),
  ]) + img('rmcode') + '</div><div class="phones">' + img('remote_main','phone') + '</div></div>' +
  note('使う時の注意', '<ul><li>パソコンとタブレットの<b class="in">両方</b>が、インターネットにつながっている必要があります。</li><li>コードは台ごとに違います。次に使う時も、同じコードでつながります。</li><li>3人・4人の試合では、リモコンには「今の選手」と「次の選手」が出ます。3人・4人の名前は、カウントの画面で登録してください。</li></ul>'),
  '離れた場所から、タブレットやスマホで得点を入れられます。インターネットが必要です。')
@@ -289,7 +291,7 @@ page(17, '困ったとき', '<div class="qa">' + ''.join(f'<div><b>{q}</b><p>{a}
 
 toc = ('<section class="pg toc"><header><i>目</i><h2>もくじ</h2></header><ol class="tocl">' + ''.join(f'<li><a href="#c{i+1}"><i>{i+1}</i>{t}</a></li>' for i, t in enumerate([
  'まず、あなたのお店はどれですか？','インターネットで開く','USBメモリーで開く','ケース①　パソコン＋モニター＋キーボード＋タブレット','ケース②　パソコン＋モニター＋テンキー＋タブレット','ケース③　ノートパソコンだけ','ケース④ Wi-Fiがない　／　ケース⑤ パソコンがない','モニターにつなぐ','テンキー早見表','画面の見方','試合の流れ','選手の登録（1）人数と、かなの入れ方','選手の登録（2）漢字・持ち点・アルファベット','残り秒数・タイムアウト・練習タイマー','タブレット・スマホで操作する（リモコン）','設定　／　3人・4人で使う','困ったとき'])) + '</ol>' +
- '<div class="quick"><b>いちばん短い使い方</b><div><span>1</span>カウントを開く（2章か3章）</div><div><span>2</span>' + kbd("Enter") + ' → ' + kbd("3") + ' → ' + kbd("Enter") + ' を人数分（名前なしで始める）</div><div><span>3</span>当たったら ' + kbd("+") + '　外したら ' + kbd("Enter") + '　まちがえたら ' + kbd("BackSpace") + '</div></div></section>')
+ '<div class="quick"><b>いちばん短い使い方</b><div><span>1</span>カウントを開く（2章か3章）</div><div><span>2</span>' + kbd("Enter") + ' → ' + kbd("3") + ' → ' + kbd("Enter") + ' を人数分（名前なし）→ 準備の画面で ' + kbd("Enter") + '</div><div><span>3</span>当たったら ' + kbd("+") + '　外したら ' + kbd("Enter") + '　まちがえたら ' + kbd("BackSpace") + '</div></div></section>')
 
 CSS = open(f'{D}/manual.css').read()
 body = '<main class="mn">' + cover + toc + ''.join(pages) + '</main>'
