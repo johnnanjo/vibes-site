@@ -1,5 +1,5 @@
 # Builds the scoreboard manual: print HTML (A4, for PDF), and a body-only variant for the web page.
-import base64, sys, os
+import base64, sys, os, re
 D = os.path.dirname(os.path.abspath(__file__))
 def img(n, cls='', alt=''):
     b = base64.b64encode(open(f'{D}/jpg/{n}.jpg', 'rb').read()).decode()
@@ -33,16 +33,21 @@ def wire(parts):
 URL = 'vibesbilliards.com/pages/count'
 RURL = 'vibesbilliards.com/pages/count-remote'
 pages = []
-def page(num, title, body, lead=''):
-    pages.append(f'<section class="pg" id="c{num}"><header><i>{num}</i><h2>{title}</h2></header>' + (f'<p class="lead">{lead}</p>' if lead else '') + body + '</section>')
+MAP = {1:1,2:2,3:4,4:6,5:7,6:8,7:9,8:10,9:11,10:12,11:13,12:14,13:15,14:16,15:17,16:18,17:21}
+def remap(t):
+    t = re.sub(r'(\d+)章', lambda m: f'{MAP.get(int(m.group(1)), int(m.group(1)))}章', t)
+    return re.sub(r'#c(\d+)"', lambda m: f'#c{MAP.get(int(m.group(1)), int(m.group(1)))}"', t)
+def page(num, title, body, lead='', new=False):
+    if not new: body, lead, num = remap(body), remap(lead), MAP[num]
+    pages.append((num, title, f'<section class="pg" id="c{num}"><header><i>{num}</i><h2>{title}</h2></header>' + (f'<p class="lead">{lead}</p>' if lead else '') + body + '</section>'))
 
 # ---------- cover ----------
 cover = f'''<section class="pg cover"><div class="cv">
 <p class="cvk">取扱説明書</p>
-<h1>スリークッション<br>デジタルカウント</h1>
-<p class="cvl">モニターに大きく映して、数字のキーだけで使えるスコアボードです。<br>パソコンが苦手な方でも、この説明書の順番どおりに進めれば使えます。</p>
-{img('main','cvimg')}
-<div class="cv3"><div><b>得点・イニング</b>当たったら「+」、外したら「Enter」</div><div><b>残り秒数</b>40秒を大きく表示。タイムアウトも自動</div><div><b>選手の名前</b>数字のキーだけで登録できます</div></div>
+<h1>VIBES BILLIARDS<br>デジタルカウント</h1>
+<p class="cvl">モニターに大きく映して、数字のキーやスマホで使えるスコアボードです。<br>キャロム（スリークッション・バンド）と、ポケット（ボーラード・9ボール・10ボール・5-9・5-10）に対応しています。<br>パソコンが苦手な方でも、この説明書の順番どおりに進めれば使えます。</p>
+{img('menu_top','cvimg')}
+<div class="cv3"><div><b>種目を選ぶだけ</b>メニューから、キャロムかポケットを選びます</div><div><b>キーは少しだけ</b>当たったら「+」、交代は「Enter」</div><div><b>USBメモリーでも使える</b>インターネットがなくても動きます</div></div>
 <p class="cvf">VIBES BILLIARDS　／　2026年11月　テスト版（関係者用）</p>
 </div></section>'''
 
@@ -67,23 +72,57 @@ page(2, 'インターネットで開く',
   ('メニューが出る', 'VIBESのロゴと、種目のボタンが出れば成功です。'),
   ('種目を選ぶ', f'スリークッションは {kbd("1")} を押して {kbd("Enter")}。マウスで押しても選べます。'),
   ('全画面にする', f'キーボードの {kbd("F")} を押します。もう一度押すと元にもどります。'),
- ]) + img('home','wide') +
+ ]) + img('menu_top','wide') +
  note('次からはもっと簡単に', 'アドレス欄の右にある ☆ を押して「お気に入り」に入れておくと、次からは選ぶだけで開けます。一度開いたパソコンでは、インターネットが切れている時でも同じアドレスで開けます。'),
  'インターネット（Wi-Fi）につながっているパソコンやタブレットは、この方法がいちばん簡単です。')
 
-# ---------- 3 USB ----------
-usbfiles = '<div class="files"><div class="win"><div class="bar">USB ドライブ (E:) ＞ VIBES-COUNT</div><div class="row hl"><span class="fi html"></span><b>1_スタート</b><em>← これをダブルクリック</em></div><div class="row"><span class="fi pdf"></span><b>2_取扱説明書</b><em>この説明書です</em></div><div class="row"><span class="fi txt"></span><b>はじめにお読みください</b></div><div class="row"><span class="fi dir"></span><b>data</b><em>さわらないでください</em></div></div></div>'
-page(3, 'USBメモリーで開く',
- steps([
-  ('USBメモリーをパソコンに差す', 'パソコンの横やうしろにある、長方形の差し込み口（USB）に差します。向きが合わない時は、裏返して差します。'),
-  ('USBメモリーの中を開く', f'キーボードの {kbd("Windows")} キー（田のマーク）を押しながら {kbd("E")} を押します。開いた画面の左側にある <b class="in">「USB ドライブ」</b>（名前は「VIBES」など）をクリックします。'),
-  ('「VIBES-COUNT」フォルダを開く', '黄色いフォルダ <b class="in">VIBES-COUNT</b> をダブルクリックします。'),
-  ('「1_スタート」をダブルクリック', 'ブラウザが開き、メニュー（種目を選ぶ画面）が出ます。「どのアプリで開きますか？」と聞かれたら、Edge か Chrome を選びます。'),
-  ('全画面にする', f'キーボードの {kbd("F")} を押します。'),
- ]) + usbfiles +
- '<div class="two"><div class="box"><h3>おすすめ：デスクトップにコピーする</h3><ol><li>「VIBES-COUNT」フォルダを<b class="in">右クリック</b>して「コピー」を選びます。</li><li>デスクトップ（最初の画面）の何もない所を<b class="in">右クリック</b>して「貼り付け」を選びます。</li><li>次からは、USBメモリーなしで、デスクトップのフォルダから開けます。</li></ol></div>' +
- '<div class="box"><h3>USBメモリーで使う時の注意</h3><ul><li>登録した選手と得点は、<b class="in">そのパソコンの中</b>に保存されます。USBメモリーには入りません。</li><li>別のパソコンで開くと、選手の登録は空から始まります。</li><li>漢字の候補と、タブレットからの操作は、インターネットがある時だけ使えます。</li><li>新しい版をもらったら、フォルダごと入れ替えます。</li></ul></div></div>',
- 'インターネットがなくても使える方法です。USBメモリーの中のファイルを開くだけで、インストールの作業はいりません。')
+# ---------- USB (A: make, B: install) ----------
+def uwin(title, rows, menu=None, side=None):
+    h=f'<div class="win"><div class="bar">{title}</div><div class="wb">'
+    if side: h+='<div class="sd">'+''.join(f'<span class="{"on" if on else ""}">{t}</span>' for t,on in side)+'</div>'
+    h+='<div class="rw">'+''.join(f'<div class="row {"hl" if hl else ""}"><span class="fi {ic}"></span><b>{t}</b></div>' for ic,t,hl in rows)
+    if menu: h+='<div class="menu">'+''.join(f'<span class="{"on" if on else ""}">{t}</span>' for t,on in menu)+'</div>'
+    return h+'</div></div></div>'
+def ukeys(*k): return '<div class="kv">'+' ＋ '.join(f'<span class="bigk">{x}</span>' for x in k)+'</div>'
+def ustep(n,t,d,pic): return f'<div class="us"><i>{n}</i><div><b>{t}</b><p>{d}</p></div><div class="pic">{pic}</div></div>'
+USIDE=['ダウンロード','デスクトップ','USB ドライブ (E:)']
+def uside(i): return [(t,j==i) for j,t in enumerate(USIDE)]
+UPIC='<div class="usbpic"><span class="stick"></span><span class="arr">→</span><span class="port">USB</span></div>'
+UA=[
+ ('ZIPファイルをパソコンに保存する','受け取った <b class="in">VIBES-COUNT-USB.zip</b> を押して保存します。パソコンの「ダウンロード」フォルダに入ります。', uwin('ダウンロード',[('zip','VIBES-COUNT-USB.zip',True)],side=uside(0))),
+ ('USBメモリーをパソコンに差す','パソコンの横やうしろにある、長方形の差し込み口（USB）に差します。向きが合わない時は、裏返します。',UPIC),
+ ('フォルダの画面を開く',f'キーボードの {kbd("Windows")} キー（田のマーク）を押しながら {kbd("E")} を押します。', ukeys('田 Windows','E')),
+ ('ZIPを「すべて展開」する','左の「ダウンロード」を押します。<b class="in">VIBES-COUNT-USB.zip</b> を<b class="in">右クリック</b>して「すべて展開」を選び、次の画面で「展開」を押します。', uwin('ダウンロード',[('zip','VIBES-COUNT-USB.zip',True)],menu=[('開く',False),('すべて展開…',True)],side=uside(0))),
+ ('「VIBES-COUNT」フォルダをコピーする','黄色いフォルダ <b class="in">VIBES-COUNT</b> ができます。<b class="in">右クリック</b>して「コピー」を選びます。', uwin('VIBES-COUNT-USB',[('dir','VIBES-COUNT',True)],menu=[('開く',False),('コピー',True)])),
+ ('USBメモリーに貼り付ける','左の「USB ドライブ」を押します。何もない所を<b class="in">右クリック</b>して「貼り付け」を選びます。', uwin('USB ドライブ (E:)',[('dir','VIBES-COUNT',True)],menu=[('表示',False),('貼り付け',True)],side=uside(2))),
+ ('USBメモリーを抜く','画面右下の「ハードウェアを安全に取り外す」を押してから抜きます。これでUSBメモリーの完成です。','<div class="done">USBメモリーの完成</div>'),
+]
+UB=[
+ ('USBメモリーをお店のパソコンに差す','長方形の差し込み口（USB）に差します。',UPIC),
+ ('USBメモリーの中を開く',f'{kbd("Windows")} キーを押しながら {kbd("E")} を押し、左の「USB ドライブ」を押します。', uwin('USB ドライブ (E:)',[('dir','VIBES-COUNT',False)],side=uside(2))),
+ ('「VIBES-COUNT」フォルダをコピーする','<b class="in">VIBES-COUNT</b> を<b class="in">右クリック</b>して「コピー」を選びます。', uwin('USB ドライブ (E:)',[('dir','VIBES-COUNT',True)],menu=[('開く',False),('コピー',True)],side=uside(2))),
+ ('デスクトップに貼り付ける','デスクトップ（最初の画面）の何もない所を<b class="in">右クリック</b>して「貼り付け」を選びます。', '<div class="desk"><span class="fi dir"></span><b>VIBES-COUNT</b><div class="menu st"><span>表示</span><span class="on">貼り付け</span></div></div>'),
+ ('「1_スタート」を開く','デスクトップの「VIBES-COUNT」フォルダを開き、<b class="in">1_スタート</b> をダブルクリックします。', uwin('VIBES-COUNT',[('html','1_スタート',True),('pdf','2_取扱説明書',False),('txt','はじめにお読みください',False),('dir','data（さわらない）',False)])),
+ ('メニューが出る',f'VIBESのロゴと種目のボタンが出れば成功です。キーボードの {kbd("F")} で全画面にします。', ukeys('F')),
+]
+page(3, 'USBメモリーを作る（配る人が1回だけ）', ''.join(ustep(i+1,*x) for i,x in enumerate(UA)) +
+ note('うまくいかない時', '「すべて展開」が出ない時は、ZIPをダブルクリックして開き、中の「VIBES-COUNT」フォルダをUSBメモリーへコピーしても同じです。'),
+ 'インターネットがないお店で使うための準備です。受け取った「VIBES-COUNT-USB.zip」を、USBメモリーに入れます。USBメモリーをもらった人は、<b class="in">4章</b> から始めてください。', new=True)
+page(4, 'USBメモリーで入れる・開く（お店のパソコン）', ''.join(ustep(i+1,*x) for i,x in enumerate(UB)) +
+ note('これで終わりです', '次からは、デスクトップの「VIBES-COUNT」フォルダ →「1_スタート」をダブルクリックするだけです。USBメモリーは抜いて大丈夫です。', 'lime') +
+ note('知っておいてほしいこと', '<ul><li>ソフトを入れる作業（インストール）はありません。フォルダをコピーするだけです。</li><li>インターネットがなくても動きます。</li><li>「どのアプリで開きますか？」と聞かれたら、Edge か Chrome を選びます。</li><li>コピーせずに、USBメモリーを差したまま「1_スタート」を開いても使えます。</li><li>「data」フォルダの中は、さわらないでください。</li><li>登録した選手と得点は、<b class="in">そのパソコンの中</b>に保存されます。別のパソコンでは、選手の登録は空から始まります。</li><li>漢字の候補と、スマホからの操作は、インターネットがある時だけ使えます。</li></ul>'),
+ 'USBメモリーの中身を、お店のパソコンのデスクトップにコピーします。次からは、USBメモリーなしで開けます。', new=True)
+
+# ---------- 5 menu ----------
+page(5, 'メニュー（種目を選ぶ）',
+ '<div class="two menus">' +
+ f'<figure>{img("menu_top")}<figcaption><i>1</i><b>キャロムか、ポケットを選ぶ</b>最初の画面です。マウスで押すか、{kbd("1")}・{kbd("2")} で選んで {kbd("Enter")}。</figcaption></figure>' +
+ f'<figure>{img("menu_carom")}<figcaption><i>2</i><b>キャロム：スリークッションか、バンド</b>どちらも同じ操作です（<b class="in">12章</b>〜）。</figcaption></figure>' +
+ f'<figure>{img("menu_pocket")}<figcaption><i>3</i><b>ポケット：ボーラード・9ボール・10ボール</b>くわしくは <b class="in">19章</b>・<b class="in">20章</b>。</figcaption></figure>' +
+ f'<figure>{img("menu_nine")}<figcaption><i>4</i><b>9ボール・10ボール：セットマッチか、5-9・5-10</b>このあと、人数と選手を登録します。</figcaption></figure>' +
+ '</div>' +
+ f'<table class="tbl"><tr><th>こんな時</th><th>やり方</th></tr><tr><td>ひとつ前の画面にもどる</td><td>{kbd("BackSpace")}、または左上の「← もどる」</td></tr><tr><td>試合の画面からメニューにもどる</td><td>左上のロゴか「メニュー」をマウスで押す。テンキーだけの時は、{kbd(".")} を2回押し、種目や人数を選ぶ画面で {kbd("BackSpace")}</td></tr><tr><td>スマホで選ぶ</td><td>「リモコン（スマホで操作）」を押すと、スマホに同じメニューが出ます。モニターはロゴだけになります（<b class="in">17章</b>）</td></tr></table>',
+ 'カウントを開くと、最初にこのメニューが出ます。種目を選ぶと、その種目のカウントが始まります。', new=True)
 
 # ---------- 4 case 1 ----------
 page(4, 'ケース①　パソコン＋モニター＋キーボード＋タブレット',
@@ -273,6 +312,28 @@ page(16, '設定　／　3人・4人で使う',
  '<h3 class="h3">3人・4人で使う</h3>' + img('p4','wide') +
  f'<p class="small">{kbd(".")} を2回押して、最初の画面で {kbd("3")} か {kbd("4")} を押します。選手が横に並び、順番は左から右へ回ります。3人目は赤、4人目は緑の球です。右はしに TIME と INNING が出ます。</p>')
 
+# ---------- 19/20 pocket ----------
+page(19, 'ポケット（1）ボーラード',
+ img('pk_bow','wide') +
+ steps([
+  ('メニューで「ポケット」→「ボーラード」を選ぶ', '人数（1〜4人）を選び、選手を登録します。名前の入れ方は、スリークッションと同じです（<b class="in">14章</b>）。'),
+  ('入れた個数を入れる', f'1個入れるたびに {kbd("+")}。まとめて入れる時は数字（例：{kbd("7")}）。全部入れた時は {kbd("1")}{kbd("0")} です。'),
+  ('ミスしたら Enter', f'{kbd("Enter")} で、そのイニングの個数が確定します。0個の時も、そのまま {kbd("Enter")} です。'),
+  ('点数は自動で計算', 'ボウリングと同じ数え方です。1フレームは2イニング、10フレーム目は最大3イニングです。'),
+ ]) +
+ '<table class="tbl"><tr><th>表示</th><th>意味</th></tr><tr><td>X（ストライク）</td><td>1イニング目で10個全部入れた。次の2イニング分の個数が加点されます</td></tr><tr><td>/（スペア）</td><td>2イニングで10個全部入れた。次の1イニング分の個数が加点されます</td></tr><tr><td>FRAME</td><td>今、何フレーム目か。下の「1 / 2」は、何イニング目か</td></tr><tr><td>STRIKE・SPARE</td><td>ストライクとスペアの回数</td></tr><tr><td>画面下の表</td><td>フレームごとの記録と、そこまでの合計</td></tr></table>' +
+ note('まちがえた時', f'{kbd("BackSpace")} で、ひとつ前のイニングにもどります。全部ストライクだと300点です。'),
+ 'ボウリングと同じスコアの付け方です。入れた個数を入れるだけで、合計は自動で出ます。', new=True)
+page(20, 'ポケット（2）9ボール・10ボール・5-9・5-10',
+ '<h3 class="h3">セットマッチ（9ボール・10ボール）</h3><div class="stepimg tall"><div>' +
+ f'<table class="tbl"><tr><td>{kbd("+")}</td><td>今撞いている選手が、セットを取った</td></tr><tr><td>{kbd("Enter")}</td><td>交代</td></tr><tr><td>{kbd("−")}</td><td>セットを取り消す</td></tr><tr><td>{kbd("BackSpace")}</td><td>戻る</td></tr></table>' +
+ '<p class="small">選手の登録で「何セット先取か」を1人ずつ入れます。数を変えると、ハンデになります。名前の横の（ ）がその数です。BREAK に「●」が付いている人が、次のブレイクです。ブレイクは「交互」か「勝った人」を設定で選べます。</p></div>' + img('pk_nine') + '</div>' +
+ '<h3 class="h3">5-9・5-10（かけ玉）</h3><div class="stepimg tall"><div>' +
+ f'<table class="tbl"><tr><td>{kbd("5")}</td><td>今撞いている選手が、5番を入れた（1点）</td></tr><tr><td>{kbd("9")}</td><td>9番を入れた（2点）。次のラックへ</td></tr><tr><td>{kbd("0")}</td><td>5-10の時の10番（2点）</td></tr><tr><td>{kbd("+")}</td><td>サイド2倍。押してから番号を押す</td></tr><tr><td>{kbd("Enter")}</td><td>交代</td></tr><tr><td>{kbd("BackSpace")}</td><td>戻る</td></tr></table></div>' + img('pk_g59') + '</div>' +
+ note('大きな数字が、今の現在地です', '点は、全員の増減で出ます。たとえば3人で5番（1点）を入れると、入れた人が <b class="in">+2</b>、ほかの2人が <b class="in">−1</b> になります。プラスの人が勝っていて、マイナスの人が負けています。', 'lime') +
+ note('かけ玉と点を変える', f'{kbd("/")}（設定）の「かけ玉と点」で変えられます。例：<b class="in">3=1,5=1,7=1,9=2</b> と入れると、3番・5番・7番が1点、9番が2点になります。「サイド2倍」も、ここで「なし」にできます。'),
+ '9ボール・10ボールは、メニューで「セットマッチ」か「5-9（5-10）」を選びます。', new=True)
+
 # ---------- 17 trouble ----------
 qa = [
  ('キーを押しても動かない', f'画面の上を一度マウスでクリックしてから押します。テンキーの数字が入らない時は {kbd("NumLock")} を押します。画面右下に「あ」と出ている時は、{kbd("半角/全角")} キーを押して「A」にします。'),
@@ -290,12 +351,12 @@ page(17, '困ったとき', '<div class="qa">' + ''.join(f'<div><b>{q}</b><p>{a}
  note('終わる時', f'そのまま画面を閉じて大丈夫です。得点と選手の登録は、パソコンに残ります。USBメモリーは、画面右下の「ハードウェアを安全に取り外す」を押してから抜くと安心です。') +
  note('この説明書について', 'テスト版です。わかりにくい所、動きがおかしい所があれば、運営（VIBES BILLIARDS）に教えてください。', 'lime'))
 
-toc = ('<section class="pg toc"><header><i>目</i><h2>もくじ</h2></header><ol class="tocl">' + ''.join(f'<li><a href="#c{i+1}"><i>{i+1}</i>{t}</a></li>' for i, t in enumerate([
- 'まず、あなたのお店はどれですか？','インターネットで開く','USBメモリーで開く','ケース①　パソコン＋モニター＋キーボード＋タブレット','ケース②　パソコン＋モニター＋テンキー＋タブレット','ケース③　ノートパソコンだけ','ケース④ Wi-Fiがない　／　ケース⑤ パソコンがない','モニターにつなぐ','テンキー早見表','画面の見方','試合の流れ','選手の登録（1）人数と、かなの入れ方','選手の登録（2）漢字・持ち点・アルファベット','残り秒数・タイムアウト・練習タイマー','タブレット・スマホで操作する（リモコン）','設定　／　3人・4人で使う','困ったとき'])) + '</ol>' +
- '<div class="quick"><b>いちばん短い使い方</b><div><span>1</span>カウントを開く（2章か3章）</div><div><span>2</span>' + kbd("Enter") + ' → ' + kbd("3") + ' → ' + kbd("Enter") + ' を人数分（名前なし）→ 準備の画面で ' + kbd("Enter") + '</div><div><span>3</span>当たったら ' + kbd("+") + '　外したら ' + kbd("Enter") + '　まちがえたら ' + kbd("BackSpace") + '</div></div></section>')
+pages.sort(key=lambda x: x[0])
+toc = ('<section class="pg toc"><header><i>目</i><h2>もくじ</h2></header><ol class="tocl two">' + ''.join(f'<li><a href="#c{n}"><i>{n}</i>{t}</a></li>' for n, t, h in pages) + '</ol>' +
+ '<div class="quick"><b>いちばん短い使い方</b><div><span>1</span>メニューを開く（2章か4章）</div><div><span>2</span>種目を選ぶ → ' + kbd("Enter") + ' → ' + kbd("3") + ' → ' + kbd("Enter") + ' を人数分（名前なし）→ 準備の画面で ' + kbd("Enter") + '</div><div><span>3</span>当たったら ' + kbd("+") + '　外したら ' + kbd("Enter") + '　まちがえたら ' + kbd("BackSpace") + '</div></div></section>')
 
 CSS = open(f'{D}/manual.css').read()
-body = '<main class="mn">' + cover + toc + ''.join(pages) + '</main>'
-open(f'{D}/out/manual-print.html', 'w').write('<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>スリークッション デジタルカウント 取扱説明書</title><style>' + CSS + '</style></head><body class="print">' + body + '</body></html>')
-open(f'{D}/out/manual-web.html', 'w').write('<title>3Cカウント 取扱説明書</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n<style>' + CSS + '</style>\n' + body)
+body = '<main class="mn">' + cover + toc + ''.join(h for n, t, h in pages) + '</main>'
+open(f'{D}/out/manual-print.html', 'w').write('<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>VIBES BILLIARDS デジタルカウント</title><style>' + CSS + '</style></head><body class="print">' + body + '</body></html>')
+open(f'{D}/out/manual-web.html', 'w').write('<title>VIBES デジタルカウント</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n<style>' + CSS + '</style>\n' + body)
 print('ok', len(body) // 1024, 'KB')

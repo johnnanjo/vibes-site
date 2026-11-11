@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];
-const USB='file:///tmp/claude-0/-home-claude/4269f5be-aa67-52b1-a813-0280e54a6b2a/scratchpad/usb/VIBES-3C-COUNT.html';
+const USB='file:///tmp/claude-0/-home-claude/4269f5be-aa67-52b1-a813-0280e54a6b2a/scratchpad/pack/VIBES-COUNT/data/count-3c.html';
 const c=await b.newContext({viewport:{width:1600,height:900},deviceScaleFactor:1.25});
 await c.route('**/inputtools.google.com/**',r=>{const q=decodeURIComponent((r.request().url().match(/text=([^&]*)/)||[])[1]||'');const M={'やまだ':['山田','山多','矢間田','山打','耶麻田'],'たろう':['太郎','太朗','多朗','汰郎','太老']};r.fulfill({status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'},body:JSON.stringify(['SUCCESS',[[q,(M[q]||[]).concat([q])]]])})});
 await c.routeWebSocket(/api\/count/,ws=>{ws.onMessage(()=>{})});
@@ -43,6 +43,6 @@ const c2=await b.newContext({viewport:{width:390,height:800},deviceScaleFactor:2
 const state={type:'state',table:0,n:['山田 太郎','SMITH'],g:[30,25],sc:[18,14],run:2,turn:0,over:false,inn:[9,9],hr:[6,3],av:['2.000','1.556'],last:[[],[]],t:40,tOn:true,pr:false,pm:5,wz:false};
 await c2.routeWebSocket(/api\/count/,ws=>{setTimeout(()=>ws.send(JSON.stringify(state)),200);ws.onMessage(()=>{})});
 const r=await c2.newPage();r.on('pageerror',e=>errs.push('R '+e.message));
-await r.goto('http://localhost:8795/pages/count-remote/');await r.waitForTimeout(600);await r.screenshot({path:'img/remote_join.png'});
+await r.goto('http://localhost:8796/pages/count-remote/');await r.waitForTimeout(600);await r.screenshot({path:'img/remote_join.png'});
 await r.fill('#iCode','123456');await r.waitForTimeout(200);await r.screenshot({path:'img/remote_code.png'});await r.keyboard.press('Enter');await r.waitForTimeout(900);await r.screenshot({path:'img/remote_main.png'});
 console.log('code',code,'errs',errs);await b.close()})()
