@@ -381,7 +381,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
       keysHelp([['1-9', 'SELECT']].concat(pg > 1 ? [['0', 'NEXT PAGE']] : []).concat([['Enter', 'OK'], ['BackSpace', 'BACK']]));
     } else if (W.step === 'pick') {
       h.appendChild(el('small', '', 'REGISTERED PLAYERS' + (W.kana ? ' — ' + W.kana : '')));
-      if (!W.list.length) b.appendChild(el('p', 'note', 'NO PLAYER FOUND. PRESS BackSpace TO GO BACK.'));
+      if (!W.list.length) b.appendChild(el('p', 'note', 'NO PLAYER FOUND. PRESS Enter TO REGISTER AS A NEW PLAYER, OR BackSpace TO GO BACK.'));
       var pg2 = listDraw(b, W.list, function (o) { return full(o); });
       keysHelp([['1-9', 'SELECT']].concat(pg2 > 1 ? [['0', 'NEXT PAGE']] : []).concat([['Enter', 'OK'], ['BackSpace', 'BACK']]));
     } else if (W.step === 'target') {
@@ -414,7 +414,9 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
       else if (d === 0) { W.page = (W.page + 1) % pages; W.sel = W.page * per; wzDraw(); }
       else if (k === 'Backspace') { var q = W.kana; kanaStart(W.purpose, W.part); W.kana = q; wzDraw(); }
       else if (k === 'Enter') {
-        var it = items[W.sel]; if (!it) return true;
+        var it = items[W.sel];
+        if (!it && W.step === 'pick' && W.kana) { W.cur = { sei: '', mei: '', ys: '', ym: '' }; W.purpose = 'new'; W.part = 'sei'; candLoad(); return true; }
+        if (!it) return true;
         if (W.step === 'pick') { W.cur = { sei: it.sei, mei: it.mei || '', ys: it.ys || '', ym: it.ym || '' }; targetStart(it.g); }
         else if (W.part === 'sei') { W.cur.sei = it; W.cur.ys = W.kana; kanaStart('new', 'mei'); }
         else { W.cur.mei = it; W.cur.ym = W.kana; var old = null; players.forEach(function (o) { if (o.sei === W.cur.sei && (o.mei || '') === it) old = o; }); targetStart(old ? old.g : 25); }
