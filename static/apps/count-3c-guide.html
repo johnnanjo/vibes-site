@@ -71,6 +71,13 @@
 .cg-legend i{font-style:normal;width:24px;height:24px;border-radius:50%;background:var(--night);color:#fff;font:800 13px/24px var(--jp);text-align:center}
 .cg-legend small{display:block;color:var(--sub);font-size:12.5px}
 
+.cg-wire{display:grid;grid-template-columns:auto minmax(40px,1fr) auto minmax(40px,1fr) auto;align-items:center;gap:6px;background:var(--night);color:var(--chalk);border-radius:16px;padding:18px 16px;margin-top:14px}
+.cg-wire .dev{text-align:center;font-size:13px}
+.cg-wire .dev svg{display:block;margin:0 auto 6px;width:58px;height:48px}
+.cg-wire .ln{border-top:3px solid var(--lime);position:relative;height:0}
+.cg-wire .ln.dash{border-top-style:dashed;border-top-color:var(--sub-d)}
+.cg-wire .ln span{position:absolute;left:50%;top:-26px;transform:translateX(-50%);font-size:11.5px;font-weight:700;white-space:nowrap}
+.cg-flow li:not(:has(.k)){grid-template-columns:40px minmax(0,1fr)}
 /* flow */
 .cg-flow{margin:14px 0 0;padding:0;list-style:none;counter-reset:f;display:grid;gap:8px}
 .cg-flow li{counter-increment:f;display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--chalk);border-radius:var(--rs);padding:12px 14px}
@@ -105,6 +112,7 @@
   .cg-pad-wrap,.cg-two{grid-template-columns:minmax(0,1fr)}
   .cg-pad{max-width:360px;margin:0 auto;width:100%}
   .cg-need,.cg-legend,.cg-kana{grid-template-columns:minmax(0,1fr)}
+  .cg-wire .dev svg{width:40px;height:34px}.cg-wire{padding:22px 10px 14px}
   .cg-flow li{grid-template-columns:32px minmax(0,1fr)}
   .cg-flow .k{grid-column:2;justify-content:flex-start}
   .cg-keys li{grid-template-columns:92px minmax(0,1fr)}
@@ -129,18 +137,86 @@
 </div></div>
 
 <ul class="cg-toc">
-<li><a href="#need">用意するもの</a></li><li><a href="#keys">テンキー早見表</a></li><li><a href="#screen">画面の見方</a></li><li><a href="#flow">試合の流れ</a></li><li><a href="#players">選手の登録</a></li><li><a href="#warmup">練習タイマー</a></li><li><a href="#settings">設定</a></li><li><a href="#offline">ネットなし・タブレット</a></li><li><a href="#qa">困ったとき</a></li>
+<li><a href="#need">用意するもの</a></li><li><a href="#connect">つなぎ方</a></li><li><a href="#keys">テンキー早見表</a></li><li><a href="#screen">画面の見方</a></li><li><a href="#flow">試合の流れ</a></li><li><a href="#players">選手の登録</a></li><li><a href="#warmup">練習タイマー</a></li><li><a href="#settings">設定</a></li><li><a href="#offline">ネットなし・タブレット</a></li><li><a href="#qa">困ったとき</a></li>
 </ul>
 
 <section class="cg-sec" id="need">
 <h2>用意するもの</h2>
-<p class="cg-lead">この3つがあれば使えます。料金はかかりません。</p>
-<div class="cg-need">
-<div><svg viewBox="0 0 54 44" fill="none" stroke="#171A22" stroke-width="2.5" stroke-linejoin="round"><rect x="9" y="6" width="36" height="24" rx="3"/><path d="M3 36h48l-3 4H6z"/></svg><b>パソコン または タブレット</b>ChromeかEdgeで開きます</div>
-<div><svg viewBox="0 0 54 44" fill="none" stroke="#171A22" stroke-width="2.5" stroke-linejoin="round"><rect x="4" y="4" width="46" height="28" rx="3"/><path d="M27 32v7M17 40h20"/></svg><b>モニター</b>HDMIケーブルでつなぎます</div>
-<div><svg viewBox="0 0 54 44" fill="none" stroke="#171A22" stroke-width="2.5" stroke-linejoin="round"><rect x="12" y="3" width="30" height="38" rx="4"/><path d="M19 12h3M26 12h3M33 12h3M19 20h3M26 20h3M33 20v8M19 28h3M26 28h3M19 35h10M33 35h3" stroke-linecap="round"/></svg><b>テンキー</b>無線が便利です</div>
+<p class="cg-lead">パソコンで使う方法と、タブレットで使う方法があります。おすすめはパソコンです。カウント自体は無料です。</p>
+
+<h3 style="margin-top:14px">A. パソコンで使う（おすすめ）</h3>
+<table class="cg-tbl">
+<tr><th>もの</th><th>選び方</th></tr>
+<tr><td>パソコン</td><td>Windows・Mac・Chromebook のどれでも使えます。<b>HDMIの差し込み口</b>があるものが楽です。ブラウザは Chrome か Edge を使います。</td></tr>
+<tr><td>モニター</td><td><b>HDMI入力</b>がある横長（16:9）のもの。解像度はフルHD（1920×1080）で足ります。家庭用のテレビでも使えます。大きさは下の表を見てください。</td></tr>
+<tr><td>HDMIケーブル</td><td>パソコンからモニターまで届く長さ。<b>5m以内</b>が安心です。</td></tr>
+<tr><td>無線テンキー</td><td><b>USBレシーバー式（2.4GHz）</b>が、差すだけで使えて簡単です。<kbd>BackSpace</kbd> キーが付いているものを選びます。</td></tr>
+<tr><td>電池</td><td>テンキー用。予備も用意しておきます。</td></tr>
+<tr><td>インターネット</td><td>最初に1回開く時に必要です。そのあとは、なくても使えます。</td></tr>
+</table>
+<div class="cg-note"><b>HDMIの差し込み口がないパソコンの場合</b>「USB-C → HDMI 変換アダプタ」を足します。USB-Cの口が映像出力に対応しているか、パソコンの説明書で確かめてください。</div>
+
+<h3 style="margin-top:20px">B. タブレットで使う</h3>
+<table class="cg-tbl">
+<tr><th>もの</th><th>選び方</th></tr>
+<tr><td>タブレット</td><td><b>映像を外に出せる機種</b>が必要です。iPad は対応しています。Android は機種によります。Fire タブレットは多くが出せません。</td></tr>
+<tr><td>変換アダプタ</td><td>USB-C の iPad・Android は「USB-C → HDMI」。Lightning の iPad は「Lightning → HDMI」。</td></tr>
+<tr><td>無線テンキー</td><td><b>Bluetooth式</b>を選びます。USBレシーバー式は、タブレットにそのまま差せません。</td></tr>
+<tr><td>モニター・HDMIケーブル</td><td>パソコンの場合と同じです。</td></tr>
+</table>
+<div class="cg-note"><b>iPad の画面について</b>iPad は画面の形がモニターと違うため、モニターの左右に黒い帯が出ることがあります。</div>
+
+<h3 style="margin-top:20px">モニターの大きさの目安</h3>
+<p class="cg-lead">選手がどのくらい離れた所から見るかで決めます。迷ったら <b>32型</b> がおすすめです。</p>
+<table class="cg-tbl">
+<tr><th>見る距離</th><th>おすすめ</th><th>残り秒数の数字の高さ</th></tr>
+<tr><td>〜3m（台のすぐそば）</td><td>24〜27型</td><td>約6〜7cm</td></tr>
+<tr><td>3〜5m（台の向こう側から）</td><td><b>32〜43型</b></td><td>約8〜11cm</td></tr>
+<tr><td>5m以上（広い店・観客も見る）</td><td>43〜55型</td><td>約11〜14cm</td></tr>
+</table>
+<p style="font-size:13px;color:var(--sub);margin-top:8px">数字の高さは、全画面にした時の計算上の大きさです。選手の名前は数字より小さいので、名前も離れて読みたい時は、ひとつ大きいサイズを選びます。置く高さは、目線から少し上が見やすいです。</p>
+</section>
+
+<section class="cg-sec" id="connect">
+<h2>つなぎ方</h2>
+<p class="cg-lead">線は1本だけです。テンキーは無線なので、線はいりません。</p>
+<div class="cg-wire" aria-hidden="true">
+<div class="dev"><svg viewBox="0 0 54 44" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"><rect x="12" y="3" width="30" height="38" rx="4"/><path d="M19 12h3M26 12h3M33 12h3M19 20h3M26 20h3M33 20v8M19 28h3M26 28h3M19 35h10M33 35h3" stroke-linecap="round"/></svg><b>テンキー</b></div>
+<div class="ln dash"><span>無線</span></div>
+<div class="dev"><svg viewBox="0 0 54 44" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"><rect x="9" y="6" width="36" height="24" rx="3"/><path d="M3 36h48l-3 4H6z"/></svg><b>パソコン</b></div>
+<div class="ln"><span>HDMIケーブル</span></div>
+<div class="dev"><svg viewBox="0 0 54 44" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"><rect x="4" y="4" width="46" height="28" rx="3"/><path d="M27 32v7M17 40h20"/></svg><b>モニター</b></div>
 </div>
-<div class="cg-note"><b>はじめに</b><kbd>F</kbd> を押すと全画面になります。もう一度押すと元にもどります。</div>
+
+<h3 style="margin-top:20px">A. パソコンの場合</h3>
+<ol class="cg-flow">
+<li><div><b>モニターを置いて、電源を入れる</b><span>選手から見やすい場所に置きます。</span></div></li>
+<li><div><b>HDMIケーブルでパソコンとモニターをつなぐ</b><span>両方の「HDMI」と書いてある口に差します。</span></div></li>
+<li><div><b>モニターの入力を「HDMI」に切り替える</b><span>モニターのリモコンか本体の「入力切替」ボタンを押します。パソコンの画面が映れば成功です。</span></div></li>
+<li><div><b>映らない時は、パソコン側で切り替える</b><span>Windows は <kbd>Windows</kbd> キーを押しながら <kbd>P</kbd> を押し、「複製」を選びます。パソコンとモニターに同じ画面が出ます。</span></div></li>
+<li><div><b>テンキーをつなぐ</b><span>テンキーに電池を入れて電源を入れ、付属のUSBレシーバーをパソコンに差します。数秒で使えるようになります。</span></div></li>
+<li><div><b>カウントを開く</b><span>Chrome か Edge で <b>vibesbilliards.com/pages/count-3c</b> を開きます。</span></div></li>
+<li><div><b>全画面にする</b><span>キーボードの <kbd>F</kbd> を押します。テンキーの <kbd>+</kbd> を押して、点が入れば準備完了です。</span></div></li>
+</ol>
+
+<h3 style="margin-top:20px">B. タブレットの場合</h3>
+<ol class="cg-flow">
+<li><div><b>変換アダプタをタブレットに差す</b><span>アダプタにHDMIケーブルを差し、反対側をモニターに差します。</span></div></li>
+<li><div><b>モニターの入力を「HDMI」に切り替える</b><span>タブレットと同じ画面がモニターに映ります。</span></div></li>
+<li><div><b>テンキーをBluetoothでつなぐ</b><span>タブレットの「設定」→「Bluetooth」を開きます。テンキーのペアリングボタンを押し、一覧に出たテンキーの名前を押します。</span></div></li>
+<li><div><b>カウントを開く</b><span>ブラウザで <b>vibesbilliards.com/pages/count-3c</b> を開きます。</span></div></li>
+<li><div><b>ホーム画面に追加する</b><span>ブラウザのメニューから「ホーム画面に追加」を選びます。次からは、そのアイコンから開くと全画面で使えます。</span></div></li>
+</ol>
+
+<h3 style="margin-top:20px">使う前に確かめること</h3>
+<table class="cg-tbl">
+<tr><th>確かめること</th><th>やり方</th></tr>
+<tr><td>テンキーの数字が効くか</td><td>効かない時は <kbd>NumLock</kbd> を1回押します。</td></tr>
+<tr><td>日本語入力がオフか</td><td>画面右下が「あ」の時は、<kbd>半角/全角</kbd> キーで「A」にします。</td></tr>
+<tr><td>音が出るか</td><td><kbd>*</kbd> で残り秒数を動かし、残り10秒で音が鳴るか確かめます。鳴らない時は、パソコンとモニターの音量を上げます。</td></tr>
+<tr><td>電源</td><td>パソコン・タブレットは充電器につないでおきます。カウントを開いている間は、画面は自動で消えません。</td></tr>
+<tr><td>テンキーが届くか</td><td>無線は10mほど届きますが、間に物があると弱くなります。使う場所から押して確かめます。</td></tr>
+</table>
 </section>
 
 <section class="cg-sec" id="keys">
