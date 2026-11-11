@@ -88,6 +88,8 @@ input:focus{outline:none;border-color:var(--lime)}
 .cfr{margin-bottom:12px}.cfr label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}.cfr input,.cfr select{width:100%;font:inherit;font-size:18px;font-weight:700;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:12px;padding:12px}
 .rl{display:grid;gap:8px;max-height:52vh;overflow:auto}.rr{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;background:var(--night);border:2px solid var(--line);border-radius:14px;padding:12px 14px;min-height:60px;width:100%}.rr span{min-width:0;display:grid}.rr b{font-size:19px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rr small{font-size:12px;color:var(--sub);font-weight:700}.rr i{font-style:normal;font-weight:900;font-size:22px;background:var(--night2);border-radius:10px;padding:4px 10px}.rr:active{border-color:var(--lime)}
 .ph .sm.pick{margin-left:auto;border-color:var(--lime)}.ph .sm.pick+.sm{margin-left:0}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pre .sm{min-height:46px;font-size:15px}
+.rt{display:grid;gap:10px}.rc{background:var(--night);border:2px solid var(--line);border-radius:14px;padding:12px}.rc>b{display:block;font-size:19px;font-weight:900;margin-bottom:8px}.rc>div{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:8px}.rc span{display:grid;gap:2px;text-align:center}.rc small{font-size:11px;font-weight:700;color:var(--sub)}.rc i{font-style:normal;font-weight:900;font-size:22px}
 .npick{display:flex;gap:8px;margin:0 0 14px}.npick .sm{flex:1;min-height:46px;font-size:16px}.npick .sm.on{background:var(--lime);color:var(--night);border-color:var(--lime)}
 .ph .sm{margin-left:auto}
 .sv{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
@@ -133,16 +135,14 @@ input:focus{outline:none;border-color:var(--lime)}
       <div class="ord" id="pkRdyO"></div>
       <button type="button" class="k" data-c="swap" id="pkSwap">入れ替え<small>順番を入れ替える</small></button>
       <button type="button" class="k big" data-c="start">試合開始<small>始める時に押す</small></button>
+      <div class="pre"><button type="button" class="sm prePl">選手を変える</button><button type="button" class="sm cfb">設定</button><button type="button" class="sm" data-c="warmup">練習時間</button><button type="button" class="sm" data-c="home">メニュー</button></div>
     </div>
     <div class="card pkh" id="pkHead"><small id="pkTitle"></small><div class="pkp" id="pkP"></div><div class="pkm"><span id="pkMidL"></span><b class="num" id="pkMid"></b><span id="pkInfo"></span></div></div>
     <div class="pad" id="pkKeys"></div>
-    <div class="pad">
-      <button type="button" class="k" data-c="clock">残り秒数<small id="pkClockS"></small></button>
-      <button type="button" class="k" data-c="warmup">練習時間<small id="pkWarmS"></small></button>
-      <button type="button" class="k" id="pkPlayers">選手<small>名前を入れる</small></button>
-      <button type="button" class="k cfb">設定<small>秒数・回数など</small></button>
-      <button type="button" class="k" id="pkNew">新しい試合<small>2回押す</small></button>
-      <button type="button" class="k" data-c="home" style="grid-column:1/-1;min-height:60px">メニュー<small>種目を選び直す</small></button>
+    <div class="pad" id="pkPad">
+      <button type="button" class="k" data-c="clock">秒数カウント<small id="pkClockS"></small></button>
+      <button type="button" class="k pzb" data-c="pause">一時停止<small>時計を止める</small></button>
+      <button type="button" class="k endb" style="grid-column:1/-1">試合終了<small>2回押す</small></button>
     </div>
   </section>
 
@@ -153,23 +153,34 @@ input:focus{outline:none;border-color:var(--lime)}
       <div class="ord" id="rdyO"></div>
       <button type="button" class="k" data-c="swap" id="rdySwap">入れ替え<small>先攻・後攻を入れ替える</small></button>
       <button type="button" class="k big" data-c="start">試合開始<small>先攻が初球を撞く時に押す</small></button>
+      <div class="pre"><button type="button" class="sm prePl">選手を変える</button><button type="button" class="sm cfb">設定</button><button type="button" class="sm" data-c="warmup">練習時間</button><button type="button" class="sm" data-c="home">メニュー</button></div>
     </div>
     <div class="pl" id="plBox">
       <div class="p p0" id="p0"><div class="nm"><i style="background:#fff"></i><span id="n0"></span></div><em class="at">撞く番</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s0">0</span><small>押すと1点</small></button><small id="d0"></small><button type="button" class="chg" data-c="commit">交代</button></div>
       <div class="p p1" id="p1"><div class="nm"><i style="background:#F2C200"></i><span id="n1"></span></div><em class="at">撞く番</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s1">0</span><small>押すと1点</small></button><small id="d1"></small><button type="button" class="chg" data-c="commit">交代</button></div>
     </div>
     <div class="card run" id="runBox"><small>この回の点</small><b class="num" id="run">0</b><small id="inn"></small></div>
-    <div class="pad">
+    <div class="pad" id="mainPad">
       <button type="button" class="k" data-c="sub">−1<small>1点へらす</small></button>
       <button type="button" class="k" data-c="undo">戻る<small>ひとつ前にもどす</small></button>
-      <button type="button" class="k" data-c="clock" id="kClock">残り秒数<small id="kClockS"></small></button>
-      <button type="button" class="k" data-c="warmup" id="kWarm">練習時間<small id="kWarmS"></small></button>
-      <button type="button" class="k" id="kPlayers">選手<small>名前と持ち点</small></button>
-      <button type="button" class="k" id="kNew">新しい試合<small>2回押す</small></button>
-      <button type="button" class="k cfb">設定<small>秒数・回数など</small></button>
-      <button type="button" class="k" data-c="home">メニュー<small>種目を選び直す</small></button>
+      <button type="button" class="k" data-c="clock" id="kClock">秒数カウント<small id="kClockS"></small></button>
+      <button type="button" class="k pzb" data-c="pause">一時停止<small>時計を止める</small></button>
+      <button type="button" class="k endb" style="grid-column:1/-1">試合終了<small>2回押す</small></button>
     </div>
     <p class="note" id="foot"></p>
+  </section>
+
+  <section class="card" id="vRes" hidden>
+    <h1>試合終了</h1>
+    <div class="over" id="resW"></div>
+    <p class="note" id="resT" style="margin:10px 0"></p>
+    <div class="rt" id="resB"></div>
+    <button type="button" class="go" data-c="newgame" style="margin-top:14px">新しい試合（同じ選手）</button>
+    <div class="pad" style="margin-top:10px">
+      <button type="button" class="k prePl" style="font-size:18px">選手を変える</button>
+      <button type="button" class="k" data-c="home" style="font-size:18px">メニュー</button>
+      <button type="button" class="k" data-c="undo" style="grid-column:1/-1;font-size:16px;min-height:56px">戻る<small>まちがえて終了した時</small></button>
+    </div>
   </section>
 
   <section class="card" id="vRo" hidden>
@@ -235,15 +246,16 @@ input:focus{outline:none;border-color:var(--lime)}
   var code = '', ws = null, tries = 0, ping = null, last = null, newAt = 0, gotState = false, joinT = null;
   var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
   var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
-  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin'; };
+  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin'; };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
+  function tvOf(m) { return !m ? 'vJoin' : m.kind === 'menu' ? 'vMenu' : m.over ? 'vRes' : m.kind === 'pocket' ? 'vPk' : 'vMain'; }
   function connect() {
     if (!code) return; if (ws && ws.readyState <= 1) return;
     status(false, '接続しています…');
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'つながっていません'); return; }
     ws.onopen = function () { tries = 0; status(true, '番号 ' + code.slice(0, 3) + ' ' + code.slice(3)); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
     ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'roster') { if (!m.part) roTmp = []; roTmp = roTmp.concat(m.list || []); if ((m.part || 0) + 1 >= (m.of || 1)) { ro = { gk: m.gk || '', t: m.t || '', d: m.d || 0, list: roTmp }; roTmp = []; roDraw(); } return; }
-      if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = m.kind === 'menu' ? 'vMenu' : m.kind === 'pocket' ? 'vPk' : 'vMain'; if (!OV[cur] && cur !== tv) show(tv); if ((cur === 'vPl' || cur === 'vCf' || cur === 'vPick') && tv === 'vMenu') show(tv); draw(); if (!m.wz) wzShown = false; if (m.wz && !wzShown && !OV[cur] && tv !== 'vMenu') { wzShown = true; plOpen(true); } } };
+      if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = tvOf(m); if (!OV[cur] && cur !== tv) show(tv); if ((cur === 'vPl' || cur === 'vCf' || cur === 'vPick') && tv === 'vMenu') show(tv); draw(); if (!m.wz) wzShown = false; if (m.wz && !wzShown && !OV[cur] && tv !== 'vMenu') { wzShown = true; plOpen(true); } } };
     ws.onclose = function () { clearInterval(ping); status(false, 'つなぎ直しています…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
@@ -255,19 +267,22 @@ input:focus{outline:none;border-color:var(--lime)}
     m.lab.forEach(function (x, i) { var d = document.createElement('div'); d.className = 'pp' + (i === m.turn && !m.over ? ' on' : ''); var n = document.createElement('span'); n.textContent = x; var v = document.createElement('b'); v.className = 'num'; v.textContent = m.score[i]; d.appendChild(n); d.appendChild(v); P.appendChild(d); });
     $('pkMidL').textContent = m.midL === 'FRAME' ? 'フレーム' : m.midL === 'INNING' ? 'イニング' : 'ラック'; $('pkMid').textContent = m.mid; $('pkInfo').textContent = m.info || '';
     $('pkOver').hidden = !m.over; if (m.over) $('pkOver').textContent = '試合終了 — ' + (m.win || '');
-    $('pkRdy').hidden = !m.rd; $('pkKeys').hidden = !!m.rd || !!m.over;
+    $('pkRdy').hidden = !m.rd; $('pkPad').hidden = !!m.rd; $('pkKeys').hidden = !!m.rd || !!m.over;
     if (m.rd) { var o = $('pkRdyO'); o.textContent = ''; m.n.forEach(function (x, i) { var d = document.createElement('div'); var a = document.createElement('i'); a.textContent = (i + 1) + '番'; var b = document.createElement('b'); b.textContent = m.lab[i]; d.appendChild(a); d.appendChild(b); o.appendChild(d); }); $('pkSwap').hidden = m.n.length < 2; }
     var K = $('pkKeys'), sig = JSON.stringify(m.keys); if (K.getAttribute('data-s') !== sig) { K.setAttribute('data-s', sig); K.textContent = '';
       (m.keys || []).forEach(function (kk) { var key = kk[0], lab = kk[1]; if (key === '*' || key === '/' || key === '.') return; var list = key === '0-9' ? ['0','1','2','3','4','5','6','7','8','9','10'] : [key];
         list.forEach(function (k1) { var b = document.createElement('button'); b.type = 'button'; b.className = 'k' + (k1 === '+' || k1 === 'Enter' ? ' hl' : ''); b.textContent = key === '0-9' ? k1 + '個' : lab; if (key !== '0-9') { var sm = document.createElement('small'); sm.textContent = k1 === 'BackSpace' ? '' : (k1 === 'Enter' ? '' : ''); }
           b.onclick = function () { if (key === '0-9') send({ type: 'cmd', c: 'set', v: +k1 }); else send({ type: 'key', k: k1 === 'BackSpace' ? 'Backspace' : k1 }); if (navigator.vibrate) navigator.vibrate(15); }; K.appendChild(b); }); }); }
-    $('pkClockS').textContent = m.t ? (m.tOn ? '動いています · ' + m.t + '秒' : m.t + '秒') : '設定で切になっています'; $('pkWarmS').textContent = m.pr ? '押すと閉じる' : m.pm + '分';
+    $('pkClockS').textContent = m.t ? (m.tOn ? '動いています · ' + m.t + '秒' : m.t + '秒') : '設定で切になっています';
   }
   function draw() {
     var m = last; if (!m) return;
     if (m.kind === 'menu') return drawMenu(m);
+    Array.prototype.forEach.call(document.querySelectorAll('.pzb'), function (b) { b.classList.toggle('hl', !!m.pz); b.firstChild.textContent = m.pz ? '再開' : '一時停止'; b.querySelector('small').textContent = m.pz ? '止まっています' : '時計を止める'; });
+    if (m.over) { $('resW').textContent = m.win || '試合終了'; $('resT').textContent = (m.title || '') + (m.gt ? '　試合時間 ' + m.gt : ''); var B = $('resB'); B.textContent = '';
+      (m.res || []).forEach(function (r) { var d = document.createElement('div'); d.className = 'rc'; var h = document.createElement('b'); h.textContent = r[0]; d.appendChild(h); var g = document.createElement('div'); (m.resH || []).forEach(function (t, i) { var c = document.createElement('span'); var a = document.createElement('small'); a.textContent = t; var v = document.createElement('i'); v.textContent = r[i + 1]; c.appendChild(a); c.appendChild(v); g.appendChild(c); }); d.appendChild(g); B.appendChild(d); }); return; }
     if (m.kind === 'pocket') return drawPk(m);
-    $('rdy').hidden = !m.rd; $('plBox').hidden = !!m.rd; $('runBox').hidden = !!m.rd;
+    $('rdy').hidden = !m.rd; $('mainPad').hidden = !!m.rd; $('plBox').hidden = !!m.rd; $('runBox').hidden = !!m.rd;
     if (m.rd) { var o = $('rdyO'); o.textContent = ''; m.n.forEach(function (x, i) { var d = document.createElement('div'); var a = document.createElement('i'); a.textContent = m.n.length === 2 ? (i ? '後攻' : '先攻') : (i + 1) + '番'; var b = document.createElement('b'); b.textContent = x + ' (' + m.g[i] + ')'; d.appendChild(a); d.appendChild(b); o.appendChild(d); }); $('rdySwap').firstChild.textContent = m.n.length === 2 ? '入れ替え' : '順番を回す'; }
     var N = m.n.length, ix = N === 2 ? [0, 1] : [m.turn, (m.turn + 1) % N];
     for (var c = 0; c < 2; c++) { var p = ix[c];
@@ -277,9 +292,9 @@ input:focus{outline:none;border-color:var(--lime)}
       $('p' + c).classList.toggle('on', p === m.turn && !m.over);
     }
     $('run').textContent = m.run; $('inn').textContent = (m.inn[m.turn] + (m.over ? 0 : 1)) + 'イニング目';
-    $('over').hidden = !m.over; if (m.over) { var w = 0, tie = false; m.n.forEach(function (x, i) { if (!i) return; var a = m.sc[i] / m.g[i], b = m.sc[w] / m.g[w]; if (a > b) { w = i; tie = false; } else if (a === b) tie = true; }); $('over').textContent = '試合終了 — ' + (tie ? '引き分け' : '勝者：' + m.n[w]); }
+    $('over').hidden = !m.over; if (m.over) { var w = 0, tie = false; m.n.forEach(function (x, i) { if (!i) return; var a = m.sc[i] / m.g[i], b = m.sc[w] / m.g[w]; if (a > b) { w = i; tie = false; } else if (a === b) tie = true; }); $('over').textContent = '試合終了 — ' + (tie ? '引き分け（DRAW）' : '勝者：' + m.n[w]); }
     $('kClock').classList.toggle('on', !!m.tOn); $('kClockS').textContent = m.t ? (m.tOn ? '動いています · ' + m.t + '秒' : m.t + '秒') : '設定で切になっています';
-    $('kWarm').classList.toggle('on', !!m.pr); $('kWarmS').textContent = m.pr ? '押すと閉じる' : m.pm + '分';
+    
     $('foot').textContent = m.table ? m.table + '番台' : '';
   }
   $('fJoin').addEventListener('submit', function (e) {
@@ -294,8 +309,6 @@ input:focus{outline:none;border-color:var(--lime)}
   $('bCode').onclick = function () { code = ''; try { localStorage.removeItem(CK); } catch (x) {} if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; } last = null; status(false, 'つながっていません'); show('vJoin'); };
   Array.prototype.forEach.call(document.querySelectorAll('[data-c]'), function (b) { b.addEventListener('click', function () { send({ type: 'cmd', c: b.getAttribute('data-c') }); if (navigator.vibrate) navigator.vibrate(15); }); });
   $('mBack').onclick = function () { send({ type: 'cmd', c: 'open', v: 'back' }); };
-  $('pkNew').onclick = function () { var n = Date.now(), sm = this.querySelector('small'); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); sm.textContent = '2回押す'; } else { newAt = n; sm.textContent = 'もう一度押すと決定'; setTimeout(function () { sm.textContent = '2回押す'; }, 2000); } };
-  $('kNew').onclick = function () { var n = Date.now(); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); this.querySelector('small').textContent = '2回押す'; } else { newAt = n; this.querySelector('small').textContent = 'もう一度押すと決定'; var el = this; setTimeout(function () { el.querySelector('small').textContent = '2回押す'; }, 2000); } };
   var PCOL = ['#FFFFFF', '#F2C200', '#E5484D', '#35C486'], PCN = ['白', '黄', '赤', '緑'], plN = 2, plBackTo = 'vMain', wzShown = false;
   var suOf = function () { return (last && last.su) || { min: 2, max: 2, t: '持ち点', d: 25 }; };
   function chips(p) {
@@ -336,7 +349,7 @@ input:focus{outline:none;border-color:var(--lime)}
   Array.prototype.forEach.call(document.querySelectorAll('.rob'), function (b) { b.onclick = roOpen; });
   $('roQ').addEventListener('input', roDraw); $('piQ').addEventListener('input', piDraw);
   $('roNew').onclick = function () { edOpen(null); };
-  $('roBack').onclick = function () { if (roFrom === 'vPl') { for (var p = 0; p < 4; p++) (function (p) { var i = $('pn' + p), g = $('pg' + p); if (!i || !g || !ro.t) return; ro.list.forEach(function (o) { if (o.n === i.value.trim() && o.g) g.value = o.g; }); })(p); show('vPl'); return; } show(last ? (last.kind === 'menu' ? 'vMenu' : last.kind === 'pocket' ? 'vPk' : 'vMain') : 'vJoin'); };
+  $('roBack').onclick = function () { if (roFrom === 'vPl') { for (var p = 0; p < 4; p++) (function (p) { var i = $('pn' + p), g = $('pg' + p); if (!i || !g || !ro.t) return; ro.list.forEach(function (o) { if (o.n === i.value.trim() && o.g) g.value = o.g; }); })(p); show('vPl'); return; } show(tvOf(last)); };
   $('piBack').onclick = function () { show('vPl'); };
   $('edBack').onclick = function () { show('vRo'); roDraw(); };
   $('edDel').onclick = function () { var n = Date.now(), sm = this.querySelector('small'); if (n - delAt < 2500) { delAt = 0; sm.textContent = '2回押す'; if (send({ type: 'roster', op: 'del', i: edI })) { show('vRo'); roDraw(); } } else { delAt = n; sm.textContent = 'もう一度押すと消えます'; setTimeout(function () { sm.textContent = '2回押す'; }, 2500); } };
@@ -353,17 +366,17 @@ input:focus{outline:none;border-color:var(--lime)}
     show('vCf');
   }
   Array.prototype.forEach.call(document.querySelectorAll('.cfb'), function (b) { b.onclick = cfOpen; });
-  $('bCfBack').onclick = function () { show(last && last.kind === 'pocket' ? 'vPk' : 'vMain'); };
-  $('fCf').addEventListener('submit', function (e) { e.preventDefault(); var v = {}; Array.prototype.forEach.call(document.querySelectorAll('#cfRows [data-k]'), function (i) { v[i.getAttribute('data-k')] = i.value; }); if (send({ type: 'config', v: v })) show(last && last.kind === 'pocket' ? 'vPk' : 'vMain'); });
-  $('kPlayers').onclick = function () { plOpen(false); };
-  $('pkPlayers').onclick = function () { plOpen(false); };
-  $('bPlBack').onclick = function () { show(last && last.kind === 'pocket' ? 'vPk' : 'vMain'); };
+  $('bCfBack').onclick = function () { show(tvOf(last)); };
+  $('fCf').addEventListener('submit', function (e) { e.preventDefault(); var v = {}; Array.prototype.forEach.call(document.querySelectorAll('#cfRows [data-k]'), function (i) { v[i.getAttribute('data-k')] = i.value; }); if (send({ type: 'config', v: v })) show(tvOf(last)); });
+  Array.prototype.forEach.call(document.querySelectorAll('.prePl'), function (b) { b.onclick = function () { plOpen(false); }; });
+  Array.prototype.forEach.call(document.querySelectorAll('.endb'), function (b) { b.onclick = function () { var n = Date.now(), sm = b.querySelector('small'); if (n - newAt < 2500) { newAt = 0; sm.textContent = '2回押す'; send({ type: 'cmd', c: 'end' }); } else { newAt = n; sm.textContent = 'もう一度押すと終了'; setTimeout(function () { sm.textContent = '2回押す'; }, 2500); } }; });
+  $('bPlBack').onclick = function () { show(tvOf(last)); };
   $('fPl').addEventListener('submit', function (e) {
     e.preventDefault(); var out = [], su = suOf();
     for (var p = 0; p < plN; p++) { var n = $('pn' + p).value.trim() || 'GUEST', o = { n: n }; if (su.t) o.g = Math.max(1, Math.min(999, parseInt($('pg' + p).value, 10) || su.d)); out.push(o); }
     out.forEach(function (o) { if (/^GUEST( \d)?$/i.test(o.n)) return; var hit = null; players.forEach(function (x) { if (x.n === o.n) hit = x; }); if (hit) { if (su.t === '持ち点') hit.g = o.g; } else players.unshift({ n: o.n, g: su.t === '持ち点' ? o.g : 0 }); });
     if (players.length > 300) players.length = 300; try { localStorage.setItem(PK, JSON.stringify(players)); } catch (x) {}
-    if (send({ type: 'setup', p: out })) { wzShown = true; show(last && last.kind === 'pocket' ? 'vPk' : 'vMain'); } else $('plErr').textContent = 'モニターにつながっていません。';
+    if (send({ type: 'setup', p: out })) { wzShown = true; show(tvOf(last)); } else $('plErr').textContent = 'モニターにつながっていません。';
   });
   var wl = null, wake = function () { try { if (navigator.wakeLock && document.visibilityState === 'visible') navigator.wakeLock.request('screen').then(function (l) { wl = l; }).catch(function () {}); } catch (e) {} };
   wake(); document.addEventListener('click', function once() { wake(); document.removeEventListener('click', once); });

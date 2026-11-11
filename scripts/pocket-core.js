@@ -116,7 +116,7 @@
   }
   function rdSwap() { if (!S.ready || NP() < 2) return; var c = S.cfg; if (NP() === 2) { c.n.reverse(); c.g.reverse(); } else { c.n.push(c.n.shift()); c.g.push(c.g.shift()); } render(); }
   function rdStart() { if (!S.ready) return; S.ready = false; begin(); render(); }
-  function gtText() { if (!S.t0) return '0:00'; var v = Math.max(0, Math.floor(((S.over && S.t1 ? S.t1 : Date.now()) - S.t0) / 1000)), h = Math.floor(v / 3600), m = Math.floor(v % 3600 / 60), x = v % 60, z = function (n) { return (n < 10 ? '0' : '') + n; }; return h ? h + ':' + z(m) + ':' + z(x) : m + ':' + z(x); }
+  function gtText() { if (!S.t0) return '0:00'; var v = Math.max(0, Math.floor(((S.over && S.t1 ? S.t1 : S.pz || Date.now()) - S.t0) / 1000)), h = Math.floor(v / 3600), m = Math.floor(v % 3600 / 60), x = v % 60, z = function (n) { return (n < 10 ? '0' : '') + n; }; return h ? h + ':' + z(m) + ':' + z(x) : m + ':' + z(x); }
   function drawTime() { var t = gtText(), e = $('gt'); if (e.textContent !== t) { e.textContent = t; e.classList.toggle('long', t.length > 5); } }
   var begin = function () { if (!S.t0) S.t0 = Date.now(); };
   function render() {
@@ -163,13 +163,13 @@
   }
   function tStop() { tOn = false; clearInterval(tId); tId = null; drawTimer(); }
   function tStart() {
-    if (!S.cfg.t || S.over) return; begin(); tStop(); tOn = true; tLeft = S.cfg.t; var last = Date.now(), warned = false, done = false;
+    if (!S.cfg.t || S.over) return; begin(); tStop(); tOn = true; tLeft = tRem || S.cfg.t; tRem = 0; var last = Date.now(), warned = false, done = false;
     tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('タイムアウトを使いました：' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
     drawTimer();
   }
   var tKick = function () { if (tOn) tStart(); };
   var nextTurn = function () { S.turn = (S.turn + 1) % NP(); };
-  function finish() { S.over = true; S.t1 = Date.now(); tStop(); render(); showWin(); }
+  function finish() { S.over = true; S.t1 = Date.now(); tStop(); render(); showWin(); if (typeof rmPush === 'function') rmPush(); }
   function add(n) {
     if (S.over) return; begin();
     if (isBow()) { var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('全部入りました。Enter で確定します'); return; } S.run = v; S.typed = false; tKick(); render(); return; }
@@ -217,7 +217,7 @@
   function showWin() {
     var val = function (p) { return isBow() ? bFrames(S.fr[p]).total : S.sc[p]; }, w = 0, tie = false, ps = S.cfg.n.map(function (x, i) { return i; }), sd = statDefs();
     ps.forEach(function (p) { if (p && val(p) > val(w)) { w = p; tie = false; } else if (p && val(p) === val(w)) tie = true; }); if (tie) w = -1;
-    $('wName').textContent = NP() === 1 ? 'スコア：' + val(0) : (w < 0 ? '引き分け' : '勝者：' + S.cfg.n[w]);
+    $('wName').textContent = NP() === 1 ? 'スコア：' + val(0) : (w < 0 ? '引き分け（DRAW）' : '勝者：' + S.cfg.n[w]);
     $('wH').textContent = ''; ['', isBow() ? 'スコア' : isSet() ? 'セット' : '点', sd[0][0], sd[1][0]].forEach(function (t) { $('wH').appendChild(el('th', '', t)); });
     var tb = $('wT'); tb.textContent = '';
     ps.forEach(function (p) { var tr = document.createElement('tr'); [label(p), isG5() ? signed(S.sc[p]) : isSet() ? S.sc[p] + ' / ' + S.cfg.g[p] : val(p), $('st' + p).textContent, $('sp' + p).textContent].forEach(function (v, i) { var c = document.createElement(i ? 'td' : 'th'); c.textContent = v; tr.appendChild(c); }); tb.appendChild(tr); });
