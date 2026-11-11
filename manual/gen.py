@@ -214,7 +214,7 @@ page(11, '試合の流れ',
   ('外したら交代', f'{kbd("Enter")} を押します。次の選手の番になり、ライムの枠が移ります。0点の時も、そのまま {kbd("Enter")} です。'),
   ('まちがえたら、もどす', f'{kbd("BackSpace")} で、ひとつずつ前にもどります。交代のあとでももどせます。'),
   ('持ち点に届いたら試合終了', f'「GAME OVER」と結果が出ます。{kbd("Enter")} で次の試合（選手の登録）へ進みます。'),
- ]) + '<div class="two imgs">' + f'<figure>{img("ready")}<figcaption>準備の画面：左が先攻（1ST · BREAK）、右が後攻（2ND）。{kbd("/")} で入れ替え、{kbd("Enter")} で試合開始</figcaption></figure><figure>{img("win")}<figcaption>試合終了：勝った選手（WINNER）と成績が出ます</figcaption></figure></div>' +
+ ]) + '<div class="one imgs">' + f'<figure>{img("ready")}<figcaption>準備の画面：左が先攻（1ST · BREAK）、右が後攻（2ND）。{kbd("/")} で入れ替え、{kbd("Enter")} で試合開始</figcaption></figure></div>' +
  note('裏撞き（うらづき）について', '誰かが先に持ち点に届いても、その回の最後の選手まで撞いてから試合終了になります。いらない時は、設定（<b class="in">16章</b>）の「EQUALIZING INNING」を OFF にします。'),
  'スリークッションでは、座っている人（相手）がカウントします。撞き終わった人は、席にもどって交代のキーを押します。')
 
