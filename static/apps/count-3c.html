@@ -450,9 +450,37 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     tStop(); render();
   }
   /* ===== player entry by numeric keypad ===== */
-  var PK = 'vibes-count-3c-players-v2', players = [];
-  try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) { players = []; }
-  var savePlayers = function () { try { localStorage.setItem(PK, JSON.stringify(players)); } catch (e) {} };
+  var PK = 'vibes-players-v3', PK0 = 'vibes-count-3c-players-v2', players = [], plK = '';
+  var GK = function () { return S.cfg.mode || S.cfg.game || 'three'; };
+  function yGuess(o) { if (o.ys || o.ym || typeof vnames !== 'function' || !vnames.yomi) return; var y = vnames.yomi(o.sei, o.mei); o.ys = y[0]; o.ym = y[1]; }
+  function plLoad() {
+    var a = null; try { a = JSON.parse(localStorage.getItem(PK) || 'null'); if (!a) { a = JSON.parse(localStorage.getItem(PK0) || '[]') || []; a.forEach(function (o) { if (o.g && !S.cfg.mode) o.gs = { three: o.g }; }); } } catch (e) {}
+    players = Array.isArray(a) ? a : []; plK = GK();
+    players.forEach(function (o) { if (!o.id) o.id = Math.random().toString(36).slice(2, 10); if (!o.gs) o.gs = {}; o.g = o.gs[plK]; yGuess(o); });
+  }
+  plLoad();
+  var savePlayers = function () {
+    players.forEach(function (o) { if (o.g) o.gs[plK] = o.g; });
+    try { localStorage.setItem(PK, JSON.stringify(players.map(function (o) { return { id: o.id, sei: o.sei, mei: o.mei || '', ys: o.ys || '', ym: o.ym || '', gs: o.gs }; }))); } catch (e) {}
+    if (GK() !== plK) plLoad(); roPush();
+  };
+  var nmSplit = function (n) { n = String(n || '').replace(/[\s\u3000]+/g, ' ').trim().slice(0, 20); var i = n.indexOf(' '); return i > 0 ? [n.slice(0, i), n.slice(i + 1)] : [n, '']; };
+  function roFind(n) { var a = nmSplit(n), hit = null; players.forEach(function (o) { if (o.sei === a[0] && (o.mei || '') === a[1]) hit = o; }); return hit; }
+  function roUp(n, g, y) { if (GK() !== plK) plLoad(); var a = nmSplit(n); if (!a[0]) return null; var o = roFind(n); if (!o) { o = { id: Math.random().toString(36).slice(2, 10), sei: a[0], mei: a[1], ys: '', ym: '', gs: {} }; players.push(o); if (players.length > 500) players.shift(); } if (g) o.g = g; yGuess(o); if (typeof y === 'string' && y) { o.ys = y.slice(0, 30); o.ym = ''; } return o; }
+  function roPush() { if (!(rws && rws.readyState === 1)) return; if (GK() !== plK) plLoad(); var su = {}; try { su = JSON.parse(rmState()).su || {}; } catch (e) {}
+    var L = players.map(function (o) { return { i: o.id, n: full(o), y: (o.ys || '') + (o.ym || ''), g: o.g || 0 }; }), of = Math.max(1, Math.ceil(L.length / 100));
+    try { for (var k = 0; k < of; k++) rws.send(JSON.stringify({ type: 'roster', gk: plK, t: su.t || '', d: su.d || 0, part: k, of: of, list: L.slice(k * 100, k * 100 + 100) })); } catch (e) {} }
+  function roHandle(m) {
+    if (GK() !== plK) plLoad(); var su = {}; try { su = JSON.parse(rmState()).su || {}; } catch (e) {}
+    if (m.op === 'del') { players = players.filter(function (o) { return o.id !== m.i; }); return savePlayers(); }
+    if (m.op !== 'save' || !m.p) return; var a = nmSplit(m.p.n); if (!a[0] || /^GUEST/i.test(a[0])) return roPush();
+    var o = null, old = ''; players.forEach(function (x) { if (m.p.i && x.id === m.p.i) o = x; });
+    if (o) { old = full(o); o.sei = a[0]; o.mei = a[1]; } else o = roUp(m.p.n);
+    if (typeof m.p.y === 'string') { o.ys = m.p.y.replace(/\s+/g, '').slice(0, 30); o.ym = ''; } yGuess(o);
+    var g = parseInt(m.p.g, 10); if (su.t && g >= 1 && g <= 999) o.g = g;
+    var hit = false; for (var q = 0; q < NP(); q++) if (S.cfg.n[q] === (old || full(o))) { hit = true; S.cfg.n[q] = full(o); if (su.t && o.g) S.cfg.g[q] = Math.max(o.g, S.sc[q] || 1); }
+    savePlayers(); if (hit) { if (S.run > room()) S.run = Math.max(0, room()); render(); }
+  }
   var full = function (o) { return o.mei ? o.sei + ' ' + o.mei : o.sei; };
   var KROWS = { 1: 'あいうえお', 2: 'かきくけこ', 3: 'さしすせそ', 4: 'たちつてと', 5: 'なにぬねの', 6: 'はひふへほ', 7: 'まみむめも', 8: 'やゆよ', 9: 'らりるれろ', 0: 'わをんー' };
   var KORDER = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
@@ -463,7 +491,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   var W = null;
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function keysHelp(list) { var k = $('wzK'); k.textContent = ''; list.forEach(function (a) { var sp = el('span'); sp.appendChild(el('kbd', '', a[0])); sp.appendChild(document.createTextNode(a[1])); k.appendChild(sp); }); }
-  function wzOpen(p) { try { players = JSON.parse(localStorage.getItem(PK) || '[]') || players; } catch (e) {} tStop(); $('setL').hidden = true; W = { p: p || 0, step: fresh() && !p ? 'count' : 'mode', done: [null, null, null, null] }; $('wzL').hidden = false; wzDraw(); }
+  function wzOpen(p) { plLoad(); tStop(); $('setL').hidden = true; W = { p: p || 0, step: fresh() && !p ? 'count' : 'mode', done: [null, null, null, null] }; $('wzL').hidden = false; wzDraw(); }
   function wzClose() { W = null; $('wzL').hidden = true; render(); }
   function wzFinish() {
     var gs = [];
@@ -502,7 +530,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     if (c.guest) W.done[W.p] = { name: 'GUEST', g: g, guest: true };
     else {
       var hit = null; players.forEach(function (o) { if (o.sei === c.sei && (o.mei || '') === (c.mei || '')) hit = o; });
-      if (hit) { hit.g = g; if (c.ys) { hit.ys = c.ys; hit.ym = c.ym || ''; } } else { players.push({ sei: c.sei, mei: c.mei || '', ys: c.ys || '', ym: c.ym || '', g: g }); if (players.length > 500) players.shift(); }
+      if (hit) { hit.g = g; if (c.ys) { hit.ys = c.ys; hit.ym = c.ym || ''; } } else { players.push({ id: Math.random().toString(36).slice(2, 10), gs: {}, sei: c.sei, mei: c.mei || '', ys: c.ys || '', ym: c.ym || '', g: g }); if (players.length > 500) players.shift(); }
       savePlayers(); W.done[W.p] = { name: full(c), g: g, guest: false };
     }
     wzNext();
@@ -593,7 +621,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       else if (d === 0) { W.page = (W.page + 1) % pages; W.sel = W.page * per; wzDraw(); }
       else if (k === '-' && W.step === 'pick' && items[W.sel]) {
         if (W.del !== W.sel) { W.del = W.sel; wzDraw(); }
-        else { var o2 = items[W.sel], ix2 = players.indexOf(o2); if (ix2 >= 0) players.splice(ix2, 1); try { localStorage.setItem(PK, JSON.stringify(players)); } catch (e2) {} delete roster[full(o2)]; try { localStorage.setItem(RK, JSON.stringify(roster)); } catch (e3) {} drawRoster(); W.del = null; pickLoad(); }
+        else { var o2 = items[W.sel], ix2 = players.indexOf(o2); if (ix2 >= 0) players.splice(ix2, 1); savePlayers(); delete roster[full(o2)]; try { localStorage.setItem(RK, JSON.stringify(roster)); } catch (e3) {} drawRoster(); W.del = null; pickLoad(); }
       }
       else if (k === 'Backspace') { W.del = null; var q = W.kana; kanaStart(W.purpose, W.part); W.kana = q; wzDraw(); }
       else if (k === 'Enter') {
@@ -647,7 +675,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   function rmConnect() {
     if (!rm || !rm.on) return; if (rws && rws.readyState <= 1) return;
     try { rws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { rws = null; return; }
-    rws.onopen = function () { rTry = 0; rmStatus(); rmPush(); clearInterval(rPing); rPing = setInterval(function () { if (rws && rws.readyState === 1) rws.send('ping'); }, 25000); };
+    rws.onopen = function () { rTry = 0; rmStatus(); rmPush(); roPush(); clearInterval(rPing); rPing = setInterval(function () { if (rws && rws.readyState === 1) rws.send('ping'); }, 25000); };
     rws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } rmHandle(m); };
     rws.onclose = function () { clearInterval(rPing); rmStatus(); if (rm && rm.on) setTimeout(rmConnect, Math.min(15000, 1000 * Math.pow(2, rTry++))); };
     rws.onerror = function () { try { rws.close(); } catch (e) {} };
@@ -655,7 +683,8 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   }
   function goHome() { location.href = U_HOME + (TB ? '?t=' + TB : ''); }
   function rmHandle(m) {
-    if (m.type === 'hello') { toast('スマホがつながりました'); return rmPush(); }
+    if (m.type === 'hello') { toast('スマホがつながりました'); rmPush(); return roPush(); }
+    if (m.type === 'roster') return roHandle(m);
     if (m.type === 'cmd' && m.c === 'home') { goHome(); return; }
     if (m.type === 'setup' && m.p && m.p.length >= 1 && m.p.length <= 4) {
       if (KM) return; if (!$('setL').hidden) closeSet(false); if (!$('rmL').hidden) $('rmL').hidden = true; if (!$('prL').hidden) prClose();
@@ -665,6 +694,9 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       var gsu = [];
       for (var q = 0; q < NP() && q < m.p.length; q++) { var nm = String(m.p[q].n || '').slice(0, 20).trim() || 'GUEST', gv = parseInt(m.p[q].g, 10); S.cfg.n[q] = nm; S.cfg.g[q] = Math.max(isNaN(gv) ? (S.cfg.g[q] || 25) : Math.max(1, Math.min(999, gv)), S.sc[q] || 1); if (/^GUEST( \d)?$/i.test(nm)) gsu.push(q); }
       gsu.forEach(function (q2, i) { S.cfg.n[q2] = gsu.length > 1 ? 'GUEST ' + (i + 1) : 'GUEST'; });
+      var suT = ''; try { suT = JSON.parse(rmState()).su.t; } catch (e) {}
+      for (var q3 = 0; q3 < NP() && q3 < m.p.length; q3++) if (!/^GUEST/.test(S.cfg.n[q3]) && !isDefName(S.cfg.n[q3])) roUp(S.cfg.n[q3], suT ? S.cfg.g[q3] : 0);
+      savePlayers();
       if (S.run > room()) S.run = Math.max(0, room());
       if (fresh()) S.ready = true;
       return render();

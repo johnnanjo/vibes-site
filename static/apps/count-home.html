@@ -154,12 +154,24 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   function connect() {
     if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { ws = null; return; }
-    ws.onopen = function () { tries = 0; draw(); push(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'hello') return push(); if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
+    ws.onopen = function () { tries = 0; draw(); push(); roPush(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
     ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
   function qrSvg(code) { try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + code); q.make(); return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { return ''; } }
+  var PLK = 'vibes-players-v3';
+  function roGet() { var a = null; try { a = JSON.parse(localStorage.getItem(PLK) || localStorage.getItem('vibes-count-3c-players-v2') || '[]'); } catch (e) {} a = Array.isArray(a) ? a : []; a.forEach(function (o) { if (!o.id) o.id = Math.random().toString(36).slice(2, 10); if (!o.gs) { o.gs = {}; if (o.g) o.gs.three = o.g; } delete o.g; }); return a; }
+  function roSet(a) { try { localStorage.setItem(PLK, JSON.stringify(a)); } catch (e) {} roPush(); }
+  var roFull = function (o) { return o.mei ? o.sei + ' ' + o.mei : o.sei; };
+  function roPush() { if (!(ws && ws.readyState === 1)) return; var L = roGet().map(function (o) { return { i: o.id, n: roFull(o), y: (o.ys || '') + (o.ym || ''), g: 0 }; }), of = Math.max(1, Math.ceil(L.length / 100)); try { for (var k = 0; k < of; k++) ws.send(JSON.stringify({ type: 'roster', gk: '', t: '', d: 0, part: k, of: of, list: L.slice(k * 100, k * 100 + 100) })); } catch (e) {} }
+  function roHandle(m) {
+    var a = roGet(); if (m.op === 'del') return roSet(a.filter(function (o) { return o.id !== m.i; }));
+    if (m.op !== 'save' || !m.p) return; var n = String(m.p.n || '').replace(/[\s\u3000]+/g, ' ').trim().slice(0, 20), i = n.indexOf(' '), sei = i > 0 ? n.slice(0, i) : n, mei = i > 0 ? n.slice(i + 1) : ''; if (!sei || /^GUEST/i.test(sei)) return roPush();
+    var o = null; a.forEach(function (x) { if ((m.p.i && x.id === m.p.i) || (!m.p.i && x.sei === sei && (x.mei || '') === mei)) o = x; });
+    if (!o) { o = { id: Math.random().toString(36).slice(2, 10), gs: {}, ys: '', ym: '' }; a.push(o); } o.sei = sei; o.mei = mei;
+    if (typeof m.p.y === 'string') { o.ys = m.p.y.replace(/\s+/g, '').slice(0, 30); o.ym = ''; } roSet(a);
+  }
   function rmOpen() {
     if (!rm || !/^\d{6}$/.test(rm.code || '')) rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true };
     rm.on = true; saveRm(); $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('rmQ').innerHTML = qrSvg(rm.code); $('rmL').hidden = false; showMenu = false; connect(); draw();
