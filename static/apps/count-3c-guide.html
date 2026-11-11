@@ -1,0 +1,329 @@
+<style>
+.cg{max-width:980px;margin:0 auto;padding:0 16px 56px}
+.cg h1{font-size:clamp(26px,5vw,40px);line-height:1.25;margin:0 0 10px;font-weight:900}
+.cg h2{font-size:clamp(20px,3.4vw,26px);line-height:1.35;margin:0 0 6px;font-weight:900}
+.cg h3{font-size:16px;margin:0 0 6px;font-weight:800}
+.cg p{margin:0 0 10px;max-width:38em}
+.cg-hero{background:var(--night);color:var(--chalk);border-radius:0 0 28px 28px;padding:28px 20px 30px;margin:0 -16px 26px}
+.cg-hero p{color:var(--sub-d)}
+.cg-hero .in{max-width:948px;margin:0 auto}
+.cg-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.cg-btn{display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border-radius:999px;font-weight:800;text-decoration:none;border:0;font:inherit;font-weight:800;cursor:pointer}
+.cg-btn.go{background:var(--lime);color:var(--night)}
+.cg-btn.sub{background:var(--night2);color:var(--chalk)}
+.cg-toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px;padding:0;list-style:none}
+.cg-toc a{display:block;padding:8px 14px;border-radius:999px;background:var(--card);box-shadow:0 0 0 1px var(--line);text-decoration:none;font-size:13px;font-weight:700}
+.cg-sec{background:var(--card);border-radius:var(--r);box-shadow:0 0 0 1px var(--line);padding:22px 18px;margin:0 0 18px}
+.cg-lead{color:var(--sub);font-size:14px}
+.cg kbd{display:inline-block;min-width:1.9em;padding:1px 7px;border-radius:7px;background:var(--night);color:var(--chalk);font:700 13px/1.7 var(--jp);text-align:center;white-space:nowrap}
+.cg-note{background:var(--chalk);border-radius:var(--rs);padding:12px 14px;font-size:13.5px;margin-top:12px}
+.cg-note b{display:block}
+
+/* what you need */
+.cg-need{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.cg-need div{background:var(--chalk);border-radius:var(--rs);padding:14px 12px;text-align:center;font-size:13px;line-height:1.5}
+.cg-need svg{display:block;margin:0 auto 8px;width:54px;height:44px}
+.cg-need b{display:block;font-size:14px}
+
+/* ten-key */
+.cg-pad-wrap{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:22px;align-items:start;margin-top:16px}
+.cg-pad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:74px;gap:7px;background:var(--night);padding:12px;border-radius:18px}
+.cg-key{background:var(--night2);color:var(--chalk);border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3px;line-height:1.15}
+.cg-key b{font-family:var(--disp);font-weight:400;font-size:26px;line-height:1}
+.cg-key span{font-size:10.5px;font-weight:700;margin-top:5px;color:var(--sub-d)}
+.cg-key.main{background:var(--lime);color:var(--night)}
+.cg-key.main span{color:var(--night)}
+.cg-key.act{background:var(--felt-carom)}
+.cg-key.act span{color:#fff}
+.cg-key.off{background:transparent;box-shadow:inset 0 0 0 1px var(--line-d)}
+.cg-key.off b{font-size:13px;font-family:var(--jp);font-weight:700;color:var(--sub-d)}
+.cg-key.num b{font-size:24px}
+.cg-key.t2{grid-row:span 2}.cg-key.w2{grid-column:span 2}
+.cg-keys{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.cg-keys li{display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px;align-items:baseline;padding-bottom:8px;border-bottom:1px solid var(--line2);font-size:14px}
+.cg-keys li:last-child{border:0}
+.cg-keys small{display:block;color:var(--sub);font-size:12.5px}
+
+/* screen mock */
+.cg-scr{background:var(--night);border-radius:16px;padding:12px;color:#fff;margin-top:16px;position:relative}
+.cg-scr .top{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,.8fr) minmax(0,1.6fr);gap:8px}
+.cg-pl{background:var(--felt-carom);border-radius:12px;padding:10px;position:relative;min-height:150px}
+.cg-pl.on{box-shadow:0 0 0 3px var(--lime)}
+.cg-pl .nm{font-weight:800;font-size:clamp(11px,2.3vw,17px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cg-pl .sc{font-family:var(--disp);font-size:clamp(46px,11vw,96px);line-height:1;text-align:center;margin:4px 0 6px}
+.cg-pl.y .sc{color:#F2C200}
+.cg-pl .st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.cg-pl .st i{font-style:normal;background:rgba(0,0,0,.28);border-radius:6px;text-align:center;font-size:clamp(7px,1.3vw,10px);padding:3px 0;line-height:1.3}
+.cg-pl .st i b{display:block;font-family:var(--disp);font-weight:400;font-size:clamp(12px,2.4vw,18px)}
+.cg-pl .tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--lime);color:var(--night);font-size:clamp(7px,1.3vw,10px);font-weight:800;padding:1px 8px;border-radius:99px;white-space:nowrap}
+.cg-mid{display:grid;gap:8px}
+.cg-mid div{background:var(--night2);border-radius:12px;text-align:center;padding:8px 2px;font-size:clamp(8px,1.4vw,11px);display:flex;flex-direction:column;justify-content:center}
+.cg-mid b{font-family:var(--disp);font-weight:400;font-size:clamp(26px,6vw,48px);line-height:1}
+.cg-sheet{font-size:clamp(9px,1.6vw,12px);margin:10px 4px 8px;color:var(--sub-d);line-height:1.7}
+.cg-cd{display:grid;grid-template-columns:minmax(0,1fr) 22% minmax(0,1fr);gap:5px;height:58px}
+.cg-cd .bar{border-radius:5px}
+.cg-cd .l{background:repeating-linear-gradient(90deg,transparent 0 2px,var(--night) 2px 4px),linear-gradient(90deg,hsl(0,75%,50%),hsl(55,80%,50%))}
+.cg-cd .r{background:repeating-linear-gradient(90deg,transparent 0 2px,var(--night) 2px 4px),linear-gradient(90deg,hsl(75,80%,50%),hsl(135,75%,45%))}
+.cg-cd .n{border:2px solid #fff;border-radius:8px;font-family:var(--disp);font-size:46px;line-height:54px;text-align:center}
+.cg-pin{position:absolute;width:24px;height:24px;border-radius:50%;background:#fff;color:var(--night);font:800 13px/24px var(--jp);text-align:center;box-shadow:0 0 0 2px var(--night)}
+.cg-legend{margin:14px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px;font-size:14px}
+.cg-legend li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px}
+.cg-legend i{font-style:normal;width:24px;height:24px;border-radius:50%;background:var(--night);color:#fff;font:800 13px/24px var(--jp);text-align:center}
+.cg-legend small{display:block;color:var(--sub);font-size:12.5px}
+
+/* flow */
+.cg-flow{margin:14px 0 0;padding:0;list-style:none;counter-reset:f;display:grid;gap:8px}
+.cg-flow li{counter-increment:f;display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--chalk);border-radius:var(--rs);padding:12px 14px}
+.cg-flow li::before{content:counter(f);font-family:var(--disp);font-size:30px;line-height:1}
+.cg-flow b{display:block;font-size:15px}
+.cg-flow span{font-size:13px;color:var(--sub)}
+.cg-flow .k{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.cg-flow .k kbd{font-size:15px;padding:4px 10px}
+
+/* kana */
+.cg-kana{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;margin-top:14px}
+.cg-kana div{display:grid;grid-template-columns:34px repeat(5,minmax(0,1fr));gap:4px;align-items:center}
+.cg-kana kbd{font-size:15px;padding:3px 0;min-width:0}
+.cg-kana span{background:var(--chalk);border-radius:8px;text-align:center;font-weight:800;font-size:17px;padding:5px 0 3px;line-height:1.1}
+.cg-kana span em{display:block;font-style:normal;font-size:10px;color:var(--sub);font-weight:700}
+.cg-ex{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:14px}
+.cg-ex i{font-style:normal;background:var(--chalk);border-radius:10px;padding:6px 10px;display:inline-flex;gap:4px;align-items:center}
+.cg-ex i b{font-size:17px;margin-left:4px}
+.cg-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.cg-box{background:var(--chalk);border-radius:var(--rs);padding:14px}
+.cg-box ol,.cg-box ul{margin:6px 0 0;padding-left:1.3em;font-size:14px}
+.cg-box li{margin-bottom:4px}
+.cg-tbl{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+.cg-tbl th,.cg-tbl td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line2);vertical-align:top}
+.cg-tbl th{font-size:12.5px;color:var(--sub);white-space:nowrap}
+.cg-tbl td:first-child{font-weight:700}
+.cg-qa{margin:12px 0 0;display:grid;gap:8px}
+.cg-qa details{background:var(--chalk);border-radius:var(--rs);padding:12px 14px}
+.cg-qa summary{font-weight:800;cursor:pointer}
+.cg-qa p{margin:8px 0 0;font-size:14px}
+@media (max-width:720px){
+  .cg-pad-wrap,.cg-two{grid-template-columns:minmax(0,1fr)}
+  .cg-pad{max-width:360px;margin:0 auto;width:100%}
+  .cg-need,.cg-legend,.cg-kana{grid-template-columns:minmax(0,1fr)}
+  .cg-flow li{grid-template-columns:32px minmax(0,1fr)}
+  .cg-flow .k{grid-column:2;justify-content:flex-start}
+  .cg-keys li{grid-template-columns:92px minmax(0,1fr)}
+}
+@media print{
+  header,footer,.tabbar,.drawer,.cg-btns,.cg-toc,.hd,.ft,nav{display:none!important}
+  body{background:#fff}
+  .cg{max-width:none;padding:0}
+  .cg-hero{background:#fff;color:#000;padding:0 0 8px;margin:0 0 10px;border-radius:0}
+  .cg-hero p{color:#333}
+  .cg-sec{box-shadow:none;border:1px solid #bbb;break-inside:avoid;padding:14px}
+  .cg-pad-wrap{grid-template-columns:300px minmax(0,1fr)}
+  .cg-qa details{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+<main class="cg">
+<div class="cg-hero"><div class="in">
+<h1>スリークッション デジタルカウントの使い方</h1>
+<p>モニターに映して、テンキーだけで操作するカウントです。得点・交代・残り秒数・選手の名前まで、テンキーで入れられます。</p>
+<div class="cg-btns"><a class="cg-btn go" href="/pages/count-3c">カウントを開く</a><button class="cg-btn sub" type="button" onclick="window.print()">この説明書を印刷する</button></div>
+</div></div>
+
+<ul class="cg-toc">
+<li><a href="#need">用意するもの</a></li><li><a href="#keys">テンキー早見表</a></li><li><a href="#screen">画面の見方</a></li><li><a href="#flow">試合の流れ</a></li><li><a href="#players">選手の登録</a></li><li><a href="#warmup">練習タイマー</a></li><li><a href="#settings">設定</a></li><li><a href="#offline">ネットなし・タブレット</a></li><li><a href="#qa">困ったとき</a></li>
+</ul>
+
+<section class="cg-sec" id="need">
+<h2>用意するもの</h2>
+<p class="cg-lead">この3つがあれば使えます。料金はかかりません。</p>
+<div class="cg-need">
+<div><svg viewBox="0 0 54 44" fill="none" stroke="#171A22" stroke-width="2.5" stroke-linejoin="round"><rect x="9" y="6" width="36" height="24" rx="3"/><path d="M3 36h48l-3 4H6z"/></svg><b>パソコン または タブレット</b>ChromeかEdgeで開きます</div>
+<div><svg viewBox="0 0 54 44" fill="none" stroke="#171A22" stroke-width="2.5" stroke-linejoin="round"><rect x="4" y="4" width="46" height="28" rx="3"/><path d="M27 32v7M17 40h20"/></svg><b>モニター</b>HDMIケーブルでつなぎます</div>
+<div><svg viewBox="0 0 54 44" fill="none" stroke="#171A22" stroke-width="2.5" stroke-linejoin="round"><rect x="12" y="3" width="30" height="38" rx="4"/><path d="M19 12h3M26 12h3M33 12h3M19 20h3M26 20h3M33 20v8M19 28h3M26 28h3M19 35h10M33 35h3" stroke-linecap="round"/></svg><b>テンキー</b>無線が便利です</div>
+</div>
+<div class="cg-note"><b>はじめに</b><kbd>F</kbd> を押すと全画面になります。もう一度押すと元にもどります。</div>
+</section>
+
+<section class="cg-sec" id="keys">
+<h2>テンキー早見表</h2>
+<p class="cg-lead">よく使うのは <kbd>+</kbd> と <kbd>Enter</kbd> の2つです。この表を印刷して、台のそばに置いてください。</p>
+<div class="cg-pad-wrap">
+<div class="cg-pad" aria-label="テンキーの配置">
+<div class="cg-key off" style="grid-column:1 / span 2;grid-row:1"><b>テンキー</b></div>
+<div class="cg-key act" style="grid-column:3 / span 2;grid-row:1"><b style="font-size:20px">BackSpace</b><span>ひとつ前にもどす</span></div>
+<div class="cg-key off" style="grid-column:1;grid-row:2"><b>Num<br>Lock</b></div>
+<div class="cg-key" style="grid-column:2;grid-row:2"><b>/</b><span>設定</span></div>
+<div class="cg-key act" style="grid-column:3;grid-row:2"><b>*</b><span>残り秒数<br>開始・停止</span></div>
+<div class="cg-key" style="grid-column:4;grid-row:2"><b>−</b><span>1点へらす</span></div>
+<div class="cg-key main t2" style="grid-column:4;grid-row:3 / span 2"><b>+</b><span>1点</span></div>
+<div class="cg-key num" style="grid-column:1;grid-row:3"><b>7</b></div><div class="cg-key num" style="grid-column:2;grid-row:3"><b>8</b></div><div class="cg-key num" style="grid-column:3;grid-row:3"><b>9</b></div>
+<div class="cg-key num" style="grid-column:1;grid-row:4"><b>4</b></div><div class="cg-key num" style="grid-column:2;grid-row:4"><b>5</b><span>数字＝点数を<br>まとめて入力</span></div><div class="cg-key num" style="grid-column:3;grid-row:4"><b>6</b></div>
+<div class="cg-key num" style="grid-column:1;grid-row:5"><b>1</b></div><div class="cg-key num" style="grid-column:2;grid-row:5"><b>2</b></div><div class="cg-key num" style="grid-column:3;grid-row:5"><b>3</b></div>
+<div class="cg-key main t2" style="grid-column:4;grid-row:5 / span 2"><b>Enter</b><span>交代</span></div>
+<div class="cg-key num w2" style="grid-column:1 / span 2;grid-row:6"><b>0</b></div>
+<div class="cg-key" style="grid-column:3;grid-row:6"><b>.</b><span>2回で<br>新しい試合</span></div>
+</div>
+<ul class="cg-keys">
+<li><span><kbd>+</kbd></span><span>1点入れる<small>当たるたびに1回押します</small></span></li>
+<li><span><kbd>Enter</kbd></span><span>交代する<small>外したら押します。今の点が得点に入り、相手の番になります</small></span></li>
+<li><span><kbd>BackSpace</kbd></span><span>ひとつ前にもどす<small>押しまちがえた時。何回でももどせます</small></span></li>
+<li><span><kbd>−</kbd></span><span>1点へらす<small>試合が始まる前は、練習タイマーが開きます</small></span></li>
+<li><span><kbd>0</kbd>〜<kbd>9</kbd></span><span>点数をまとめて入れる<small>例：<kbd>5</kbd> → <kbd>Enter</kbd> で5点</small></span></li>
+<li><span><kbd>*</kbd></span><span>残り秒数を始める・止める</span></li>
+<li><span><kbd>.</kbd> を2回</span><span>新しい試合を始める<small>選手の登録画面が開きます</small></span></li>
+<li><span><kbd>/</kbd></span><span>設定を開く</span></li>
+</ul>
+</div>
+<div class="cg-note"><b>キーボードで使うキー</b><kbd>F</kbd> 全画面　<kbd>P</kbd> 練習タイマー　<kbd>Esc</kbd> 開いている画面を閉じる</div>
+</section>
+
+<section class="cg-sec" id="screen">
+<h2>画面の見方</h2>
+<p class="cg-lead">画面の文字は英語です。選手の名前だけ日本語で出ます。</p>
+<div class="cg-scr" aria-hidden="true">
+<div class="top">
+<div class="cg-pl on"><span class="tag">AT THE TABLE</span><div class="nm">◯ 山田 太郎 (30)</div><div class="sc">12</div><div class="st"><i>INNINGS<b>8</b></i><i>HIGH RUN<b>4</b></i><i>AVERAGE<b>1.500</b></i></div>
+<span class="cg-pin" style="top:-10px;left:6px">1</span><span class="cg-pin" style="top:26px;right:6px">2</span><span class="cg-pin" style="top:46%;left:8px">3</span><span class="cg-pin" style="bottom:28px;right:6px">6</span></div>
+<div class="cg-mid"><div style="position:relative">RUN<b>2</b><span class="cg-pin" style="top:4px;right:4px">4</span></div><div style="position:relative">INNING<b>9</b><span class="cg-pin" style="top:4px;right:4px">5</span></div></div>
+<div class="cg-pl y"><div class="nm">● GUEST (25)</div><div class="sc">9</div><div class="st"><i>INNINGS<b>8</b></i><i>HIGH RUN<b>3</b></i><i>AVERAGE<b>1.125</b></i></div></div>
+</div>
+<div class="cg-sheet" style="position:relative">◯ 山田 太郎 (30)　1 0 2 4 0 3 1 1<br>● GUEST (25)　0 2 1 0 3 0 2 1<span class="cg-pin" style="top:6px;right:4px">7</span></div>
+<div class="cg-cd" style="position:relative"><div class="bar l"></div><div class="n">40</div><div class="bar r"></div><span class="cg-pin" style="top:-8px;left:58%">8</span></div>
+</div>
+<ul class="cg-legend">
+<li><i>1</i><span>ライムの枠＝今撞いている選手<small>AT THE TABLE と出ます</small></span></li>
+<li><i>2</i><span>名前（持ち点）<small>白丸＝白球、黄丸＝黄球</small></span></li>
+<li><i>3</i><span>今の得点</span></li>
+<li><i>4</i><span>RUN＝このイニングで当てた点<small><kbd>Enter</kbd> を押すと得点に入ります</small></span></li>
+<li><i>5</i><span>INNING＝今何イニング目か</span></li>
+<li><i>6</i><span>INNINGS 撞いた回数／HIGH RUN 最高連続点／AVERAGE アベレージ</span></li>
+<li><i>7</i><span>スコア表<small>イニングごとの点が並びます</small></span></li>
+<li><i>8</i><span>残り秒数<small>1秒ごとにバーが1本ずつ消えます</small></span></li>
+</ul>
+</section>
+
+<section class="cg-sec" id="flow">
+<h2>試合の流れ</h2>
+<p class="cg-lead">上から順に押していけば、1試合ができます。</p>
+<ol class="cg-flow">
+<li><div><b>選手を登録する</b><span>名前と持ち点を入れます。くわしくは下の「選手の登録」へ。</span></div><div class="k"><kbd>.</kbd><kbd>.</kbd></div></li>
+<li><div><b>練習タイマーを使う（使う時だけ）</b><span>試合前に <kbd>−</kbd> を押すと開きます。<kbd>+</kbd> で開始、<kbd>Enter</kbd> で閉じます。</span></div><div class="k"><kbd>−</kbd></div></li>
+<li><div><b>残り秒数を始める（使う時だけ）</b><span>はじめは40秒です。残り10秒と0秒で音が鳴ります。</span></div><div class="k"><kbd>*</kbd></div></li>
+<li><div><b>当たったら1点</b><span>当たるたびに1回。まん中の RUN が増えます。</span></div><div class="k"><kbd>+</kbd></div></li>
+<li><div><b>外したら交代</b><span>RUN の点が得点に入り、相手の番になります。0点の時もそのまま押します。</span></div><div class="k"><kbd>Enter</kbd></div></li>
+<li><div><b>まちがえたら、もどす</b><span>交代のあとでも、ひとつずつ前にもどせます。</span></div><div class="k"><kbd>BackSpace</kbd></div></li>
+<li><div><b>持ち点に届いたら試合終了</b><span>GAME OVER と結果が出ます。<kbd>Enter</kbd> で次の試合（選手の登録）へ進みます。</span></div><div class="k"><kbd>Enter</kbd></div></li>
+</ol>
+<div class="cg-note"><b>後攻の裏撞きについて</b>先攻が先に持ち点に届いても、後攻がそのイニングを撞いてから試合終了になります。いらない場合は、設定の「EQUALIZING INNING」を OFF にします。</div>
+</section>
+
+<section class="cg-sec" id="players">
+<h2>選手の登録</h2>
+<p class="cg-lead"><kbd>.</kbd> を2回押すと登録画面が開きます。まず、3つの中から数字で選びます。</p>
+<table class="cg-tbl">
+<tr><th>キー</th><th>画面の表示</th><th>使う時</th></tr>
+<tr><td><kbd>1</kbd></td><td>SEARCH REGISTERED PLAYER</td><td>前に登録した選手を呼び出す</td></tr>
+<tr><td><kbd>2</kbd></td><td>NEW PLAYER</td><td>はじめての選手を登録する</td></tr>
+<tr><td><kbd>3</kbd></td><td>GUEST</td><td>名前を入れずに始める（2人ともゲストなら GUEST 1・GUEST 2）</td></tr>
+</table>
+
+<h3 style="margin-top:20px">かなの入れ方（数字を2回押す）</h3>
+<p class="cg-lead">1回目で行、2回目で文字を選びます。下の表が、そのまま画面にも出ます。</p>
+<div class="cg-kana">
+<div><kbd>1</kbd><span>あ<em>1</em></span><span>い<em>2</em></span><span>う<em>3</em></span><span>え<em>4</em></span><span>お<em>5</em></span></div>
+<div><kbd>6</kbd><span>は<em>1</em></span><span>ひ<em>2</em></span><span>ふ<em>3</em></span><span>へ<em>4</em></span><span>ほ<em>5</em></span></div>
+<div><kbd>2</kbd><span>か<em>1</em></span><span>き<em>2</em></span><span>く<em>3</em></span><span>け<em>4</em></span><span>こ<em>5</em></span></div>
+<div><kbd>7</kbd><span>ま<em>1</em></span><span>み<em>2</em></span><span>む<em>3</em></span><span>め<em>4</em></span><span>も<em>5</em></span></div>
+<div><kbd>3</kbd><span>さ<em>1</em></span><span>し<em>2</em></span><span>す<em>3</em></span><span>せ<em>4</em></span><span>そ<em>5</em></span></div>
+<div><kbd>8</kbd><span>や<em>1</em></span><span>ゆ<em>2</em></span><span>よ<em>3</em></span></div>
+<div><kbd>4</kbd><span>た<em>1</em></span><span>ち<em>2</em></span><span>つ<em>3</em></span><span>て<em>4</em></span><span>と<em>5</em></span></div>
+<div><kbd>9</kbd><span>ら<em>1</em></span><span>り<em>2</em></span><span>る<em>3</em></span><span>れ<em>4</em></span><span>ろ<em>5</em></span></div>
+<div><kbd>5</kbd><span>な<em>1</em></span><span>に<em>2</em></span><span>ぬ<em>3</em></span><span>ね<em>4</em></span><span>の<em>5</em></span></div>
+<div><kbd>0</kbd><span>わ<em>1</em></span><span>を<em>2</em></span><span>ん<em>3</em></span><span>ー<em>4</em></span></div>
+</div>
+<div class="cg-note"><b>濁点（゛）・半濁点（゜）・小さい字</b>文字を入れた直後に <kbd>*</kbd> を押します。押すたびに変わります。　か→<b style="display:inline">が</b>　は→<b style="display:inline">ば</b>→<b style="display:inline">ぱ</b>　つ→<b style="display:inline">づ</b>→<b style="display:inline">っ</b>　や→<b style="display:inline">ゃ</b></div>
+<h3 style="margin-top:18px">例：「ごとう」と入れる</h3>
+<div class="cg-ex"><i><kbd>2</kbd><kbd>5</kbd><b>こ</b></i>→<i><kbd>*</kbd><b>ご</b></i>→<i><kbd>4</kbd><kbd>5</kbd><b>と</b></i>→<i><kbd>1</kbd><kbd>3</kbd><b>う</b></i></div>
+
+<div class="cg-two">
+<div class="cg-box"><h3>はじめての選手（<kbd>2</kbd> NEW）</h3><ol>
+<li>名字のかなを入れて <kbd>Enter</kbd></li>
+<li>漢字の候補が出るので、番号で選んで <kbd>Enter</kbd></li>
+<li>名前のかなを入れて <kbd>Enter</kbd> → 番号で選んで <kbd>Enter</kbd><br><small>名前を入れない時は、何も入れずに <kbd>Enter</kbd></small></li>
+<li>持ち点を数字で入れて <kbd>Enter</kbd></li>
+</ol></div>
+<div class="cg-box"><h3>登録した選手（<kbd>1</kbd> SEARCH）</h3><ol>
+<li>名字のかなを1〜2文字入れて <kbd>Enter</kbd><br><small>何も入れずに <kbd>Enter</kbd> で全員が出ます</small></li>
+<li>番号で選んで <kbd>Enter</kbd></li>
+<li>持ち点を確かめて <kbd>Enter</kbd>（数字で変えられます）</li>
+</ol></div>
+</div>
+<table class="cg-tbl">
+<tr><th>こんな時</th><th>押すキー</th></tr>
+<tr><td>1文字消す・前の画面にもどる</td><td><kbd>BackSpace</kbd></td></tr>
+<tr><td>候補の次のページを見る</td><td><kbd>0</kbd></td></tr>
+<tr><td>登録をやめる</td><td><kbd>Esc</kbd></td></tr>
+<tr><td>名前をまちがえて登録した</td><td><kbd>.</kbd> を2回押して、<kbd>2</kbd> から入れ直します</td></tr>
+<tr><td>まちがえた登録を消す</td><td><kbd>1</kbd> → <kbd>Enter</kbd> → 番号で選ぶ → <kbd>−</kbd> を2回</td></tr>
+<tr><td>試合の途中で名前だけ直す</td><td>画面右上の「PLAYERS」を押します（得点は残ります）</td></tr>
+</table>
+<div class="cg-note"><b>漢字の候補について</b>漢字の候補はインターネットを使って出しています。ネットがない時は、ひらがな・カタカナで登録できます。</div>
+</section>
+
+<section class="cg-sec" id="warmup">
+<h2>練習タイマー</h2>
+<p class="cg-lead">試合前の練習時間をはかります。はじめは5分です。</p>
+<table class="cg-tbl">
+<tr><th>キー</th><th>動き</th></tr>
+<tr><td><kbd>−</kbd> または <kbd>P</kbd></td><td>練習タイマーを開く（<kbd>−</kbd> は試合が始まる前だけ）</td></tr>
+<tr><td><kbd>+</kbd></td><td>開始・一時停止</td></tr>
+<tr><td><kbd>1</kbd>〜<kbd>9</kbd></td><td>分数を変える（止まっている時）</td></tr>
+<tr><td><kbd>/</kbd></td><td>最初にもどす</td></tr>
+<tr><td><kbd>Enter</kbd></td><td>閉じて試合の画面へ</td></tr>
+</table>
+<p style="margin-top:10px;font-size:14px">残り30秒と0秒で音が鳴ります。10分以上にしたい時は、設定の「WARM-UP TIME」で1〜60分を入れます。</p>
+</section>
+
+<section class="cg-sec" id="settings">
+<h2>設定</h2>
+<p class="cg-lead"><kbd>/</kbd> を押すと開きます。数字を入れて <kbd>Enter</kbd> で保存、<kbd>Esc</kbd> でやめます。</p>
+<table class="cg-tbl">
+<tr><th>画面の表示</th><th>意味</th></tr>
+<tr><td>NAME／TARGET POINTS</td><td>選手の名前と持ち点</td></tr>
+<tr><td>INNING LIMIT</td><td>イニング制限。0 は制限なし</td></tr>
+<tr><td>SHOT CLOCK SECONDS</td><td>1ショットの秒数。0 は使わない</td></tr>
+<tr><td>WARM-UP TIME</td><td>練習タイマーの分数</td></tr>
+<tr><td>EQUALIZING INNING</td><td>後攻の裏撞き。ON＝あり</td></tr>
+<tr><td>SOUND</td><td>残り10秒・時間切れの音</td></tr>
+<tr><td>SWAP PLAYERS</td><td>先攻と後攻を入れ替える</td></tr>
+</table>
+</section>
+
+<section class="cg-sec" id="offline">
+<h2>ネットなし・タブレットで使う</h2>
+<div class="cg-two" style="margin-top:6px">
+<div class="cg-box"><h3>インターネットがない場所で使う</h3><ol>
+<li>ネットにつながる場所で、一度カウントを開きます。</li>
+<li>次からは、ネットがなくても同じページが開きます。</li>
+</ol><p style="font-size:13px;margin:8px 0 0">得点・残り秒数・練習タイマー・登録した選手は、ネットなしで使えます。漢字の候補とスマホからの操作は、ネットが必要です。</p></div>
+<div class="cg-box"><h3>タブレットをモニターにつなぐ</h3><ol>
+<li>タブレットとモニターを、変換アダプタとHDMIケーブルでつなぎます。</li>
+<li>無線のテンキーをタブレットにつなぎます。</li>
+<li>カウントを開きます。使用中は画面が消えません。</li>
+</ol><p style="font-size:13px;margin:8px 0 0">映像を出せないタブレットもあります。買う前に機種を確かめてください。</p></div>
+</div>
+<div class="cg-note"><b>スマホ・タブレットから操作する</b>画面右上の「REMOTE」を押すと6桁のコードが出ます。スマホで <a href="/pages/count-remote">カウントのリモコン</a> を開き、コードを入れると操作できます。</div>
+</section>
+
+<section class="cg-sec" id="qa">
+<h2>困ったとき</h2>
+<div class="cg-qa">
+<details><summary>キーを押しても動かない</summary><p>画面を一度クリックしてから押してください。テンキーの数字が効かない時は <kbd>NumLock</kbd> を押します。日本語入力がオン（「あ」）の時は、半角（「A」）に切り替えます。</p></details>
+<details><summary>点を入れすぎた・交代をまちがえた</summary><p><kbd>BackSpace</kbd> を押すと、ひとつずつ前にもどります。</p></details>
+<details><summary>残り秒数が動かない</summary><p><kbd>*</kbd> を押すと始まります。設定の「SHOT CLOCK SECONDS」が 0 の時は動きません。</p></details>
+<details><summary>音が鳴らない</summary><p>パソコンとモニターの音量を確かめてください。設定の「SOUND」が OFF の時は鳴りません。</p></details>
+<details><summary>ページを閉じてしまった</summary><p>もう一度開くと、試合の続きから始まります。得点は消えません。</p></details>
+<details><summary>画面を大きくしたい</summary><p><kbd>F</kbd> を押すと全画面になります。</p></details>
+</div>
+<div class="cg-btns" style="margin-top:18px"><a class="cg-btn go" href="/pages/count-3c">カウントを開く</a></div>
+</section>
+</main>

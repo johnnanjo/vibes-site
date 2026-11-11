@@ -22,7 +22,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .top{display:flex;align-items:center;justify-content:space-between;gap:2vw;min-height:5vh}
 .top img{height:4.4vh;width:auto}
 .top .ttl{font-weight:900;font-size:2.2vh;letter-spacing:.06em;color:var(--sub)}
-.top button{font:inherit;font-weight:700;font-size:1.8vh;color:var(--chalk);background:var(--night2);border:1px solid var(--line);border-radius:999px;padding:.8vh 1.6vw;cursor:pointer}
+.top button,.top #bHelp{text-decoration:none;font:inherit;font-weight:700;font-size:1.8vh;color:var(--chalk);background:var(--night2);border:1px solid var(--line);border-radius:999px;padding:.8vh 1.6vw;cursor:pointer}
 .top button:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
 .main{display:grid;grid-template-columns:1fr minmax(16vw,20vw) 1fr;gap:1vw;min-height:0}
 .side{position:relative;background:var(--felt);border-radius:2.4vh;display:grid;grid-template-rows:auto 1fr auto;padding:2vh 1.6vw;min-height:0;border:.6vh solid transparent;opacity:.55;transition:opacity .15s}
@@ -107,7 +107,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   .score{font-size:30vw}.name{font-size:5vw}.goal{font-size:2.6vw;padding:1vw 2vw}.goal b{font-size:5vw}.goal small{font-size:2.4vw}.who{flex-wrap:wrap}.sheet .lab{font-size:3.2vw;max-width:40vw}.ball{width:7vw;height:7vw}.stat b{font-size:6vw}.stat small{font-size:2.6vw}
   .run b,.inn b{font-size:11vw}.mid{grid-template-columns:1fr 1fr!important}.cd{height:22vw}.cd b{font-size:24vw;min-width:36vw}.box small,.keys,.sheet{font-size:3vw}.top .ttl{display:none}.turn{font-size:3vw;top:-3.4vw}
   .panel h2{font-size:5vw}.panel p,.f label{font-size:3.4vw}.f input,.f select,.btn{font-size:4vw}.grid2{grid-template-columns:1fr}
-  .sheet .row span{min-width:7vw;font-size:4vw}.top button{font-size:3.2vw;padding:1.6vw 3vw}.top img{height:9vw}
+  .sheet .row span{min-width:7vw;font-size:4vw}.top button,.top #bHelp{font-size:3.2vw;padding:1.6vw 3vw}.top img{height:9vw}
 }
 </style>
 </head>
@@ -116,7 +116,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   <div class="top">
     <a href="/" aria-label="VIBES BILLIARDS home"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
     <span class="ttl" id="ttl">3-CUSHION SCOREBOARD</span>
-    <span style="display:flex;gap:.8vw"><button type="button" id="bRm">REMOTE</button><button type="button" id="bKey" hidden>KEYS (K)</button><button type="button" id="bPl">PLAYERS</button><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
+    <span style="display:flex;gap:.8vw"><a href="/pages/count-3c-guide" target="_blank" rel="noopener" id="bHelp">GUIDE</a><button type="button" id="bRm">REMOTE</button><button type="button" id="bKey" hidden>KEYS (K)</button><button type="button" id="bPl">PLAYERS</button><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
   </div>
   <div class="main">
     <section class="side p0" id="s0" aria-label="Player 1">

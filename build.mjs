@@ -380,6 +380,7 @@ function contentPages() {
     .replace(/https:\/\/cdn\.shopify\.com\/s\/files\/1\/0792\/5533\/9107\/files\/vibes-kids-v2\.css\?v=\d+/, '/apps/kids/vibes-kids-v2.css').replace(/https:\/\/cdn\.shopify\.com\/s\/files\/1\/0792\/5533\/9107\/files\/vibes-kids-v2\.js\?v=\d+/, '/apps/kids/vibes-kids-v2.js');
   put('/pages/kids', { raw: fixHtml(kids) });
   put('/pages/count-3c', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-3c.html'), 'utf8') });
+  put('/pages/count-3c-guide', page({ title: 'スリークッション デジタルカウントの使い方', desc: 'モニターとテンキーで使うスリークッション用デジタルカウントの説明書。テンキー早見表、画面の見方、選手の登録、練習タイマー。印刷できます。', path: '/pages/count-3c-guide', body: fs.readFileSync(path.join(ROOT, 'static/apps/count-3c-guide.html'), 'utf8') }));
   put('/pages/count-remote', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-remote.html'), 'utf8') });
   const nd = fs.readFileSync(path.join(ROOT, 'static/apps/nine-drop.html'), 'utf8');
   put('/pages/nine-drop', { raw: `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/img/favicon-64.png"><link rel="canonical" href="${SITE}/pages/nine-drop"><meta name="description" content="ナインボールのルールで遊ぶ落ち物パズル。"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style></head><body>${nd.replace('<title>Nine Drop</title>', '<title>NINE DROP｜VIBES BILLIARDS</title>')}</body></html>` });
