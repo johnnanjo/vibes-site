@@ -626,7 +626,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), U_HOME = '/pages/count/', rm = null, rws = null, rTry = 0, rPing = null;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
-  function rmState() { return JSON.stringify({ type: 'state', kind: '3c', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
+  function rmState() { var N3 = NP(); return JSON.stringify({ type: 'state', kind: N3 > 2 ? 'pocket' : '3c', su: { min: 2, max: 4, t: '持ち点', d: 25 }, title: S.cfg.game === 'band' ? 'バンド' : 'スリークッション', lab: S.cfg.n.map(function (x, i) { return x + ' (' + S.cfg.g[i] + ')'; }), score: S.cfg.n.map(function (x, i) { return String(S.sc[i] + (i === S.turn && !S.over ? S.run : 0)); }), midL: 'INNING', mid: $('inn').textContent, info: S.run && !S.over ? 'この回 ' + S.run + '点' : '', keys: [['+', '1点'], ['-', '1点へらす'], ['Enter', '交代'], ['BackSpace', '戻る']], win: S.over ? $('wName').textContent : '', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
   function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); } catch (e) {} } }
   function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'つながっています' : '接続しています…') : '切'; $('bRm').textContent = rm && rm.on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'リモコン'; }
   function rmConnect() {
@@ -640,8 +640,21 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   }
   function goHome() { location.href = U_HOME + (TB ? '?t=' + TB : ''); }
   function rmHandle(m) {
-    if (m.type === 'hello') return rmPush();
+    if (m.type === 'hello') { toast('スマホがつながりました'); return rmPush(); }
     if (m.type === 'cmd' && m.c === 'home') { goHome(); return; }
+    if (m.type === 'setup' && m.p && m.p.length >= 1 && m.p.length <= 4) {
+      if (KM) return; if (!$('setL').hidden) closeSet(false); if (!$('rmL').hidden) $('rmL').hidden = true; if (!$('prL').hidden) prClose();
+      if (W) { W = null; $('wzL').hidden = true; }
+      if (S.over) newGame(true);
+      if (fresh() && m.p.length !== NP()) setN(m.p.length);
+      var gsu = [];
+      for (var q = 0; q < NP() && q < m.p.length; q++) { var nm = String(m.p[q].n || '').slice(0, 20).trim() || 'GUEST', gv = parseInt(m.p[q].g, 10); S.cfg.n[q] = nm; S.cfg.g[q] = Math.max(isNaN(gv) ? (S.cfg.g[q] || 25) : Math.max(1, Math.min(999, gv)), S.sc[q] || 1); if (/^GUEST( \d)?$/i.test(nm)) gsu.push(q); }
+      gsu.forEach(function (q2, i) { S.cfg.n[q2] = gsu.length > 1 ? 'GUEST ' + (i + 1) : 'GUEST'; });
+      if (S.run > room()) S.run = Math.max(0, room());
+      if (fresh()) S.ready = true;
+      return render();
+    }
+    if (m.type === 'key' && typeof m.k === 'string' && /^([0-9+\-*]|Enter|Backspace)$/.test(m.k)) { if (KM) return; if (!$('setL').hidden) closeSet(false); if (W) { W = null; $('wzL').hidden = true; } if (!$('prL').hidden) prClose(); if (S.ready && !S.over) return; onKey(m.k, noop); return; }
     if (KM) return;
     if (!$('setL').hidden) closeSet(false);
     if (!$('rmL').hidden) $('rmL').hidden = true;

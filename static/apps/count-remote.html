@@ -84,7 +84,9 @@ input:focus{outline:none;border-color:var(--lime)}
 .k small{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-top:2px}
 .k.big small,.k.end small{color:#3A3F4C}
 .note{font-size:13px;color:var(--sub);text-align:center;margin:0}
-.row2{display:grid;grid-template-columns:1fr 110px;gap:10px;margin-bottom:10px}
+.row2{display:grid;grid-template-columns:1fr 110px;gap:10px;margin-bottom:10px}.row2.one{grid-template-columns:1fr}
+.npick{display:flex;gap:8px;margin:0 0 14px}.npick .sm{flex:1;min-height:46px;font-size:16px}.npick .sm.on{background:var(--lime);color:var(--night);border-color:var(--lime)}
+.ph .sm{margin-left:auto}
 .sv{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
 .sv button{background:var(--night);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-weight:700;font-size:14px}
 .ph{display:flex;align-items:center;gap:8px;font-weight:900;font-size:17px;margin:0 0 10px}
@@ -133,8 +135,9 @@ input:focus{outline:none;border-color:var(--lime)}
     <div class="pad">
       <button type="button" class="k" data-c="clock">残り秒数<small id="pkClockS"></small></button>
       <button type="button" class="k" data-c="warmup">練習時間<small id="pkWarmS"></small></button>
+      <button type="button" class="k" id="pkPlayers">選手<small>名前を入れる</small></button>
       <button type="button" class="k" id="pkNew">新しい試合<small>2回押す</small></button>
-      <button type="button" class="k" data-c="home">メニュー<small>種目を選び直す</small></button>
+      <button type="button" class="k" data-c="home" style="grid-column:1/-1;min-height:60px">メニュー<small>種目を選び直す</small></button>
     </div>
   </section>
 
@@ -164,17 +167,13 @@ input:focus{outline:none;border-color:var(--lime)}
   </section>
 
   <section class="card" id="vPl" hidden>
-    <h1>選手</h1>
-    <p>名前を入れてください。前に入れた選手は、名前の下に出ます。</p>
+    <h1>選手の登録</h1>
+    <p id="plLead">名前を入れて「モニターに送る」を押してください。前に入れた選手は、名前の下に出ます。</p>
     <form id="fPl">
-      <div class="ph"><i style="background:#fff"></i>選手1（白）<button type="button" class="sm" data-guest="0">ゲスト</button></div>
-      <div class="row2"><div><label for="pn0">名前</label><input id="pn0" maxlength="20" autocomplete="off"></div><div><label for="pg0">持ち点</label><input id="pg0" type="number" inputmode="numeric" min="1" max="999"></div></div>
-      <div class="sv" id="sv0"></div>
-      <div class="ph"><i style="background:#F2C200"></i>選手2（黄）<button type="button" class="sm" data-guest="1">ゲスト</button></div>
-      <div class="row2"><div><label for="pn1">名前</label><input id="pn1" maxlength="20" autocomplete="off"></div><div><label for="pg1">持ち点</label><input id="pg1" type="number" inputmode="numeric" min="1" max="999"></div></div>
-      <div class="sv" id="sv1"></div>
+      <div class="npick" id="plN"></div>
+      <div id="plRows"></div>
       <button class="go" type="submit">モニターに送る</button>
-      <p class="err"></p>
+      <p class="err" id="plErr"></p>
       <button type="button" class="k" id="bPlBack" style="width:100%;min-height:56px;font-size:18px">戻る</button>
     </form>
   </section>
@@ -193,7 +192,7 @@ input:focus{outline:none;border-color:var(--lime)}
     status(false, '接続しています…');
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'つながっていません'); return; }
     ws.onopen = function () { tries = 0; status(true, '番号 ' + code.slice(0, 3) + ' ' + code.slice(3)); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = m.kind === 'menu' ? 'vMenu' : m.kind === 'pocket' ? 'vPk' : 'vMain'; if (!(cur === 'vPl' && tv === 'vMain') && cur !== tv) show(tv); draw(); } };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = m.kind === 'menu' ? 'vMenu' : m.kind === 'pocket' ? 'vPk' : 'vMain'; if (cur !== 'vPl' && cur !== tv) show(tv); if (cur === 'vPl' && tv === 'vMenu') show(tv); draw(); if (!m.wz) wzShown = false; if (m.wz && !wzShown && cur !== 'vPl' && tv !== 'vMenu') { wzShown = true; plOpen(true); } } };
     ws.onclose = function () { clearInterval(ping); status(false, 'つなぎ直しています…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
@@ -203,7 +202,7 @@ input:focus{outline:none;border-color:var(--lime)}
   function drawPk(m) {
     $('pkTitle').textContent = m.title + (m.table ? ' · ' + m.table + '番台' : ''); var P = $('pkP'); P.textContent = '';
     m.lab.forEach(function (x, i) { var d = document.createElement('div'); d.className = 'pp' + (i === m.turn && !m.over ? ' on' : ''); var n = document.createElement('span'); n.textContent = x; var v = document.createElement('b'); v.className = 'num'; v.textContent = m.score[i]; d.appendChild(n); d.appendChild(v); P.appendChild(d); });
-    $('pkMidL').textContent = m.midL === 'FRAME' ? 'フレーム' : 'ラック'; $('pkMid').textContent = m.mid; $('pkInfo').textContent = m.info || '';
+    $('pkMidL').textContent = m.midL === 'FRAME' ? 'フレーム' : m.midL === 'INNING' ? 'イニング' : 'ラック'; $('pkMid').textContent = m.mid; $('pkInfo').textContent = m.info || '';
     $('pkOver').hidden = !m.over; if (m.over) $('pkOver').textContent = '試合終了 — ' + (m.win || '');
     $('pkRdy').hidden = !m.rd; $('pkKeys').hidden = !!m.rd || !!m.over;
     if (m.rd) { var o = $('pkRdyO'); o.textContent = ''; m.n.forEach(function (x, i) { var d = document.createElement('div'); var a = document.createElement('i'); a.textContent = (i + 1) + '番'; var b = document.createElement('b'); b.textContent = m.lab[i]; d.appendChild(a); d.appendChild(b); o.appendChild(d); }); $('pkSwap').hidden = m.n.length < 2; }
@@ -246,32 +245,47 @@ input:focus{outline:none;border-color:var(--lime)}
   $('mBack').onclick = function () { send({ type: 'cmd', c: 'open', v: 'back' }); };
   $('pkNew').onclick = function () { var n = Date.now(), sm = this.querySelector('small'); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); sm.textContent = '2回押す'; } else { newAt = n; sm.textContent = 'もう一度押すと決定'; setTimeout(function () { sm.textContent = '2回押す'; }, 2000); } };
   $('kNew').onclick = function () { var n = Date.now(); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); this.querySelector('small').textContent = '2回押す'; } else { newAt = n; this.querySelector('small').textContent = 'もう一度押すと決定'; var el = this; setTimeout(function () { el.querySelector('small').textContent = '2回押す'; }, 2000); } };
+  var PCOL = ['#FFFFFF', '#F2C200', '#E5484D', '#35C486'], PCN = ['白', '黄', '赤', '緑'], plN = 2, plBackTo = 'vMain', wzShown = false;
+  var suOf = function () { return (last && last.su) || { min: 2, max: 2, t: '持ち点', d: 25 }; };
   function chips(p) {
-    var box = $('sv' + p), q = $('pn' + p).value.trim(); box.textContent = '';
-    players.filter(function (o) { return !q || o.n.indexOf(q) >= 0 || (o.y || '').indexOf(q) >= 0; }).slice(0, 12).forEach(function (o) {
-      var b = document.createElement('button'); b.type = 'button'; b.textContent = o.n + ' (' + o.g + ')';
-      b.onclick = function () { $('pn' + p).value = o.n; $('pg' + p).value = o.g; chips(p); }; box.appendChild(b);
+    var box = $('sv' + p), q = $('pn' + p).value.trim(), su = suOf(); box.textContent = '';
+    players.filter(function (o) { return !q || o.n.indexOf(q) >= 0; }).slice(0, 10).forEach(function (o) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = o.n;
+      b.onclick = function () { $('pn' + p).value = o.n; if (su.t === '持ち点' && o.g && $('pg' + p)) $('pg' + p).value = o.g; chips(p); }; box.appendChild(b);
     });
   }
-  $('kPlayers').onclick = function () {
-    if (last && last.n.length > 2) { status(true, '3〜4人の名前はモニター側で入れてください'); return; }
-    var m = last || { n: ['', ''], g: [25, 25] };
-    for (var p = 0; p < 2; p++) { $('pn' + p).value = /^PLAYER [1-4]$/.test(m.n[p]) ? '' : m.n[p]; $('pg' + p).value = m.g[p]; chips(p); }
-    show('vPl');
-  };
-  [0, 1].forEach(function (p) { $('pn' + p).addEventListener('input', function () { chips(p); }); });
-  Array.prototype.forEach.call(document.querySelectorAll('[data-guest]'), function (b) { b.onclick = function () { var p = +b.getAttribute('data-guest'); $('pn' + p).value = 'GUEST'; chips(p); }; });
-  $('bPlBack').onclick = function () { show('vMain'); };
+  function plBuild(keep) {
+    var su = suOf(), old = [], R = $('plRows'), NB = $('plN'), m = last || { n: [], g: [] };
+    if (keep) for (var i = 0; i < 4; i++) old.push($('pn' + i) ? [$('pn' + i).value, $('pg' + i) ? $('pg' + i).value : ''] : null);
+    plN = Math.max(su.min, Math.min(su.max, plN)); R.textContent = ''; NB.textContent = ''; NB.hidden = su.min === su.max;
+    for (var n = su.min; n <= su.max; n++) (function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = 'sm' + (n === plN ? ' on' : ''); b.textContent = n + '人'; b.onclick = function () { plN = n; plBuild(true); }; NB.appendChild(b); })(n);
+    for (var p = 0; p < plN; p++) (function (p) {
+      var ph = document.createElement('div'); ph.className = 'ph'; var dot = document.createElement('i'); dot.style.background = PCOL[p]; ph.appendChild(dot); ph.appendChild(document.createTextNode('選手' + (p + 1) + '（' + PCN[p] + '）'));
+      var gb = document.createElement('button'); gb.type = 'button'; gb.className = 'sm'; gb.textContent = 'ゲスト'; ph.appendChild(gb);
+      var row = document.createElement('div'); row.className = 'row2' + (su.t ? '' : ' one');
+      var d1 = document.createElement('div'), l1 = document.createElement('label'); l1.textContent = '名前'; l1.htmlFor = 'pn' + p; var i1 = document.createElement('input'); i1.id = 'pn' + p; i1.maxLength = 20; i1.autocomplete = 'off'; d1.appendChild(l1); d1.appendChild(i1); row.appendChild(d1);
+      if (su.t) { var d2 = document.createElement('div'), l2 = document.createElement('label'); l2.textContent = su.t; l2.htmlFor = 'pg' + p; var i2 = document.createElement('input'); i2.id = 'pg' + p; i2.type = 'number'; i2.inputMode = 'numeric'; i2.min = 1; i2.max = 999; d2.appendChild(l2); d2.appendChild(i2); row.appendChild(d2); }
+      var sv = document.createElement('div'); sv.className = 'sv'; sv.id = 'sv' + p;
+      R.appendChild(ph); R.appendChild(row); R.appendChild(sv);
+      var nm = old[p] ? old[p][0] : (m.n[p] && !/^PLAYER [1-4]$/.test(m.n[p]) ? m.n[p] : '');
+      i1.value = nm; if (su.t) $('pg' + p).value = old[p] && old[p][1] ? old[p][1] : (m.g[p] || su.d);
+      i1.addEventListener('input', function () { chips(p); }); gb.onclick = function () { i1.value = 'GUEST'; chips(p); }; chips(p);
+    })(p);
+  }
+  function plOpen(auto) { var su = suOf(); plN = last && last.n ? last.n.length : su.min; plBackTo = cur === 'vPl' ? plBackTo : cur; $('plLead').textContent = (last && last.title ? last.title + '：' : '') + '名前を入れて「モニターに送る」を押してください。前に入れた選手は、名前の下に出ます。'; plBuild(false); show('vPl'); }
+  $('kPlayers').onclick = function () { plOpen(false); };
+  $('pkPlayers').onclick = function () { plOpen(false); };
+  $('bPlBack').onclick = function () { show(last && last.kind === 'pocket' ? 'vPk' : 'vMain'); };
   $('fPl').addEventListener('submit', function (e) {
-    e.preventDefault(); var out = [];
-    for (var p = 0; p < 2; p++) { var n = $('pn' + p).value.trim() || 'GUEST', g = Math.max(1, Math.min(999, parseInt($('pg' + p).value, 10) || 25)); out.push({ n: n, g: g }); }
-    var gs = out.map(function (o) { return /^GUEST( \d)?$/i.test(o.n); });
-    if (gs[0] && gs[1]) { out[0].n = 'GUEST 1'; out[1].n = 'GUEST 2'; } else { if (gs[0]) out[0].n = 'GUEST'; if (gs[1]) out[1].n = 'GUEST'; }
-    out.forEach(function (o, i) { if (gs[i]) return; var hit = null; players.forEach(function (x) { if (x.n === o.n) hit = x; }); if (hit) hit.g = o.g; else players.unshift({ n: o.n, g: o.g }); });
+    e.preventDefault(); var out = [], su = suOf();
+    for (var p = 0; p < plN; p++) { var n = $('pn' + p).value.trim() || 'GUEST', o = { n: n }; if (su.t) o.g = Math.max(1, Math.min(999, parseInt($('pg' + p).value, 10) || su.d)); out.push(o); }
+    out.forEach(function (o) { if (/^GUEST( \d)?$/i.test(o.n)) return; var hit = null; players.forEach(function (x) { if (x.n === o.n) hit = x; }); if (hit) { if (su.t === '持ち点') hit.g = o.g; } else players.unshift({ n: o.n, g: su.t === '持ち点' ? o.g : 0 }); });
     if (players.length > 300) players.length = 300; try { localStorage.setItem(PK, JSON.stringify(players)); } catch (x) {}
-    if (send({ type: 'players', p: out })) show('vMain');
+    if (send({ type: 'setup', p: out })) { wzShown = true; show(last && last.kind === 'pocket' ? 'vPk' : 'vMain'); } else $('plErr').textContent = 'モニターにつながっていません。';
   });
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) connect(); });
+  var wl = null, wake = function () { try { if (navigator.wakeLock && document.visibilityState === 'visible') navigator.wakeLock.request('screen').then(function (l) { wl = l; }).catch(function () {}); } catch (e) {} };
+  wake(); document.addEventListener('click', function once() { wake(); document.removeEventListener('click', once); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) { connect(); wake(); } });
   var q = /[?&]r=(\d{6})/.exec(location.search); try { code = q ? q[1] : (localStorage.getItem(CK) || ''); } catch (e) {}
   if (code) { $('iCode').value = code.slice(0, 3) + ' ' + code.slice(3); connect(); joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'モニターを待っています。モニター側で「リモコン」を押してください。'; }, 5000); }
   show('vJoin');
