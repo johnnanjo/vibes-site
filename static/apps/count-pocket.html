@@ -182,6 +182,9 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 .rdg{display:flex;align-items:baseline;gap:.8vw}.rdg b{font-size:9vh;line-height:1}.rdg small{font-weight:700;font-size:2vh;letter-spacing:.2em;color:#DCE3F0}
 .rdn{margin:0;color:var(--sub);font-weight:700;font-size:2.2vh;letter-spacing:.08em}
 .btn.big{font-size:3.4vh;padding:1.8vh 4vw}
+.qrw{display:flex;align-items:center;gap:2vw;margin-bottom:1.6vh}.qrw p{margin:0;text-align:left;font-size:2.4vh;color:var(--chalk)}
+.qr{flex:none;background:#fff;border-radius:1.6vh;padding:1vh;width:24vh;height:24vh}.qr svg{width:100%;height:100%;display:block}
+#rmL .inp span.num{font-size:11vh!important}
 /* ---- pocket: cloth colour, bowling sheet, signed scores ---- */
 .side,.rdc{background:radial-gradient(120% 90% at 28% 0%,rgba(255,255,255,.16),transparent 56%),repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 4px),linear-gradient(180deg,#6E7683 0%,#5A616C 46%,#434953 100%)}
 .rdc{background:linear-gradient(180deg,#6E7683 0%,#5A616C 46%,#434953 100%)}
@@ -274,6 +277,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   <div class="panel wz" role="dialog" aria-label="Remote control">
     <h2>リモコン <small id="rmS"></small></h2>
     <p class="note" style="font-size:2.6vh;color:var(--chalk)">タブレットかスマホでこのページを開き、下の番号を入れてください。</p>
+    <div class="qrw"><div class="qr" id="rmQ"></div><p>スマホのカメラでQRコードを読むと、番号を入れずにつながります。</p></div>
     <div class="inp" style="justify-content:center"><span id="rmU" style="font-size:4.4vh"></span></div>
     <div class="inp" style="justify-content:center"><span class="num" id="rmC" style="font-size:16vh;letter-spacing:.08em"></span></div>
     <div class="acts"><button type="button" class="btn" id="rmOff">リモコンを切る</button><button type="button" class="btn go" id="rmOk">閉じる (Enter)</button></div>
@@ -300,6 +304,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 </div>
 <div class="toast" id="toast" hidden></div>
 
+<script src="/js/qr.js"></script>
 <script>
 (function () {
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
@@ -806,10 +811,11 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     else if (c === 'clock') { if (tOn) tStop(); else tStart(); rmPush(); }
     else if (c === 'set' && typeof m.v === 'number') { S.run = Math.max(0, Math.min(room(), m.v | 0)); S.typed = false; render(); }
   }
+  function qrSvg(code) { try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + code); q.make(); return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { return ''; } }
   function rmOpen() {
     if (!rm || !rm.code) { var c = ''; for (var i = 0; i < 6; i++) c += Math.floor(Math.random() * 10); rm = { code: c, on: true }; }
     rm.on = true; try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {}
-    $('rmU').textContent = 'vibesbilliards.com/pages/count-remote'; $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3);
+    $('rmU').textContent = 'vibesbilliards.com/pages/count-remote'; $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('rmQ').innerHTML = qrSvg(rm.code);
     $('rmL').hidden = false; rmConnect(); rmStatus();
   }
   $('bHome').onclick = goHome; $('aHome').onclick = function (e) { e.preventDefault(); goHome(); };

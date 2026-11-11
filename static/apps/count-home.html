@@ -51,6 +51,10 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 .solo p{margin:0;color:var(--sub);font-weight:700;font-size:2.2vh;letter-spacing:.08em;text-align:center}
 .solo p b{color:var(--chalk);font-family:Unbounded,Anton,sans-serif;font-weight:400;font-size:3.4vh;letter-spacing:.06em;margin:0 .6vw}
 .solo button{margin-top:1.4vh;font:inherit;font-weight:700;font-size:1.8vh;color:var(--chalk);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.8vh 2vw;cursor:pointer}
+.qrw{display:flex;align-items:center;gap:2vw;margin-bottom:1.6vh}.qrw p{margin:0;text-align:left;font-size:2.2vh}
+.qr{flex:none;background:#fff;border-radius:1.6vh;padding:1vh;width:24vh;height:24vh}.qr svg{width:100%;height:100%;display:block}.qr.sm{width:17vh;height:17vh}
+.soloq{display:flex;align-items:center;justify-content:center;gap:2.4vw}.solo img{height:40vh}
+.panel .c{font-size:min(10vh,11vw)}
 .ov{position:fixed;inset:0;background:rgba(10,12,16,.82);backdrop-filter:blur(8px);display:grid;place-items:center;z-index:5;padding:3vh 3vw}
 .panel{background:linear-gradient(180deg,#2C313D,#232730);border:1px solid rgba(255,255,255,.12);border-radius:2.4vh;padding:3vh 3vw;width:min(92vw,900px);box-shadow:0 3vh 8vh rgba(0,0,0,.55);text-align:center}
 .panel h2{margin:0 0 1.4vh;font-size:3.2vh}
@@ -78,17 +82,19 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 <img id="logoSrc" src="/img/vibes-logo-t.png" alt="" hidden>
 <div class="solo" id="solo" hidden>
   <img id="soloLogo" alt="VIBES BILLIARDS">
-  <div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div>
+  <div class="soloq"><div class="qr sm" id="soloQ"></div><div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div></div>
 </div>
 <div class="ov" id="rmL" hidden>
   <div class="panel" role="dialog" aria-label="リモコン">
     <h2>リモコン（スマホで操作）</h2>
     <p>スマホかタブレットでこのページを開き、下の番号を入れてください。</p>
+    <div class="qrw"><div class="qr" id="rmQ"></div><p>スマホのカメラでQRコードを読むと、番号を入れずにつながります。<br>読めない時は、下のページを開いて番号を入れてください。</p></div>
     <div class="u" id="rmU">vibesbilliards.com/pages/count-remote</div>
     <div class="c" id="rmC"></div>
     <div class="acts"><button type="button" class="btn" id="rmOff">リモコンを切る</button><button type="button" class="btn go" id="rmOk">閉じる (Enter)</button></div>
   </div>
 </div>
+<script src="/js/qr.js"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -136,7 +142,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   function draw() {
     var on = !!(rm && rm.on); $('solo').hidden = !on || showMenu; $('home').hidden = on && !showMenu;
     $('bRm').textContent = on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) : 'リモコン（スマホで操作）';
-    if (on) { $('soloC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('soloS').textContent = ws && ws.readyState === 1 ? '' : '（接続しています…）'; }
+    if (on) { if ($('soloQ').getAttribute('data-c') !== rm.code) { $('soloQ').innerHTML = qrSvg(rm.code); $('soloQ').setAttribute('data-c', rm.code); } $('soloC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('soloS').textContent = ws && ws.readyState === 1 ? '' : '（接続しています…）'; }
   }
   function connect() {
     if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
@@ -146,9 +152,10 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
+  function qrSvg(code) { try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + code); q.make(); return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { return ''; } }
   function rmOpen() {
     if (!rm || !/^\d{6}$/.test(rm.code || '')) rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true };
-    rm.on = true; saveRm(); $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('rmL').hidden = false; showMenu = false; connect(); draw();
+    rm.on = true; saveRm(); $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('rmQ').innerHTML = qrSvg(rm.code); $('rmL').hidden = false; showMenu = false; connect(); draw();
   }
   $('bRm').onclick = rmOpen; $('rmOk').onclick = function () { $('rmL').hidden = true; };
   $('rmOff').onclick = function () { if (rm) { rm.on = false; saveRm(); } if (ws) { try { ws.close(); } catch (e) {} } $('rmL').hidden = true; showMenu = false; draw(); };
