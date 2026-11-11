@@ -183,7 +183,6 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 .rdn{margin:0;color:var(--sub);font-weight:700;font-size:2.2vh;letter-spacing:.08em}
 .btn.big{font-size:3.4vh;padding:1.8vh 4vw}
 /* ---- pocket: cloth colour, bowling sheet, signed scores ---- */
-#bRm{display:none}
 .side,.rdc{background:radial-gradient(120% 90% at 28% 0%,rgba(255,255,255,.16),transparent 56%),repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 4px),linear-gradient(180deg,#6E7683 0%,#5A616C 46%,#434953 100%)}
 .rdc{background:linear-gradient(180deg,#6E7683 0%,#5A616C 46%,#434953 100%)}
 .main.n1{grid-template-columns:1fr minmax(16vw,20vw)}.rdm.n1{grid-template-columns:minmax(0,60vw);justify-content:center}
@@ -212,9 +211,9 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 <body>
 <div class="board" id="board">
   <div class="top">
-    <a href="/" aria-label="VIBES BILLIARDS home"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
+    <a href="/pages/count/" id="aHome" aria-label="メニューにもどる"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
     <span class="ttl" id="ttl">POCKET SCOREBOARD</span>
-    <span style="display:flex;gap:.8vw"><button type="button" id="bRm">リモコン</button><button type="button" id="bKey" hidden>キー設定 (K)</button><button type="button" id="bPl">選手</button><button type="button" id="bPr">練習時間 (P)</button><button type="button" id="bSet">設定 (/)</button><button type="button" id="bFull">全画面 (F)</button></span>
+    <span style="display:flex;gap:.8vw"><button type="button" id="bHome">メニュー</button><button type="button" id="bRm">リモコン</button><button type="button" id="bKey" hidden>キー設定 (K)</button><button type="button" id="bPl">選手</button><button type="button" id="bPr">練習時間 (P)</button><button type="button" id="bSet">設定 (/)</button><button type="button" id="bFull">全画面 (F)</button></span>
   </div>
   <div class="main" id="main">
     <div class="mid" id="mid">
@@ -530,7 +529,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     $('wH').textContent = ''; ['', isBow() ? 'スコア' : isSet() ? 'セット' : '点', sd[0][0], sd[1][0]].forEach(function (t) { $('wH').appendChild(el('th', '', t)); });
     var tb = $('wT'); tb.textContent = '';
     ps.forEach(function (p) { var tr = document.createElement('tr'); [label(p), isG5() ? signed(S.sc[p]) : isSet() ? S.sc[p] + ' / ' + S.cfg.g[p] : val(p), $('st' + p).textContent, $('sp' + p).textContent].forEach(function (v, i) { var c = document.createElement(i ? 'td' : 'th'); c.textContent = v; tr.appendChild(c); }); tb.appendChild(tr); });
-    $('winL').hidden = false;
+    $('winL').hidden = false; if (typeof rmPush === 'function') rmPush();
   }
   function openSet() {
     for (var q = 0; q < 4; q++) { $('fn' + q).value = S.cfg.n[q] || 'PLAYER ' + (q + 1); $('fg' + q).value = S.cfg.g[q] || S.cfg.g[0] || 5; }
@@ -632,7 +631,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       h.appendChild(document.createTextNode('種目を選ぶ'));
       var bg = el('div', 'opts c3');
       MKEYS.forEach(function (k, i) { var o = el('div', 'opt' + (k === S.cfg.mode ? ' sel' : '')); o.appendChild(el('kbd', '', String(i + 1))); o.appendChild(el('span', '', MODES[k].jp)); bg.appendChild(o); });
-      b.appendChild(bg); keysHelp([['1-5', '選ぶ'], ['Enter', M().jp + ' のまま']]); return;
+      b.appendChild(bg); keysHelp([['1-5', '選ぶ'], ['Enter', M().jp + ' のまま'], ['BackSpace', 'メニューにもどる']]); return;
     }
     if (W.step === 'count') {
       h.appendChild(document.createTextNode('人数を選ぶ（' + M().jp + '）'));
@@ -679,6 +678,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     if (W.step === 'game') {
       if (d >= 1 && d <= 5) { if (MKEYS[d - 1] !== S.cfg.mode) { setMode(MKEYS[d - 1]); render(); } afterGame(); }
       else if (k === 'Enter') afterGame();
+      else if (k === 'Backspace') goHome();
       return true;
     }
     if (W.step === 'count') {
@@ -762,9 +762,10 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 
   /* ===== remote control from a tablet / phone (relay: Cloudflare Worker + Durable Object) ===== */
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
-  var RMK = 'vibes-count-pocket-remote' + (TB ? '-t' + TB : ''), rm = null, rws = null, rTry = 0, rPing = null;
+  var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), U_HOME = '/pages/count/', rm = null, rws = null, rTry = 0, rPing = null;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
-  function rmState() { return JSON.stringify({ type: 'state', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
+  function rmState() { var ks = []; Array.prototype.forEach.call($('mainK').children, function (sp) { var kb = sp.querySelector('kbd'); ks.push([kb.textContent, sp.textContent.slice(kb.textContent.length)]); });
+    return JSON.stringify({ type: 'state', kind: 'pocket', table: TB, mode: S.cfg.mode, title: M().jp, n: S.cfg.n, g: S.cfg.g, lab: S.cfg.n.map(function (x, i) { return label(i); }), score: S.cfg.n.map(function (x, i) { return scoreText(i); }), turn: S.turn, over: S.over, midL: M().mid, mid: $('inn').textContent, info: $('runS').textContent, keys: ks, t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over, win: S.over ? $('wName').textContent : '' }); }
   function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); } catch (e) {} } }
   function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'つながっています' : '接続しています…') : '切'; $('bRm').textContent = rm && rm.on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'リモコン'; }
   function rmConnect() {
@@ -776,18 +777,21 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     rws.onerror = function () { try { rws.close(); } catch (e) {} };
     rmStatus();
   }
+  function goHome() { location.href = U_HOME + (TB ? '?t=' + TB : ''); }
   function rmHandle(m) {
     if (m.type === 'hello') return rmPush();
+    if (m.type === 'cmd' && m.c === 'home') { goHome(); return; }
     if (KM) return;
     if (!$('setL').hidden) closeSet(false);
     if (!$('rmL').hidden) $('rmL').hidden = true;
-    if (m.type === 'players' && m.p && m.p.length === 2 && NP() === 2) {
+    if (m.type === 'players' && m.p && m.p.length === 2 && NP() === 2 && false) {
       if (W) { W = null; $('wzL').hidden = true; }
       for (var p = 0; p < 2; p++) { var n = String(m.p[p].n || '').slice(0, 20).trim() || 'PLAYER ' + (p + 1), g = Math.max(1, Math.min(999, parseInt(m.p[p].g, 10) || 25)); S.cfg.n[p] = n; S.cfg.g[p] = Math.max(g, S.sc[p]); }
       if (S.run > room()) S.run = Math.max(0, room());
       if (fresh()) S.ready = true;
       return render();
     }
+    if (m.type === 'key' && typeof m.k === 'string' && /^([0-9+\-*]|Enter|Backspace)$/.test(m.k)) { if (W) { W = null; $('wzL').hidden = true; } if (!$('prL').hidden) prClose(); if (S.ready && !S.over) return; onKey(m.k, noop); return; }
     if (m.type !== 'cmd') return;
     var c = m.c;
     if (W && c !== 'players') { W = null; $('wzL').hidden = true; }
@@ -808,6 +812,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     $('rmU').textContent = 'vibesbilliards.com/pages/count-remote'; $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3);
     $('rmL').hidden = false; rmConnect(); rmStatus();
   }
+  $('bHome').onclick = goHome; $('aHome').onclick = function (e) { e.preventDefault(); goHome(); };
   $('bRm').onclick = rmOpen; $('rmOk').onclick = function () { $('rmL').hidden = true; };
   $('rmOff').onclick = function () { if (rm) { rm.on = false; try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} } if (rws) { try { rws.close(); } catch (e) {} } $('rmL').hidden = true; rmStatus(); };
   rmStatus(); rmConnect();
@@ -882,15 +887,16 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     if (hit) e.preventDefault();
   }
   /* offline: cache this page and what it loaded; keep the screen awake */
-  if (false && 'serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.href)) {
-    navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count-3c' }).then(function () { return navigator.serviceWorker.ready; }).then(function (reg) {
+  if ('serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.href)) {
+    navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count' }).then(function () { return navigator.serviceWorker.ready; }).then(function (reg) {
       var send = function () { try { var urls = performance.getEntriesByType('resource').map(function (r) { return r.name; }).filter(function (u) { return /fonts\.(googleapis|gstatic)\.com|\/img\//.test(u); }); if (reg.active) reg.active.postMessage({ type: 'cache', urls: urls }); } catch (e) {} };
       setTimeout(send, 3000); if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(send, 500); });
     }).catch(function () {});
   }
   var wl = null, wake = function () { try { if (navigator.wakeLock && document.visibilityState === 'visible') navigator.wakeLock.request('screen').then(function (l) { wl = l; }).catch(function () {}); } catch (e) {} };
   wake(); document.addEventListener('visibilitychange', wake); document.addEventListener('keydown', function once() { if (!wl) wake(); document.removeEventListener('keydown', once); });
-  render(); setInterval(drawTime, 500); if (S.over) showWin(); else if (S.cfg.n.every(isDefName) && fresh()) wzOpen(0);
+  var qm = /[?&]m=([a-z0-9]+)/.exec(location.search), viaMenu = false; if (qm && MODES[qm[1]] && (S.cfg.mode !== qm[1] || S.over)) { setMode(qm[1]); hist = []; S.ready = !S.cfg.n.every(isDefName); } if (qm && MODES[qm[1]]) viaMenu = true;
+  render(); setInterval(drawTime, 500); if (S.over) showWin(); else if (S.cfg.n.every(isDefName) && fresh()) { wzOpen(0); if (viaMenu) { W.step = M().min === M().max ? 'mode' : 'count'; wzDraw(); } }
 })();
 </script>
 </body>

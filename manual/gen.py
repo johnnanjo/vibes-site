@@ -30,7 +30,7 @@ def wire(parts):
         if p[0] == 'dev': h += f'<div class="dev">{IC[p[1]]}<b>{p[2]}</b></div>'
         else: h += f'<div class="ln {"dash" if p[2] else ""}"><span>{p[1]}</span></div>'
     return h + '</div>'
-URL = 'vibesbilliards.com/pages/count-3c'
+URL = 'vibesbilliards.com/pages/count'
 RURL = 'vibesbilliards.com/pages/count-remote'
 pages = []
 def page(num, title, body, lead=''):
@@ -64,23 +64,24 @@ page(2, 'インターネットで開く',
  steps([
   ('ブラウザを開く', '画面の下や、デスクトップにある <b class="in">Edge（エッジ）</b> か <b class="in">Chrome（クローム）</b> のマークをダブルクリックします。青と緑のうずまきが Edge、赤・黄・緑の丸が Chrome です。'),
   ('アドレスを入れる', f'画面のいちばん上にある細長い欄をクリックし、<b class="in">{URL}</b> と入れて {kbd("Enter")} を押します。'),
-  ('カウントの画面が出る', '「人数を選ぶ」の画面が出れば成功です。'),
+  ('メニューが出る', 'VIBESのロゴと、種目のボタンが出れば成功です。'),
+  ('種目を選ぶ', f'スリークッションは {kbd("1")} を押して {kbd("Enter")}。マウスで押しても選べます。'),
   ('全画面にする', f'キーボードの {kbd("F")} を押します。もう一度押すと元にもどります。'),
- ]) + img('count','wide') +
+ ]) + img('home','wide') +
  note('次からはもっと簡単に', 'アドレス欄の右にある ☆ を押して「お気に入り」に入れておくと、次からは選ぶだけで開けます。一度開いたパソコンでは、インターネットが切れている時でも同じアドレスで開けます。'),
  'インターネット（Wi-Fi）につながっているパソコンやタブレットは、この方法がいちばん簡単です。')
 
 # ---------- 3 USB ----------
-usbfiles = '<div class="files"><div class="win"><div class="bar">USB ドライブ (E:) ＞ VIBES-3C</div><div class="row hl"><span class="fi html"></span><b>1_デジタルカウント</b><em>← これをダブルクリック</em></div><div class="row"><span class="fi pdf"></span><b>2_取扱説明書</b><em>この説明書です</em></div><div class="row"><span class="fi txt"></span><b>はじめにお読みください</b></div></div></div>'
+usbfiles = '<div class="files"><div class="win"><div class="bar">USB ドライブ (E:) ＞ VIBES-COUNT</div><div class="row hl"><span class="fi html"></span><b>1_スタート</b><em>← これをダブルクリック</em></div><div class="row"><span class="fi pdf"></span><b>2_取扱説明書</b><em>この説明書です</em></div><div class="row"><span class="fi txt"></span><b>はじめにお読みください</b></div><div class="row"><span class="fi dir"></span><b>data</b><em>さわらないでください</em></div></div></div>'
 page(3, 'USBメモリーで開く',
  steps([
   ('USBメモリーをパソコンに差す', 'パソコンの横やうしろにある、長方形の差し込み口（USB）に差します。向きが合わない時は、裏返して差します。'),
   ('USBメモリーの中を開く', f'キーボードの {kbd("Windows")} キー（田のマーク）を押しながら {kbd("E")} を押します。開いた画面の左側にある <b class="in">「USB ドライブ」</b>（名前は「VIBES」など）をクリックします。'),
-  ('「VIBES-3C」フォルダを開く', '黄色いフォルダ <b class="in">VIBES-3C</b> をダブルクリックします。'),
-  ('「1_デジタルカウント」をダブルクリック', 'ブラウザが開き、カウントの画面が出ます。「どのアプリで開きますか？」と聞かれたら、Edge か Chrome を選びます。'),
+  ('「VIBES-COUNT」フォルダを開く', '黄色いフォルダ <b class="in">VIBES-COUNT</b> をダブルクリックします。'),
+  ('「1_スタート」をダブルクリック', 'ブラウザが開き、メニュー（種目を選ぶ画面）が出ます。「どのアプリで開きますか？」と聞かれたら、Edge か Chrome を選びます。'),
   ('全画面にする', f'キーボードの {kbd("F")} を押します。'),
  ]) + usbfiles +
- '<div class="two"><div class="box"><h3>おすすめ：デスクトップにコピーする</h3><ol><li>「VIBES-3C」フォルダを<b class="in">右クリック</b>して「コピー」を選びます。</li><li>デスクトップ（最初の画面）の何もない所を<b class="in">右クリック</b>して「貼り付け」を選びます。</li><li>次からは、USBメモリーなしで、デスクトップのフォルダから開けます。</li></ol></div>' +
+ '<div class="two"><div class="box"><h3>おすすめ：デスクトップにコピーする</h3><ol><li>「VIBES-COUNT」フォルダを<b class="in">右クリック</b>して「コピー」を選びます。</li><li>デスクトップ（最初の画面）の何もない所を<b class="in">右クリック</b>して「貼り付け」を選びます。</li><li>次からは、USBメモリーなしで、デスクトップのフォルダから開けます。</li></ol></div>' +
  '<div class="box"><h3>USBメモリーで使う時の注意</h3><ul><li>登録した選手と得点は、<b class="in">そのパソコンの中</b>に保存されます。USBメモリーには入りません。</li><li>別のパソコンで開くと、選手の登録は空から始まります。</li><li>漢字の候補と、タブレットからの操作は、インターネットがある時だけ使えます。</li><li>新しい版をもらったら、フォルダごと入れ替えます。</li></ul></div></div>',
  'インターネットがなくても使える方法です。USBメモリーの中のファイルを開くだけで、インストールの作業はいりません。')
 
@@ -128,7 +129,7 @@ page(7, 'ケース④ Wi-Fiがない　／　ケース⑤ パソコンがない'
  '<h3 class="h3">ケース④　Wi-Fi（インターネット）がない</h3>' +
  wire([('dev','usb','USBメモリー'),('line','差す',False),('dev','pc','パソコン'),('line','HDMIケーブル',False),('dev','monitor','モニター')]) +
  steps([
-  ('USBメモリーから開く', '<b class="in">3章</b> のとおりに、USBメモリーの中の「1_デジタルカウント」を開きます。'),
+  ('USBメモリーから開く', '<b class="in">3章</b> のとおりに、USBメモリーの中の「1_スタート」を開きます。'),
   ('あとは同じ', '操作は、インターネットがある時と同じです。'),
  ]) +
  '<table class="tbl"><tr><th>ネットなしで使えるもの</th><th>ネットなしでは使えないもの</th></tr><tr><td>得点・交代・もどす<br>残り秒数・タイムアウト・練習タイマー<br>選手の登録（ひらがな・カタカナ・アルファベット）<br>登録した選手の検索</td><td>名前の漢字の候補<br>タブレット・スマホからの操作（リモコン）</td></tr></table>' +
@@ -206,7 +207,7 @@ page(10, '画面の見方',
 # ---------- 11 flow ----------
 page(11, '試合の流れ',
  steps([
-  ('人数を選び、選手を登録する', f'{kbd(".")} を2回押します。くわしくは <b class="in">12章</b>・<b class="in">13章</b>。名前を入れない時は「ゲスト」で始められます。'),
+  ('種目を選び、人数と選手を登録する', f'メニューでスリークッションを選びます。試合の画面からは {kbd(".")} を2回押します。くわしくは <b class="in">12章</b>・<b class="in">13章</b>。名前を入れない時は「ゲスト」で始められます。'),
   ('準備の画面が出る', 'VIBESのロゴと、選手の名前・持ち点が出ます。ここでバンキングをして、先攻と後攻を決めます。<b class="in">先攻が左、後攻が右</b>です。'),
   ('先攻と後攻を入れ替える（必要な時だけ）', f'{kbd("/")} を押すと、左右が入れ替わります。練習タイマーは {kbd("−")} で開きます（<b class="in">14章</b>）。'),
   ('先攻が初球を撞く時に「試合開始」', f'{kbd("Enter")} を押すと試合の画面になり、<b class="in">試合時間が動き始めます</b>。残り秒数を使う時は、続けて {kbd("*")} を押します。'),

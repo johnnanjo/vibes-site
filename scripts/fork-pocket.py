@@ -35,21 +35,23 @@ rep("    if (W.step === 'count') {\n      h.appendChild(document.createTextNode(
       h.appendChild(document.createTextNode('種目を選ぶ'));
       var bg = el('div', 'opts c3');
       MKEYS.forEach(function (k, i) { var o = el('div', 'opt' + (k === S.cfg.mode ? ' sel' : '')); o.appendChild(el('kbd', '', String(i + 1))); o.appendChild(el('span', '', MODES[k].jp)); bg.appendChild(o); });
-      b.appendChild(bg); keysHelp([['1-5', '選ぶ'], ['Enter', M().jp + ' のまま']]); return;
+      b.appendChild(bg); keysHelp([['1-5', '選ぶ'], ['Enter', M().jp + ' のまま'], ['BackSpace', 'メニューにもどる']]); return;
     }
     if (W.step === 'count') {
       h.appendChild(document.createTextNode('人数を選ぶ（' + M().jp + '）'));
       var bx = el('div', 'opts c3'), rng = []; for (var ri = M().min; ri <= M().max; ri++) rng.push(ri);
       rng.forEach(function (n) {""")
-rep("keysHelp([['2-4', '選ぶ'], ['Enter', NP() + '人のまま']])","keysHelp([[M().min + '-' + M().max, '選ぶ'], ['Enter', NP() + '人のまま'], ['BackSpace', '種目にもどる']])")
+rep("keysHelp([['2-4', '選ぶ'], ['Enter', NP() + '人のまま'], ['BackSpace', 'メニューにもどる']])","keysHelp([[M().min + '-' + M().max, '選ぶ'], ['Enter', NP() + '人のまま'], ['BackSpace', '種目にもどる']])")
 rep("""    if (W.step === 'count') {
       if (d >= 2 && d <= 4) { if (d !== NP()) { setN(d); render(); } W.step = 'mode'; wzDraw(); }
       else if (k === 'Enter') { W.step = 'mode'; wzDraw(); }
+      else if (k === 'Backspace') goHome();
       return true;
     }""","""    var afterGame = function () { W.step = M().min === M().max ? 'mode' : 'count'; wzDraw(); };
     if (W.step === 'game') {
       if (d >= 1 && d <= 5) { if (MKEYS[d - 1] !== S.cfg.mode) { setMode(MKEYS[d - 1]); render(); } afterGame(); }
       else if (k === 'Enter') afterGame();
+      else if (k === 'Backspace') goHome();
       return true;
     }
     if (W.step === 'count') {
@@ -64,10 +66,16 @@ rep("var g = Math.max(1, Math.min(999, parseInt(W.num, 10) || 25)), c = W.cur;",
 rep("'持ち点 — ' +","'セット数（先取） — ' +")
 rep("inp2.appendChild(el('small', '', '点'))","inp2.appendChild(el('small', '', 'セット先取'))")
 rep("keysHelp([['0-9', '点数を入れる'], ['Enter', '決定'], ['BackSpace', '消す・戻る']])","keysHelp([['0-9', 'セット数を入れる'], ['Enter', '決定'], ['BackSpace', '消す・戻る']])")
-rep("if ('serviceWorker' in navigator &&","if (false && 'serviceWorker' in navigator &&")
 rep("else if (S.cfg.n.every(isDefName) && fresh()) wzOpen(0);","else if (S.cfg.n.every(isDefName) && fresh()) wzOpen(0);")
+# remote for pocket: generic key buttons on the phone
+i=s.index("  function rmState() {"); j=s.index("\n",i)
+s=s[:i]+"""  function rmState() { var ks = []; Array.prototype.forEach.call($('mainK').children, function (sp) { var kb = sp.querySelector('kbd'); ks.push([kb.textContent, sp.textContent.slice(kb.textContent.length)]); });
+    return JSON.stringify({ type: 'state', kind: 'pocket', table: TB, mode: S.cfg.mode, title: M().jp, n: S.cfg.n, g: S.cfg.g, lab: S.cfg.n.map(function (x, i) { return label(i); }), score: S.cfg.n.map(function (x, i) { return scoreText(i); }), turn: S.turn, over: S.over, midL: M().mid, mid: $('inn').textContent, info: $('runS').textContent, keys: ks, t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over, win: S.over ? $('wName').textContent : '' }); }"""+s[j:]
+rep("    if (m.type !== 'cmd') return;","    if (m.type === 'key' && typeof m.k === 'string' && /^([0-9+\\-*]|Enter|Backspace)$/.test(m.k)) { if (W) { W = null; $('wzL').hidden = true; } if (!$('prL').hidden) prClose(); if (S.ready && !S.over) return; onKey(m.k, noop); return; }\n    if (m.type !== 'cmd') return;")
+rep("m.p.length === 2 && NP() === 2) {","m.p.length === 2 && NP() === 2 && false) {")
+rep("render(); setInterval(drawTime, 500);","var qm = /[?&]m=([a-z0-9]+)/.exec(location.search), viaMenu = false; if (qm && MODES[qm[1]] && (S.cfg.mode !== qm[1] || S.over)) { setMode(qm[1]); hist = []; S.ready = !S.cfg.n.every(isDefName); } if (qm && MODES[qm[1]]) viaMenu = true;\n  render(); setInterval(drawTime, 500);")
+rep("else if (S.cfg.n.every(isDefName) && fresh()) wzOpen(0);","else if (S.cfg.n.every(isDefName) && fresh()) { wzOpen(0); if (viaMenu) { W.step = M().min === M().max ? 'mode' : 'count'; wzDraw(); } }")
 css='''/* ---- pocket: cloth colour, bowling sheet, signed scores ---- */
-#bRm{display:none}
 .side,.rdc{background:radial-gradient(120% 90% at 28% 0%,rgba(255,255,255,.16),transparent 56%),repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 4px),linear-gradient(180deg,#6E7683 0%,#5A616C 46%,#434953 100%)}
 .rdc{background:linear-gradient(180deg,#6E7683 0%,#5A616C 46%,#434953 100%)}
 .main.n1{grid-template-columns:1fr minmax(16vw,20vw)}.rdm.n1{grid-template-columns:minmax(0,60vw);justify-content:center}

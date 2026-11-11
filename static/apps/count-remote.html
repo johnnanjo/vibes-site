@@ -57,6 +57,16 @@ input:focus{outline:none;border-color:var(--lime)}
 .ord div+div i{background:rgba(10,16,30,.5);color:#fff}
 .ord b{font-size:20px;font-weight:900;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 [hidden]{display:none!important}
+.mg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mt{border:0;border-radius:16px;padding:14px 8px;min-height:104px;color:#fff;font:inherit;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer;touch-action:manipulation;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.mt.carom{background:linear-gradient(180deg,#2468C0,#1E5AA8 46%,#164482)}.mt.pocket{background:linear-gradient(180deg,#6E7683,#5A616C 46%,#434953)}
+.mt:active{transform:scale(.97)}.mt small{font-size:10px;font-weight:700;letter-spacing:.14em;color:#DCE3F0}.mt b{font-size:17px;font-weight:900;line-height:1.25}
+.mlogo{display:grid;place-items:center;padding:26px 0}.mlogo img{height:96px;width:auto}
+.pkh{display:grid;gap:10px}.pkh>small{font-weight:900;letter-spacing:.06em;color:var(--sub)}
+.pkp{display:grid;gap:8px}.pp{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#5A616C;border-radius:14px;padding:10px 14px;border:3px solid transparent}
+.pp.on{border-color:var(--lime)}.pp span{font-weight:900;font-size:17px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pp b{font-size:34px;line-height:1}
+.pkm{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700;color:var(--sub);font-size:13px}.pkm b{font-size:30px;color:var(--chalk)}
+.k.hl{background:var(--lime);color:var(--night);border-color:var(--lime)}
 .run{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .run b{font-size:54px}
 .run small{font-weight:700;color:var(--sub);font-size:13px}
@@ -98,6 +108,31 @@ input:focus{outline:none;border-color:var(--lime)}
     </form>
   </section>
 
+  <section id="vMenu" hidden>
+    <div class="mg" id="mgTop"></div>
+    <div class="mlogo"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></div>
+    <div class="mg" id="mgBot"></div>
+    <p class="note" style="text-align:center">種目を押すと、モニターが切り替わります。</p>
+  </section>
+
+  <section id="vPk" hidden style="display:none;flex-direction:column;gap:12px">
+    <div class="over" id="pkOver" hidden></div>
+    <div class="card rdy" id="pkRdy" hidden>
+      <small>順番を決めます。先攻が上です。</small>
+      <div class="ord" id="pkRdyO"></div>
+      <button type="button" class="k" data-c="swap" id="pkSwap">入れ替え<small>順番を入れ替える</small></button>
+      <button type="button" class="k big" data-c="start">試合開始<small>始める時に押す</small></button>
+    </div>
+    <div class="card pkh" id="pkHead"><small id="pkTitle"></small><div class="pkp" id="pkP"></div><div class="pkm"><span id="pkMidL"></span><b class="num" id="pkMid"></b><span id="pkInfo"></span></div></div>
+    <div class="pad" id="pkKeys"></div>
+    <div class="pad">
+      <button type="button" class="k" data-c="clock">残り秒数<small id="pkClockS"></small></button>
+      <button type="button" class="k" data-c="warmup">練習時間<small id="pkWarmS"></small></button>
+      <button type="button" class="k" id="pkNew">新しい試合<small>2回押す</small></button>
+      <button type="button" class="k" data-c="home">メニュー<small>種目を選び直す</small></button>
+    </div>
+  </section>
+
   <section id="vMain" hidden style="display:flex;flex-direction:column;gap:12px">
     <div class="over" id="over" hidden></div>
     <div class="card rdy" id="rdy" hidden>
@@ -118,6 +153,7 @@ input:focus{outline:none;border-color:var(--lime)}
       <button type="button" class="k" data-c="warmup" id="kWarm">練習時間<small id="kWarmS"></small></button>
       <button type="button" class="k" id="kPlayers">選手<small>名前と持ち点</small></button>
       <button type="button" class="k" id="kNew">新しい試合<small>2回押す</small></button>
+      <button type="button" class="k" data-c="home" style="grid-column:1/-1;min-height:60px">メニュー<small>種目を選び直す</small></button>
     </div>
     <p class="note" id="foot"></p>
   </section>
@@ -145,20 +181,37 @@ input:focus{outline:none;border-color:var(--lime)}
   var CK = 'vibes-count-remote-code', PK = 'vibes-count-remote-players';
   var code = '', ws = null, tries = 0, ping = null, last = null, newAt = 0, gotState = false, joinT = null;
   var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
-  var show = function (v) { ['vJoin', 'vMain', 'vPl'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin'; };
+  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin'; };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
   function connect() {
     if (!code) return; if (ws && ws.readyState <= 1) return;
     status(false, '接続しています…');
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'つながっていません'); return; }
     ws.onopen = function () { tries = 0; status(true, '番号 ' + code.slice(0, 3) + ' ' + code.slice(3)); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; draw(); if (!$('vJoin').hidden) show('vMain'); } };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = m.kind === 'menu' ? 'vMenu' : m.kind === 'pocket' ? 'vPk' : 'vMain'; if (!(cur === 'vPl' && tv === 'vMain') && cur !== tv) show(tv); draw(); } };
     ws.onclose = function () { clearInterval(ping); status(false, 'つなぎ直しています…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
   function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'つながっていません'); connect(); return false; }
+  function tile(it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'mt ' + (it.c === 'carom' ? 'carom' : 'pocket'); var s1 = document.createElement('small'); s1.textContent = it.s; var b1 = document.createElement('b'); b1.textContent = it.b; b.appendChild(s1); b.appendChild(b1); b.onclick = function () { send({ type: 'cmd', c: 'open', v: it.id }); if (navigator.vibrate) navigator.vibrate(15); }; return b; }
+  function drawMenu(m) { var a = $('mgTop'), b = $('mgBot'); a.textContent = ''; b.textContent = ''; (m.items || []).forEach(function (it, i) { (i < Math.ceil(m.items.length / 2) ? a : b).appendChild(tile(it)); }); }
+  function drawPk(m) {
+    $('pkTitle').textContent = m.title + (m.table ? ' · ' + m.table + '番台' : ''); var P = $('pkP'); P.textContent = '';
+    m.lab.forEach(function (x, i) { var d = document.createElement('div'); d.className = 'pp' + (i === m.turn && !m.over ? ' on' : ''); var n = document.createElement('span'); n.textContent = x; var v = document.createElement('b'); v.className = 'num'; v.textContent = m.score[i]; d.appendChild(n); d.appendChild(v); P.appendChild(d); });
+    $('pkMidL').textContent = m.midL === 'FRAME' ? 'フレーム' : 'ラック'; $('pkMid').textContent = m.mid; $('pkInfo').textContent = m.info || '';
+    $('pkOver').hidden = !m.over; if (m.over) $('pkOver').textContent = '試合終了 — ' + (m.win || '');
+    $('pkRdy').hidden = !m.rd; $('pkKeys').hidden = !!m.rd || !!m.over;
+    if (m.rd) { var o = $('pkRdyO'); o.textContent = ''; m.n.forEach(function (x, i) { var d = document.createElement('div'); var a = document.createElement('i'); a.textContent = (i + 1) + '番'; var b = document.createElement('b'); b.textContent = m.lab[i]; d.appendChild(a); d.appendChild(b); o.appendChild(d); }); $('pkSwap').hidden = m.n.length < 2; }
+    var K = $('pkKeys'), sig = JSON.stringify(m.keys); if (K.getAttribute('data-s') !== sig) { K.setAttribute('data-s', sig); K.textContent = '';
+      (m.keys || []).forEach(function (kk) { var key = kk[0], lab = kk[1]; if (key === '*' || key === '/' || key === '.') return; var list = key === '0-9' ? ['0','1','2','3','4','5','6','7','8','9','10'] : [key];
+        list.forEach(function (k1) { var b = document.createElement('button'); b.type = 'button'; b.className = 'k' + (k1 === '+' || k1 === 'Enter' ? ' hl' : ''); b.textContent = key === '0-9' ? k1 + '個' : lab; if (key !== '0-9') { var sm = document.createElement('small'); sm.textContent = k1 === 'BackSpace' ? '' : (k1 === 'Enter' ? '' : ''); }
+          b.onclick = function () { if (key === '0-9') send({ type: 'cmd', c: 'set', v: +k1 }); else send({ type: 'key', k: k1 === 'BackSpace' ? 'Backspace' : k1 }); if (navigator.vibrate) navigator.vibrate(15); }; K.appendChild(b); }); }); }
+    $('pkClockS').textContent = m.t ? (m.tOn ? '動いています · ' + m.t + '秒' : m.t + '秒') : '設定で切になっています'; $('pkWarmS').textContent = m.pr ? '押すと閉じる' : m.pm + '分';
+  }
   function draw() {
     var m = last; if (!m) return;
+    if (m.kind === 'menu') return drawMenu(m);
+    if (m.kind === 'pocket') return drawPk(m);
     $('rdy').hidden = !m.rd; $('plBox').hidden = !!m.rd; $('runBox').hidden = !!m.rd;
     if (m.rd) { var o = $('rdyO'); o.textContent = ''; m.n.forEach(function (x, i) { var d = document.createElement('div'); var a = document.createElement('i'); a.textContent = m.n.length === 2 ? (i ? '後攻' : '先攻') : (i + 1) + '番'; var b = document.createElement('b'); b.textContent = x + ' (' + m.g[i] + ')'; d.appendChild(a); d.appendChild(b); o.appendChild(d); }); $('rdySwap').firstChild.textContent = m.n.length === 2 ? '入れ替え' : '順番を回す'; }
     var N = m.n.length, ix = N === 2 ? [0, 1] : [m.turn, (m.turn + 1) % N];
@@ -185,6 +238,7 @@ input:focus{outline:none;border-color:var(--lime)}
   $('iCode').addEventListener('input', function () { var v = this.value.replace(/\D/g, '').slice(0, 6); this.value = v.length > 3 ? v.slice(0, 3) + ' ' + v.slice(3) : v; });
   $('bCode').onclick = function () { code = ''; try { localStorage.removeItem(CK); } catch (x) {} if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; } last = null; status(false, 'つながっていません'); show('vJoin'); };
   Array.prototype.forEach.call(document.querySelectorAll('[data-c]'), function (b) { b.addEventListener('click', function () { send({ type: 'cmd', c: b.getAttribute('data-c') }); if (navigator.vibrate) navigator.vibrate(15); }); });
+  $('pkNew').onclick = function () { var n = Date.now(), sm = this.querySelector('small'); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); sm.textContent = '2回押す'; } else { newAt = n; sm.textContent = 'もう一度押すと決定'; setTimeout(function () { sm.textContent = '2回押す'; }, 2000); } };
   $('kNew').onclick = function () { var n = Date.now(); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); this.querySelector('small').textContent = '2回押す'; } else { newAt = n; this.querySelector('small').textContent = 'もう一度押すと決定'; var el = this; setTimeout(function () { el.querySelector('small').textContent = '2回押す'; }, 2000); } };
   function chips(p) {
     var box = $('sv' + p), q = $('pn' + p).value.trim(); box.textContent = '';

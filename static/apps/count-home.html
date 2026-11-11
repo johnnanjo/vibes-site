@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ja" translate="no">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VIBES デジタルカウント｜VIBES BILLIARDS</title>
+<link rel="canonical" href="https://vibesbilliards.com/pages/count">
+<link rel="icon" href="/img/favicon-64.png">
+<meta name="theme-color" content="#171A22">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap">
+<style>
+@font-face{font-family:Unbounded;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/unbounded-latin-900-normal.woff2) format("woff2")}
+:root{--night:#171A22;--night2:#262A35;--line:#3A3F4C;--lime:#C0FC09;--chalk:#F3F4EF;--sub:#A3A8B5;--carom:#1E5AA8;--pocket:#5A616C}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:radial-gradient(120% 90% at 50% 0%,#232836 0%,#171A22 55%,#0E1015 100%) fixed;overflow:hidden}
+[hidden]{display:none!important}
+.home{height:100vh;display:grid;grid-template-rows:auto 1fr auto;padding:2vh 2vw;gap:1.6vh}
+.bar{display:flex;justify-content:flex-end;gap:.8vw;min-height:5vh}
+.bar button{font:inherit;font-weight:700;font-size:1.7vh;letter-spacing:.06em;color:var(--chalk);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:.8vh 1.6vw;cursor:pointer}
+.bar button:hover{background:rgba(255,255,255,.1)}
+.bar button:focus-visible,.tile:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+.ring{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:1fr auto 1fr;gap:2.2vh 1.6vw;min-height:0;align-items:stretch;max-width:1500px;width:100%;margin:0 auto}
+.logo{grid-column:1/-1;display:grid;place-items:center;padding:1vh 0}
+.logo img{height:24vh;width:auto;max-width:70vw;filter:drop-shadow(0 1.4vh 3vh rgba(0,0,0,.5))}
+.tile{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:.6vh;text-align:left;text-decoration:none;color:#fff;font:inherit;border:0;cursor:pointer;border-radius:2.4vh;padding:2.2vh 1.8vw;min-height:0;min-width:0;
+  background:radial-gradient(120% 90% at 28% 0%,rgba(255,255,255,.16),transparent 56%),repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 4px),linear-gradient(180deg,var(--a) 0%,var(--b) 46%,var(--c) 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 1.2vh 3vh rgba(0,0,0,.4);transition:transform .15s,box-shadow .15s}
+.tile.carom{--a:#2468C0;--b:#1E5AA8;--c:#164482}
+.tile.pocket{--a:#6E7683;--b:#5A616C;--c:#434953}
+.tile:hover,.tile.sel{transform:translateY(-.4vh);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),0 0 0 .3vh var(--lime),0 0 5vh rgba(192,252,9,.2),0 1.6vh 3.6vh rgba(0,0,0,.45)}
+.tile kbd{position:absolute;top:1.6vh;left:1.4vw;font-family:Unbounded,Anton,Impact,sans-serif;font-size:2.4vh;line-height:4.6vh;min-width:4.6vh;height:4.6vh;border-radius:1vh;background:var(--chalk);color:var(--night);text-align:center}
+.tile small{font-weight:700;font-size:1.7vh;letter-spacing:.2em;color:#DCE3F0}
+.tile b{font-weight:900;font-size:min(5.2vh,3.4vw);line-height:1.15}
+.tile span{font-size:1.9vh;font-weight:700;color:#DCE3F0}
+.foot{display:flex;justify-content:center;gap:1.6vw;flex-wrap:wrap;color:var(--sub);font-weight:700;font-size:1.7vh;letter-spacing:.06em}
+.foot kbd{font:inherit;font-weight:900;color:var(--night);background:var(--chalk);border-radius:.7vh;padding:0 .7vw;margin-right:.4vw}
+/* phone is in control: the monitor shows the logo only */
+.solo{position:fixed;inset:0;display:grid;place-items:center;grid-template-rows:1fr auto;padding:4vh 4vw;background:radial-gradient(120% 90% at 50% 0%,#232836 0%,#171A22 55%,#0E1015 100%)}
+.solo img{height:46vh;width:auto;max-width:80vw;align-self:center;filter:drop-shadow(0 2vh 4vh rgba(0,0,0,.55))}
+.solo p{margin:0;color:var(--sub);font-weight:700;font-size:2.2vh;letter-spacing:.08em;text-align:center}
+.solo p b{color:var(--chalk);font-family:Unbounded,Anton,sans-serif;font-weight:400;font-size:3.4vh;letter-spacing:.06em;margin:0 .6vw}
+.solo button{margin-top:1.4vh;font:inherit;font-weight:700;font-size:1.8vh;color:var(--chalk);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.8vh 2vw;cursor:pointer}
+.ov{position:fixed;inset:0;background:rgba(10,12,16,.82);backdrop-filter:blur(8px);display:grid;place-items:center;z-index:5;padding:3vh 3vw}
+.panel{background:linear-gradient(180deg,#2C313D,#232730);border:1px solid rgba(255,255,255,.12);border-radius:2.4vh;padding:3vh 3vw;width:min(92vw,900px);box-shadow:0 3vh 8vh rgba(0,0,0,.55);text-align:center}
+.panel h2{margin:0 0 1.4vh;font-size:3.2vh}
+.panel p{margin:0 0 1.6vh;color:var(--chalk);font-size:2.3vh;line-height:1.7}
+.panel .u{background:var(--night);border:.4vh solid var(--lime);border-radius:1.6vh;padding:1.2vh 1vw;font-weight:900;font-size:min(4vh,4.6vw);margin-bottom:1.4vh;overflow-wrap:anywhere}
+.panel .c{font-family:Unbounded,Anton,sans-serif;font-size:min(14vh,13vw);letter-spacing:.06em;line-height:1.1}
+.acts{display:flex;gap:1vw;justify-content:center;margin-top:2.2vh;flex-wrap:wrap}
+.btn{font:inherit;font-weight:900;font-size:2.2vh;border-radius:999px;padding:1.2vh 2.4vw;border:1px solid var(--line);background:var(--night);color:var(--chalk);cursor:pointer}
+.btn.go{background:var(--lime);color:var(--night);border-color:var(--lime)}
+@media (max-width:760px){
+  html,body{overflow:auto}.home{height:auto;min-height:100vh}
+  .ring{grid-template-rows:auto}.tile{min-height:26vw;padding:3vw}.tile b{font-size:5vw}.tile small{font-size:2.6vw}.tile span{font-size:3vw}.tile kbd{display:none}
+  .logo img{height:22vw}.bar button,.foot{font-size:3vw}.foot{display:none}
+}
+@media (prefers-reduced-motion:reduce){.tile{transition:none}}
+</style>
+</head>
+<body>
+<div class="home" id="home">
+  <div class="bar"><button type="button" id="bRm">リモコン（スマホで操作）</button><button type="button" id="bFull">全画面 (F)</button></div>
+  <div class="ring" id="ring">
+    <a class="tile carom" data-id="3c" href="/pages/count-3c/"><kbd>1</kbd><small>CAROM</small><b>スリークッション</b><span>2〜4人・持ち点・タイムアウト</span></a>
+    <a class="tile pocket" data-id="bowlard" href="/pages/count-pocket/?m=bowlard"><kbd>2</kbd><small>POCKET</small><b>ボーラード</b><span>1〜4人・ボウリングのスコア</span></a>
+    <a class="tile pocket" data-id="nine" href="/pages/count-pocket/?m=nine"><kbd>3</kbd><small>POCKET</small><b>9ボール</b><span>セットマッチ・ハンデ対応</span></a>
+    <div class="logo"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></div>
+    <a class="tile pocket" data-id="ten" href="/pages/count-pocket/?m=ten"><kbd>4</kbd><small>POCKET</small><b>10ボール</b><span>セットマッチ・ハンデ対応</span></a>
+    <a class="tile pocket" data-id="g59" href="/pages/count-pocket/?m=g59"><kbd>5</kbd><small>POCKET</small><b>5-9</b><span>2〜4人・かけ玉の点を自動計算</span></a>
+    <a class="tile pocket" data-id="g510" href="/pages/count-pocket/?m=g510"><kbd>6</kbd><small>POCKET</small><b>5-10</b><span>2〜4人・かけ玉の点を自動計算</span></a>
+  </div>
+  <div class="foot"><span><kbd>1</kbd>〜<kbd>6</kbd>種目を選ぶ</span><span><kbd>Enter</kbd>決定</span><span><kbd>F</kbd>全画面</span></div>
+</div>
+<div class="solo" id="solo" hidden>
+  <img id="soloLogo" alt="VIBES BILLIARDS">
+  <div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div>
+</div>
+<div class="ov" id="rmL" hidden>
+  <div class="panel" role="dialog" aria-label="リモコン">
+    <h2>リモコン（スマホで操作）</h2>
+    <p>スマホかタブレットでこのページを開き、下の番号を入れてください。</p>
+    <div class="u" id="rmU">vibesbilliards.com/pages/count-remote</div>
+    <div class="c" id="rmC"></div>
+    <div class="acts"><button type="button" class="btn" id="rmOff">リモコンを切る</button><button type="button" class="btn go" id="rmOk">閉じる (Enter)</button></div>
+  </div>
+</div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
+  var U = { '3c': '/pages/count-3c/', pocket: '/pages/count-pocket/' };
+  var tiles = Array.prototype.slice.call(document.querySelectorAll('.tile')), sel = -1;
+  var url = function (id) { var u = id === '3c' ? U['3c'] : U.pocket + '?m=' + id; if (TB) u += (u.indexOf('?') < 0 ? '?' : '&') + 't=' + TB; return u; };
+  tiles.forEach(function (t) { t.setAttribute('href', url(t.getAttribute('data-id'))); });
+  function go(id) { location.href = url(id); }
+  function pick(i) { sel = i; tiles.forEach(function (t, k) { t.classList.toggle('sel', k === i); }); }
+  function goFull() { var d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {}); }
+  $('bFull').onclick = goFull; $('soloLogo').src = document.querySelector('.logo img').src;
+  /* remote: same room as the scoreboards, so the phone keeps its connection when the monitor changes page */
+  var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+  var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), rm = null, ws = null, tries = 0, ping = null, showMenu = false;
+  try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
+  var saveRm = function () { try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} };
+  var state = function () { return JSON.stringify({ type: 'state', kind: 'menu', table: TB, items: tiles.map(function (t) { return { id: t.getAttribute('data-id'), b: t.querySelector('b').textContent, s: t.querySelector('small').textContent, c: t.classList.contains('carom') ? 'carom' : 'pocket' }; }) }); };
+  var push = function () { if (ws && ws.readyState === 1) { try { ws.send(state()); } catch (e) {} } };
+  function draw() {
+    var on = !!(rm && rm.on); $('solo').hidden = !on || showMenu; $('home').hidden = on && !showMenu;
+    $('bRm').textContent = on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) : 'リモコン（スマホで操作）';
+    if (on) { $('soloC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('soloS').textContent = ws && ws.readyState === 1 ? '' : '（接続しています…）'; }
+  }
+  function connect() {
+    if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
+    try { ws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { ws = null; return; }
+    ws.onopen = function () { tries = 0; draw(); push(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'hello') return push(); if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^(3c|bowlard|nine|ten|g59|g510)$/.test(m.v)) go(m.v); };
+    ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
+    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+  }
+  function rmOpen() {
+    if (!rm || !/^\d{6}$/.test(rm.code || '')) rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true };
+    rm.on = true; saveRm(); $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('rmL').hidden = false; showMenu = false; connect(); draw();
+  }
+  $('bRm').onclick = rmOpen; $('rmOk').onclick = function () { $('rmL').hidden = true; };
+  $('rmOff').onclick = function () { if (rm) { rm.on = false; saveRm(); } if (ws) { try { ws.close(); } catch (e) {} } $('rmL').hidden = true; showMenu = false; draw(); };
+  $('soloMenu').onclick = function () { showMenu = true; draw(); };
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return; var k = e.key;
+    if (!$('rmL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('rmL').hidden = true; } return; }
+    if (k === 'f' || k === 'F') { e.preventDefault(); goFull(); return; }
+    if (!$('solo').hidden) { if (k === 'Escape' || k === 'Enter') { e.preventDefault(); showMenu = true; draw(); } return; }
+    if (k >= '1' && k <= '6') { e.preventDefault(); var i = +k - 1; if (sel === i) go(tiles[i].getAttribute('data-id')); else pick(i); }
+    else if (k === 'Enter' && sel >= 0) { e.preventDefault(); go(tiles[sel].getAttribute('data-id')); }
+    else if (k === 'ArrowRight' || k === '+') { e.preventDefault(); pick((sel + 1) % tiles.length); }
+    else if (k === 'ArrowLeft' || k === '-') { e.preventDefault(); pick((sel + tiles.length - 1) % tiles.length); }
+    else if (k === 'Escape' && rm && rm.on) { e.preventDefault(); showMenu = false; draw(); }
+  });
+  draw(); connect();
+  if ('serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.href)) navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count' }).catch(function () {});
+})();
+</script>
+</body>
+</html>

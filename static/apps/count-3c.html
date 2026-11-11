@@ -197,9 +197,9 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 <body>
 <div class="board" id="board">
   <div class="top">
-    <a href="/" aria-label="VIBES BILLIARDS home"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
+    <a href="/pages/count/" id="aHome" aria-label="メニューにもどる"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
     <span class="ttl" id="ttl">3-CUSHION SCOREBOARD</span>
-    <span style="display:flex;gap:.8vw"><button type="button" id="bRm">リモコン</button><button type="button" id="bKey" hidden>キー設定 (K)</button><button type="button" id="bPl">選手</button><button type="button" id="bPr">練習時間 (P)</button><button type="button" id="bSet">設定 (/)</button><button type="button" id="bFull">全画面 (F)</button></span>
+    <span style="display:flex;gap:.8vw"><button type="button" id="bHome">メニュー</button><button type="button" id="bRm">リモコン</button><button type="button" id="bKey" hidden>キー設定 (K)</button><button type="button" id="bPl">選手</button><button type="button" id="bPr">練習時間 (P)</button><button type="button" id="bSet">設定 (/)</button><button type="button" id="bFull">全画面 (F)</button></span>
   </div>
   <div class="main" id="main">
     <div class="mid" id="mid">
@@ -501,7 +501,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       h.appendChild(document.createTextNode('人数を選ぶ'));
       var bx = el('div', 'opts c3');
       [2, 3, 4].forEach(function (n) { var o = el('div', 'opt' + (n === NP() ? ' sel' : '')); o.appendChild(el('kbd', '', String(n))); o.appendChild(el('span', '', n + '人')); bx.appendChild(o); });
-      b.appendChild(bx); keysHelp([['2-4', '選ぶ'], ['Enter', NP() + '人のまま']]); return;
+      b.appendChild(bx); keysHelp([['2-4', '選ぶ'], ['Enter', NP() + '人のまま'], ['BackSpace', 'メニューにもどる']]); return;
     }
     var dot = el('i'); dot.style.background = PCOL[W.p]; h.appendChild(dot);
     h.appendChild(document.createTextNode('選手' + (W.p + 1) + '（' + PCN[W.p] + '）'));
@@ -541,6 +541,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     if (W.step === 'count') {
       if (d >= 2 && d <= 4) { if (d !== NP()) { setN(d); render(); } W.step = 'mode'; wzDraw(); }
       else if (k === 'Enter') { W.step = 'mode'; wzDraw(); }
+      else if (k === 'Backspace') goHome();
       return true;
     }
     if (W.step === 'mode') {
@@ -618,9 +619,9 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 
   /* ===== remote control from a tablet / phone (relay: Cloudflare Worker + Durable Object) ===== */
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
-  var RMK = 'vibes-count-3c-remote' + (TB ? '-t' + TB : ''), rm = null, rws = null, rTry = 0, rPing = null;
+  var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), U_HOME = '/pages/count/', rm = null, rws = null, rTry = 0, rPing = null;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
-  function rmState() { return JSON.stringify({ type: 'state', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
+  function rmState() { return JSON.stringify({ type: 'state', kind: '3c', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
   function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); } catch (e) {} } }
   function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'つながっています' : '接続しています…') : '切'; $('bRm').textContent = rm && rm.on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'リモコン'; }
   function rmConnect() {
@@ -632,8 +633,10 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     rws.onerror = function () { try { rws.close(); } catch (e) {} };
     rmStatus();
   }
+  function goHome() { location.href = U_HOME + (TB ? '?t=' + TB : ''); }
   function rmHandle(m) {
     if (m.type === 'hello') return rmPush();
+    if (m.type === 'cmd' && m.c === 'home') { goHome(); return; }
     if (KM) return;
     if (!$('setL').hidden) closeSet(false);
     if (!$('rmL').hidden) $('rmL').hidden = true;
@@ -664,6 +667,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     $('rmU').textContent = 'vibesbilliards.com/pages/count-remote'; $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3);
     $('rmL').hidden = false; rmConnect(); rmStatus();
   }
+  $('bHome').onclick = goHome; $('aHome').onclick = function (e) { e.preventDefault(); goHome(); };
   $('bRm').onclick = rmOpen; $('rmOk').onclick = function () { $('rmL').hidden = true; };
   $('rmOff').onclick = function () { if (rm) { rm.on = false; try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} } if (rws) { try { rws.close(); } catch (e) {} } $('rmL').hidden = true; rmStatus(); };
   rmStatus(); rmConnect();
@@ -739,7 +743,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   }
   /* offline: cache this page and what it loaded; keep the screen awake */
   if ('serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.href)) {
-    navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count-3c' }).then(function () { return navigator.serviceWorker.ready; }).then(function (reg) {
+    navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count' }).then(function () { return navigator.serviceWorker.ready; }).then(function (reg) {
       var send = function () { try { var urls = performance.getEntriesByType('resource').map(function (r) { return r.name; }).filter(function (u) { return /fonts\.(googleapis|gstatic)\.com|\/img\//.test(u); }); if (reg.active) reg.active.postMessage({ type: 'cache', urls: urls }); } catch (e) {} };
       setTimeout(send, 3000); if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(send, 500); });
     }).catch(function () {});

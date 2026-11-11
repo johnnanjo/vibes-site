@@ -166,3 +166,5 @@ body.print .cover .cvimg{max-height:120mm;object-fit:contain}
 
 .one{margin-top:3.5mm}.one figure{max-width:62%;margin:0 auto}
 @media (max-width:640px){.one figure{max-width:100%}}
+
+.fi.dir{background:#F2C200;height:6.5mm;width:8.5mm;border-radius:1mm 2mm 1mm 1mm}

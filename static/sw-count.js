@@ -1,8 +1,9 @@
-/* Offline support for the 3-cushion scoreboard (/pages/count-3c). Scope is limited to that page. */
-var C = 'vibes-count-3c-offline-v3';
-var PAGE = '/pages/count-3c/';
-var CORE = [PAGE, '/img/vibes-logo.png', '/img/favicon-64.png', '/count-3c.webmanifest', '/fonts/unbounded-latin-900-normal.woff2',
-  'https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap'];
+/* Offline support for the scoreboards: /pages/count (start), /pages/count-3c, /pages/count-pocket, /pages/count-remote. */
+var C = 'vibes-count-3c-offline-v4';
+var PAGES = ['/pages/count/', '/pages/count-3c/', '/pages/count-pocket/'];
+var pageKey = function (u) { var p = new URL(u, location.origin).pathname; return p.charAt(p.length - 1) === '/' ? p : p + '/'; };
+var CORE = PAGES.concat([ '/img/vibes-logo.png', '/img/favicon-64.png', '/count-3c.webmanifest', '/fonts/unbounded-latin-900-normal.woff2',
+  'https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap']);
 /* a redirected response cannot be used to answer a navigation, so store a clean copy */
 function clean(r) { return r.redirected ? r.blob().then(function (b) { return new Response(b, { status: r.status, statusText: r.statusText, headers: r.headers }); }) : Promise.resolve(r); }
 self.addEventListener('install', function (e) {
@@ -20,8 +21,8 @@ self.addEventListener('fetch', function (e) {
   var url = new URL(req.url);
   if (url.hostname === 'inputtools.google.com' || url.pathname.indexOf('/api/') === 0) return;
   if (req.mode === 'navigate') {
-    e.respondWith(fetch(req).then(function (r) { if (r.ok) { clean(r.clone()).then(function (cp) { caches.open(C).then(function (c) { c.put(PAGE, cp); }); }); } return r; })
-      .catch(function () { return caches.match(PAGE).then(function (r) { return r || new Response('Offline. Open this page once while online.', { status: 503, headers: { 'Content-Type': 'text/plain' } }); }); }));
+    e.respondWith(fetch(req).then(function (r) { if (r.ok) { clean(r.clone()).then(function (cp) { caches.open(C).then(function (c) { c.put(pageKey(req.url), cp); }); }); } return r; })
+      .catch(function () { return caches.match(pageKey(req.url)).then(function (r) { return r || new Response('Offline. Open this page once while online.', { status: 503, headers: { 'Content-Type': 'text/plain' } }); }); }));
     return;
   }
   var cacheable = url.origin === location.origin ? /^\/(img|css|js|fonts)\//.test(url.pathname) || url.pathname === '/count-3c.webmanifest' : /fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
