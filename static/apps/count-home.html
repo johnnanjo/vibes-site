@@ -37,6 +37,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 1.2vh 3vh rgba(0,0,0,.4);transition:transform .15s,box-shadow .15s}
 .tile.carom{--a:#2468C0;--b:#1E5AA8;--c:#164482}
 .tile.pocket{--a:#6E7683;--b:#5A616C;--c:#434953}
+.tile.lt{color:var(--night)}.tile.lt small,.tile.lt span{color:#3A3F4C}.tile.lt kbd{background:var(--night);color:#fff}
 .tile:hover,.tile.sel{transform:translateY(-.4vh);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),0 0 0 .3vh var(--lime),0 0 5vh rgba(192,252,9,.2),0 1.6vh 3.6vh rgba(0,0,0,.45)}
 .tile kbd{position:absolute;top:1.6vh;left:1.4vw;font-family:Unbounded,Anton,Impact,sans-serif;font-size:2.4vh;line-height:4.6vh;min-width:4.6vh;height:4.6vh;border-radius:1vh;background:var(--chalk);color:var(--night);text-align:center}
 .tile small{font-weight:700;font-size:1.7vh;letter-spacing:.2em;color:#DCE3F0}
@@ -100,6 +101,9 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     nine: { t: '9ボール', back: 'pocket', items: [{ id: 'nine-set', b: 'セットマッチ', s: '9-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g59', b: '5-9', s: '9-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] },
     ten: { t: '10ボール', back: 'pocket', items: [{ id: 'ten-set', b: 'セットマッチ', s: '10-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g510', b: '5-10', s: '10-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] }
   };
+  var COL = { carom: ['#2468C0', '#1E5AA8', '#164482'], pocket: ['#6E7683', '#5A616C', '#434953'], purple: ['#8656C4', '#6A3FA0', '#4C2B78'], green: ['#1F9A5C', '#14804A', '#0D5C35'], yellow: ['#FFD83A', '#F2C200', '#C79E00', 1], blue: ['#3A66E8', '#1D4ED8', '#1539A3'], red: ['#E04A52', '#C4262E', '#8F1A21'] };
+  var KOL = { band: 'purple', bowlard: 'green', nine: 'yellow', ten: 'blue', 'nine-set': 'yellow', g59: 'red', 'ten-set': 'blue', g510: 'red' };
+  var colOf = function (it) { return COL[KOL[it.id] || it.c]; };
   var lv = 'top', tiles = [], sel = -1;
   var url = function (id) { var u = id === '3c' ? U['3c'] + '?g=three' : id === 'band' ? U['3c'] + '?g=band' : U.pocket + '?m=' + id.replace('-set', ''); if (TB) u += (u.indexOf('?') < 0 ? '?' : '&') + 't=' + TB; return u; };
   function open(id) {
@@ -111,7 +115,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     var m = MENU[lv], r = $('ring'); r.textContent = ''; r.className = 'ring n' + m.items.length; sel = -1; tiles = [];
     var cr = $('crumb'); cr.textContent = ''; if (m.back) { var bb = document.createElement('button'); bb.type = 'button'; bb.textContent = '← もどる (BackSpace)'; bb.onclick = function () { open('back'); }; cr.appendChild(bb); cr.appendChild(document.createTextNode(m.t)); }
     m.items.forEach(function (it, i) {
-      var a = document.createElement('button'); a.type = 'button'; a.className = 'tile ' + it.c;
+      var a = document.createElement('button'), cl = colOf(it); a.type = 'button'; a.className = 'tile' + (cl[3] ? ' lt' : ''); a.style.setProperty('--a', cl[0]); a.style.setProperty('--b', cl[1]); a.style.setProperty('--c', cl[2]);
       var kb = document.createElement('kbd'); kb.textContent = String(i + 1); var sm = document.createElement('small'); sm.textContent = it.s; var b = document.createElement('b'); b.textContent = it.b; var sp = document.createElement('span'); sp.textContent = it.d;
       a.appendChild(kb); a.appendChild(sm); a.appendChild(b); a.appendChild(sp); a.onclick = function () { open(it.id); }; r.appendChild(a); tiles.push(a);
     });
@@ -127,7 +131,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), rm = null, ws = null, tries = 0, ping = null, showMenu = false;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
   var saveRm = function () { try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} };
-  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d }; }) }); };
+  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { var cl = colOf(x); return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d, col: cl.slice(0, 3), lt: cl[3] ? 1 : 0 }; }) }); };
   var push = function () { if (ws && ws.readyState === 1) { try { ws.send(state()); } catch (e) {} } };
   function draw() {
     var on = !!(rm && rm.on); $('solo').hidden = !on || showMenu; $('home').hidden = on && !showMenu;
