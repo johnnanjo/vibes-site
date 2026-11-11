@@ -383,7 +383,8 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
       h.appendChild(el('small', '', 'REGISTERED PLAYERS' + (W.kana ? ' — ' + W.kana : '')));
       if (!W.list.length) b.appendChild(el('p', 'note', 'NO PLAYER FOUND. PRESS Enter TO REGISTER AS A NEW PLAYER, OR BackSpace TO GO BACK.'));
       var pg2 = listDraw(b, W.list, function (o) { return full(o); });
-      keysHelp([['1-9', 'SELECT']].concat(pg2 > 1 ? [['0', 'NEXT PAGE']] : []).concat([['Enter', 'OK'], ['BackSpace', 'BACK']]));
+      if (W.del != null && W.list[W.del]) b.appendChild(el('p', 'note', 'DELETE ' + full(W.list[W.del]) + ' ? PRESS - AGAIN TO DELETE.'));
+      keysHelp([['1-9', 'SELECT']].concat(pg2 > 1 ? [['0', 'NEXT PAGE']] : []).concat([['Enter', 'OK'], ['-', '×2 DELETE PLAYER'], ['BackSpace', 'BACK']]));
     } else if (W.step === 'target') {
       h.appendChild(el('small', '', 'TARGET POINTS — ' + (W.cur.guest ? 'GUEST' : full(W.cur))));
       var inp2 = el('div', 'inp'); inp2.appendChild(el('span', 'num', W.num)); inp2.appendChild(el('span', 'cur')); inp2.appendChild(el('small', '', 'POINTS')); b.appendChild(inp2);
@@ -410,9 +411,13 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
       } else return false;
     } else if (W.step === 'cand' || W.step === 'pick') {
       var items = W.step === 'cand' ? W.cands : W.list, per = 9, pages = Math.max(1, Math.ceil(items.length / per));
-      if (d >= 1 && d <= 9) { var ix = W.page * per + d - 1; if (ix < items.length) { W.sel = ix; wzDraw(); } }
+      if (d >= 1 && d <= 9) { var ix = W.page * per + d - 1; if (ix < items.length) { W.sel = ix; W.del = null; wzDraw(); } }
       else if (d === 0) { W.page = (W.page + 1) % pages; W.sel = W.page * per; wzDraw(); }
-      else if (k === 'Backspace') { var q = W.kana; kanaStart(W.purpose, W.part); W.kana = q; wzDraw(); }
+      else if (k === '-' && W.step === 'pick' && items[W.sel]) {
+        if (W.del !== W.sel) { W.del = W.sel; wzDraw(); }
+        else { var o2 = items[W.sel], ix2 = players.indexOf(o2); if (ix2 >= 0) players.splice(ix2, 1); try { localStorage.setItem(PK, JSON.stringify(players)); } catch (e2) {} delete roster[full(o2)]; try { localStorage.setItem(RK, JSON.stringify(roster)); } catch (e3) {} drawRoster(); W.del = null; pickLoad(); }
+      }
+      else if (k === 'Backspace') { W.del = null; var q = W.kana; kanaStart(W.purpose, W.part); W.kana = q; wzDraw(); }
       else if (k === 'Enter') {
         var it = items[W.sel];
         if (!it && W.step === 'pick' && W.kana) { W.cur = { sei: '', mei: '', ys: '', ym: '' }; W.purpose = 'new'; W.part = 'sei'; candLoad(); return true; }
