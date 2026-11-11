@@ -1,7 +1,7 @@
 /* Offline support for the 3-cushion scoreboard (/pages/count-3c). Scope is limited to that page. */
-var C = 'vibes-count-3c-offline-v2';
+var C = 'vibes-count-3c-offline-v3';
 var PAGE = '/pages/count-3c/';
-var CORE = [PAGE, '/img/vibes-logo.png', '/img/favicon-64.png', '/count-3c.webmanifest',
+var CORE = [PAGE, '/img/vibes-logo.png', '/img/favicon-64.png', '/count-3c.webmanifest', '/fonts/unbounded-latin-900-normal.woff2',
   'https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap'];
 /* a redirected response cannot be used to answer a navigation, so store a clean copy */
 function clean(r) { return r.redirected ? r.blob().then(function (b) { return new Response(b, { status: r.status, statusText: r.statusText, headers: r.headers }); }) : Promise.resolve(r); }
@@ -24,7 +24,7 @@ self.addEventListener('fetch', function (e) {
       .catch(function () { return caches.match(PAGE).then(function (r) { return r || new Response('Offline. Open this page once while online.', { status: 503, headers: { 'Content-Type': 'text/plain' } }); }); }));
     return;
   }
-  var cacheable = url.origin === location.origin ? /^\/(img|css|js)\//.test(url.pathname) || url.pathname === '/count-3c.webmanifest' : /fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
+  var cacheable = url.origin === location.origin ? /^\/(img|css|js|fonts)\//.test(url.pathname) || url.pathname === '/count-3c.webmanifest' : /fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
   if (!cacheable) return;
   e.respondWith(caches.match(req, { ignoreVary: true }).then(function (hit) {
     return hit || fetch(req).then(function (r) { if (r.ok) { var cp = r.clone(); caches.open(C).then(function (c) { c.put(req, cp); }); } return r; });

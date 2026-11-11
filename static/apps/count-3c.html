@@ -14,11 +14,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap">
 <style>
+@font-face{font-family:Unbounded;font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/unbounded-latin-900-normal.woff2) format("woff2")}
 :root{--night:#171A22;--night2:#262A35;--line:#3A3F4C;--lime:#C0FC09;--chalk:#F3F4EF;--sub:#A3A8B5;--felt:#1E5AA8;--white:#FFFFFF;--yellow:#F2C200;--red:#D7262E}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-family:"Noto Sans JP",system-ui,sans-serif;overflow:hidden}
 [hidden]{display:none!important}
-.num{font-family:Anton,Impact,"Arial Narrow","Noto Sans JP",sans-serif;font-variant-numeric:tabular-nums;line-height:.9}
+.num{font-family:Unbounded,Anton,Impact,"Arial Narrow","Noto Sans JP",sans-serif;font-variant-numeric:tabular-nums;line-height:.9}
 .board{height:100vh;display:grid;grid-template-rows:auto 1fr auto;gap:1vh;padding:1.2vh 1.2vw}
 .top{display:flex;align-items:center;justify-content:space-between;gap:2vw;min-height:5vh}
 .top img{height:4.4vh;width:auto}
@@ -33,13 +34,13 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .p0 .ball{background:var(--white)}.p1 .ball{background:var(--yellow)}
 .name{font-weight:900;font-size:4.6vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .goal{margin-left:auto;font-weight:700;font-size:2.4vh;white-space:nowrap;background:rgba(23,26,34,.55);border-radius:1.4vh;padding:.4vh 1vw;text-align:right}.goal small{display:block;font-size:2.4vh;color:#fff;font-weight:900}
-.goal b{font-family:Anton,Impact,sans-serif;font-size:4.4vh;font-weight:400;margin-left:.4vw}
+.goal b{font-family:Unbounded,Anton,Impact,sans-serif;font-size:4.4vh;font-weight:400;margin-left:.4vw}
 .score{display:flex;align-items:center;justify-content:center;font-size:min(33vh,22vw);min-height:0}
 .p0 .score{color:var(--white)}.p1 .score{color:var(--yellow)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.8vw}
 .stat{background:rgba(23,26,34,.55);border-radius:1.4vh;padding:1vh .6vw;text-align:center}
 .stat small{display:block;font-weight:700;font-size:1.9vh;color:#DCE3F0}
-.stat b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:5.4vh}
+.stat b{font-family:Unbounded,Anton,Impact,sans-serif;font-weight:400;font-size:5.4vh}
 .turn{position:absolute;top:-2.2vh;left:50%;transform:translateX(-50%);background:var(--lime);color:var(--night);font-weight:900;font-size:2.2vh;padding:.4vh 1.4vw;border-radius:999px;white-space:nowrap}
 .side:not(.on) .turn{display:none}
 .mid{display:grid;grid-template-rows:1.3fr 1fr;gap:1vh;min-height:0}
@@ -50,7 +51,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .cd{position:relative;height:21vh;margin-top:1vh;background:var(--night2);border-radius:1.4vh;padding:.8vh .6vw}.segs{display:flex;gap:.25vw;height:100%}.segs i{flex:1;border-radius:.5vh;transition:opacity .2s}.segs i.off{opacity:.08}
 .cd b{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:22vh;line-height:20vh;height:20vh;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--night);color:var(--chalk);border-radius:2vh;padding:0 2vw;min-width:24vw;text-align:center;border:.6vh solid var(--chalk)}
 .cd.warn b{color:var(--yellow);border-color:var(--yellow)}.cd.over b{color:#fff;background:var(--red);border-color:var(--red)}
-.pt .clock{font-family:Anton,Impact,sans-serif;font-size:min(34vh,24vw);line-height:1;text-align:center;font-variant-numeric:tabular-nums;margin:1vh 0}.pt.warn .clock{color:var(--yellow)}.pt.over .clock{color:var(--red)}.pt .keys{margin-top:2vh;font-size:2.2vh}
+.pt .clock{font-family:Unbounded,Anton,Impact,sans-serif;font-size:min(34vh,24vw);line-height:1;text-align:center;font-variant-numeric:tabular-nums;margin:1vh 0}.pt.warn .clock{color:var(--yellow)}.pt.over .clock{color:var(--red)}.pt .keys{margin-top:2vh;font-size:2.2vh}
 .timer.warn b{color:var(--yellow)}.timer.over b{color:var(--red)}
 .timer .bar{height:1vh;background:var(--night);border-radius:1vh;overflow:hidden;margin-top:.8vh}
 .timer .bar i{display:block;height:100%;width:100%;background:var(--lime);transform-origin:left}
@@ -58,7 +59,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .sheet .lab{font-weight:900;color:var(--chalk);font-size:2.4vh;white-space:nowrap;max-width:26vw;overflow:hidden;display:flex;align-items:center;gap:.5vw}
 .sheet .lab i{width:1.8vh;height:1.8vh;border-radius:50%;display:inline-block;flex:none}.sheet .lab small{color:var(--sub);font-weight:700;margin-left:.6vw}
 .sheet .row{display:flex;gap:.35vw;overflow:hidden;justify-content:flex-start}
-.sheet .row span{min-width:2.6vw;text-align:center;font-family:Anton,Impact,sans-serif;font-size:2.6vh;background:var(--night);border-radius:.6vh;padding:.2vh 0}
+.sheet .row span{min-width:2.6vw;text-align:center;font-family:Unbounded,Anton,Impact,sans-serif;font-size:2.6vh;background:var(--night);border-radius:.6vh;padding:.2vh 0}
 .sheet .row span.z{color:#6B7180}
 .keys{display:flex;flex-wrap:wrap;gap:.3vh 1.2vw;justify-content:center;font-size:1.6vh;color:var(--sub);font-weight:700}
 .keys kbd{font:inherit;color:var(--night);background:var(--chalk);border-radius:.6vh;padding:0 .7vw;margin-right:.4vw;font-weight:900}
@@ -74,7 +75,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .btn{font:inherit;font-weight:900;font-size:2.2vh;border-radius:999px;padding:1.2vh 2.4vw;border:1px solid var(--line);background:var(--night);color:var(--chalk);cursor:pointer}
 .btn.go{background:var(--lime);color:var(--night);border-color:var(--lime)}
 .btn:focus-visible{outline:3px solid var(--chalk);outline-offset:2px}
-.win .big{font-family:Anton;font-size:9vh;line-height:1.1;margin:1vh 0}
+.win .big{font-family:Unbounded,Anton;font-size:9vh;line-height:1.1;margin:1vh 0}
 .win table{width:100%;border-collapse:collapse;font-size:2.4vh;margin-top:1.6vh}
 .win td,.win th{padding:.8vh .6vw;border-bottom:1px solid var(--line);text-align:center}
 .win th{color:var(--sub);font-weight:700}
@@ -90,9 +91,9 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .kr{display:grid;grid-template-columns:7vh repeat(5,1fr);gap:.5vw;align-items:center;background:var(--night);border-radius:1.4vh;padding:.7vh .6vw;border:.3vh solid transparent}
 .kr.on{border-color:var(--lime);background:#10131A}
 .kr.dim{opacity:.35}
-.kr kbd,.opt kbd{font:inherit;font-family:Anton,Impact,sans-serif;font-size:4vh;color:var(--night);background:var(--chalk);border-radius:1vh;text-align:center;line-height:6vh;height:6vh;min-width:6vh;display:inline-block}
+.kr kbd,.opt kbd{font:inherit;font-family:Unbounded,Anton,Impact,sans-serif;font-size:4vh;color:var(--night);background:var(--chalk);border-radius:1vh;text-align:center;line-height:6vh;height:6vh;min-width:6vh;display:inline-block}
 .kr span{font-size:4.4vh;font-weight:900;text-align:center;position:relative;line-height:6vh}
-.kr span em{display:none;font-style:normal;font-family:Anton,Impact,sans-serif;font-size:2.2vh;color:var(--night);background:var(--lime);border-radius:.6vh;position:absolute;top:-.6vh;left:50%;transform:translateX(-50%);line-height:2.6vh;min-width:2.6vh}
+.kr span em{display:none;font-style:normal;font-family:Unbounded,Anton,Impact,sans-serif;font-size:2.2vh;color:var(--night);background:var(--lime);border-radius:.6vh;position:absolute;top:-.6vh;left:50%;transform:translateX(-50%);line-height:2.6vh;min-width:2.6vh}
 .kr.on span em{display:block}
 .opts{display:grid;gap:1vh}.opts.c3{grid-template-columns:repeat(3,1fr)}
 .opt{display:flex;align-items:center;gap:1.2vw;background:var(--night);border-radius:1.4vh;padding:1vh 1vw;font-size:4vh;font-weight:900;border:.4vh solid transparent;min-width:0}
@@ -129,11 +130,24 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 .over-l{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .panel{background:linear-gradient(180deg,#2C313D,#232730);border-color:rgba(255,255,255,.12);box-shadow:0 3vh 8vh rgba(0,0,0,.55)}
 .inn{padding:.8vh .4vw;overflow:hidden}.inn small{line-height:1.1}.inn b{font-size:min(18.5vh,13vw);line-height:.92;text-shadow:0 .4vh 0 rgba(0,0,0,.25)}
+/* ---- wide numerals (Unbounded Black): sizes refit for the wider digits ---- */
+.num,.stat b,.goal b,.sheet .row span,.kr kbd,.opt kbd{font-variant-numeric:tabular-nums}
+.score{font-size:min(40vh,19.5vw);line-height:.8;letter-spacing:-.02em}.score.d3{font-size:min(30vh,13vw)}
+.stat b{font-size:3.9vh;line-height:1.25}
+.run b{font-size:min(17vh,9vw);line-height:.85}
+.inn b{font-size:min(21vh,9.4vw);line-height:.84}
+.cd b{font-size:22.5vh;line-height:.8;padding-top:0;letter-spacing:-.02em;min-width:26vw}
+.pt .clock{font-size:min(28vh,19vw)}
+.sheet .row span{font-size:2.1vh;line-height:1.5}
+.kr kbd,.opt kbd{font-size:3vh}
+.kr span em{font-size:1.7vh}
+.goal b{font-size:3.4vh}
+.win .big{font-size:6.6vh}
 @media (prefers-reduced-motion:reduce){.side,.segs i{transition:none}}
 @media (max-width:760px){
   html,body{overflow:auto}.board{height:auto;min-height:100vh}
   .main{grid-template-columns:1fr 1fr;grid-template-areas:"a b" "m m"}.p0{grid-area:a}.p1{grid-area:b}.mid{grid-area:m;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto}
-  .score{font-size:30vw}.name{font-size:5vw}.goal{font-size:2.6vw;padding:1vw 2vw}.goal b{font-size:5vw}.goal small{font-size:2.4vw}.who{flex-wrap:wrap}.sheet .lab{font-size:3.2vw;max-width:40vw}.ball{width:7vw;height:7vw}.stat b{font-size:6vw}.stat small{font-size:2.6vw}
+  .score{font-size:22vw}.score.d3{font-size:15vw}.stat b{font-size:3.4vw!important}.cd b{font-size:20vw!important}.name{font-size:5vw}.goal{font-size:2.6vw;padding:1vw 2vw}.goal b{font-size:5vw}.goal small{font-size:2.4vw}.who{flex-wrap:wrap}.sheet .lab{font-size:3.2vw;max-width:40vw}.ball{width:7vw;height:7vw}.stat b{font-size:6vw}.stat small{font-size:2.6vw}
   .run b,.inn b{font-size:11vw}.mid{grid-template-columns:1fr 1fr!important}.cd{height:22vw}.cd b{font-size:24vw;min-width:36vw}.box small,.keys,.sheet{font-size:3vw}.top .ttl{display:none}.turn{font-size:3vw;top:-3.4vw}
   .panel h2{font-size:5vw}.panel p,.f label{font-size:3.4vw}.f input,.f select,.btn{font-size:4vw}.grid2{grid-template-columns:1fr}
   .sheet .row span{min-width:7vw;font-size:4vw}.top button,.top #bHelp{font-size:3.2vw;padding:1.6vw 3vw}.top img{height:9vw}
@@ -256,7 +270,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
       $('n' + p).textContent = S.cfg.n[p] + ' (' + S.cfg.g[p] + ')'; $('g' + p).textContent = S.cfg.g[p];
       var left = S.cfg.g[p] - S.sc[p] - (p === S.turn && !S.over ? S.run : 0); $('rm' + p).textContent = left > 0 ? left + ' TO GO' : 'FINISHED';
       $('ln' + p).textContent = S.cfg.n[p] + ' (' + S.cfg.g[p] + ')';
-      $('sc' + p).textContent = S.sc[p] + (p === S.turn && !S.over ? S.run : 0);
+      $('sc' + p).textContent = S.sc[p] + (p === S.turn && !S.over ? S.run : 0); $('sc' + p).classList.toggle('d3', $('sc' + p).textContent.length > 2);
       $('in' + p).textContent = S.inn[p].length; $('hr' + p).textContent = Math.max(hi(p), p === S.turn ? S.run : 0); $('av' + p).textContent = avg(p);
       $('s' + p).classList.toggle('on', p === S.turn && !S.over);
       var r = $('r' + p), a = S.inn[p].slice(-18); r.textContent = '';
