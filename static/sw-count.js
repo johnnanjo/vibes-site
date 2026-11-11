@@ -1,8 +1,8 @@
 /* Offline support for the scoreboards: /pages/count (start), /pages/count-3c, /pages/count-pocket, /pages/count-remote. */
-var C = 'vibes-count-3c-offline-v4';
+var C = 'vibes-count-3c-offline-v5';
 var PAGES = ['/pages/count/', '/pages/count-3c/', '/pages/count-pocket/'];
 var pageKey = function (u) { var p = new URL(u, location.origin).pathname; return p.charAt(p.length - 1) === '/' ? p : p + '/'; };
-var CORE = PAGES.concat([ '/img/vibes-logo.png', '/img/favicon-64.png', '/count-3c.webmanifest', '/fonts/unbounded-latin-900-normal.woff2',
+var CORE = PAGES.concat([ '/img/vibes-logo-t.png', '/img/favicon-64.png', '/count-3c.webmanifest', '/fonts/unbounded-latin-900-normal.woff2',
   'https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap']);
 /* a redirected response cannot be used to answer a navigation, so store a clean copy */
 function clean(r) { return r.redirected ? r.blob().then(function (b) { return new Response(b, { status: r.status, statusText: r.statusText, headers: r.headers }); }) : Promise.resolve(r); }

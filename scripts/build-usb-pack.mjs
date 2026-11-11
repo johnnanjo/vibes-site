@@ -13,7 +13,7 @@ function inline(src, links) {
     .replace(/<link rel="preconnect"[^\n]*\n/, '').replace(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>\n/, `<style>@font-face{font-family:Anton;font-style:normal;font-weight:400;src:url(data:font/woff2;base64,${b64('static/fonts/anton-latin-400-normal.woff2')}) format("woff2")}</style>\n`);
   s = s.split('url(/fonts/unbounded-latin-900-normal.woff2)').join(`url(data:font/woff2;base64,${b64('static/fonts/unbounded-latin-900-normal.woff2')})`);
   s = s.split('href="/img/favicon-64.png"').join(`href="data:image/png;base64,${b64('static/img/favicon-64.png')}"`);
-  s = s.split('src="/img/vibes-logo.png"').join(`src="data:image/png;base64,${b64('static/img/vibes-logo.png')}"`);
+  s = s.split('src="/img/vibes-logo-t.png"').join(`src="data:image/png;base64,${b64('static/img/vibes-logo-t.png')}"`);
   for (const [a, b] of links) s = s.split(a).join(b);
   if (/(src|href)="\/[^"]/.test(s) || /url\(\//.test(s) || /U_HOME = '\/pages/.test(s) || /= \{ '3c': '\/pages/.test(s)) throw new Error('absolute path left in ' + src);
   return s;
