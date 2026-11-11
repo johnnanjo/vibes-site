@@ -84,6 +84,13 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   <img id="soloLogo" alt="VIBES BILLIARDS">
   <div class="soloq"><div class="qr sm" id="soloQ"></div><div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div></div>
 </div>
+<div class="ov" id="zipL" hidden style="z-index:9">
+  <div class="panel" role="alertdialog" aria-label="フォルダを展開してください">
+    <h2>このままでは使えません</h2>
+    <p>ZIPファイルの中から、直接開いています。<br>先にZIPファイルを「すべて展開」してから、開き直してください。</p>
+    <p style="text-align:left;font-size:2.1vh;line-height:1.9">1. この画面を閉じます。<br>2. <b>VIBES-COUNT-USB.zip</b> を右クリックして「すべて展開」を選び、「展開」を押します。<br>3. 出てきた <b>VIBES-COUNT</b> フォルダの中の「1_スタート」をダブルクリックします。</p>
+  </div>
+</div>
 <div class="ov" id="rmL" hidden>
   <div class="panel" role="dialog" aria-label="リモコン">
     <h2>リモコン（スマホで操作）</h2>
@@ -174,6 +181,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     else if (k === 'Escape' && rm && rm.on) { e.preventDefault(); showMenu = false; draw(); }
   });
   menu(); draw(); connect();
+  var PROBE = ''; if (PROBE) { var ps = document.createElement('script'); ps.src = PROBE; ps.onerror = function () { $('zipL').hidden = false; }; document.head.appendChild(ps); }
   if ('serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.href)) navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count' }).catch(function () {});
 })();
 </script>

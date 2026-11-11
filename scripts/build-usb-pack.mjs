@@ -22,9 +22,11 @@ function inline(src, links) {
 const enc = encodeURI;
 fs.writeFileSync(path.join(out, START), inline('static/apps/count-home.html', [
   ["'/pages/count-3c/'", "'data/count-3c.html'"], ["'/pages/count-pocket/'", "'data/count-pocket.html'"],
+  ["var PROBE = '';", "var PROBE = 'data/ok.js';"],
   ['href="/pages/count-3c/"', 'href="data/count-3c.html"'], ['href="/pages/count-pocket/?m=', 'href="data/count-pocket.html?m='],
 ]));
 for (const f of ['count-3c', 'count-pocket']) fs.writeFileSync(path.join(out, 'data', f + '.html'), inline('static/apps/' + f + '.html', [
   ["U_HOME = '/pages/count/'", `U_HOME = '../${enc(START)}'`], ['href="/pages/count/"', `href="../${enc(START)}"`],
 ]));
+fs.writeFileSync(path.join(out, 'data', 'ok.js'), '/* marker: the folder was extracted correctly */\n');
 console.log('wrote', out, fs.readdirSync(out), fs.readdirSync(path.join(out, 'data')));
