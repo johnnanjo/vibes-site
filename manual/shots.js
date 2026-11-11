@@ -22,21 +22,21 @@ await k(['3','0']);await shot('target30');await k(['Enter']);
 await shot('mode2');
 await k(['2','/']);await shot('abc');await k(['4','4','3','3','2','4','4','5','2','3','Enter','Enter','2','5','Enter']);
 await shot('start');
-await k(['-']);await shot('warm');await k(['Enter']);
+await shot('ready0');await k(['-']);await shot('warm');await k(['Enter','Enter']);
 await k(['*','+','+']);await p.waitForTimeout(1500);await shot('play');
 await k(['Enter','+','Enter','/']);await shot('settings');await p.keyboard.press('Escape');
 // search list
 await k(['.','.','Enter','1','Enter']);await shot('search');await p.keyboard.press('Escape');
 // mid game
-await setS(()=>{const S=JSON.parse(localStorage.getItem('vibes-count-3c-v1'));S.cfg.n=['山田 太郎','SMITH'];S.cfg.g=[30,25];S.sc=[18,14];S.inn=[[1,0,2,4,0,3,1,1,6],[0,2,1,0,3,0,2,3,3]];S.to=[3,2];S.turn=0;S.run=2;S.t0=Date.now()-754000;localStorage.setItem('vibes-count-3c-v1',JSON.stringify(S))});
+await setS(()=>{const S=JSON.parse(localStorage.getItem('vibes-count-3c-v1'));S.ready=false;S.cfg.n=['山田 太郎','SMITH'];S.cfg.g=[30,25];S.sc=[18,14];S.inn=[[1,0,2,4,0,3,1,1,6],[0,2,1,0,3,0,2,3,3]];S.to=[3,2];S.turn=0;S.run=2;S.t0=Date.now()-754000;localStorage.setItem('vibes-count-3c-v1',JSON.stringify(S))});
 await k(['*']);await p.waitForTimeout(5200);await shot('main');
 // remote code
 await p.click('#bRm');await shot('rmcode');const code=await p.evaluate(()=>document.getElementById('rmC').textContent);await p.keyboard.press('Enter');
 // win
-await setS(()=>{const S=JSON.parse(localStorage.getItem('vibes-count-3c-v1'));S.sc=[29,14];S.run=0;S.turn=0;localStorage.setItem('vibes-count-3c-v1',JSON.stringify(S))});
+await setS(()=>{const S=JSON.parse(localStorage.getItem('vibes-count-3c-v1'));S.ready=false;S.sc=[29,14];S.run=0;S.turn=0;localStorage.setItem('vibes-count-3c-v1',JSON.stringify(S))});
 await k(['+','Enter','Enter']);await shot('win');
 // 4p
-await setS(()=>{const S=JSON.parse(localStorage.getItem('vibes-count-3c-v1'));S.cfg.n=['山田 太郎','SMITH','佐藤 花子','GUEST'];S.cfg.g=[30,25,20,25];S.sc=[18,12,9,21];S.to=[3,2,3,1];S.inn=[[1,0,2,4,0,3,1,1,6],[0,2,1,0,3,0,2,1,3],[1,1,0,2,0,1,3,0,1],[2,3,0,4,1,2,5,3,1]];S.turn=1;S.run=1;S.over=false;S.t0=Date.now()-1354000;S.t1=0;localStorage.setItem('vibes-count-3c-v1',JSON.stringify(S))});
+await setS(()=>{const S=JSON.parse(localStorage.getItem('vibes-count-3c-v1'));S.ready=false;S.cfg.n=['山田 太郎','SMITH','佐藤 花子','GUEST'];S.cfg.g=[30,25,20,25];S.sc=[18,12,9,21];S.to=[3,2,3,1];S.inn=[[1,0,2,4,0,3,1,1,6],[0,2,1,0,3,0,2,1,3],[1,1,0,2,0,1,3,0,1],[2,3,0,4,1,2,5,3,1]];S.turn=1;S.run=1;S.over=false;S.t0=Date.now()-1354000;S.t1=0;localStorage.setItem('vibes-count-3c-v1',JSON.stringify(S))});
 await shot('p4');
 // remote page (phone)
 const c2=await b.newContext({viewport:{width:390,height:800},deviceScaleFactor:2});

@@ -83,58 +83,58 @@ input:focus{outline:none;border-color:var(--lime)}
 <div class="wrap">
   <div class="top">
     <a href="/" aria-label="VIBES BILLIARDS home"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
-    <span class="st" id="st"><i></i><span id="stT">NOT CONNECTED</span></span>
-    <button type="button" class="sm" id="bCode" hidden>CHANGE TABLE</button>
+    <span class="st" id="st"><i></i><span id="stT">つながっていません</span></span>
+    <button type="button" class="sm" id="bCode" hidden>台を変える</button>
   </div>
 
   <section class="card" id="vJoin">
-    <h1>REMOTE CONTROL</h1>
-    <p>Enter the 6-digit code shown on the scoreboard monitor (press REMOTE on the monitor page).</p>
+    <h1>リモコン</h1>
+    <p>モニターに出ている6けたの番号を入れてください。（モニター側で「リモコン」を押すと番号が出ます）</p>
     <form id="fJoin">
-      <label for="iCode">CODE</label>
+      <label for="iCode">番号</label>
       <input id="iCode" class="code" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="000 000">
       <p class="err" id="eJoin"></p>
-      <button class="go" type="submit">CONNECT</button>
+      <button class="go" type="submit">つなぐ</button>
     </form>
   </section>
 
   <section id="vMain" hidden style="display:flex;flex-direction:column;gap:12px">
     <div class="over" id="over" hidden></div>
     <div class="card rdy" id="rdy" hidden>
-      <small>LAG FOR BREAK · 先攻が左</small>
+      <small>バンキングで先攻・後攻を決めます。先攻が左です。</small>
       <div class="ord" id="rdyO"></div>
-      <button type="button" class="k" data-c="swap" id="rdySwap">SWAP<small>先攻・後攻を入れ替える</small></button>
-      <button type="button" class="k big" data-c="start">GAME START<small>試合開始</small></button>
+      <button type="button" class="k" data-c="swap" id="rdySwap">入れ替え<small>先攻・後攻を入れ替える</small></button>
+      <button type="button" class="k big" data-c="start">試合開始<small>先攻が初球を撞く時に押す</small></button>
     </div>
     <div class="pl" id="plBox">
-      <div class="p p0" id="p0"><div class="nm"><i style="background:#fff"></i><span id="n0"></span></div><em class="at">AT THE TABLE</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s0">0</span><small>TAP = +1 POINT</small></button><small id="d0"></small><button type="button" class="chg" data-c="commit">PLAYER CHANGE</button></div>
-      <div class="p p1" id="p1"><div class="nm"><i style="background:#F2C200"></i><span id="n1"></span></div><em class="at">AT THE TABLE</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s1">0</span><small>TAP = +1 POINT</small></button><small id="d1"></small><button type="button" class="chg" data-c="commit">PLAYER CHANGE</button></div>
+      <div class="p p0" id="p0"><div class="nm"><i style="background:#fff"></i><span id="n0"></span></div><em class="at">撞く番</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s0">0</span><small>押すと1点</small></button><small id="d0"></small><button type="button" class="chg" data-c="commit">交代</button></div>
+      <div class="p p1" id="p1"><div class="nm"><i style="background:#F2C200"></i><span id="n1"></span></div><em class="at">撞く番</em><button type="button" class="tap" data-c="add" aria-label="Add one point"><span class="sc num" id="s1">0</span><small>押すと1点</small></button><small id="d1"></small><button type="button" class="chg" data-c="commit">交代</button></div>
     </div>
-    <div class="card run" id="runBox"><small>RUN</small><b class="num" id="run">0</b><small id="inn"></small></div>
+    <div class="card run" id="runBox"><small>この回の点</small><b class="num" id="run">0</b><small id="inn"></small></div>
     <div class="pad">
-      <button type="button" class="k" data-c="sub">−1</button>
-      <button type="button" class="k" data-c="undo">UNDO<small>戻る</small></button>
-      <button type="button" class="k" data-c="clock" id="kClock">SHOT CLOCK<small id="kClockS"></small></button>
-      <button type="button" class="k" data-c="warmup" id="kWarm">WARM-UP<small>練習時間</small><small id="kWarmS"></small></button>
-      <button type="button" class="k" id="kPlayers">PLAYERS</button>
-      <button type="button" class="k" id="kNew">NEW GAME<small>TAP TWICE</small></button>
+      <button type="button" class="k" data-c="sub">−1<small>1点へらす</small></button>
+      <button type="button" class="k" data-c="undo">戻る<small>ひとつ前にもどす</small></button>
+      <button type="button" class="k" data-c="clock" id="kClock">残り秒数<small id="kClockS"></small></button>
+      <button type="button" class="k" data-c="warmup" id="kWarm">練習時間<small id="kWarmS"></small></button>
+      <button type="button" class="k" id="kPlayers">選手<small>名前と持ち点</small></button>
+      <button type="button" class="k" id="kNew">新しい試合<small>2回押す</small></button>
     </div>
     <p class="note" id="foot"></p>
   </section>
 
   <section class="card" id="vPl" hidden>
-    <h1>PLAYERS</h1>
-    <p>Type the names with this device's keyboard. Saved players appear below each name.</p>
+    <h1>選手</h1>
+    <p>名前を入れてください。前に入れた選手は、名前の下に出ます。</p>
     <form id="fPl">
-      <div class="ph"><i style="background:#fff"></i>PLAYER 1 (WHITE)<button type="button" class="sm" data-guest="0">GUEST</button></div>
-      <div class="row2"><div><label for="pn0">NAME</label><input id="pn0" maxlength="20" autocomplete="off"></div><div><label for="pg0">TARGET</label><input id="pg0" type="number" inputmode="numeric" min="1" max="999"></div></div>
+      <div class="ph"><i style="background:#fff"></i>選手1（白）<button type="button" class="sm" data-guest="0">ゲスト</button></div>
+      <div class="row2"><div><label for="pn0">名前</label><input id="pn0" maxlength="20" autocomplete="off"></div><div><label for="pg0">持ち点</label><input id="pg0" type="number" inputmode="numeric" min="1" max="999"></div></div>
       <div class="sv" id="sv0"></div>
-      <div class="ph"><i style="background:#F2C200"></i>PLAYER 2 (YELLOW)<button type="button" class="sm" data-guest="1">GUEST</button></div>
-      <div class="row2"><div><label for="pn1">NAME</label><input id="pn1" maxlength="20" autocomplete="off"></div><div><label for="pg1">TARGET</label><input id="pg1" type="number" inputmode="numeric" min="1" max="999"></div></div>
+      <div class="ph"><i style="background:#F2C200"></i>選手2（黄）<button type="button" class="sm" data-guest="1">ゲスト</button></div>
+      <div class="row2"><div><label for="pn1">名前</label><input id="pn1" maxlength="20" autocomplete="off"></div><div><label for="pg1">持ち点</label><input id="pg1" type="number" inputmode="numeric" min="1" max="999"></div></div>
       <div class="sv" id="sv1"></div>
-      <button class="go" type="submit">SEND TO SCOREBOARD</button>
+      <button class="go" type="submit">モニターに送る</button>
       <p class="err"></p>
-      <button type="button" class="k" id="bPlBack" style="width:100%;min-height:56px;font-size:18px">BACK</button>
+      <button type="button" class="k" id="bPlBack" style="width:100%;min-height:56px;font-size:18px">戻る</button>
     </form>
   </section>
 </div>
@@ -149,43 +149,43 @@ input:focus{outline:none;border-color:var(--lime)}
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
   function connect() {
     if (!code) return; if (ws && ws.readyState <= 1) return;
-    status(false, 'CONNECTING…');
-    try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'NOT CONNECTED'); return; }
-    ws.onopen = function () { tries = 0; status(true, 'TABLE ' + code.slice(0, 3) + ' ' + code.slice(3)); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
+    status(false, '接続しています…');
+    try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'つながっていません'); return; }
+    ws.onopen = function () { tries = 0; status(true, '番号 ' + code.slice(0, 3) + ' ' + code.slice(3)); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
     ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; draw(); if (!$('vJoin').hidden) show('vMain'); } };
-    ws.onclose = function () { clearInterval(ping); status(false, 'RECONNECTING…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
+    ws.onclose = function () { clearInterval(ping); status(false, 'つなぎ直しています…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
-  function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'NOT CONNECTED'); connect(); return false; }
+  function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'つながっていません'); connect(); return false; }
   function draw() {
     var m = last; if (!m) return;
     $('rdy').hidden = !m.rd; $('plBox').hidden = !!m.rd; $('runBox').hidden = !!m.rd;
-    if (m.rd) { var o = $('rdyO'); o.textContent = ''; m.n.forEach(function (x, i) { var d = document.createElement('div'); var a = document.createElement('i'); a.textContent = m.n.length === 2 ? (i ? '2ND' : '1ST') : String(i + 1); var b = document.createElement('b'); b.textContent = x + ' (' + m.g[i] + ')'; d.appendChild(a); d.appendChild(b); o.appendChild(d); }); $('rdySwap').firstChild.textContent = m.n.length === 2 ? 'SWAP' : 'ROTATE'; }
+    if (m.rd) { var o = $('rdyO'); o.textContent = ''; m.n.forEach(function (x, i) { var d = document.createElement('div'); var a = document.createElement('i'); a.textContent = m.n.length === 2 ? (i ? '後攻' : '先攻') : (i + 1) + '番'; var b = document.createElement('b'); b.textContent = x + ' (' + m.g[i] + ')'; d.appendChild(a); d.appendChild(b); o.appendChild(d); }); $('rdySwap').firstChild.textContent = m.n.length === 2 ? '入れ替え' : '順番を回す'; }
     var N = m.n.length, ix = N === 2 ? [0, 1] : [m.turn, (m.turn + 1) % N];
     for (var c = 0; c < 2; c++) { var p = ix[c];
-      $('n' + c).textContent = (N > 2 ? (c ? 'NEXT: ' : '') : '') + m.n[p] + ' (' + m.g[p] + ')';
+      $('n' + c).textContent = (N > 2 ? (c ? '次：' : '') : '') + m.n[p] + ' (' + m.g[p] + ')';
       $('s' + c).textContent = m.sc[p] + (p === m.turn && !m.over ? m.run : 0);
-      $('d' + c).textContent = 'INN ' + m.inn[p] + ' · HR ' + m.hr[p] + ' · AVG ' + m.av[p];
+      $('d' + c).textContent = m.inn[p] + '回 · ハイラン ' + m.hr[p] + ' · 平均 ' + m.av[p];
       $('p' + c).classList.toggle('on', p === m.turn && !m.over);
     }
-    $('run').textContent = m.run; $('inn').textContent = 'INNING ' + (m.inn[m.turn] + (m.over ? 0 : 1));
-    $('over').hidden = !m.over; if (m.over) { var w = 0, tie = false; m.n.forEach(function (x, i) { if (!i) return; var a = m.sc[i] / m.g[i], b = m.sc[w] / m.g[w]; if (a > b) { w = i; tie = false; } else if (a === b) tie = true; }); $('over').textContent = 'GAME OVER — ' + (tie ? 'DRAW' : 'WINNER: ' + m.n[w]); }
-    $('kClock').classList.toggle('on', !!m.tOn); $('kClockS').textContent = m.t ? (m.tOn ? 'RUNNING · ' + m.t + ' SEC' : m.t + ' SEC') : 'OFF IN SETTINGS';
-    $('kWarm').classList.toggle('on', !!m.pr); $('kWarmS').textContent = m.pr ? 'TAP TO CLOSE' : m.pm + ' MIN';
-    $('foot').textContent = m.table ? 'TABLE ' + m.table : '';
+    $('run').textContent = m.run; $('inn').textContent = (m.inn[m.turn] + (m.over ? 0 : 1)) + 'イニング目';
+    $('over').hidden = !m.over; if (m.over) { var w = 0, tie = false; m.n.forEach(function (x, i) { if (!i) return; var a = m.sc[i] / m.g[i], b = m.sc[w] / m.g[w]; if (a > b) { w = i; tie = false; } else if (a === b) tie = true; }); $('over').textContent = '試合終了 — ' + (tie ? '引き分け' : '勝者：' + m.n[w]); }
+    $('kClock').classList.toggle('on', !!m.tOn); $('kClockS').textContent = m.t ? (m.tOn ? '動いています · ' + m.t + '秒' : m.t + '秒') : '設定で切になっています';
+    $('kWarm').classList.toggle('on', !!m.pr); $('kWarmS').textContent = m.pr ? '押すと閉じる' : m.pm + '分';
+    $('foot').textContent = m.table ? m.table + '番台' : '';
   }
   $('fJoin').addEventListener('submit', function (e) {
     e.preventDefault(); var v = $('iCode').value.replace(/\D/g, '');
-    if (v.length !== 6) { $('eJoin').textContent = 'ENTER THE 6-DIGIT CODE.'; return; }
+    if (v.length !== 6) { $('eJoin').textContent = '6けたの番号を入れてください。'; return; }
     $('eJoin').textContent = ''; code = v; gotState = false; try { localStorage.setItem(CK, code); } catch (x) {}
     if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; }
     connect(); clearTimeout(joinT);
-    joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'NO SCOREBOARD FOUND FOR THIS CODE. CHECK THE CODE AND THAT REMOTE IS ON AT THE MONITOR.'; }, 5000);
+    joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'この番号のモニターが見つかりません。番号と、モニター側で「リモコン」が入っているかを確かめてください。'; }, 5000);
   });
   $('iCode').addEventListener('input', function () { var v = this.value.replace(/\D/g, '').slice(0, 6); this.value = v.length > 3 ? v.slice(0, 3) + ' ' + v.slice(3) : v; });
-  $('bCode').onclick = function () { code = ''; try { localStorage.removeItem(CK); } catch (x) {} if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; } last = null; status(false, 'NOT CONNECTED'); show('vJoin'); };
+  $('bCode').onclick = function () { code = ''; try { localStorage.removeItem(CK); } catch (x) {} if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; } last = null; status(false, 'つながっていません'); show('vJoin'); };
   Array.prototype.forEach.call(document.querySelectorAll('[data-c]'), function (b) { b.addEventListener('click', function () { send({ type: 'cmd', c: b.getAttribute('data-c') }); if (navigator.vibrate) navigator.vibrate(15); }); });
-  $('kNew').onclick = function () { var n = Date.now(); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); this.querySelector('small').textContent = 'TAP TWICE'; } else { newAt = n; this.querySelector('small').textContent = 'TAP AGAIN TO CONFIRM'; var el = this; setTimeout(function () { el.querySelector('small').textContent = 'TAP TWICE'; }, 2000); } };
+  $('kNew').onclick = function () { var n = Date.now(); if (n - newAt < 2000) { newAt = 0; send({ type: 'cmd', c: 'newgame' }); this.querySelector('small').textContent = '2回押す'; } else { newAt = n; this.querySelector('small').textContent = 'もう一度押すと決定'; var el = this; setTimeout(function () { el.querySelector('small').textContent = '2回押す'; }, 2000); } };
   function chips(p) {
     var box = $('sv' + p), q = $('pn' + p).value.trim(); box.textContent = '';
     players.filter(function (o) { return !q || o.n.indexOf(q) >= 0 || (o.y || '').indexOf(q) >= 0; }).slice(0, 12).forEach(function (o) {
@@ -194,7 +194,7 @@ input:focus{outline:none;border-color:var(--lime)}
     });
   }
   $('kPlayers').onclick = function () {
-    if (last && last.n.length > 2) { status(true, 'ENTER 3-4 PLAYERS AT THE MONITOR'); return; }
+    if (last && last.n.length > 2) { status(true, '3〜4人の名前はモニター側で入れてください'); return; }
     var m = last || { n: ['', ''], g: [25, 25] };
     for (var p = 0; p < 2; p++) { $('pn' + p).value = /^PLAYER [1-4]$/.test(m.n[p]) ? '' : m.n[p]; $('pg' + p).value = m.g[p]; chips(p); }
     show('vPl');
@@ -213,7 +213,7 @@ input:focus{outline:none;border-color:var(--lime)}
   });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) connect(); });
   var q = /[?&]r=(\d{6})/.exec(location.search); try { code = q ? q[1] : (localStorage.getItem(CK) || ''); } catch (e) {}
-  if (code) { $('iCode').value = code.slice(0, 3) + ' ' + code.slice(3); connect(); joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'WAITING FOR THE SCOREBOARD. PRESS REMOTE ON THE MONITOR PAGE.'; }, 5000); }
+  if (code) { $('iCode').value = code.slice(0, 3) + ' ' + code.slice(3); connect(); joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'モニターを待っています。モニター側で「リモコン」を押してください。'; }, 5000); }
   show('vJoin');
 })();
 </script>

@@ -199,7 +199,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   <div class="top">
     <a href="/" aria-label="VIBES BILLIARDS home"><img src="/img/vibes-logo.png" alt="VIBES BILLIARDS"></a>
     <span class="ttl" id="ttl">3-CUSHION SCOREBOARD</span>
-    <span style="display:flex;gap:.8vw"><button type="button" id="bRm">REMOTE</button><button type="button" id="bKey" hidden>KEYS (K)</button><button type="button" id="bPl">PLAYERS</button><button type="button" id="bPr">WARM-UP (P)</button><button type="button" id="bSet">SETTINGS (/)</button><button type="button" id="bFull">FULL SCREEN (F)</button></span>
+    <span style="display:flex;gap:.8vw"><button type="button" id="bRm">リモコン</button><button type="button" id="bKey" hidden>キー設定 (K)</button><button type="button" id="bPl">選手</button><button type="button" id="bPr">練習時間 (P)</button><button type="button" id="bSet">設定 (/)</button><button type="button" id="bFull">全画面 (F)</button></span>
   </div>
   <div class="main" id="main">
     <div class="mid" id="mid">
@@ -211,45 +211,45 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     <div class="sheet" id="sheet"></div>
     <div class="cd" id="tbox" aria-label="Shot clock"><div class="segs" id="segs"></div><b class="num" id="tm">40</b></div>
     <div class="keys" style="margin-top:.8vh">
-      <span><kbd>+</kbd>+1 POINT</span><span><kbd>-</kbd>-1 POINT</span><span><kbd>0-9</kbd>ENTER POINTS</span><span><kbd>Enter</kbd>PLAYER CHANGE</span><span><kbd>BackSpace</kbd>UNDO</span><span><kbd>*</kbd>SHOT CLOCK</span><span><kbd>-</kbd>WARM-UP (BEFORE START)</span><span><kbd>/</kbd>SETTINGS</span><span><kbd>.</kbd>×2 NEW GAME</span>
+      <span><kbd>+</kbd>1点</span><span><kbd>-</kbd>1点へらす</span><span><kbd>0-9</kbd>点数入力</span><span><kbd>Enter</kbd>交代</span><span><kbd>BackSpace</kbd>戻る</span><span><kbd>*</kbd>残り秒数</span><span><kbd>-</kbd>練習時間（試合前）</span><span><kbd>/</kbd>設定</span><span><kbd>.</kbd>2回で新しい試合</span>
     </div>
   </div>
 </div>
 
 <div class="over-l" id="setL" hidden>
   <form class="panel" id="setF">
-    <h2>GAME SETTINGS</h2>
-    <p>Type player names on a full keyboard. Numbers can be entered on the keypad. Press Enter to save and start.</p>
+    <h2>設定</h2>
+    <p>名前はキーボードで入力できます。数字はテンキーで入力できます。Enter で保存します。</p>
     <div class="grid2">
-      <div class="f"><label for="fnp">NUMBER OF PLAYERS</label><select id="fnp"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
-      <div class="f"><label for="fto">TIME-OUTS PER PLAYER (0 = OFF)</label><input id="fto" type="number" inputmode="numeric" min="0" max="9"></div>
-      <div class="f pf0"><label for="fn0">PLAYER 1 (WHITE) NAME</label><input id="fn0" maxlength="14" autocomplete="off" list="roster"></div>
-      <div class="f pf0"><label for="fg0">PLAYER 1 TARGET POINTS</label><input id="fg0" type="number" inputmode="numeric" min="1" max="999"></div>
-      <div class="f pf1"><label for="fn1">PLAYER 2 (YELLOW) NAME</label><input id="fn1" maxlength="14" autocomplete="off" list="roster"></div>
-      <div class="f pf1"><label for="fg1">PLAYER 2 TARGET POINTS</label><input id="fg1" type="number" inputmode="numeric" min="1" max="999"></div>
-      <div class="f pf2"><label for="fn2">PLAYER 3 (RED) NAME</label><input id="fn2" maxlength="14" autocomplete="off" list="roster"></div>
-      <div class="f pf2"><label for="fg2">PLAYER 3 TARGET POINTS</label><input id="fg2" type="number" inputmode="numeric" min="1" max="999"></div>
-      <div class="f pf3"><label for="fn3">PLAYER 4 (GREEN) NAME</label><input id="fn3" maxlength="14" autocomplete="off" list="roster"></div>
-      <div class="f pf3"><label for="fg3">PLAYER 4 TARGET POINTS</label><input id="fg3" type="number" inputmode="numeric" min="1" max="999"></div>
-      <div class="f"><label for="fl">INNING LIMIT (0 = NONE)</label><input id="fl" type="number" inputmode="numeric" min="0" max="999"></div>
-      <div class="f"><label for="ft">SHOT CLOCK SECONDS (0 = OFF)</label><input id="ft" type="number" inputmode="numeric" min="0" max="180"></div>
-      <div class="f"><label for="fp">WARM-UP TIME (MINUTES)</label><input id="fp" type="number" inputmode="numeric" min="1" max="60"></div>
-      <div class="f" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="bPr2" style="width:100%">OPEN WARM-UP TIMER</button></div>
-      <div class="f"><label for="fe">EQUALIZING INNING (FINISH THE ROUND)</label><select id="fe"><option value="1">ON</option><option value="0">OFF</option></select></div>
-      <div class="f"><label for="fs">SOUND (10 SEC LEFT / TIME UP)</label><select id="fs"><option value="1">ON</option><option value="0">OFF</option></select></div>
+      <div class="f"><label for="fnp">人数</label><select id="fnp"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+      <div class="f"><label for="fto">タイムアウトの回数（0＝なし）</label><input id="fto" type="number" inputmode="numeric" min="0" max="9"></div>
+      <div class="f pf0"><label for="fn0">選手1（白）の名前</label><input id="fn0" maxlength="14" autocomplete="off" list="roster"></div>
+      <div class="f pf0"><label for="fg0">選手1の持ち点</label><input id="fg0" type="number" inputmode="numeric" min="1" max="999"></div>
+      <div class="f pf1"><label for="fn1">選手2（黄）の名前</label><input id="fn1" maxlength="14" autocomplete="off" list="roster"></div>
+      <div class="f pf1"><label for="fg1">選手2の持ち点</label><input id="fg1" type="number" inputmode="numeric" min="1" max="999"></div>
+      <div class="f pf2"><label for="fn2">選手3（赤）の名前</label><input id="fn2" maxlength="14" autocomplete="off" list="roster"></div>
+      <div class="f pf2"><label for="fg2">選手3の持ち点</label><input id="fg2" type="number" inputmode="numeric" min="1" max="999"></div>
+      <div class="f pf3"><label for="fn3">選手4（緑）の名前</label><input id="fn3" maxlength="14" autocomplete="off" list="roster"></div>
+      <div class="f pf3"><label for="fg3">選手4の持ち点</label><input id="fg3" type="number" inputmode="numeric" min="1" max="999"></div>
+      <div class="f"><label for="fl">イニング制限（0＝なし）</label><input id="fl" type="number" inputmode="numeric" min="0" max="999"></div>
+      <div class="f"><label for="ft">残り秒数（0＝使わない）</label><input id="ft" type="number" inputmode="numeric" min="0" max="180"></div>
+      <div class="f"><label for="fp">練習時間（分）</label><input id="fp" type="number" inputmode="numeric" min="1" max="60"></div>
+      <div class="f" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="bPr2" style="width:100%">練習タイマーを開く</button></div>
+      <div class="f"><label for="fe">裏撞き（全員が撞いてから終了）</label><select id="fe"><option value="1">あり</option><option value="0">なし</option></select></div>
+      <div class="f"><label for="fs">音（残り10秒・時間切れ）</label><select id="fs"><option value="1">あり</option><option value="0">なし</option></select></div>
     </div>
     <datalist id="roster"></datalist>
-    <p style="margin-top:1.6vh">Player names and target points are remembered on this PC. Next time, pick a name and the target points fill in automatically.</p>
-    <div class="acts"><button type="button" class="btn" id="bSwap">SWAP PLAYERS</button><button type="button" class="btn" id="bNew">NEW GAME</button><button type="submit" class="btn go">SAVE (Enter)</button></div>
+    <p style="margin-top:1.6vh">名前と持ち点は、このパソコンに保存されます。次からは名前を選ぶと、持ち点が自動で入ります。</p>
+    <div class="acts"><button type="button" class="btn" id="bSwap">選手を入れ替える</button><button type="button" class="btn" id="bNew">新しい試合</button><button type="submit" class="btn go">保存 (Enter)</button></div>
   </form>
 </div>
 
 <div class="over-l" id="winL" hidden>
   <div class="panel win" role="dialog" aria-label="Game over">
-    <h2>GAME OVER</h2>
+    <h2>試合終了</h2>
     <div class="big" id="wName"></div>
-    <table><thead><tr><th></th><th>POINTS</th><th>INNINGS</th><th>HIGH RUN</th><th>AVERAGE</th></tr></thead><tbody id="wT"></tbody></table>
-    <div class="acts"><button type="button" class="btn" id="bBack">UNDO (BackSpace)</button><button type="button" class="btn go" id="bAgain">NEW GAME (Enter)</button></div>
+    <table><thead><tr><th></th><th>得点</th><th>イニング</th><th>ハイラン</th><th>アベレージ</th></tr></thead><tbody id="wT"></tbody></table>
+    <div class="acts"><button type="button" class="btn" id="bBack">戻る (BackSpace)</button><button type="button" class="btn go" id="bAgain">新しい試合 (Enter)</button></div>
   </div>
 </div>
 <div class="over-l" id="wzL" hidden>
@@ -257,30 +257,30 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
 </div>
 <div class="over-l" id="rmL" hidden>
   <div class="panel wz" role="dialog" aria-label="Remote control">
-    <h2>REMOTE CONTROL <small id="rmS"></small></h2>
-    <p class="note" style="font-size:2.6vh;color:var(--chalk)">Open this page on a tablet or phone and enter the code:</p>
+    <h2>リモコン <small id="rmS"></small></h2>
+    <p class="note" style="font-size:2.6vh;color:var(--chalk)">タブレットかスマホでこのページを開き、下の番号を入れてください。</p>
     <div class="inp" style="justify-content:center"><span id="rmU" style="font-size:4.4vh"></span></div>
     <div class="inp" style="justify-content:center"><span class="num" id="rmC" style="font-size:16vh;letter-spacing:.08em"></span></div>
-    <div class="acts"><button type="button" class="btn" id="rmOff">TURN OFF REMOTE</button><button type="button" class="btn go" id="rmOk">CLOSE (Enter)</button></div>
+    <div class="acts"><button type="button" class="btn" id="rmOff">リモコンを切る</button><button type="button" class="btn go" id="rmOk">閉じる (Enter)</button></div>
   </div>
 </div>
 <div class="over-l" id="kmL" hidden>
-  <div class="panel wz" role="dialog" aria-label="Key setup"><h2 id="kmH"></h2><div class="inp"><span id="kmT"></span></div><p class="note" id="kmN"></p><div class="keys"><span><kbd>Esc</kbd>CANCEL</span></div></div>
+  <div class="panel wz" role="dialog" aria-label="Key setup"><h2 id="kmH"></h2><div class="inp"><span id="kmT"></span></div><p class="note" id="kmN"></p><div class="keys"><span><kbd>Esc</kbd>やめる</span></div></div>
 </div>
 <div class="over-l rd" id="rdL" hidden>
   <div class="rdp" role="dialog" aria-label="Ready to start">
     <img id="rdLogo" alt="VIBES BILLIARDS">
     <div class="rdm" id="rdM"></div>
     <p class="rdn" id="rdN"></p>
-    <div class="acts" style="justify-content:center"><button type="button" class="btn" id="rdSwap">SWAP (/)</button><button type="button" class="btn" id="rdWarm">WARM-UP (-)</button><button type="button" class="btn go big" id="rdGo">GAME START (Enter)</button></div>
-    <div class="keys"><span><kbd>/</kbd>SWAP BREAK ORDER</span><span><kbd>-</kbd>WARM-UP</span><span><kbd>BackSpace</kbd>PLAYERS</span><span><kbd>Enter</kbd>GAME START</span></div>
+    <div class="acts" style="justify-content:center"><button type="button" class="btn" id="rdSwap">入れ替え (/)</button><button type="button" class="btn" id="rdWarm">練習時間 (-)</button><button type="button" class="btn go big" id="rdGo">試合開始 (Enter)</button></div>
+    <div class="keys"><span><kbd>/</kbd>先攻・後攻を入れ替え</span><span><kbd>-</kbd>練習時間</span><span><kbd>BackSpace</kbd>選手の登録</span><span><kbd>Enter</kbd>試合開始</span></div>
   </div>
 </div>
 <div class="over-l" id="prL" hidden>
   <div class="panel pt" id="prP" role="dialog" aria-label="Warm-up timer">
-    <h2>WARM-UP <span id="prWho" style="color:var(--sub);font-size:.7em"></span></h2>
+    <h2>練習時間 <span id="prWho" style="color:var(--sub);font-size:.7em"></span></h2>
     <div class="clock" id="prC">5:00</div>
-    <div class="keys"><span><kbd>+</kbd>START / STOP</span><span><kbd>/</kbd>RESET</span><span><kbd>1-9</kbd>SET MINUTES</span><span><kbd>Enter</kbd>CLOSE</span></div>
+    <div class="keys"><span><kbd>+</kbd>開始・停止</span><span><kbd>/</kbd>最初にもどす</span><span><kbd>1-9</kbd>分数を変える</span><span><kbd>Enter</kbd>閉じる</span></div>
   </div>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -290,7 +290,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
   var KEY = 'vibes-count-3c-v1' + (TB ? '-t' + TB : '');
   var $ = function (id) { return document.getElementById(id); };
-  var PCOL = ['#FFFFFF', '#F2C200', '#E5484D', '#35C486'], PCN = ['WHITE', 'YELLOW', 'RED', 'GREEN'];
+  var PCOL = ['#FFFFFF', '#F2C200', '#E5484D', '#35C486'], PCN = ['白', '黄', '赤', '緑'];
   var isDefName = function (v) { return /^PLAYER [1-4]$/.test(v || ''); };
   var def = function (c) { c = c || { n: ['PLAYER 1', 'PLAYER 2'], g: [25, 25], lim: 0, t: 40, eq: 1, snd: 1, pm: 5, to: 3 }; var N = c.n.length, z = function (f) { var a = []; for (var i = 0; i < N; i++) a.push(f()); return a; };
     return { cfg: c, sc: z(function () { return 0; }), inn: z(function () { return []; }), to: z(function () { return c.to; }), run: 0, typed: false, turn: 0, over: false, t0: 0, t1: 0, ready: false }; };
@@ -302,7 +302,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   var RK = 'vibes-count-3c-roster-v1', roster = {};
   try { roster = JSON.parse(localStorage.getItem(RK) || '{}') || {}; } catch (e) { roster = {}; }
   function drawRoster() { var dl = $('roster'); dl.textContent = ''; players.forEach(function (o) { var n0 = o.mei ? o.sei + ' ' + o.mei : o.sei; if (!roster[n0]) roster[n0] = o.g; });
-    Object.keys(roster).sort().forEach(function (n) { var o = document.createElement('option'); o.value = n; o.label = 'Target ' + roster[n]; dl.appendChild(o); }); }
+    Object.keys(roster).sort().forEach(function (n) { var o = document.createElement('option'); o.value = n; o.label = '持ち点 ' + roster[n]; dl.appendChild(o); }); }
   function remember() { for (var p = 0; p < NP(); p++) { var n = S.cfg.n[p]; if (n && !isDefName(n) && !/^GUEST/.test(n)) roster[n] = S.cfg.g[p]; } var ks = Object.keys(roster); if (ks.length > 300) delete roster[ks[0]]; try { localStorage.setItem(RK, JSON.stringify(roster)); } catch (e) {} drawRoster(); }
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
   var snap = function () { hist.push(JSON.stringify(S)); if (hist.length > 400) hist.shift(); };
@@ -337,12 +337,12 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     var m = $('rdM'), N = NP(); m.textContent = ''; m.className = 'rdm n' + N; if (!$('rdLogo').src) $('rdLogo').src = document.querySelector('.top img').src;
     for (var p = 0; p < N; p++) {
       if (p && N === 2) m.appendChild(el('span', 'vs', 'VS'));
-      var c = el('div', 'rdc'); c.appendChild(el('small', '', N === 2 ? (p ? '2ND' : '1ST · BREAK') : (p ? String(p + 1) : '1 · BREAK')));
+      var c = el('div', 'rdc'); c.appendChild(el('small', '', N === 2 ? (p ? '後攻' : '先攻') : (p ? (p + 1) + '番' : '1番（先攻）')));
       var w = el('div', 'who'), b = el('span', 'ball'); b.style.setProperty('--c', PCOL[p]); w.appendChild(b); w.appendChild(el('span', 'name', S.cfg.n[p])); c.appendChild(w);
-      var g = el('div', 'rdg'); g.appendChild(el('b', 'num', String(S.cfg.g[p]))); g.appendChild(el('small', '', 'POINTS')); c.appendChild(g); m.appendChild(c);
+      var g = el('div', 'rdg'); g.appendChild(el('b', 'num', String(S.cfg.g[p]))); g.appendChild(el('small', '', '点')); c.appendChild(g); m.appendChild(c);
     }
-    $('rdN').textContent = N === 2 ? 'LAG FOR BREAK. THE BREAKER IS ON THE LEFT. PRESS / TO SWAP.' : 'DECIDE THE ORDER. PRESS / TO ROTATE.';
-    $('rdSwap').textContent = (N === 2 ? 'SWAP' : 'ROTATE') + ' (/)';
+    $('rdN').textContent = N === 2 ? 'バンキングで先攻・後攻を決めます。先攻が左です。入れ替える時は / を押します。' : '順番を決めます。/ を押すと順番が回ります。';
+    $('rdSwap').textContent = (N === 2 ? '入れ替え' : '順番を回す') + ' (/)';
   }
   function rdSwap() { if (!S.ready) return; var c = S.cfg; if (NP() === 2) { c.n.reverse(); c.g.reverse(); } else { c.n.push(c.n.shift()); c.g.push(c.g.shift()); } render(); }
   function rdStart() { if (!S.ready) return; S.ready = false; begin(); render(); }
@@ -364,7 +364,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     }
     $('runS').textContent = S.run && !S.over ? 'RUN ' + S.run : '';
     $('inn').textContent = S.inn[S.turn].length + (S.over ? 0 : 1);
-    $('lim').textContent = S.cfg.lim ? 'LIMIT ' + S.cfg.lim : '';
+    $('lim').textContent = S.cfg.lim ? '制限 ' + S.cfg.lim : '';
     $('tbox').hidden = !S.cfg.t;
     rdDraw(); drawTime(); drawTimer(); save(); if (typeof rmPush === 'function') rmPush();
   }
@@ -379,11 +379,11 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   function tStop() { tOn = false; clearInterval(tId); tId = null; drawTimer(); }
   function tStart() {
     if (!S.cfg.t || S.over) return; begin(); tStop(); tOn = true; tLeft = S.cfg.t; var last = Date.now(), warned = false, done = false;
-    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('TIME-OUT USED: ' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
+    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('タイムアウトを使いました：' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
     drawTimer();
   }
   var tKick = function () { if (tOn) tStart(); };
-  function add(n) { if (S.over) return; begin(); var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('Target reached. Press Enter to confirm'); return; } S.run = v; S.typed = false; tKick(); render(); }
+  function add(n) { if (S.over) return; begin(); var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('持ち点に届きました。Enter で確定します'); return; } S.run = v; S.typed = false; tKick(); render(); }
   function digit(d) { if (S.over) return; begin(); var v = S.typed ? S.run * 10 + d : d; if (v > room()) v = d > room() ? room() : d; S.run = v; S.typed = true; render(); }
   function finish() { S.over = true; S.t1 = Date.now(); tStop(); render(); showWin(); }
   function commit() {
@@ -397,14 +397,14 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   }
   function undo() {
     if (!S.over && S.run > 0) { S.run = 0; S.typed = false; render(); return; }
-    if (!hist.length) { toast('Nothing to undo'); return; }
+    if (!hist.length) { toast('これ以上は戻れません'); return; }
     S = JSON.parse(hist.pop()); $('winL').hidden = true; render();
   }
   function newGame(keep) { snap(); var c = S.cfg; S = def(c); S.ready = !c.n.every(isDefName); if (!keep) hist = []; tStop(); $('winL').hidden = true; render(); }
   function showWin() {
     var pct = function (p) { return S.sc[p] / S.cfg.g[p]; }, w = 0, tie = false, ps = S.cfg.n.map(function (x, i) { return i; });
     ps.forEach(function (p) { if (p && pct(p) > pct(w)) { w = p; tie = false; } else if (p && pct(p) === pct(w)) tie = true; }); if (tie) w = -1;
-    $('wName').textContent = w < 0 ? 'DRAW' : 'WINNER: ' + S.cfg.n[w] + ' (' + S.cfg.g[w] + ')';
+    $('wName').textContent = w < 0 ? '引き分け' : '勝者：' + S.cfg.n[w] + ' (' + S.cfg.g[w] + ')';
     var tb = $('wT'); tb.textContent = '';
     ps.forEach(function (p) { var tr = document.createElement('tr'); [S.cfg.n[p] + ' (' + S.cfg.g[p] + ')', S.sc[p] + ' / ' + S.cfg.g[p], S.inn[p].length, hi(p), avg(p)].forEach(function (v, i) { var c = document.createElement(i ? 'td' : 'th'); c.textContent = v; tr.appendChild(c); }); tb.appendChild(tr); });
     $('winL').hidden = false;
@@ -492,47 +492,47 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     var box = el('div', 'opts c3'), st = W.page * per;
     items.slice(st, st + per).forEach(function (it, i) { var o = el('div', 'opt' + (st + i === W.sel ? ' sel' : '')); o.appendChild(el('kbd', '', String(i + 1))); o.appendChild(el('span', '', label(it))); if (it && it.g) o.appendChild(el('small', '', '(' + it.g + ')')); box.appendChild(o); });
     b.appendChild(box);
-    if (pages > 1) b.appendChild(el('p', 'note', 'PAGE ' + (W.page + 1) + ' / ' + pages));
+    if (pages > 1) b.appendChild(el('p', 'note', 'ページ ' + (W.page + 1) + ' / ' + pages));
     return pages;
   }
   function wzDraw() {
     var h = $('wzH'), b = $('wzB'); h.textContent = ''; b.textContent = '';
     if (W.step === 'count') {
-      h.appendChild(document.createTextNode('NUMBER OF PLAYERS'));
+      h.appendChild(document.createTextNode('人数を選ぶ'));
       var bx = el('div', 'opts c3');
-      [2, 3, 4].forEach(function (n) { var o = el('div', 'opt' + (n === NP() ? ' sel' : '')); o.appendChild(el('kbd', '', String(n))); o.appendChild(el('span', '', n + ' PLAYERS')); bx.appendChild(o); });
-      b.appendChild(bx); keysHelp([['2-4', 'SELECT'], ['Enter', 'KEEP ' + NP() + ' PLAYERS']]); return;
+      [2, 3, 4].forEach(function (n) { var o = el('div', 'opt' + (n === NP() ? ' sel' : '')); o.appendChild(el('kbd', '', String(n))); o.appendChild(el('span', '', n + '人')); bx.appendChild(o); });
+      b.appendChild(bx); keysHelp([['2-4', '選ぶ'], ['Enter', NP() + '人のまま']]); return;
     }
     var dot = el('i'); dot.style.background = PCOL[W.p]; h.appendChild(dot);
-    h.appendChild(document.createTextNode('PLAYER ' + (W.p + 1) + ' (' + PCN[W.p] + ')'));
+    h.appendChild(document.createTextNode('選手' + (W.p + 1) + '（' + PCN[W.p] + '）'));
     var cur = S.cfg.n[W.p], isDef = isDefName(cur);
     if (W.step === 'mode') {
-      h.appendChild(el('small', '', isDef ? '' : 'NOW: ' + cur + ' (' + S.cfg.g[W.p] + ')'));
+      h.appendChild(el('small', '', isDef ? '' : '今：' + cur + ' (' + S.cfg.g[W.p] + ')'));
       var box = el('div', 'opts');
-      [['1', 'SEARCH REGISTERED PLAYER', players.length + ' PLAYERS'], ['2', 'NEW PLAYER', ''], ['3', 'GUEST', '']].forEach(function (a) { var o = el('div', 'opt'); o.appendChild(el('kbd', '', a[0])); o.appendChild(el('span', '', a[1])); if (a[2]) o.appendChild(el('small', '', a[2])); box.appendChild(o); });
+      [['1', '登録した選手をさがす', players.length + '人'], ['2', '新しい選手を登録', ''], ['3', 'ゲスト（名前なし）', '']].forEach(function (a) { var o = el('div', 'opt'); o.appendChild(el('kbd', '', a[0])); o.appendChild(el('span', '', a[1])); if (a[2]) o.appendChild(el('small', '', a[2])); box.appendChild(o); });
       b.appendChild(box);
-      keysHelp([['1-3', 'SELECT']].concat(isDef ? [] : [['Enter', 'KEEP ' + cur]]).concat([['BackSpace', 'BACK']]));
+      keysHelp([['1-3', '選ぶ']].concat(isDef ? [] : [['Enter', cur + ' のまま']]).concat([['BackSpace', '戻る']]));
     } else if (W.step === 'kana') {
-      h.appendChild(el('small', '', W.purpose === 'search' ? 'SEARCH BY READING' : (W.part === 'sei' ? 'FAMILY NAME' : 'GIVEN NAME') + (W.cur && W.cur.sei && W.part === 'mei' ? ' — ' + W.cur.sei : '')));
+      h.appendChild(el('small', '', W.purpose === 'search' ? 'よみがなでさがす' : (W.part === 'sei' ? '名字' : '名前') + (W.cur && W.cur.sei && W.part === 'mei' ? ' — ' + W.cur.sei : '')));
       var inp = el('div', 'inp'); inp.appendChild(el('span', '', W.kana)); inp.appendChild(el('span', 'cur')); b.appendChild(inp);
       var g = el('div', 'kg');
-      (W.abc ? AORDER : KORDER).forEach(function (n) { var r = el('div', 'kr' + (W.row === n ? ' on' : W.row !== null ? ' dim' : '')); r.appendChild(el('kbd', '', String(n))); (W.abc ? AROWS : KROWS)[n].split('').forEach(function (c, i) { var sp = el('span', '', c === ' ' ? 'SPACE' : c); if (c === ' ') sp.style.fontSize = '2.2vh'; sp.appendChild(el('em', '', String(i + 1))); r.appendChild(sp); }); g.appendChild(r); });
+      (W.abc ? AORDER : KORDER).forEach(function (n) { var r = el('div', 'kr' + (W.row === n ? ' on' : W.row !== null ? ' dim' : '')); r.appendChild(el('kbd', '', String(n))); (W.abc ? AROWS : KROWS)[n].split('').forEach(function (c, i) { var sp = el('span', '', c === ' ' ? '空白' : c); if (c === ' ') sp.style.fontSize = '2.2vh'; sp.appendChild(el('em', '', String(i + 1))); r.appendChild(sp); }); g.appendChild(r); });
       b.appendChild(g);
-      keysHelp(W.row === null ? [[W.abc ? '1-6' : '0-9', 'ROW']].concat(W.abc ? [] : [['*', 'が ぱ っ ゃ (CHANGE LAST)']]).concat([['/', W.abc ? 'かな' : 'ABC'], ['BackSpace', 'DELETE'], ['Enter', W.purpose === 'search' ? 'SEARCH' : (W.part === 'mei' && !W.kana ? 'SKIP' : (W.abc || isAbc(W.kana) ? 'OK' : 'KANJI'))]]) : [['1-5', 'CHARACTER'], ['BackSpace', 'CANCEL ROW']]);
+      keysHelp(W.row === null ? [[W.abc ? '1-6' : '0-9', '行を選ぶ']].concat(W.abc ? [] : [['*', '゛゜小（直前の文字）']]).concat([['/', W.abc ? 'かな' : 'ABC'], ['BackSpace', '消す'], ['Enter', W.purpose === 'search' ? 'さがす' : (W.part === 'mei' && !W.kana ? '入れない' : (W.abc || isAbc(W.kana) ? '決定' : '漢字にする'))]]) : [['1-5', '文字を選ぶ'], ['BackSpace', '行をやめる']]);
     } else if (W.step === 'cand') {
-      h.appendChild(el('small', '', (W.part === 'sei' ? 'FAMILY NAME' : 'GIVEN NAME') + ' — ' + W.kana + (W.loading ? ' …' : '')));
+      h.appendChild(el('small', '', (W.part === 'sei' ? '名字' : '名前') + ' — ' + W.kana + (W.loading ? ' …' : '')));
       var pg = listDraw(b, W.cands, function (v) { return v; });
-      keysHelp([['1-9', 'SELECT']].concat(pg > 1 ? [['0', 'NEXT PAGE']] : []).concat([['Enter', 'OK'], ['BackSpace', 'BACK']]));
+      keysHelp([['1-9', '選ぶ']].concat(pg > 1 ? [['0', '次のページ']] : []).concat([['Enter', '決定'], ['BackSpace', '戻る']]));
     } else if (W.step === 'pick') {
-      h.appendChild(el('small', '', 'REGISTERED PLAYERS' + (W.kana ? ' — ' + W.kana : '')));
-      if (!W.list.length) b.appendChild(el('p', 'note', 'NO PLAYER FOUND. PRESS Enter TO REGISTER AS A NEW PLAYER, OR BackSpace TO GO BACK.'));
+      h.appendChild(el('small', '', '登録した選手' + (W.kana ? ' — ' + W.kana : '')));
+      if (!W.list.length) b.appendChild(el('p', 'note', '見つかりません。Enter で新しく登録、BackSpace で戻ります。'));
       var pg2 = listDraw(b, W.list, function (o) { return full(o); });
-      if (W.del != null && W.list[W.del]) b.appendChild(el('p', 'note', 'DELETE ' + full(W.list[W.del]) + ' ? PRESS - AGAIN TO DELETE.'));
-      keysHelp([['1-9', 'SELECT']].concat(pg2 > 1 ? [['0', 'NEXT PAGE']] : []).concat([['Enter', 'OK'], ['-', '×2 DELETE PLAYER'], ['BackSpace', 'BACK']]));
+      if (W.del != null && W.list[W.del]) b.appendChild(el('p', 'note', full(W.list[W.del]) + ' を消しますか？ もう一度 - を押すと消えます。'));
+      keysHelp([['1-9', '選ぶ']].concat(pg2 > 1 ? [['0', '次のページ']] : []).concat([['Enter', '決定'], ['-', '2回で選手を消す'], ['BackSpace', '戻る']]));
     } else if (W.step === 'target') {
-      h.appendChild(el('small', '', 'TARGET POINTS — ' + (W.cur.guest ? 'GUEST' : full(W.cur))));
-      var inp2 = el('div', 'inp'); inp2.appendChild(el('span', 'num', W.num)); inp2.appendChild(el('span', 'cur')); inp2.appendChild(el('small', '', 'POINTS')); b.appendChild(inp2);
-      keysHelp([['0-9', 'ENTER POINTS'], ['Enter', 'OK'], ['BackSpace', 'DELETE / BACK']]);
+      h.appendChild(el('small', '', '持ち点 — ' + (W.cur.guest ? 'GUEST' : full(W.cur))));
+      var inp2 = el('div', 'inp'); inp2.appendChild(el('span', 'num', W.num)); inp2.appendChild(el('span', 'cur')); inp2.appendChild(el('small', '', '点')); b.appendChild(inp2);
+      keysHelp([['0-9', '点数を入れる'], ['Enter', '決定'], ['BackSpace', '消す・戻る']]);
     }
   }
   function wzKey(k) {
@@ -622,7 +622,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
   function rmState() { return JSON.stringify({ type: 'state', table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
   function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); } catch (e) {} } }
-  function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'CONNECTED' : 'CONNECTING…') : 'OFF'; $('bRm').textContent = rm && rm.on ? 'REMOTE ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'REMOTE'; }
+  function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'つながっています' : '接続しています…') : '切'; $('bRm').textContent = rm && rm.on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'リモコン'; }
   function rmConnect() {
     if (!rm || !rm.on) return; if (rws && rws.readyState <= 1) return;
     try { rws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { rws = null; return; }
@@ -669,7 +669,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
   rmStatus(); rmConnect();
   /* ===== several tables on one PC: each keypad's key codes are learned per table and routed to that table's window ===== */
   var MK = 'vibes-count-3c-keymap-v1', LOGI = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', 'Enter', 'Backspace', '*', '/', '.'], KM = null, chan = null;
-  var NAMES = { '+': '+ (PLUS)', '-': '- (MINUS)', '*': '* (TIMER)', '/': '/ (SETTINGS)', '.': '. (NEW GAME)', 'Backspace': 'BackSpace (UNDO)', 'Enter': 'Enter' };
+  var NAMES = { '+': '+（1点）', '-': '-（1点へらす）', '*': '*（残り秒数）', '/': '/（設定）', '.': '.（新しい試合）', 'Backspace': 'BackSpace（戻る）', 'Enter': 'Enter（交代）' };
   var loadMaps = function () { try { return JSON.parse(localStorage.getItem(MK) || '{}') || {}; } catch (e) { return {}; } };
   var noop = { preventDefault: function () {}, target: {} };
   if (TB) {
@@ -677,16 +677,16 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     try { chan = new BroadcastChannel('vibes-count-3c'); chan.onmessage = function (ev) { var m = ev.data || {}; if (m.t === TB && m.k) { if (!$('setL').hidden) closeSet(false); onKey(m.k, noop); } }; } catch (e) {}
   }
   function kmOpen() { if (!TB) return; KM = { i: 0, map: {} }; $('kmL').hidden = false; kmDraw(''); }
-  function kmDraw(msg) { $('kmH').textContent = 'TABLE ' + TB + ' KEY SETUP  (' + (KM.i + 1) + ' / ' + LOGI.length + ')'; $('kmT').textContent = 'PRESS THE KEY FOR:  ' + (NAMES[LOGI[KM.i]] || LOGI[KM.i]); $('kmN').textContent = msg || 'Use the keypad that belongs to this table.'; }
+  function kmDraw(msg) { $('kmH').textContent = TB + '番台 キー設定（' + (KM.i + 1) + ' / ' + LOGI.length + '）'; $('kmT').textContent = '次のキーを押してください：' + (NAMES[LOGI[KM.i]] || LOGI[KM.i]); $('kmN').textContent = msg || 'この台のテンキーで押してください。'; }
   function kmKey(e) {
     if (e.key === 'Escape') { KM = null; $('kmL').hidden = true; return; }
     var code = e.code, maps = loadMaps(), other = 0;
     if (!code || /^(Shift|Control|Alt|Meta|NumLock|CapsLock)/.test(code)) return;
     Object.keys(maps).forEach(function (t) { if (+t !== TB && maps[t][code]) other = t; });
-    if (other) return kmDraw('THIS KEY IS ALREADY USED BY TABLE ' + other + '. PRESS A DIFFERENT KEY.');
-    if (KM.map[code]) return kmDraw('THIS KEY IS ALREADY SET ON THIS KEYPAD. PRESS A DIFFERENT KEY.');
+    if (other) return kmDraw('このキーは ' + other + '番台で使っています。別のキーを押してください。');
+    if (KM.map[code]) return kmDraw('このキーは設定済みです。別のキーを押してください。');
     KM.map[code] = LOGI[KM.i]; KM.i++;
-    if (KM.i >= LOGI.length) { maps[TB] = KM.map; try { localStorage.setItem(MK, JSON.stringify(maps)); } catch (x) {} KM = null; $('kmL').hidden = true; toast('KEYS SAVED FOR TABLE ' + TB); return; }
+    if (KM.i >= LOGI.length) { maps[TB] = KM.map; try { localStorage.setItem(MK, JSON.stringify(maps)); } catch (x) {} KM = null; $('kmL').hidden = true; toast('キーを保存しました：' + TB + '番台'); return; }
     kmDraw('');
   }
   $('bKey').onclick = kmOpen;
@@ -702,7 +702,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
         if (!$('setL').hidden) { if (lk === 'Enter' || (lk >= '0' && lk <= '9')) return; e.preventDefault(); return; }
         e.preventDefault(); onKey(lk, noop); return;
       }
-      if (Object.keys(maps).length && (e.code.indexOf('Numpad') === 0 || e.code === 'Backspace') && $('setL').hidden) { e.preventDefault(); toast('THIS KEYPAD IS NOT SET UP. PRESS K FOR KEY SETUP.'); return; }
+      if (Object.keys(maps).length && (e.code.indexOf('Numpad') === 0 || e.code === 'Backspace') && $('setL').hidden) { e.preventDefault(); toast('このテンキーは未設定です。K を押して設定します。'); return; }
       if ((e.key === 'k' || e.key === 'K') && $('setL').hidden && !W) { e.preventDefault(); kmOpen(); return; }
     }
     onKey(e.key, e);
@@ -732,7 +732,7 @@ html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;t
     else if (k === 'Backspace') undo();
     else if (k === '*') { if (tOn) tStop(); else tStart(); }
     else if (k === '/') openSet();
-    else if (k === '.' || k === 'Delete' || k === ',') { var n = Date.now(); if (n - dotAt < 1500) { dotAt = 0; newGame(true); wzOpen(0); } else { dotAt = n; toast('Press . again for a new game'); } }
+    else if (k === '.' || k === 'Delete' || k === ',') { var n = Date.now(); if (n - dotAt < 1500) { dotAt = 0; newGame(true); wzOpen(0); } else { dotAt = n; toast('もう一度 . を押すと新しい試合です'); } }
     else if (k === 'f' || k === 'F') goFull();
     else hit = false;
     if (hit) e.preventDefault();
