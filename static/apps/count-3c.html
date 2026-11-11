@@ -303,6 +303,8 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   var full = function (o) { return o.mei ? o.sei + ' ' + o.mei : o.sei; };
   var KROWS = { 1: 'あいうえお', 2: 'かきくけこ', 3: 'さしすせそ', 4: 'たちつてと', 5: 'なにぬねの', 6: 'はひふへほ', 7: 'まみむめも', 8: 'やゆよ', 9: 'らりるれろ', 0: 'わをんー' };
   var KORDER = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+  var AROWS = { 1: 'ABCDE', 2: 'FGHIJ', 3: 'KLMNO', 4: 'PQRST', 5: 'UVWXY', 6: 'Z-. ' }, AORDER = [1, 2, 3, 4, 5, 6];
+  var isAbc = function (v) { return /[A-Z]/.test(v || ''); };
   var CYC = ['かが', 'きぎ', 'くぐ', 'けげ', 'こご', 'さざ', 'しじ', 'すず', 'せぜ', 'そぞ', 'ただ', 'ちぢ', 'つっづ', 'てで', 'とど', 'はばぱ', 'ひびぴ', 'ふぶぷ', 'へべぺ', 'ほぼぽ', 'やゃ', 'ゆゅ', 'よょ', 'あぁ', 'いぃ', 'うぅ', 'えぇ', 'おぉ', 'わゎ'];
   var kata = function (t) { return t.replace(/[ぁ-ゖ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); }); };
   var W = null;
@@ -320,11 +322,12 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
   function wzNext() { if (W.p === 0) { W.p = 1; W.step = 'mode'; wzDraw(); } else wzFinish(); }
   function kanaStart(purpose, part) { W.step = 'kana'; W.purpose = purpose; W.part = part; W.kana = ''; W.row = null; wzDraw(); }
   function kanaKey(d) {
-    if (W.row === null) { W.row = d; }
-    else { var r = KROWS[W.row]; if (d >= 1 && d <= r.length) { if (W.kana.length < 12) W.kana += r.charAt(d - 1); W.row = null; } else W.row = d; }
+    var RW = W.abc ? AROWS : KROWS;
+    if (W.row === null) { if (RW[d]) W.row = d; }
+    else { var r = RW[W.row]; if (d >= 1 && d <= r.length) { var ch = r.charAt(d - 1); if (W.kana.length < 12 && (ch !== ' ' || W.kana)) W.kana += ch; W.row = null; } else if (RW[d]) W.row = d; }
     wzDraw();
   }
-  function kanaVar() { if (!W.kana) return; var c = W.kana.slice(-1); for (var i = 0; i < CYC.length; i++) { var k = CYC[i].indexOf(c); if (k >= 0) { W.kana = W.kana.slice(0, -1) + CYC[i].charAt((k + 1) % CYC[i].length); break; } } wzDraw(); }
+  function kanaVar() { if (!W.kana || W.abc) return; var c = W.kana.slice(-1); for (var i = 0; i < CYC.length; i++) { var k = CYC[i].indexOf(c); if (k >= 0) { W.kana = W.kana.slice(0, -1) + CYC[i].charAt((k + 1) % CYC[i].length); break; } } wzDraw(); }
   function candLoad() {
     var q = W.kana, base = [q, kata(q)]; W.step = 'cand'; W.cands = base.slice(); W.sel = 0; W.page = 0; W.loading = true; wzDraw();
     var fin = function (list) { if (!W || W.step !== 'cand' || W.kana !== q) return; var seen = {}, out = []; list.concat(base).forEach(function (v) { if (v && !seen[v] && !/[A-Za-z]/.test(v)) { seen[v] = 1; out.push(v); } }); W.cands = out; W.loading = false; wzDraw(); };
@@ -373,9 +376,9 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
       h.appendChild(el('small', '', W.purpose === 'search' ? 'SEARCH BY READING' : (W.part === 'sei' ? 'FAMILY NAME' : 'GIVEN NAME') + (W.cur && W.cur.sei && W.part === 'mei' ? ' — ' + W.cur.sei : '')));
       var inp = el('div', 'inp'); inp.appendChild(el('span', '', W.kana)); inp.appendChild(el('span', 'cur')); b.appendChild(inp);
       var g = el('div', 'kg');
-      KORDER.forEach(function (n) { var r = el('div', 'kr' + (W.row === n ? ' on' : W.row !== null ? ' dim' : '')); r.appendChild(el('kbd', '', String(n))); KROWS[n].split('').forEach(function (c, i) { var sp = el('span', '', c); sp.appendChild(el('em', '', String(i + 1))); r.appendChild(sp); }); g.appendChild(r); });
+      (W.abc ? AORDER : KORDER).forEach(function (n) { var r = el('div', 'kr' + (W.row === n ? ' on' : W.row !== null ? ' dim' : '')); r.appendChild(el('kbd', '', String(n))); (W.abc ? AROWS : KROWS)[n].split('').forEach(function (c, i) { var sp = el('span', '', c === ' ' ? 'SPACE' : c); if (c === ' ') sp.style.fontSize = '2.2vh'; sp.appendChild(el('em', '', String(i + 1))); r.appendChild(sp); }); g.appendChild(r); });
       b.appendChild(g);
-      keysHelp(W.row === null ? [['0-9', 'ROW'], ['*', 'が ぱ っ ゃ (CHANGE LAST)'], ['BackSpace', 'DELETE'], ['Enter', W.purpose === 'search' ? 'SEARCH' : (W.part === 'mei' && !W.kana ? 'SKIP' : 'KANJI')]] : [['1-5', 'CHARACTER'], ['BackSpace', 'CANCEL ROW']]);
+      keysHelp(W.row === null ? [[W.abc ? '1-6' : '0-9', 'ROW']].concat(W.abc ? [] : [['*', 'が ぱ っ ゃ (CHANGE LAST)']]).concat([['/', W.abc ? 'かな' : 'ABC'], ['BackSpace', 'DELETE'], ['Enter', W.purpose === 'search' ? 'SEARCH' : (W.part === 'mei' && !W.kana ? 'SKIP' : (W.abc || isAbc(W.kana) ? 'OK' : 'KANJI'))]]) : [['1-5', 'CHARACTER'], ['BackSpace', 'CANCEL ROW']]);
     } else if (W.step === 'cand') {
       h.appendChild(el('small', '', (W.part === 'sei' ? 'FAMILY NAME' : 'GIVEN NAME') + ' — ' + W.kana + (W.loading ? ' …' : '')));
       var pg = listDraw(b, W.cands, function (v) { return v; });
@@ -403,11 +406,18 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
       else return k === 'Enter' || k === 'Backspace';
     } else if (W.step === 'kana') {
       if (d >= 0) kanaKey(d); else if (k === '*') kanaVar();
+      else if (k === '/') { W.abc = !W.abc; W.row = null; wzDraw(); }
+      else if (k.length === 1 && (/[a-zA-Z]/.test(k) || (W.abc && /[ \-.]/.test(k)))) { W.abc = true; W.row = null; if (W.kana.length < 12 && (k !== ' ' || W.kana)) W.kana += k.toUpperCase(); wzDraw(); }
       else if (k === 'Backspace') { if (W.row !== null) W.row = null; else if (W.kana) W.kana = W.kana.slice(0, -1); else if (W.purpose === 'new' && W.part === 'mei') { kanaStart('new', 'sei'); return true; } else { W.step = 'mode'; } wzDraw(); }
       else if (k === 'Enter') {
         W.row = null;
         if (W.purpose === 'search') pickLoad();
         else if (!W.kana) { if (W.part === 'mei') targetStart(25); }
+        else if (isAbc(W.kana)) {
+          var nm = W.kana.replace(/\s+$/, '');
+          if (W.part === 'sei') { W.cur.sei = nm; W.cur.ys = nm; kanaStart('new', 'mei'); }
+          else { W.cur.mei = nm; W.cur.ym = nm; var old2 = null; players.forEach(function (o) { if (o.sei === W.cur.sei && (o.mei || '') === nm) old2 = o; }); targetStart(old2 ? old2.g : 25); }
+        }
         else candLoad();
       } else return false;
     } else if (W.step === 'cand' || W.step === 'pick') {
@@ -421,7 +431,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
       else if (k === 'Backspace') { W.del = null; var q = W.kana; kanaStart(W.purpose, W.part); W.kana = q; wzDraw(); }
       else if (k === 'Enter') {
         var it = items[W.sel];
-        if (!it && W.step === 'pick' && W.kana) { W.cur = { sei: '', mei: '', ys: '', ym: '' }; W.purpose = 'new'; W.part = 'sei'; candLoad(); return true; }
+        if (!it && W.step === 'pick' && W.kana) { W.cur = { sei: '', mei: '', ys: '', ym: '' }; W.purpose = 'new'; W.part = 'sei'; if (isAbc(W.kana)) { W.cur.sei = W.cur.ys = W.kana.replace(/\s+$/, ''); kanaStart('new', 'mei'); } else candLoad(); return true; }
         if (!it) return true;
         if (W.step === 'pick') { W.cur = { sei: it.sei, mei: it.mei || '', ys: it.ys || '', ym: it.ym || '' }; targetStart(it.g); }
         else if (W.part === 'sei') { W.cur.sei = it; W.cur.ys = W.kana; kanaStart('new', 'mei'); }
