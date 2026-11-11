@@ -143,7 +143,7 @@ function tDetail(t) {
   add('会場', `${esc(t.venue)}${t.shop ? ` <small><a href="${t.shop.url}">お店のページ</a></small>` : ''}${t.pref || t.city ? `<small>${esc((t.pref || '') + (t.city || ''))}</small>` : ''}`);
   add('種目', esc(gamesLabel(t)));
   add('クラス', esc(classLabel(t)));
-  add('主催', esc(ORG[t.organizer] ?? t.organizer ?? ''));
+  add('主催', esc(ORG[t.organizer] || (t.organizer === 'other' ? t.source_name : t.organizer) || ''));
   add('参加費', t.fee_yen ? `¥${Number(t.fee_yen).toLocaleString()}${t.fee_note ? `<small>${esc(t.fee_note)}</small>` : ''}` : esc(t.fee_note || ''));
   add('ハンデ', esc(t.handicap));
   add('形式', esc(t.format));
