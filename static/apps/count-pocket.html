@@ -1044,7 +1044,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     var sd = t.closest('.side'); if (sd && !S.cfg.mode && !S.over) { var pi = +sd.id.slice(1); act({ type: 'key', k: pi === S.turn ? 'Enter' : '+' }); } /* the waiting player keeps score: tap your own panel to give the shooter a point; the shooter taps theirs to hand over */
   });
   function mirInit() {
-    var mt = null, mw = true, mva = 1, pInn = -1; document.body.classList.add('mir', 'mirwait'); save = function () {};
+    var mt = null, mw = true, mva = 1, pInn = -1, pLen = []; document.body.classList.add('mir', 'mirwait'); save = function () {};
     var tidy = function () { Array.prototype.forEach.call(document.querySelectorAll('.board .keys span'), function (sp) { var kb = sp.querySelector('kbd'); if (!kb) return; var k = kb.textContent === 'BackSpace' ? 'Backspace' : kb.textContent; sp.hidden = !KOK.test(k) || /練習/.test(sp.textContent) || (k === '*' && !!S.cfg.easy && !S.cfg.mode); }); };
     document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button,a'); if (!b) return; e.preventDefault(); e.stopPropagation(); var c = { rdGo: 'start', rdSwap: 'swap', pzB: 'pause' }[b.id]; if (c) act({ type: 'cmd', c: c }); else if (b.id === 'mirPl' || b.id === 'mirHome') { try { parent.postMessage({ type: 'mir', nav: b.id === 'mirPl' ? 'players' : 'home' }, location.origin); } catch (x) {} } }, true);
     window.addEventListener('keydown', function (e) { e.stopImmediatePropagation(); }, true);
@@ -1054,7 +1054,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       var sk = Date.now() - (m.now || Date.now()); S = m.s; ['t0', 't1', 'pz'].forEach(function (k) { if (S[k]) S[k] += sk; });
       clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0; mva = m.va === 0 ? 0 : 1; if (!tOn || tLeft > 10.5) mw = !tOn;
       if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!mw && tLeft <= 10 && tLeft > 7) { mw = true; if (typeof speak === 'function' && !S.cfg.mode && S.cfg.voice !== 0 && S.cfg.t > 10 && !(S.cfg.vdev === 'pc' && mva)) speak('ten seconds'); } drawTimer(); }, 200); }
-      var tInn = 0; S.inn.forEach(function (a) { tInn += (a && a.length) || 0; }); if (pInn >= 0 && tInn > pInn && !S.over && !S.cfg.mode && typeof chime === 'function' && !(S.cfg.vdev === 'pc' && mva)) chime(); pInn = tInn;
+      var tInn = 0; S.inn.forEach(function (a) { tInn += (a && a.length) || 0; }); if (pInn >= 0 && tInn > pInn && !S.over && !S.cfg.mode && typeof chime === 'function' && !(S.cfg.vdev === 'pc' && mva)) { chime(); var who = -1; S.inn.forEach(function (a, i) { if (a.length > (pLen[i] || 0)) who = i; }); if (who >= 0 && S.cfg.voice !== 0) setTimeout(speak, 350, gotText(S.inn[who][S.inn[who].length - 1])); } pInn = tInn; pLen = S.inn.map(function (a) { return a.length; });
       render(); pzDraw(); $('winL').hidden = true; tidy(); document.body.classList.remove('mirwait');
     });
     [['mirPl', '選手を変える', 'players'], ['mirHome', 'メニュー', 'home']].forEach(function (x) { var bt = el('button', 'btn', x[1]); bt.type = 'button'; bt.id = x[0]; $('rdGo').parentNode.insertBefore(bt, $('rdSwap')); });
