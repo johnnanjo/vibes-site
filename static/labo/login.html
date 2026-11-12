@@ -44,7 +44,7 @@ button:disabled{opacity:.6}
 (function () {
   var $ = function (i) { return document.getElementById(i); }, labo = /vibesdigilabo\.com$|^labo\.localhost$/.test(location.hostname), q = new URLSearchParams(location.search);
   if (!labo) { $('home').href = '/labo/'; $('back').href = '/labo/'; }
-  var next = q.get('next') || '/pages/count/'; if (!/^\/pages\/count(-3c|-pocket)?\/?(\?[^#]*)?$/.test(next)) next = '/pages/count/';
+  var pre = labo ? '' : '/labo', next = q.get('next') || pre + '/pages/count/'; if (!/^(\/labo)?\/pages\/count(-3c|-pocket)?\/?(\?[^#]*)?$/.test(next)) next = pre + '/pages/count/';
   if (q.get('why') === 'expired') $('msg').textContent = '利用期間が終了しました。運営にお問い合わせください。'; else if (q.get('why') === 'stopped') $('msg').textContent = 'このアカウントは停止中です。運営にお問い合わせください。';
   fetch('/api/labo/me', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (j) { if (j && j.ok) location.replace(next); }).catch(function () {});
   $('f').addEventListener('submit', function (e) { e.preventDefault(); $('err').textContent = ''; $('go').disabled = true;

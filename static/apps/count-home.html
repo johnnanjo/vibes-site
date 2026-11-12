@@ -244,7 +244,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!a.length) { var e = document.createElement('p'); e.textContent = 'まだ誰も登録されていません。'; e.style.fontSize = '2vh'; B.appendChild(e); } }
   function roPanel() { $('roL').hidden = false; roList(); var on = !!(rm && rm.on); $('roQW').hidden = !on; if (on) { try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + rm.code + '&j=1'); q.make(); $('roQ').innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { $('roQW').hidden = true; } } $('roN').focus(); }
   $('roF').addEventListener('submit', function (e) { e.preventDefault(); if (!$('roN').value.trim()) return; roHandle({ op: 'save', p: { n: $('roN').value, y: $('roY').value, g: $('roG').value } }); $('roN').value = ''; $('roY').value = ''; $('roN').focus(); });
-  if (window.LABO) { $('bAcc').hidden = false; $('bAcc').onclick = function () { location.href = '/account'; }; }
+  if (window.LABO && LABO.id) { $('bAcc').hidden = false; $('bAcc').onclick = function () { location.href = (LABO.pre || '') + '/account'; }; }
   $('bCamP').onclick = function () { if (!rm || !/^\d{6}$/.test(rm.code || '')) rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true }; rm.on = true; saveRm(); connect(); draw();
     try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-cam/?r=' + rm.code); q.make(); $('cmQ').innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) {} $('cmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('cmL').hidden = false; };
   $('cmX').onclick = function () { $('cmL').hidden = true; };

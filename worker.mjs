@@ -147,17 +147,21 @@ async function laboApi(req, env, url) {
 async function asset(env, req, url, path) { const u = new URL(url); u.pathname = path; u.search = ''; return env.ASSETS.fetch(new Request(u, { method: 'GET', headers: req.headers })); }
 async function html(res, fn) { if (!res.ok || !(res.headers.get('content-type') || '').includes('text/html')) return res; const h = new Headers(res.headers); h.set('cache-control', 'no-store'); h.delete('etag'); h.delete('content-length'); return new Response(fn(await res.text()), { status: 200, headers: h }); }
 
-async function laboSite(req, env, url) {
-  let p = url.pathname.replace(/\/+$/, '') || '/';
-  if (LABO_PAGES[p]) return asset(env, req, url, LABO_PAGES[p]);
+/* pre = '' on vibesdigilabo.com; '/labo' when the same site is reached under a path on the preview host (until the domain is on Cloudflare) */
+async function laboSite(req, env, url, pre = '') {
+  let p = (url.pathname.slice(pre.length).replace(/\/+$/, '')) || '/';
+  if (!pre && LABO_PAGES[p]) return asset(env, req, url, LABO_PAGES[p]);
   const app = /^\/pages\/count(-3c|-pocket|-remote|-cam|-live)?$/.exec(p);
   if (app) {
     const gated = !app[1] || app[1] === '-3c' || app[1] === '-pocket';
     let s = null;
-    if (gated) { s = await accounts(env).session(cookieOf(req)); if (!s.ok) return Response.redirect(url.origin + '/login?next=' + encodeURIComponent(url.pathname + url.search) + (s.why ? '&why=' + s.why : ''), 302); }
-    const boot = s ? `<script>window.LABO=${JSON.stringify({ id: s.id, shop: s.shop, expires: s.expires }).replace(/</g, '\\u003c')}</script>` : '';
-    return html(await asset(env, req, url, p), (t) => t.split('https://vibesbilliards.com/pages/count').join(url.origin + '/pages/count').split('vibesbilliards.com/pages/count').join(url.host + '/pages/count').split('/img/vibes-logo-t.png').join('/img/vibes-digilabo-t.png').replace('<head>', '<head>' + boot + '<style>.lab,.mlogo span,.top>b{display:none!important}</style>'));
+    if (gated) { s = await accounts(env).session(cookieOf(req)); if (!s.ok) return Response.redirect(url.origin + pre + '/login?next=' + encodeURIComponent(url.pathname + url.search) + (s.why ? '&why=' + s.why : ''), 302); }
+    const boot = `<script>window.LABO=${JSON.stringify(s ? { id: s.id, shop: s.shop, expires: s.expires, pre } : { pre }).replace(/</g, '\\u003c')}</script>`;
+    return html(await asset(env, req, url, p), (t) => t.split('https://vibesbilliards.com/pages/count').join('\u0001A').split('vibesbilliards.com/pages/count').join('\u0001B').split('/pages/count').join(pre + '/pages/count')
+      .split('\u0001A').join(url.origin + pre + '/pages/count').split('\u0001B').join(url.host + pre + '/pages/count')
+      .split('/img/vibes-logo-t.png').join('/img/vibes-digilabo-t.png').replace('<head>', '<head>' + boot + '<style>.lab,.mlogo span,.top>b{display:none!important}</style>'));
   }
+  if (pre) return env.ASSETS.fetch(req);
   if (/^\/(img|js|css|fonts|labo)\//.test(url.pathname) || /^\/(sw-count\.js|count-3c\.webmanifest|favicon\.ico|robots\.txt)$/.test(url.pathname)) return env.ASSETS.fetch(req);
   return Response.redirect(url.origin + '/', 302);
 }
@@ -169,6 +173,7 @@ export default {
     if (m) return env.COUNT_ROOM.get(env.COUNT_ROOM.idFromName(m[1])).fetch(req);
     if (url.pathname.startsWith('/api/labo/')) return laboApi(req, env, url);
     if (LABO_HOSTS.has(url.hostname)) return laboSite(req, env, url);
+    if (url.pathname.startsWith('/labo/pages/count')) return laboSite(req, env, url, '/labo');
     return env.ASSETS.fetch(req);
   },
 };

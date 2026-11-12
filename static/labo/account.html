@@ -40,7 +40,7 @@ button.ghost{background:transparent;color:var(--chalk);border:2px solid var(--li
 <script>
 (function () {
   var $ = function (i) { return document.getElementById(i); }, labo = /vibesdigilabo\.com$|^labo\.localhost$/.test(location.hostname), login = labo ? '/login' : '/labo/login';
-  if (!labo) $('home').href = '/labo/';
+  if (!labo) { $('home').href = '/labo/'; document.querySelector('a.btn').href = '/labo/pages/count/'; }
   fetch('/api/labo/me', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (j) { if (!j || !j.ok) return location.replace(login); $('shop').textContent = j.shop; $('uid').textContent = j.id; if (j.expires) { var d = new Date(j.expires); $('exp').textContent = d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日まで'; } else $('exp').textContent = '期限なし'; }).catch(function () { location.replace(login); });
   $('f').addEventListener('submit', function (e) { e.preventDefault(); $('m').className = 'msg'; $('m').textContent = '';
     fetch('/api/labo/password', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ old: $('o').value, new: $('n').value }) }).then(function (r) { return r.json(); })
