@@ -43,6 +43,7 @@ button.s{font-size:13px;padding:7px 12px;background:transparent;color:var(--chal
       <div class="g2"><div><label for="cdays">利用できる日数（0＝期限なし）</label><input id="cdays" type="number" min="0" max="3650" value="30"></div><div><label for="cnote">メモ（台数・連絡先など）</label><input id="cnote"></div></div>
       <p class="err" id="ec" role="alert"></p><button type="submit">発行する</button></form>
     <div class="new" id="np" hidden><b id="npT"></b><div>ID：<code id="npI"></code></div><div>パスワード：<code id="npP"></code></div><p>このパスワードは、今だけ表示されます。控えてから、お店に渡してください。お店の人は、ログイン後に自分で変更できます。</p></div>
+    <div class="card"><h2>ホームページ</h2><p>ホームページは、公開前のため運営だけが見られます。このブラウザーでは30日間見られます。</p><a id="hp" href="/" style="font-weight:900;color:var(--night);background:var(--lime);border-radius:12px;padding:12px 16px;text-decoration:none;text-align:center">ホームページを見る</a><p class="err" id="eo" role="alert"></p></div>
     <div class="card"><h2>店舗アカウント <span id="cnt"></span></h2><div id="list" style="display:grid;gap:10px"></div></div>
   </div>
 </div>
@@ -50,11 +51,12 @@ button.s{font-size:13px;padding:7px 12px;background:transparent;color:var(--chal
 (function () {
   var $ = function (i) { return document.getElementById(i); }, key = ''; try { key = sessionStorage.getItem('labo-admin') || ''; } catch (e) {}
   function api(op, d) { return fetch('/api/labo/admin', { method: 'POST', headers: { 'content-type': 'application/json', 'x-admin-key': key }, body: JSON.stringify(Object.assign({ op: op }, d || {})) }).then(function (r) { return r.json().catch(function () { return { ok: false, error: 'このページからは使えません。vibesdigilabo.com/admin で開いてください。' }; }); }); }
+  function owner() { if (!/vibesdigilabo\.com$|^labo\.localhost$/.test(location.hostname)) $('hp').href = '/labo/'; fetch('/api/labo/owner', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ key: key }) }).then(function (r) { return r.json(); }).then(function (j) { $('eo').textContent = j.ok ? '' : 'ホームページを見る準備ができませんでした。もう一度、管理キーを入れてください。'; }).catch(function () {}); }
   function day(t) { if (!t) return '—'; var d = new Date(t); return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate(); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function showPw(title, id, pw) { $('npT').textContent = title; $('npI').textContent = id; $('npP').textContent = pw; $('np').hidden = false; $('np').scrollIntoView({ block: 'center' }); }
   function load() { return api('list').then(function (j) { if (!j.ok) { $('ek').textContent = j.error || '開けませんでした。'; $('fk').hidden = false; $('main').hidden = true; return; }
-    try { sessionStorage.setItem('labo-admin', key); } catch (e) {} $('fk').hidden = true; $('main').hidden = false; var L = $('list'); L.textContent = ''; $('cnt').textContent = '（' + j.accounts.length + '件）';
+    try { sessionStorage.setItem('labo-admin', key); } catch (e) {} owner(); $('fk').hidden = true; $('main').hidden = false; var L = $('list'); L.textContent = ''; $('cnt').textContent = '（' + j.accounts.length + '件）';
     j.accounts.forEach(function (a) { var c = el('div', 'acc'), h = el('div', 'h'); h.appendChild(el('b', '', a.shop)); h.appendChild(el('code', '', a.id));
       var expd = a.expires && j.now > a.expires; h.appendChild(el('span', 'tag' + (a.status !== 'active' ? ' off' : expd ? ' exp' : ''), a.status !== 'active' ? '停止中' : expd ? '期限切れ' : '利用中')); c.appendChild(h);
       c.appendChild(el('small', '', '期限：' + (a.expires ? day(a.expires) + 'まで' : 'なし') + '　発行：' + day(a.created) + '　最終ログイン：' + day(a.last_login) + (a.note ? '　メモ：' + a.note : '')));

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>準備中｜VIBES BILLIARDS DIGITAL LABO</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/img/favicon-64.png">
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#171A22;color:#F3F4EF;font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;font-weight:700;padding:24px 18px;text-align:center}
+.box{display:grid;gap:18px;justify-items:center;max-width:440px}
+img{height:120px;width:auto}
+h1{font-size:26px;font-weight:900;margin:0}
+p{margin:0;color:#A9AFBD;line-height:1.8}
+a.btn{display:inline-block;background:#C0FC09;color:#171A22;font-weight:900;font-size:18px;text-decoration:none;border-radius:999px;padding:13px 30px}
+a.sub{color:#A9AFBD;font-size:14px}
+a:focus-visible{outline:3px solid #C0FC09;outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="box">
+  <img src="/img/vibes-digilabo-t.png" alt="VIBES DIGILABO" width="717" height="406">
+  <h1>ただいま準備中です</h1>
+  <p>ホームページは、公開の準備をしています。導入店舗の方は、下のボタンからログインできます。</p>
+  <a class="btn" id="login" href="/login">導入店舗ログイン</a>
+  <a class="sub" id="admin" href="/admin">運営の方はこちら</a>
+</div>
+<script>
+(function () { if (/vibesdigilabo\.com$|^labo\.localhost$/.test(location.hostname)) return; document.getElementById('login').href = '/labo/login'; document.getElementById('admin').href = '/labo/admin'; })();
+</script>
+</body>
+</html>

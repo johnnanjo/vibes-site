@@ -125,6 +125,11 @@ const LABO_PAGES = { '/': '/labo', '/login': '/labo/login', '/admin': '/labo/adm
 const json = (o, status = 200, headers = {}) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers } });
 const cookieOf = (req) => { const m = /(?:^|;\s*)labo_s=([0-9a-f]{64})/.exec(req.headers.get('cookie') || ''); return m ? m[1] : ''; };
 const setCookie = (token, age) => `labo_s=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${age}`;
+/* the landing page is shown only to the owner (someone who has entered ADMIN_KEY on /admin) until the public opening */
+const ownerToken = async (env) => { if (!env.ADMIN_KEY) return ''; const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(env.ADMIN_KEY + '|labo-owner-view')); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join(''); };
+const isOwner = async (req, env) => { const t = await ownerToken(env), m = /(?:^|;\s*)labo_o=([0-9a-f]{64})/.exec(req.headers.get('cookie') || ''); return !!t && !!m && same(m[1], t); };
+const noStore = (res) => { const h = new Headers(res.headers); h.set('cache-control', 'no-store'); h.set('x-robots-tag', 'noindex'); h.delete('etag'); return new Response(res.body, { status: res.status, headers: h }); };
+async function laboHome(req, env, url) { return noStore(await asset(env, req, url, (await isOwner(req, env)) ? '/labo' : '/labo/closed')); }
 const accounts = (env) => env.LABO.get(env.LABO.idFromName('main'));
 
 async function laboApi(req, env, url) {
@@ -136,6 +141,11 @@ async function laboApi(req, env, url) {
   if (p === 'login') { const r = await db.login(d.id, d.pw); if (!r.ok) return json(r, 401); const { token, ...rest } = r; return json(rest, 200, { 'set-cookie': setCookie(token, SESSION_DAYS * 86400) }); }
   if (p === 'logout') { await db.logout(cookieOf(req)); return json({ ok: true }, 200, { 'set-cookie': setCookie('x', 0) }); }
   if (p === 'password') return json(await db.password(cookieOf(req), d.old, d.new));
+  if (p === 'owner') {
+    if (!env.ADMIN_KEY) return json({ ok: false, error: '管理キー（ADMIN_KEY）が、まだ設定されていません。' }, 503);
+    if (!same(String(d.key || ''), env.ADMIN_KEY)) return json({ ok: false, error: '管理キーが違います。' }, 401);
+    return json({ ok: true }, 200, { 'set-cookie': `labo_o=${await ownerToken(env)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${30 * 86400}` });
+  }
   if (p === 'admin') {
     if (!env.ADMIN_KEY) return json({ ok: false, error: '管理キー（ADMIN_KEY）が、まだ設定されていません。' }, 503);
     if (!same(req.headers.get('x-admin-key') || '', env.ADMIN_KEY)) return json({ ok: false, error: '管理キーが違います。' }, 401);
@@ -150,6 +160,7 @@ async function html(res, fn) { if (!res.ok || !(res.headers.get('content-type') 
 /* pre = '' on vibesdigilabo.com; '/labo' when the same site is reached under a path on the preview host (until the domain is on Cloudflare) */
 async function laboSite(req, env, url, pre = '') {
   let p = (url.pathname.slice(pre.length).replace(/\/+$/, '')) || '/';
+  if (!pre && p === '/') return laboHome(req, env, url);
   if (!pre && LABO_PAGES[p]) return asset(env, req, url, LABO_PAGES[p]);
   const app = /^\/pages\/count(-3c|-pocket|-remote|-cam|-live)?$/.exec(p);
   if (app) {
@@ -162,6 +173,7 @@ async function laboSite(req, env, url, pre = '') {
       .split('/img/vibes-logo-t.png').join('/img/vibes-digilabo-t.png').replace('<head>', '<head>' + boot + '<style>.lab,.mlogo span,.top>b{display:none!important}</style>'));
   }
   if (pre) return env.ASSETS.fetch(req);
+  if (/^\/labo(\/(index(\.html)?)?)?$/.test(url.pathname)) return Response.redirect(url.origin + '/', 302);
   if (/^\/(img|js|css|fonts|labo)\//.test(url.pathname) || /^\/(sw-count\.js|count-3c\.webmanifest|favicon\.ico|robots\.txt)$/.test(url.pathname)) return env.ASSETS.fetch(req);
   return Response.redirect(url.origin + '/', 302);
 }
@@ -173,6 +185,7 @@ export default {
     if (m) return env.COUNT_ROOM.get(env.COUNT_ROOM.idFromName(m[1])).fetch(req);
     if (url.pathname.startsWith('/api/labo/')) return laboApi(req, env, url);
     if (LABO_HOSTS.has(url.hostname)) return laboSite(req, env, url);
+    if (/^\/labo(\/(index(\.html)?)?)?$/.test(url.pathname)) return laboHome(req, env, url);
     if (url.pathname.startsWith('/labo/pages/count')) return laboSite(req, env, url, '/labo');
     return env.ASSETS.fetch(req);
   },

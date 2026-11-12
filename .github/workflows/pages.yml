@@ -23,6 +23,8 @@ jobs:
           node-version: 20
       - run: node build.mjs
       - run: touch dist/.nojekyll
+      # DIGITAL LABO のトップは公開前。Worker 側で運営だけに見せるので、Pages には出さない
+      - run: cp dist/labo/closed.html dist/labo/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
