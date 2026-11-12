@@ -40,7 +40,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 .ring.n5 .tile:nth-of-type(5){grid-column:2;grid-row:2;align-self:end;min-height:15vh;margin:0 2.4vw;padding:1.6vh 1.4vw}.ring.n5 .tile:nth-of-type(5) b{font-size:min(3.6vh,2vw)}.ring.n5 .tile:nth-of-type(5) kbd{top:1.2vh;left:auto;right:1vw;font-size:2vh;line-height:3.8vh;min-width:3.8vh;height:3.8vh}
 .ring.n5 .tile b{font-size:min(5.4vh,2.9vw);white-space:nowrap}.ring.n5 .tile{overflow:hidden}.ring.n5 .tile span{font-size:2.1vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .logo{grid-column:1/-1;display:grid;place-items:center;align-content:center;padding:1vh 0}
-.lab{margin-top:1.6vh;padding-top:1.4vh;border-top:.35vh solid var(--lime);font-family:Unbounded,Anton,sans-serif;font-weight:900;font-size:2.7vh;letter-spacing:.34em;text-indent:.34em;color:var(--chalk);white-space:nowrap}
+.lab{margin-top:1.6vh;padding-top:1.4vh;border-top:.35vh solid var(--lime);font-family:Unbounded,Anton,sans-serif;font-weight:900;font-size:2.7vh;letter-spacing:.3em;text-indent:.3em;color:var(--chalk);white-space:nowrap}
 .solo .lab{font-size:4.6vh;margin-top:2.4vh;padding-top:2vh;justify-self:center}.solo .lg{display:grid;justify-items:center;align-self:center}
 .shop{font-weight:900;font-size:4.4vh;letter-spacing:.08em;color:var(--chalk);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw}.solo .shop{font-size:6vh;margin-bottom:3vh;max-width:90vw}
 .pf{display:grid;grid-template-columns:1fr 1fr;gap:1.2vh 1.4vw;text-align:left}.pf label{display:block;font-weight:700;font-size:1.8vh;margin-bottom:.4vh;color:var(--chalk)}
@@ -101,7 +101,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 </div>
 <img id="logoSrc" src="/img/vibes-logo-t.png" alt="" hidden>
 <div class="solo" id="solo" hidden>
-  <div class="lg"><div class="shop" id="soloShop" hidden></div><img id="soloLogo" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LAB</div></div>
+  <div class="lg"><div class="shop" id="soloShop" hidden></div><img id="soloLogo" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LABO</div></div>
   <div class="soloq"><div class="qr sm" id="soloQ"></div><div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div></div>
 </div>
 <div class="ov" id="zipL" hidden style="z-index:9">
@@ -168,7 +168,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
       var kb = document.createElement('kbd'); kb.textContent = String(i + 1); var sm = document.createElement('small'); sm.textContent = it.s; var b = document.createElement('b'); b.textContent = it.b; var sp = document.createElement('span'); sp.textContent = it.d;
       a.appendChild(kb); a.appendChild(sm); a.appendChild(b); a.appendChild(sp); a.onclick = function () { open(it.id); }; r.appendChild(a); tiles.push(a);
     });
-    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LAB'; lg.appendChild(lb); r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
+    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LABO'; lg.appendChild(lb); r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
     var f = $('foot'); f.textContent = ''; [['1', '〜'], [String(m.items.length), '選ぶ'], ['Enter', '決定']].concat(m.back ? [['BackSpace', 'もどる']] : []).concat([['F', '全画面']]).forEach(function (x, i) { var sp2 = i === 1 ? f.lastChild : document.createElement('span'); var k2 = document.createElement('kbd'); k2.textContent = x[0]; sp2.appendChild(k2); sp2.appendChild(document.createTextNode(x[1])); if (i !== 1) f.appendChild(sp2); });
     if (typeof shopDraw === 'function') shopDraw();
     if (typeof push === 'function') push();
