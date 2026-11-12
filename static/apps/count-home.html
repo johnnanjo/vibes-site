@@ -34,6 +34,11 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 .ring.n4 .logo{grid-column:2;grid-row:1/3;padding:0 2.4vw}.ring.n4 .logo img{height:24vh;max-width:30vw}
 .ring.n4 .tile:nth-of-type(1){grid-column:1;grid-row:1}.ring.n4 .tile:nth-of-type(2){grid-column:3;grid-row:1}.ring.n4 .tile:nth-of-type(3){grid-column:1;grid-row:2}.ring.n4 .tile:nth-of-type(4){grid-column:3;grid-row:2}
 .ring.n4 .tile b{font-size:min(5.4vh,2.9vw);white-space:nowrap}.ring.n4 .tile{overflow:hidden}.ring.n4 .tile span{font-size:2.1vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ring.n5{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-rows:minmax(0,33vh) minmax(0,33vh);align-content:center}
+.ring.n5 .logo{grid-column:2;grid-row:1;padding:0 2.4vw;align-self:center}.ring.n5 .logo img{height:19vh;max-width:28vw}.ring.n5 .lab{font-size:2.3vh;margin-top:1.2vh;padding-top:1vh}
+.ring.n5 .tile:nth-of-type(1){grid-column:1;grid-row:1}.ring.n5 .tile:nth-of-type(2){grid-column:3;grid-row:1}.ring.n5 .tile:nth-of-type(3){grid-column:1;grid-row:2}.ring.n5 .tile:nth-of-type(4){grid-column:3;grid-row:2}
+.ring.n5 .tile:nth-of-type(5){grid-column:2;grid-row:2;align-self:end;min-height:15vh;margin:0 2.4vw;padding:1.6vh 1.4vw}.ring.n5 .tile:nth-of-type(5) b{font-size:min(3.6vh,2vw)}.ring.n5 .tile:nth-of-type(5) kbd{top:1.2vh;left:auto;right:1vw;font-size:2vh;line-height:3.8vh;min-width:3.8vh;height:3.8vh}
+.ring.n5 .tile b{font-size:min(5.4vh,2.9vw);white-space:nowrap}.ring.n5 .tile{overflow:hidden}.ring.n5 .tile span{font-size:2.1vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .logo{grid-column:1/-1;display:grid;place-items:center;align-content:center;padding:1vh 0}
 .lab{margin-top:1.6vh;padding-top:1.4vh;border-top:.35vh solid var(--lime);font-family:Unbounded,Anton,sans-serif;font-weight:900;font-size:2.7vh;letter-spacing:.34em;text-indent:.34em;color:var(--chalk);white-space:nowrap}
 .solo .lab{font-size:4.6vh;margin-top:2.4vh;padding-top:2vh;justify-self:center}.solo .lg{display:grid;justify-items:center;align-self:center}
@@ -107,6 +112,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   </div>
 </div>
 <div class="ov" id="ntL" hidden><div class="panel" role="alertdialog"><p id="ntT"></p><div class="acts"><button type="button" class="btn go" id="ntOk">OK (Enter)</button></div></div></div>
+<div class="ov" id="shL" hidden><div class="panel" role="dialog" aria-label="店名登録"><h2>店名登録</h2><p style="font-size:2vh;color:var(--sub)">お店の名前を入れて「登録する」を押します。トップ画面とiPadのメニューに出ます。</p><p id="shNow" style="font-weight:900"></p><form id="shF"><div class="pf" style="grid-template-columns:1fr"><div><label for="shN">店名</label><input id="shN" maxlength="30" autocomplete="off" placeholder="例：WINDビリヤード"></div></div><div class="acts"><button type="button" class="btn" id="shX">閉じる (Esc)</button><button type="submit" class="btn go">登録する</button></div></form></div></div>
 <div class="ov" id="cfL" hidden><div class="panel" role="dialog" aria-label="各種設定"><h2>各種設定</h2><p style="font-size:1.9vh;color:var(--sub)">ここで決めた内容が、次の試合から使われます。</p><form id="cfF"><div class="pf" id="cfR"></div><div class="acts"><button type="button" class="btn" id="cfX">閉じる (Esc)</button><button type="submit" class="btn go">保存する</button></div></form></div></div>
 <div class="ov" id="roL" hidden><div class="panel" role="dialog" aria-label="選手登録"><h2>選手登録</h2><p style="font-size:1.9vh;color:var(--sub)">一度登録した選手は、ずっと残ります。持ち点はスリークッションの持ち点です。スマホ・タブレットからも登録できます。</p>
   <form class="rof" id="roF"><div><label for="roN">名前</label><input id="roN" maxlength="20" autocomplete="off" placeholder="山田 太郎"></div><div><label for="roY">よみがな</label><input id="roY" maxlength="30" autocomplete="off" placeholder="やまだたろう"></div><div><label for="roG">持ち点</label><input id="roG" type="number" min="1" max="999" value="25"></div><button type="submit" class="btn go">登録</button></form>
@@ -129,7 +135,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
   var U = { '3c': '/pages/count-3c/', pocket: '/pages/count-pocket/' };
   var MENU = {
-    top: { t: '', items: [{ id: 'game', b: 'ニューゲーム', s: 'NEW GAME', c: 'carom', d: '種目と選手を選んで始める' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }, { id: 'roster', b: '選手登録', s: 'PLAYERS', c: 'pocket', d: '選手の登録・持ち点の修正' }, { id: 'config', b: '各種設定', s: 'SETTINGS', c: 'pocket', d: '秒数・タイムアウト・イージーモード' }] },
+    top: { t: '', items: [{ id: 'game', b: 'ニューゲーム', s: 'NEW GAME', c: 'carom', d: '種目と選手を選んで始める' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }, { id: 'roster', b: '選手登録', s: 'PLAYERS', c: 'pocket', d: '選手の登録・持ち点の修正' }, { id: 'config', b: '各種設定', s: 'SETTINGS', c: 'pocket', d: '秒数・タイムアウト・イージーモード' }, { id: 'shop', b: '店名登録', s: 'SHOP NAME', c: 'pocket', d: '' }] },
     game: { t: 'ニューゲーム', back: 'top', items: [{ id: 'carom', b: 'キャロム', s: 'CAROM', c: 'carom', d: 'スリークッション・バンド' }, { id: 'pocket', b: 'ポケット', s: 'POCKET', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }] },
     carom: { t: 'キャロム', back: 'game', items: [{ id: '3c', b: 'スリークッション', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }, { id: 'band', b: 'バンド', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }] },
     pocket: { t: 'ポケット', back: 'game', items: [{ id: 'bowlard', b: 'ボーラード', s: 'POCKET', c: 'pocket', d: '1〜4人・ボウリングのスコア', go: 1 }, { id: 'nine', b: '9ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-9' }, { id: 'ten', b: '10ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-10' }] },
@@ -137,7 +143,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     ten: { t: '10ボール', back: 'pocket', items: [{ id: 'ten-set', b: 'セットマッチ', s: '10-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g510', b: '5-10', s: '10-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] }
   };
   var COL = { carom: ['#2468C0', '#1E5AA8', '#164482'], pocket: ['#6E7683', '#5A616C', '#434953'], purple: ['#8656C4', '#6A3FA0', '#4C2B78'], green: ['#1F9A5C', '#14804A', '#0D5C35'], yellow: ['#FFD83A', '#F2C200', '#C79E00', 1], blue: ['#3A66E8', '#1D4ED8', '#1539A3'], red: ['#E04A52', '#C4262E', '#8F1A21'] };
-  var KOL = { game: 'blue', again: 'green', roster: 'purple', config: 'pocket', band: 'purple', bowlard: 'green', nine: 'yellow', ten: 'blue', 'nine-set': 'yellow', g59: 'red', 'ten-set': 'blue', g510: 'red' };
+  var KOL = { shop: 'yellow', game: 'blue', again: 'green', roster: 'purple', config: 'pocket', band: 'purple', bowlard: 'green', nine: 'yellow', ten: 'blue', 'nine-set': 'yellow', g59: 'red', 'ten-set': 'blue', g510: 'red' };
   var colOf = function (it) { return COL[KOL[it.id] || it.c]; };
   var lv = 'top', tiles = [], sel = -1;
   var url = function (id) { var u = id === '3c' ? U['3c'] + '?g=three' : id === 'band' ? U['3c'] + '?g=band' : U.pocket + '?m=' + id.replace('-set', ''); u += '&n=new'; if (TB) u += '&t=' + TB; return u; };
@@ -145,6 +151,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (id === 'again') { var L = lastGame(); if (!L) return note('まだ試合の記録がありません。「ニューゲーム」から始めてください。'); location.href = L.u + (L.u.indexOf('?') < 0 ? '?' : '&') + 'n=again'; return; }
     if (id === 'roster') return roPanel();
     if (id === 'config') return cfPanel();
+    if (id === 'shop') return shopPanel();
     if (id === 'back') { if (MENU[lv].back) { lv = MENU[lv].back; menu(); } return; }
     if (MENU[id] && id !== 'top') { if (MENU[lv].items.some(function (x) { return x.id === id; })) { lv = id; menu(); } return; }
     var it = null; Object.keys(MENU).forEach(function (k) { MENU[k].items.forEach(function (x) { if (x.id === id && x.go) it = x; }); }); if (it) location.href = url(id);
@@ -153,6 +160,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   function note(t) { $('ntT').textContent = t; $('ntL').hidden = false; }
   function menu() {
     var Lg = lastGame(); MENU.top.items[1].d = Lg ? Lg.n.join(' ・ ') + '（' + (Lg.title || '') + '）' : 'まだ試合の記録がありません';
+    MENU.top.items[4].d = shopGet() ? '登録中：' + shopGet() : 'お店の名前を登録する';
     var m = MENU[lv], r = $('ring'); r.textContent = ''; r.className = 'ring n' + m.items.length; sel = -1; tiles = [];
     var cr = $('crumb'); cr.textContent = ''; if (m.back) { var bb = document.createElement('button'); bb.type = 'button'; bb.textContent = '← もどる (BackSpace)'; bb.onclick = function () { open('back'); }; cr.appendChild(bb); cr.appendChild(document.createTextNode(m.t)); }
     m.items.forEach(function (it, i) {
@@ -208,11 +216,13 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   function shopGet() { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); return pf && typeof pf.shop === 'string' ? pf.shop : ''; } catch (e) { return ''; } }
   function shopDraw() { var n = shopGet(); $('soloShop').textContent = n; $('soloShop').hidden = !n; if (lv === 'top') { var cr = $('crumb'); cr.textContent = ''; if (n) { var sp = document.createElement('span'); sp.className = 'shop'; sp.textContent = n; cr.appendChild(sp); } } }
   function cfSchema() { var c = cfGet(), yn = [[1, 'あり'], [0, 'なし']]; return [
-    { k: 'shop', l: '店舗名（トップ画面に出ます）', t: 'x', v: shopGet() },
+
     { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 't', l: '秒数カウント（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
     { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
     { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'voice', l: '音声コール（英語で点数を読み上げ）', t: 's', o: yn, v: c.voice ? 1 : 0 }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
-  function cfSave(v) { var c = cfGet(); c.shop = shopGet(); cfSchema().forEach(function (f) { if (!(f.k in v)) return; if (f.t === 'x') { c[f.k] = String(v[f.k]).replace(/\s+/g, ' ').trim().slice(0, 30); return; } var x = parseInt(v[f.k], 10); if (isNaN(x)) return; c[f.k] = f.t === 'n' ? Math.max(f.min, Math.min(f.max, x)) : (x ? 1 : 0); }); try { localStorage.setItem(PFK, JSON.stringify(c)); } catch (e) {} shopDraw(); }
+  function cfSave(v) { var c = cfGet(); c.shop = typeof v.shop === 'string' ? v.shop.replace(/\s+/g, ' ').trim().slice(0, 30) : shopGet(); cfSchema().forEach(function (f) { if (!(f.k in v)) return; if (f.t === 'x') { c[f.k] = String(v[f.k]).replace(/\s+/g, ' ').trim().slice(0, 30); return; } var x = parseInt(v[f.k], 10); if (isNaN(x)) return; c[f.k] = f.t === 'n' ? Math.max(f.min, Math.min(f.max, x)) : (x ? 1 : 0); }); try { localStorage.setItem(PFK, JSON.stringify(c)); } catch (e) {} if (lv === 'top') menu(); else shopDraw(); }
+  function shopPanel() { $('shN').value = shopGet(); $('shNow').textContent = shopGet() ? '今の登録：' + shopGet() : 'まだ登録されていません。'; $('shL').hidden = false; $('shN').focus(); $('shN').select(); }
+  $('shF').addEventListener('submit', function (e) { e.preventDefault(); cfSave({ shop: $('shN').value }); $('shL').hidden = true; push(); }); $('shX').onclick = function () { $('shL').hidden = true; };
   function cfPanel() { var R = $('cfR'); R.textContent = ''; cfSchema().forEach(function (f) { var d = document.createElement('div'), l = document.createElement('label'), i; l.textContent = f.l; l.htmlFor = 'c_' + f.k;
       if (f.t === 's') { i = document.createElement('select'); f.o.forEach(function (o) { var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; i.appendChild(op); }); } else { i = document.createElement('input'); if (f.t === 'x') { i.maxLength = 30; i.placeholder = '例：WINDビリヤード'; d.style.gridColumn = '1/-1'; } else { i.type = 'number'; i.min = f.min; i.max = f.max; } }
       i.value = f.v; i.id = 'c_' + f.k; i.setAttribute('data-k', f.k); d.appendChild(l); d.appendChild(i); R.appendChild(d); }); $('cfL').hidden = false; }
@@ -236,7 +246,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return; var k = e.key;
     if (!$('ntL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('ntL').hidden = true; } return; }
-    if (!$('cfL').hidden || !$('roL').hidden) { if (k === 'Escape') { e.preventDefault(); $('cfL').hidden = true; $('roL').hidden = true; } return; }
+    if (!$('cfL').hidden || !$('roL').hidden || !$('shL').hidden) { if (k === 'Escape') { e.preventDefault(); $('cfL').hidden = true; $('roL').hidden = true; $('shL').hidden = true; } return; }
     if (!$('rmL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('rmL').hidden = true; } return; }
     if (k === 'f' || k === 'F') { e.preventDefault(); goFull(); return; }
     if (!$('solo').hidden) { if (k === 'Escape' || k === 'Enter') { e.preventDefault(); showMenu = true; draw(); } return; }

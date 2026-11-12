@@ -206,6 +206,15 @@ input:focus{outline:none;border-color:var(--lime)}
     </div>
   </section>
 
+  <section class="card" id="vShop" hidden>
+    <h1>店名登録</h1>
+    <p>お店の名前を入れて「登録する」を押します。モニターのトップ画面と、このメニューに出ます。</p>
+    <p id="shNow" style="font-weight:900"></p>
+    <form id="fSh"><div class="cfr"><label for="shN">店名</label><input id="shN" maxlength="30" autocomplete="off" placeholder="例：WINDビリヤード"></div>
+      <button class="go" type="submit">登録する</button>
+      <button type="button" class="k" id="shBack" style="width:100%;min-height:56px;font-size:18px;margin-top:10px">戻る</button></form>
+  </section>
+
   <section class="card" id="vSelf" hidden>
     <h1>選手登録</h1>
     <p id="sfLead">名前と持ち点を入れて「登録する」を押してください。お店の画面の名簿に入ります。</p>
@@ -291,8 +300,8 @@ input:focus{outline:none;border-color:var(--lime)}
   var code = '', ws = null, tries = 0, ping = null, last = null, newAt = 0, gotState = false, joinT = null;
   var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
   var SELF = /[?&]j=1/.test(location.search), sfWait = '', sfT = null;
-  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
-  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; };
+  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1, vShop: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
+  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
   function tvOf(m) { return !m ? 'vJoin' : m.kind === 'menu' ? 'vMenu' : m.over ? 'vRes' : m.kind === 'pocket' ? 'vPk' : 'vMain'; }
   var tmV = -1, tmL = -1, tmAt = 0;
@@ -316,8 +325,8 @@ input:focus{outline:none;border-color:var(--lime)}
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
   function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'つながっていません'); connect(); return false; }
-  function tile(it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'mt ' + (it.c === 'carom' ? 'carom' : 'pocket'); if (it.col && /^#[0-9A-Fa-f]{6}$/.test(it.col[0] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[1] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[2] + '')) b.style.background = 'linear-gradient(180deg,' + it.col[0] + ',' + it.col[1] + ' 46%,' + it.col[2] + ')'; if (it.lt) b.classList.add('lt'); var s1 = document.createElement('small'); s1.textContent = it.s; var b1 = document.createElement('b'); b1.textContent = it.b; b.appendChild(s1); b.appendChild(b1); if (it.d) { var e1 = document.createElement('em'); e1.textContent = it.d; b.appendChild(e1); } b.onclick = function () { if (it.id === 'roster') return roOpen(); if (it.id === 'config') return cfOpen(); send({ type: 'cmd', c: 'open', v: it.id }); if (navigator.vibrate) navigator.vibrate(15); }; return b; }
-  function drawMenu(m) { var a = $('mgTop'), b = $('mgBot'), n = (m.items || []).length; a.textContent = ''; b.textContent = ''; a.className = b.className = 'mg c' + (n === 3 ? 3 : n === 2 ? 1 : n === 4 ? 2 : 3); (m.items || []).forEach(function (it, i) { (n === 3 ? b : (i < Math.ceil(n / 2) ? a : b)).appendChild(tile(it)); }); $('mTitle').textContent = m.title || m.shop || ''; $('mBack').hidden = !m.back; }
+  function tile(it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'mt ' + (it.c === 'carom' ? 'carom' : 'pocket'); if (it.col && /^#[0-9A-Fa-f]{6}$/.test(it.col[0] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[1] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[2] + '')) b.style.background = 'linear-gradient(180deg,' + it.col[0] + ',' + it.col[1] + ' 46%,' + it.col[2] + ')'; if (it.lt) b.classList.add('lt'); var s1 = document.createElement('small'); s1.textContent = it.s; var b1 = document.createElement('b'); b1.textContent = it.b; b.appendChild(s1); b.appendChild(b1); if (it.d) { var e1 = document.createElement('em'); e1.textContent = it.d; b.appendChild(e1); } b.onclick = function () { if (it.id === 'roster') return roOpen(); if (it.id === 'config') return cfOpen(); if (it.id === 'shop') { $('shN').value = (last && last.shop) || ''; $('shNow').textContent = last && last.shop ? '今の登録：' + last.shop : 'まだ登録されていません。'; return show('vShop'); } send({ type: 'cmd', c: 'open', v: it.id }); if (navigator.vibrate) navigator.vibrate(15); }; return b; }
+  function drawMenu(m) { var a = $('mgTop'), b = $('mgBot'), n = (m.items || []).length; a.textContent = ''; b.textContent = ''; a.className = b.className = 'mg c' + (n === 3 ? 3 : n === 2 ? 1 : n === 4 || n === 5 ? 2 : 3); (m.items || []).forEach(function (it, i) { var t = tile(it); if (n === 5 && i === 4) { t.style.gridColumn = '1/-1'; t.style.minHeight = '84px'; } (n === 3 ? b : n === 5 ? (i < 2 ? a : b) : (i < Math.ceil(n / 2) ? a : b)).appendChild(t); }); $('mTitle').textContent = m.title || m.shop || ''; $('mBack').hidden = !m.back; }
   function drawPk(m) {
     $('pkTitle').textContent = m.title + (m.table ? ' · ' + m.table + '番台' : ''); var P = $('pkP'); P.textContent = '';
     m.lab.forEach(function (x, i) { var d = document.createElement('div'); d.className = 'pp' + (i === m.turn && !m.over ? ' on' : ''); var n = document.createElement('span'); n.textContent = x; var v = document.createElement('b'); v.className = 'num'; v.textContent = m.score[i]; d.appendChild(n); d.appendChild(v); P.appendChild(d); });
@@ -422,6 +431,7 @@ input:focus{outline:none;border-color:var(--lime)}
     sfWait = n; $('sfGo').disabled = true; clearTimeout(sfT); sfT = setTimeout(function () { if (sfWait) { sfWait = ''; $('sfGo').disabled = false; $('sfErr').textContent = '登録を確認できませんでした。もう一度押してください。'; } }, 6000); });
   $('sfMore').onclick = function () { $('sfN').value = ''; $('sfY').value = ''; $('sfG').value = ro.d || ''; $('fSf').hidden = false; $('sfDone').hidden = true; $('sfN').focus(); };
   $('roQr').onclick = function () { var B = $('qrB'); B.textContent = ''; try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + code + '&j=1'); q.make(); B.innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { B.textContent = 'QRコードを出せませんでした。'; } show('vQr'); };
+  $('fSh').addEventListener('submit', function (e) { e.preventDefault(); if (send({ type: 'config', v: { shop: $('shN').value } })) show(tvOf(last)); }); $('shBack').onclick = function () { show(tvOf(last)); };
   $('qrBack').onclick = function () { show('vRo'); roDraw(); };
   function cfOpen() {
     var R = $('cfRows'), cf = (last && last.cf) || []; R.textContent = '';
