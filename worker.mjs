@@ -178,9 +178,33 @@ async function laboSite(req, env, url, pre = '') {
   return Response.redirect(url.origin + '/', 302);
 }
 
+/* YouTube search for the tablet's YouTube screen. Needs the secret YT_KEY (a YouTube Data API v3 key). Only our own pages may call it, and answers are cached for a day because the free quota is about 100 searches a day. */
+const YT_ORIGINS = /^https:\/\/(vibesbilliards\.com|www\.vibesbilliards\.com|vibesdigilabo\.com|www\.vibesdigilabo\.com|[a-z0-9-]+\.quiet-darkness-2185\.workers\.dev)$|^http:\/\/(localhost|127\.0\.0\.1|labo\.localhost)(:\d+)?$/;
+async function ytSearch(req, env, url, ctx) {
+  const origin = req.headers.get('origin') || '', cors = YT_ORIGINS.test(origin) ? { 'access-control-allow-origin': origin, vary: 'origin' } : {};
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: { ...cors, 'access-control-allow-methods': 'GET', 'access-control-max-age': '86400' } });
+  if (origin && !YT_ORIGINS.test(origin)) return json({ ok: false, error: 'origin' }, 403);
+  if (!origin && !YT_ORIGINS.test(url.origin)) return json({ ok: false, error: 'origin' }, 403);
+  if (!env.YT_KEY) return json({ ok: false, error: 'nokey' }, 503, cors);
+  const q = (url.searchParams.get('q') || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+  if (q.length < 2) return json({ ok: false, error: 'short' }, 400, cors);
+  const key = new Request('https://yt-cache.invalid/search?q=' + encodeURIComponent(q.toLowerCase())), cache = caches.default;
+  let hit = await cache.match(key);
+  if (!hit) {
+    const api = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoEmbeddable=true&maxResults=12&regionCode=JP&relevanceLanguage=ja&safeSearch=moderate&q=' + encodeURIComponent(q) + '&key=' + encodeURIComponent(env.YT_KEY);
+    const r = await fetch(api); if (!r.ok) return json({ ok: false, error: r.status === 403 ? 'quota' : 'api' }, 502, cors);
+    const d = await r.json(), items = (d.items || []).filter((x) => x.id && /^[A-Za-z0-9_-]{11}$/.test(x.id.videoId || '')).map((x) => ({ id: x.id.videoId, t: String((x.snippet && x.snippet.title) || '').slice(0, 120), c: String((x.snippet && x.snippet.channelTitle) || '').slice(0, 60), live: x.snippet && x.snippet.liveBroadcastContent === 'live' ? 1 : 0 }));
+    hit = new Response(JSON.stringify({ ok: true, items }), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=86400' } });
+    ctx.waitUntil(cache.put(key, hit.clone()));
+  }
+  const h = new Headers(hit.headers); Object.entries(cors).forEach(([k, v]) => h.set(k, v)); h.set('cache-control', 'no-store');
+  return new Response(hit.body, { status: 200, headers: h });
+}
+
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
     const url = new URL(req.url);
+    if (url.pathname === '/api/yt/search') return ytSearch(req, env, url, ctx);
     const m = url.pathname.match(/^\/api\/count\/(\d{6})$/);
     if (m) return env.COUNT_ROOM.get(env.COUNT_ROOM.idFromName(m[1])).fetch(req);
     if (url.pathname.startsWith('/api/labo/')) return laboApi(req, env, url);

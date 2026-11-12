@@ -228,6 +228,9 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   <section class="card" id="vYt" hidden>
     <h1>YouTube</h1>
     <p>YouTubeで流したい動画の「共有」→「リンクをコピー」を押してから、下の欄に貼り付けてください。モニターのトップ画面に動画が出ます。</p>
+    <form id="ytQf"><label for="ytQ">YouTubeをさがす</label><div class="sq" style="grid-template-columns:1.6fr 1fr"><input id="ytQ" maxlength="80" autocomplete="off" enterkeyhint="search" placeholder="例：スリークッション"><button type="submit" class="sm">さがす</button></div></form>
+    <p class="note" id="ytQe" role="status" style="text-align:left;min-height:20px;margin-top:6px"></p>
+    <div id="ytR" style="display:grid;gap:10px;margin:6px 0 18px"></div>
     <form id="ytFm"><label for="ytU">動画のリンク</label><input id="ytU" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="https://youtu.be/…">
       <p class="note" id="ytE" role="alert" style="text-align:left;color:#FF8A8F;min-height:20px"></p>
       <button class="go" type="submit">モニターで再生</button></form>
@@ -385,6 +388,16 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   function ytDraw() { var L = $('ytL2'); L.textContent = ''; ytList.forEach(function (x, i) { var r = document.createElement('div'); r.style.cssText = 'display:grid;grid-template-columns:1fr auto;gap:8px'; var b = document.createElement('button'); b.type = 'button'; b.className = 'sm'; b.style.cssText = 'text-align:left;border-radius:14px;min-height:48px'; b.textContent = x.n; b.onclick = function () { $('ytU').value = x.u; ytPlay(x.u); };
       var d = document.createElement('button'); d.type = 'button'; d.className = 'sm'; d.textContent = '消す'; d.onclick = function () { var n = Date.now(); if (n - (d._t || 0) < 3000) { ytList.splice(i, 1); try { localStorage.setItem(YTK, JSON.stringify(ytList)); } catch (e) {} ytDraw(); } else { d._t = n; d.textContent = 'もう一度'; setTimeout(function () { d.textContent = '消す'; }, 3000); } }; r.appendChild(b); r.appendChild(d); L.appendChild(r); });
     if (!ytList.length) { var p = document.createElement('p'); p.className = 'note'; p.style.textAlign = 'left'; p.textContent = 'まだ登録がありません。'; L.appendChild(p); } }
+  var YTH = /\.workers\.dev$|^localhost$|^127\.0\.0\.1$/.test(location.hostname) ? '' : 'https://vibes-site1.quiet-darkness-2185.workers.dev';
+  $('ytQf').addEventListener('submit', function (e) { e.preventDefault(); var q = $('ytQ').value.replace(/\s+/g, ' ').trim(), R = $('ytR'), E = $('ytQe'); if (q.length < 2) { E.textContent = 'さがす言葉を2文字以上入れてください。'; return; } try { $('ytQ').blur(); } catch (x) {}
+    E.textContent = 'さがしています…'; R.textContent = '';
+    fetch(YTH + '/api/yt/search?q=' + encodeURIComponent(q)).then(function (r) { return r.json().catch(function () { return { ok: false, error: 'api' }; }); }).then(function (j) {
+      if (!j.ok) { E.textContent = j.error === 'nokey' ? '検索は、まだ準備中です（YouTubeの検索キーが未設定）。下の欄にリンクを貼り付ければ再生できます。' : j.error === 'quota' ? '今日の検索回数の上限に達しました。明日また使えます。リンクの貼り付けは使えます。' : '検索できませんでした。少し待ってから、もう一度押してください。'; return; }
+      if (!j.items.length) { E.textContent = '見つかりませんでした。言葉を変えてみてください。'; return; } E.textContent = '流したい動画を押すと、モニターで再生します。';
+      j.items.forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'sm'; b.style.cssText = 'display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;text-align:left;border-radius:14px;padding:8px;min-height:84px'; var im = document.createElement('img'); im.src = 'https://i.ytimg.com/vi/' + x.id + '/mqdefault.jpg'; im.alt = ''; im.loading = 'lazy'; im.style.cssText = 'width:120px;height:68px;object-fit:cover;border-radius:8px;display:block;background:#000';
+        var tx = document.createElement('span'), t = document.createElement('b'), c = document.createElement('small'); t.textContent = (x.live ? '【ライブ】' : '') + x.t; t.style.cssText = 'display:block;font-size:15px;line-height:1.4'; c.textContent = x.c; c.style.cssText = 'display:block;color:var(--sub);font-size:13px;margin-top:2px'; tx.appendChild(t); tx.appendChild(c); b.appendChild(im); b.appendChild(tx);
+        b.onclick = function () { $('ytU').value = 'https://youtu.be/' + x.id; ytPlay($('ytU').value); E.textContent = '「' + x.t.slice(0, 30) + '」をモニターに送りました。'; }; R.appendChild(b); });
+    }).catch(function () { E.textContent = '通信できませんでした。ネットを確かめて、もう一度押してください。'; }); });
   $('mYt').onclick = function () { $('ytE').textContent = ''; $('ytS').textContent = last && last.yt ? 'モニターで再生中です。' : ''; ytDraw(); show('vYt'); };
   $('ytBack').onclick = function () { show(tvOf(last)); draw(); };
   $('ytFm').addEventListener('submit', function (e) { e.preventDefault(); ytPlay($('ytU').value); });
