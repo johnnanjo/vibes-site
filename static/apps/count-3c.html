@@ -466,7 +466,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
     else S.turn = p + 1;
     tKick(); render(); if (S.cfg.vdev !== 'tab') { chime(); if (S.cfg.voice !== 0) setTimeout(function (n) { speak(gotText(n), S.cfg.clang, gotText(n, 'en')); }, 350, S.inn[p][S.inn[p].length - 1]); }
   }
-  var GOT = { en: function (n) { return 'you got ' + (n ? NW(n) + (n === 1 ? ' point' : ' points') : 'no points'); }, ja: function (n) { return n + '点です'; },
+  var GOT = { en: function (n) { return 'you got ' + (n ? NW(n) + (n === 1 ? ' point' : ' points') : 'no points'); }, ja: function (n) { return n ? n + '点です' : 'なし'; },
     es: function (n) { return n ? 'Has conseguido ' + n + (n === 1 ? ' punto' : ' puntos') : 'No has conseguido puntos'; }, fr: function (n) { return n ? 'Vous avez marqué ' + n + (n === 1 ? ' point' : ' points') : "Vous n'avez marqué aucun point"; },
     it: function (n) { return n ? 'Hai fatto ' + n + (n === 1 ? ' punto' : ' punti') : 'Non hai fatto punti'; }, ko: function (n) { return n ? n + '점을 획득했습니다' : '득점이 없습니다'; } };
   var gotText = function (n, l) { return (GOT[l || S.cfg.clang] || GOT.en)(n); };
