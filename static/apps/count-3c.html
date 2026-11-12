@@ -275,9 +275,9 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
       <div class="f" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="bPr2" style="width:100%">練習タイマーを開く</button></div>
       <div class="f"><label for="fe">裏撞き（全員が撞いてから終了）</label><select id="fe"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fz">イージーモード（点数・イニング・名前・ハイランだけ）</label><select id="fz"><option value="0">なし</option><option value="1">あり</option></select></div>
-      <div class="f"><label for="fv">音声コール（英語で点数を読み上げ）</label><select id="fv"><option value="1">あり</option><option value="0">なし</option></select></div>
+      <div class="f"><label for="fv">音声コール（点数を読み上げ）</label><select id="fv"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fvd">音声コールを出す場所</label><select id="fvd"><option value="both">モニターとタブレット</option><option value="pc">モニターだけ</option><option value="tab">タブレットだけ</option></select></div>
-      <div class="f"><label for="fcl">交代の読み上げの言葉</label><select id="fcl"><option value="en">英語</option><option value="ja">日本語</option><option value="es">スペイン語</option><option value="fr">フランス語</option><option value="it">イタリア語</option><option value="ko">韓国語</option></select></div>
+      <div class="f"><label for="fcl">読み上げの言葉</label><select id="fcl"><option value="en">英語</option><option value="ja">日本語</option><option value="es">スペイン語</option><option value="fr">フランス語</option><option value="it">イタリア語</option><option value="ko">韓国語</option></select></div>
       <div class="f"><label for="fcv">声</label><select id="fcv"><option value="f">女性</option><option value="m">男性</option></select></div>
       <div class="f"><label for="fs">音（残り10秒・時間切れ）</label><select id="fs"><option value="1">あり</option><option value="0">なし</option></select></div>
     </div>
@@ -443,7 +443,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   function tStop() { tOn = false; clearInterval(tId); tId = null; drawTimer(); }
   function tStart() {
     if (!S.cfg.t || S.over) return; begin(); tStop(); tOn = true; tLeft = tRem || S.cfg.t; tRem = 0; var last = Date.now(), warned = false, done = false;
-    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); if (S.cfg.voice !== 0 && S.cfg.vdev !== 'tab' && S.cfg.t > 10) speak('ten seconds'); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('タイムアウトを使いました：' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
+    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); if (S.cfg.voice !== 0 && S.cfg.vdev !== 'tab' && S.cfg.t > 10) speak(TEN[cl()], cl(), TEN.en); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('タイムアウトを使いました：' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
     drawTimer();
   }
   var tKick = function () { if (tOn) tStart(); };
@@ -451,10 +451,17 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   var sdK = '', sdM = 0, fresh1 = function (run0, run1) { var k = S.turn + ':' + S.inn[S.turn].length; if (k !== sdK) { sdK = k; sdM = run0; } if (run1 > sdM) { sdM = run1; return true; } return false; };
   function add(n) { if (S.over) return; begin(); var r0 = S.run, v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('持ち点に届きました。Enter で確定します'); return; } S.run = v; S.typed = false; if (n > 0 && S.cfg.t && !S.cfg.easy) tStart(); else tKick(); render(); if (n > 0 && fresh1(r0, S.run)) callOut(); }
   /* referee-style call in English: "two points", then "three more" / "two more" / "one more" near the target */
-  function callText(run, left) { var more = { 3: 'three more', 2: 'two more', 1: 'one more' }[left]; return NW(run) + (run === 1 ? ' point' : ' points') + (more ? ', ' + more : ''); }
+  function callText(run, left, l) { l = l || 'en'; var m = left >= 1 && left <= 3 ? left : 0;
+    if (l === 'ja') return run + '点' + (m ? '、あと' + m + '点' : '');
+    if (l === 'es') return run + (run === 1 ? ' punto' : ' puntos') + (m ? (m === 1 ? ', falta 1' : ', faltan ' + m) : '');
+    if (l === 'fr') return run + (run === 1 ? ' point' : ' points') + (m ? ', encore ' + m : '');
+    if (l === 'it') return run + (run === 1 ? ' punto' : ' punti') + (m ? ', ancora ' + m : '');
+    if (l === 'ko') return run + '점' + (m ? ', ' + m + '점 남았습니다' : '');
+    var more = { 3: 'three more', 2: 'two more', 1: 'one more' }[left]; return NW(run) + (run === 1 ? ' point' : ' points') + (more ? ', ' + more : ''); }
+  var TEN = { en: 'ten seconds', ja: '残り10秒', es: 'diez segundos', fr: 'dix secondes', it: 'dieci secondi', ko: '10초 남았습니다' }, cl = function () { return VL[S.cfg.clang] ? S.cfg.clang : 'en'; };
   var NW = function (n) { var a = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'], t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']; return n < 20 ? a[n] : n < 100 ? t[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '') : String(n); };
   function speak(t, lang, fb) { vSpeak(t, lang || 'en', S.cfg.cvo === 'm' ? 'm' : 'f', fb); }
-  function callOut() { if (S.cfg.voice === 0 || S.cfg.vdev === 'tab' || S.over || S.run < 1) return; speak(callText(S.run, S.cfg.g[S.turn] - S.sc[S.turn] - S.run)); }
+  function callOut() { if (S.cfg.voice === 0 || S.cfg.vdev === 'tab' || S.over || S.run < 1) return; var lf = S.cfg.g[S.turn] - S.sc[S.turn] - S.run; speak(callText(S.run, lf, cl()), cl(), callText(S.run, lf)); }
   function digit(d) { if (S.over) return; begin(); var v = S.typed ? S.run * 10 + d : d; if (v > room()) v = d > room() ? room() : d; S.run = v; S.typed = true; render(); }
   function finish() { S.over = true; S.t1 = Date.now(); tStop(); render(); showWin(); if (typeof rmPush === 'function') rmPush(); }
   function commit() {
@@ -509,7 +516,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   function cfSchema() { var c = S.cfg, yn = [[1, 'あり'], [0, 'なし']]; return [
     { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 't', l: '残り秒数（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
     { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
-    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（英語で点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'clang', l: '交代の読み上げの言葉', t: 's', o: [['en', '英語'], ['ja', '日本語'], ['es', 'スペイン語'], ['fr', 'フランス語'], ['it', 'イタリア語'], ['ko', '韓国語']], v: c.clang || 'en' }, { k: 'cvo', l: '声', t: 's', o: [['f', '女性'], ['m', '男性']], v: c.cvo === 'm' ? 'm' : 'f' }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
+    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'clang', l: '読み上げの言葉', t: 's', o: [['en', '英語'], ['ja', '日本語'], ['es', 'スペイン語'], ['fr', 'フランス語'], ['it', 'イタリア語'], ['ko', '韓国語']], v: c.clang || 'en' }, { k: 'cvo', l: '声', t: 's', o: [['f', '女性'], ['m', '男性']], v: c.cvo === 'm' ? 'm' : 'f' }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
   function cfApply(v) {
     var oldTo = S.cfg.to;
     cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = v[f.k];
@@ -927,7 +934,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
     var a = el('span', '', '一時停止'); a.id = 'tkPz'; a.setAttribute('role', 'button'); var b = el('span', '', '試合終了'); b.id = 'tkEnd'; b.setAttribute('role', 'button'); tk.appendChild(a); tk.appendChild(b); })();
   if (MIR || (window.matchMedia && matchMedia('(pointer:coarse)').matches)) document.body.classList.add('touch');
   function act(a) {
-    if (MIR) { var said = 0; if (a.type === 'key' && a.k === '+' && !S.cfg.mode && typeof callText === 'function' && S.cfg.voice !== 0 && !S.over && !S.ready && !S.pz && !(S.cfg.vdev === 'pc' && mva)) { var rm0 = S.cfg.g[S.turn] - S.sc[S.turn]; if (S.run < rm0) { said = 1; if (fresh1(S.run, S.run + 1)) psay(callText(S.run + 1, rm0 - S.run - 1)); S.run++; /* count ahead so quick taps are called in order; the monitor's next message replaces this */ } }
+    if (MIR) { var said = 0; if (a.type === 'key' && a.k === '+' && !S.cfg.mode && typeof callText === 'function' && S.cfg.voice !== 0 && !S.over && !S.ready && !S.pz && !(S.cfg.vdev === 'pc' && mva)) { var rm0 = S.cfg.g[S.turn] - S.sc[S.turn]; if (S.run < rm0) { said = 1; if (fresh1(S.run, S.run + 1)) psay(callText(S.run + 1, rm0 - S.run - 1, cl()), cl(), callText(S.run + 1, rm0 - S.run - 1)); S.run++; /* count ahead so quick taps are called in order; the monitor's next message replaces this */ } }
       try { parent.postMessage({ type: 'mir', send: a, said: said }, location.origin); } catch (e) {} return; }
     if (a.type === 'key') onKey(a.k, noop); else if (a.c === 'pause') { if (S.pz) pzOff(); else pzOn(); } else if (a.c === 'end') endGame();
   }
@@ -950,7 +957,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
       if (m.type !== 'full' || !m.s || !m.s.cfg || !m.s.sc) return;
       var sk = Date.now() - (m.now || Date.now()); S = m.s; ['t0', 't1', 'pz'].forEach(function (k) { if (S[k]) S[k] += sk; });
       clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0; mva = m.va === 0 ? 0 : 1; if (!tOn || tLeft > 10.5) mw = !tOn;
-      if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!mw && tLeft <= 10 && tLeft > 7) { mw = true; if (typeof speak === 'function' && !S.cfg.mode && S.cfg.voice !== 0 && S.cfg.t > 10 && !(S.cfg.vdev === 'pc' && mva)) psay('ten seconds'); } drawTimer(); }, 200); }
+      if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!mw && tLeft <= 10 && tLeft > 7) { mw = true; if (typeof speak === 'function' && !S.cfg.mode && S.cfg.voice !== 0 && S.cfg.t > 10 && !(S.cfg.vdev === 'pc' && mva)) psay(TEN[cl()], cl(), TEN.en); } drawTimer(); }, 200); }
       var tInn = 0; S.inn.forEach(function (a) { tInn += (a && a.length) || 0; }); if (pInn >= 0 && tInn > pInn && !S.over && !S.cfg.mode && typeof chime === 'function' && !(S.cfg.vdev === 'pc' && mva)) { pchime(); var who = -1; S.inn.forEach(function (a, i) { if (a.length > (pLen[i] || 0)) who = i; }); if (who >= 0 && S.cfg.voice !== 0) setTimeout(function (n) { psay(gotText(n), S.cfg.clang, gotText(n, 'en')); }, 350, S.inn[who][S.inn[who].length - 1]); } pInn = tInn; pLen = S.inn.map(function (a) { return a.length; });
       render(); pzDraw(); $('winL').hidden = true; tidy(); $('mirRl').hidden = !(S.pz && !S.over); document.body.classList.remove('mirwait');
     });
