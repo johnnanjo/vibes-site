@@ -211,6 +211,14 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
 .n2 .stat b{font-size:5.2vh;line-height:1.2}.n2 .stat small{font-size:2vh}
 .box.inn{background:var(--lime)}.box.inn small,.box.inn b{color:var(--night);text-shadow:none}
 .sheet .row span{width:2.55vw}
+/* points made in the inning in progress, top right of the shooter's panel */
+.runb{margin-left:auto;flex:none;display:flex;flex-direction:column;align-items:center;background:var(--chalk);color:var(--night);border-radius:1.6vh;padding:.7vh .9vw .2vh;box-shadow:0 .5vh 1.4vh rgba(0,0,0,.35);margin-top:-.6vh}.runb[hidden]{display:none}
+.runb small{font-weight:900;font-size:1.8vh;letter-spacing:.2em;margin-right:-.2em;line-height:1}.runb b{font-family:Unbounded,Anton,Impact,sans-serif;font-weight:400;font-size:7.4vh;line-height:1.08;min-width:1.3ch;text-align:center}
+.n2 .side .name{font-size:4.1vh}
+.n2 .side .who{min-height:10vh}.n3 .side .who{min-height:7vh}.n4 .side .who{min-height:5.8vh}.n2 .score{font-size:min(36vh,19.5vw)}.n2 .score.d3{font-size:min(28vh,13vw)}
+body.easy .n2 .side .who{min-height:12vh}body.easy .n2 .score{font-size:min(50vh,24vw)}body.easy .n2 .score.d3{font-size:min(38vh,15vw)}
+.n3 .runb b{font-size:5vh}.n4 .runb b{font-size:4vh}.n3 .runb small,.n4 .runb small{font-size:1.4vh}
+body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy .n2 .side .name{font-size:4.8vh}
 .n2 .foot:has(.tos[hidden]){grid-template-columns:1fr}
 /* ---- pocket: cloth colour, bowling sheet, signed scores ---- */
 .side,.rdc{background:radial-gradient(120% 90% at 28% 0%,rgba(255,255,255,.16),transparent 56%),repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 4px),linear-gradient(180deg,#6E7683 0%,#5A616C 46%,#434953 100%)}

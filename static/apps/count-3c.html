@@ -212,6 +212,14 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
 .n2 .stat b{font-size:5.2vh;line-height:1.2}.n2 .stat small{font-size:2vh}
 .box.inn{background:var(--lime)}.box.inn small,.box.inn b{color:var(--night);text-shadow:none}
 .sheet .row span{width:2.55vw}
+/* points made in the inning in progress, top right of the shooter's panel */
+.runb{margin-left:auto;flex:none;display:flex;flex-direction:column;align-items:center;background:var(--chalk);color:var(--night);border-radius:1.6vh;padding:.7vh .9vw .2vh;box-shadow:0 .5vh 1.4vh rgba(0,0,0,.35);margin-top:-.6vh}.runb[hidden]{display:none}
+.runb small{font-weight:900;font-size:1.8vh;letter-spacing:.2em;margin-right:-.2em;line-height:1}.runb b{font-family:Unbounded,Anton,Impact,sans-serif;font-weight:400;font-size:7.4vh;line-height:1.08;min-width:1.3ch;text-align:center}
+.n2 .side .name{font-size:4.1vh}
+.n2 .side .who{min-height:10vh}.n3 .side .who{min-height:7vh}.n4 .side .who{min-height:5.8vh}.n2 .score{font-size:min(36vh,19.5vw)}.n2 .score.d3{font-size:min(28vh,13vw)}
+body.easy .n2 .side .who{min-height:12vh}body.easy .n2 .score{font-size:min(50vh,24vw)}body.easy .n2 .score.d3{font-size:min(38vh,15vw)}
+.n3 .runb b{font-size:5vh}.n4 .runb b{font-size:4vh}.n3 .runb small,.n4 .runb small{font-size:1.4vh}
+body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy .n2 .side .name{font-size:4.8vh}
 .n2 .foot:has(.tos[hidden]){grid-template-columns:1fr}
 @media (prefers-reduced-motion:reduce){.side,.segs i{transition:none}}
 @media (max-width:760px){
@@ -375,7 +383,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     for (var p = 0; p < N; p++) {
       var sec = el('section', 'side p' + p); sec.id = 's' + p; sec.style.order = N === 2 ? (p ? 3 : 1) : p + 1;
       sec.appendChild(el('span', 'turn', 'AT THE TABLE'));
-      var who = el('div', 'who'), ball = el('span', 'ball'); ball.style.setProperty('--c', PCOL[p]); who.appendChild(ball); var nm = el('span', 'name'); nm.id = 'n' + p; who.appendChild(nm); sec.appendChild(who);
+      var who = el('div', 'who'), ball = el('span', 'ball'); ball.style.setProperty('--c', PCOL[p]); who.appendChild(ball); var nm = el('span', 'name'); nm.id = 'n' + p; who.appendChild(nm); var rb = el('span', 'runb'); rb.id = 'rb' + p; rb.hidden = true; rb.appendChild(el('small', '', 'RUN')); rb.appendChild(el('b', 'num', '0')); who.appendChild(rb); sec.appendChild(who);
       var sc = el('div', 'score num', '0'); sc.id = 'sc' + p; sc.style.color = p ? PCOL[p] : '#fff'; sec.appendChild(sc);
       var foot = el('div', 'foot'), st = el('div', 'stats');
       [['HIGH RUN', 'hr'], ['AVERAGE', 'av']].forEach(function (a) { var d = el('div', 'stat s-' + a[1]); d.appendChild(el('small', '', a[0])); var b = el('b', '', '0'); b.id = a[1] + p; d.appendChild(b); st.appendChild(d); });
@@ -411,13 +419,14 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       $('sc' + p).textContent = S.sc[p] + (p === S.turn && !S.over ? S.run : 0); $('sc' + p).classList.toggle('d3', $('sc' + p).textContent.length > 2);
       $('hr' + p).textContent = Math.max(hi(p), p === S.turn ? S.run : 0); $('av' + p).textContent = p === S.turn && !S.over && S.run > 0 ? ((S.sc[p] + S.run) / (S.inn[p].length + 1)).toFixed(3) : avg(p); /* the inning in progress counts as soon as a point is in */
       $('s' + p).classList.toggle('on', p === S.turn && !S.over);
+      var rbOn = p === S.turn && !S.over && !S.ready; if ($('rb' + p).hidden === rbOn) $('rb' + p).hidden = !rbOn; if (rbOn) $('rb' + p).lastChild.textContent = S.run;
       var tw = $('to' + p); tw.textContent = ''; tw.parentNode.hidden = !S.cfg.to;
       for (var k = 0; k < (S.cfg.to || 0); k++) { var c = el('i'); if (k >= S.to[p]) c.className = 'used'; tw.appendChild(c); }
       var r = $('r' + p), NC = 25, mx = Math.max.apply(null, S.inn.map(function (x) { return x.length; })) + (S.over ? 0 : 1), i0 = Math.max(0, mx - NC); r.textContent = '';
       for (var ci = 0; ci < NC; ci++) { var cv = S.inn[p][i0 + ci], cs = document.createElement('span'); if (cv == null) cs.className = 'e'; else { cs.textContent = cv; if (!cv) cs.className = 'z'; } r.appendChild(cs); }
       if (!p) { var hh = $('rh'); hh.textContent = ''; for (var hi2 = 0; hi2 < NC; hi2++) { var hs = document.createElement('span'); hs.textContent = i0 + hi2 + 1; if (i0 + hi2 + 1 === S.inn[S.turn].length + 1 && !S.over) hs.className = 'now'; hh.appendChild(hs); } }
     }
-    $('runS').textContent = S.run && !S.over ? 'RUN ' + S.run : '';
+    $('runS').textContent = '';
     $('inn').textContent = S.inn[S.turn].length + (S.over ? 0 : 1);
     $('lim').textContent = S.cfg.lim ? '制限 ' + S.cfg.lim : '';
     $('tbox').hidden = !S.cfg.t;
