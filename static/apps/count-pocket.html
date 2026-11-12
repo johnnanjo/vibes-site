@@ -1048,7 +1048,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     var a = el('span', '', '一時停止'); a.id = 'tkPz'; a.setAttribute('role', 'button'); var b = el('span', '', '試合終了'); b.id = 'tkEnd'; b.setAttribute('role', 'button'); tk.appendChild(a); tk.appendChild(b); })();
   if (MIR || (window.matchMedia && matchMedia('(pointer:coarse)').matches)) document.body.classList.add('touch');
   function act(a) {
-    if (MIR) { var said = 0; if (a.type === 'key' && a.k === '+' && !S.cfg.mode && typeof callText === 'function' && S.cfg.voice !== 0 && !S.over && !S.ready && !S.pz && !(S.cfg.vdev === 'pc' && mva)) { var rm0 = S.cfg.g[S.turn] - S.sc[S.turn]; if (S.run < rm0) { psay(callText(S.run + 1, rm0 - S.run - 1)); said = 1; } }
+    if (MIR) { var said = 0; if (a.type === 'key' && a.k === '+' && !S.cfg.mode && typeof callText === 'function' && S.cfg.voice !== 0 && !S.over && !S.ready && !S.pz && !(S.cfg.vdev === 'pc' && mva)) { var rm0 = S.cfg.g[S.turn] - S.sc[S.turn]; if (S.run < rm0) { said = 1; if (fresh1(S.run, S.run + 1)) psay(callText(S.run + 1, rm0 - S.run - 1)); S.run++; /* count ahead so quick taps are called in order; the monitor's next message replaces this */ } }
       try { parent.postMessage({ type: 'mir', send: a, said: said }, location.origin); } catch (e) {} return; }
     if (a.type === 'key') onKey(a.k, noop); else if (a.c === 'pause') { if (S.pz) pzOff(); else pzOn(); } else if (a.c === 'end') endGame();
   }

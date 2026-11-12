@@ -438,7 +438,9 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     drawTimer();
   }
   var tKick = function () { if (tOn) tStart(); };
-  function add(n) { if (S.over) return; begin(); var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('持ち点に届きました。Enter で確定します'); return; } S.run = v; S.typed = false; if (n > 0 && S.cfg.t && !S.cfg.easy) tStart(); else tKick(); render(); if (n > 0) callOut(); }
+  /* a point is called once per inning: after a correction (-1, back) the same numbers are not called again */
+  var sdK = '', sdM = 0, fresh1 = function (run0, run1) { var k = S.turn + ':' + S.inn[S.turn].length; if (k !== sdK) { sdK = k; sdM = run0; } if (run1 > sdM) { sdM = run1; return true; } return false; };
+  function add(n) { if (S.over) return; begin(); var r0 = S.run, v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('持ち点に届きました。Enter で確定します'); return; } S.run = v; S.typed = false; if (n > 0 && S.cfg.t && !S.cfg.easy) tStart(); else tKick(); render(); if (n > 0 && fresh1(r0, S.run)) callOut(); }
   /* referee-style call in English: "two points", then "three more" / "two more" / "one more" near the target */
   function callText(run, left) { var more = { 3: 'three more', 2: 'two more', 1: 'one more' }[left]; return NW(run) + (run === 1 ? ' point' : ' points') + (more ? ', ' + more : ''); }
   var NW = function (n) { var a = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'], t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']; return n < 20 ? a[n] : n < 100 ? t[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '') : String(n); };
@@ -916,7 +918,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     var a = el('span', '', '一時停止'); a.id = 'tkPz'; a.setAttribute('role', 'button'); var b = el('span', '', '試合終了'); b.id = 'tkEnd'; b.setAttribute('role', 'button'); tk.appendChild(a); tk.appendChild(b); })();
   if (MIR || (window.matchMedia && matchMedia('(pointer:coarse)').matches)) document.body.classList.add('touch');
   function act(a) {
-    if (MIR) { var said = 0; if (a.type === 'key' && a.k === '+' && !S.cfg.mode && typeof callText === 'function' && S.cfg.voice !== 0 && !S.over && !S.ready && !S.pz && !(S.cfg.vdev === 'pc' && mva)) { var rm0 = S.cfg.g[S.turn] - S.sc[S.turn]; if (S.run < rm0) { psay(callText(S.run + 1, rm0 - S.run - 1)); said = 1; } }
+    if (MIR) { var said = 0; if (a.type === 'key' && a.k === '+' && !S.cfg.mode && typeof callText === 'function' && S.cfg.voice !== 0 && !S.over && !S.ready && !S.pz && !(S.cfg.vdev === 'pc' && mva)) { var rm0 = S.cfg.g[S.turn] - S.sc[S.turn]; if (S.run < rm0) { said = 1; if (fresh1(S.run, S.run + 1)) psay(callText(S.run + 1, rm0 - S.run - 1)); S.run++; /* count ahead so quick taps are called in order; the monitor's next message replaces this */ } }
       try { parent.postMessage({ type: 'mir', send: a, said: said }, location.origin); } catch (e) {} return; }
     if (a.type === 'key') onKey(a.k, noop); else if (a.c === 'pause') { if (S.pz) pzOff(); else pzOn(); } else if (a.c === 'end') endGame();
   }
