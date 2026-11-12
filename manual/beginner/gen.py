@@ -9,14 +9,14 @@ def fig(name,cap,notes=None,dev=None,small=False):
     dev=dev or ('pc' if name.startswith('pc') else 'phone' if name.startswith('ph') else 'ipad')
     src,w,h=img(name,1180 if dev=='pc' else 1100)
     ms=M.get(name,[]) if notes else []
-    o=f'<figure class="shot {dev}{" small" if small else ""}"><div class="dev"><span class="tag">{"PCの画面（モニター）" if dev=="pc" else "お客様のスマホ" if dev=="phone" else "タブレットの画面"}</span><div class="scr" style="aspect-ratio:{w}/{h}"><img src="{src}" alt="{html.escape(cap)}" width="{w}" height="{h}">'
+    o=f'<figure class="shot {dev}{" small" if small else ""}"><figcaption>{cap}</figcaption><div class="dev"><span class="tag">{"PCの画面（モニター）" if dev=="pc" else "お客様のスマホ" if dev=="phone" else "タブレットの画面"}</span><div class="scr" style="aspect-ratio:{w}/{h}"><img src="{src}" alt="{html.escape(cap)}" width="{w}" height="{h}">'
     for i,m in enumerate(ms):
         if i>=len(notes): break
         o+=f'<i class="box" style="left:{m[0]}%;top:{m[1]}%;width:{m[2]}%;height:{m[3]}%"><b>{i+1}</b></i>'
     o+='</div></div>'
     if notes:
         o+='<ol class="legend">'+''.join(f'<li><b>{i+1}</b><span>{n}</span></li>' for i,n in enumerate(notes))+'</ol>'
-    o+=f'<figcaption>{cap}</figcaption></figure>'
+    o+='</figure>'
     return o
 def steps(items): return '<ol class="steps">'+''.join(f'<li><b class="n">{i+1}</b><div><h4>{t}</h4><p>{d}</p></div></li>' for i,(t,d) in enumerate(items))+'</ol>'
 def sec(i,idv,title,lead,body): return f'<section id="{idv}"><header><span class="no">{i}</span><div><h2>{title}</h2><p class="lead">{lead}</p></div></header>{body}</section>'
