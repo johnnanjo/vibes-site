@@ -582,7 +582,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
       var box = el('div', 'opts');
       [['1', '登録した選手をさがす', players.length + '人'], ['2', '新しい選手を登録', ''], ['3', 'ゲスト（名前なし）', ''], ['4', '持ち点でさがす', '']].forEach(function (a) { var o = el('div', 'opt'); o.appendChild(el('kbd', '', a[0])); o.appendChild(el('span', '', a[1])); if (a[2]) o.appendChild(el('small', '', a[2])); box.appendChild(o); });
       b.appendChild(box);
-      keysHelp([['1-3', '選ぶ']].concat(isDef ? [] : [['Enter', cur + ' のまま']]).concat([['BackSpace', '戻る']]));
+      keysHelp([['1-4', '選ぶ']].concat(isDef ? [] : [['Enter', cur + ' のまま']]).concat([['BackSpace', '戻る']]));
     } else if (W.step === 'kana') {
       h.appendChild(el('small', '', W.purpose === 'search' ? 'よみがなでさがす' : (W.part === 'sei' ? '名字' : '名前') + (W.cur && W.cur.sei && W.part === 'mei' ? ' — ' + W.cur.sei : '')));
       var inp = el('div', 'inp'); inp.appendChild(el('span', '', W.kana)); inp.appendChild(el('span', 'cur')); b.appendChild(inp);
