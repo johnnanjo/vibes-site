@@ -277,7 +277,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
       <div class="f"><label for="fz">イージーモード（点数・イニング・名前・ハイランだけ）</label><select id="fz"><option value="0">なし</option><option value="1">あり</option></select></div>
       <div class="f"><label for="fv">音声コール（点数を読み上げ）</label><select id="fv"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fvd">音声コールを出す場所</label><select id="fvd"><option value="both">モニターとタブレット</option><option value="pc">モニターだけ</option><option value="tab">タブレットだけ</option></select></div>
-      <div class="f"><label for="ften">残り10秒のお知らせ（音と読み上げ）</label><select id="ften"><option value="1">あり</option><option value="0">なし</option></select></div>
+      <div class="f"><label for="ften">残り10秒の音声（読み上げ）</label><select id="ften"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fcl">読み上げの言葉</label><select id="fcl"><option value="en">英語</option><option value="ja">日本語</option><option value="es">スペイン語</option><option value="fr">フランス語</option><option value="it">イタリア語</option><option value="ko">韓国語</option></select></div>
       <div class="f"><label for="fcv">声</label><select id="fcv"><option value="f">女性</option><option value="m">男性</option></select></div>
       <div class="f"><label for="fs">音（残り10秒・時間切れ）</label><select id="fs"><option value="1">あり</option><option value="0">なし</option></select></div>
@@ -444,7 +444,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   function tStop() { tOn = false; clearInterval(tId); tId = null; drawTimer(); }
   function tStart() {
     if (!S.cfg.t || S.over) return; begin(); tStop(); tOn = true; tLeft = tRem || S.cfg.t; tRem = 0; var last = Date.now(), warned = false, done = false;
-    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; if (S.cfg.ten !== 0) beep(880, 160); if (S.cfg.ten !== 0 && S.cfg.voice !== 0 && S.cfg.vdev !== 'tab' && S.cfg.t > 10) speak(TEN[cl()], cl(), TEN.en); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('タイムアウトを使いました：' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
+    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); if (S.cfg.ten !== 0 && S.cfg.voice !== 0 && S.cfg.vdev !== 'tab' && S.cfg.t > 10) speak(TEN[cl()], cl(), TEN.en); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('タイムアウトを使いました：' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
     drawTimer();
   }
   var tKick = function () { if (tOn) tStart(); };
@@ -523,7 +523,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   function cfSchema() { var c = S.cfg, yn = [[1, 'あり'], [0, 'なし']]; return [
     { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 't', l: '残り秒数（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
     { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
-    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'ten', l: '残り10秒のお知らせ（音と読み上げ）', t: 's', o: yn, v: c.ten === 0 ? 0 : 1 }, { k: 'clang', l: '読み上げの言葉', t: 's', o: [['en', '英語'], ['ja', '日本語'], ['es', 'スペイン語'], ['fr', 'フランス語'], ['it', 'イタリア語'], ['ko', '韓国語']], v: c.clang || 'en' }, { k: 'cvo', l: '声', t: 's', o: [['f', '女性'], ['m', '男性']], v: c.cvo === 'm' ? 'm' : 'f' }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
+    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'ten', l: '残り10秒の音声（読み上げ）', t: 's', o: yn, v: c.ten === 0 ? 0 : 1 }, { k: 'clang', l: '読み上げの言葉', t: 's', o: [['en', '英語'], ['ja', '日本語'], ['es', 'スペイン語'], ['fr', 'フランス語'], ['it', 'イタリア語'], ['ko', '韓国語']], v: c.clang || 'en' }, { k: 'cvo', l: '声', t: 's', o: [['f', '女性'], ['m', '男性']], v: c.cvo === 'm' ? 'm' : 'f' }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
   function cfApply(v) {
     var oldTo = S.cfg.to;
     cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = v[f.k];
