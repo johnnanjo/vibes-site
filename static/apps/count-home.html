@@ -199,12 +199,12 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!o) { o = { id: Math.random().toString(36).slice(2, 10), gs: {}, ys: '', ym: '' }; a.push(o); } o.sei = sei; o.mei = mei;
     if (typeof m.p.y === 'string') { o.ys = m.p.y.replace(/\s+/g, '').slice(0, 30); o.ym = ''; } var g = parseInt(m.p.g, 10); if (g >= 1 && g <= 999) { o.gs = o.gs || {}; o.gs.three = g; } roSet(a);
   }
-  var PFK = 'vibes-count-prefs', PFD = { lim: 0, t: 40, to: 3, pm: 5, eq: 1, snd: 1, easy: 0 };
+  var PFK = 'vibes-count-prefs', PFD = { lim: 0, t: 40, to: 3, pm: 5, eq: 1, snd: 1, easy: 0, voice: 1 };
   function cfGet() { var o = {}, pf = null, st = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); if (!pf) { st = JSON.parse(localStorage.getItem('vibes-count-3c-v1') || 'null'); pf = st && st.cfg; } } catch (e) {} Object.keys(PFD).forEach(function (k) { o[k] = pf && typeof pf[k] === 'number' ? pf[k] : PFD[k]; }); return o; }
   function cfSchema() { var c = cfGet(), yn = [[1, 'あり'], [0, 'なし']]; return [
     { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 't', l: '秒数カウント（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
     { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
-    { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
+    { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'voice', l: '音声コール（英語で点数を読み上げ）', t: 's', o: yn, v: c.voice ? 1 : 0 }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
   function cfSave(v) { var c = cfGet(); cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = parseInt(v[f.k], 10); if (isNaN(x)) return; c[f.k] = f.t === 'n' ? Math.max(f.min, Math.min(f.max, x)) : (x ? 1 : 0); }); try { localStorage.setItem(PFK, JSON.stringify(c)); } catch (e) {} }
   function cfPanel() { var R = $('cfR'); R.textContent = ''; cfSchema().forEach(function (f) { var d = document.createElement('div'), l = document.createElement('label'), i; l.textContent = f.l; l.htmlFor = 'c_' + f.k;
       if (f.t === 's') { i = document.createElement('select'); f.o.forEach(function (o) { var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; i.appendChild(op); }); } else { i = document.createElement('input'); i.type = 'number'; i.min = f.min; i.max = f.max; }

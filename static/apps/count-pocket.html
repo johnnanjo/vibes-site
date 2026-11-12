@@ -264,6 +264,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
       <div class="f o-g5"><label for="fpb">かけ玉と点（例：5=1,9=2）</label><input id="fpb" maxlength="60" autocomplete="off"></div>
       <div class="f o-g5"><label for="fdb">サイド2倍</label><select id="fdb"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fz">イージーモード（点数・イニング・名前・ハイランだけ）</label><select id="fz"><option value="0">なし</option><option value="1">あり</option></select></div>
+      <div class="f"><label for="fv">音声コール（英語で点数を読み上げ）</label><select id="fv"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fs">音（残り10秒・時間切れ）</label><select id="fs"><option value="1">あり</option><option value="0">なし</option></select></div>
     </div>
     <datalist id="roster"></datalist>
@@ -837,8 +838,8 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
     rws.onerror = function () { try { rws.close(); } catch (e) {} };
     rmStatus();
   }
-  var PFK = 'vibes-count-prefs', PFL = ['lim', 't', 'to', 'pm', 'eq', 'snd', 'easy'];
-  function prefSave() { if (S.cfg.mode) return; var o = {}; PFL.forEach(function (k) { o[k] = +S.cfg[k] || 0; }); try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
+  var PFK = 'vibes-count-prefs', PFL = ['lim', 't', 'to', 'pm', 'eq', 'snd', 'easy', 'voice'];
+  function prefSave() { if (S.cfg.mode) return; var o = {}; PFL.forEach(function (k) { o[k] = k === 'voice' ? (S.cfg.voice === 0 ? 0 : 1) : +S.cfg[k] || 0; }); try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
   function menuInit() {
     var q = /[?&]n=(new|again)/.exec(location.search); if (!q) return;
     var c = S.cfg, pf = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); } catch (e) {}
