@@ -127,6 +127,7 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
 #mirW{position:fixed;inset:0;z-index:60;background:#171A22;display:flex;align-items:flex-start;justify-content:center}#mirW[hidden]{display:none}
 #mirF{border:0;width:100vw;height:min(100vh,75vw);height:min(100dvh,75vw);display:block}
 #mirS{position:fixed;left:50%;top:8px;transform:translateX(-50%);background:#F3F4EF;color:#171A22;font-weight:900;font-size:15px;border-radius:999px;padding:4px 16px}#mirS:empty{display:none}
+#vYt .go,#vYt .sm{touch-action:manipulation;position:relative;z-index:1}#ytE{font-size:15px!important;font-weight:700}
 </style>
 </head>
 <body>
@@ -233,7 +234,7 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     <div id="ytR" style="display:grid;gap:10px;margin:6px 0 18px"></div>
     <form id="ytFm"><label for="ytU">動画のリンク</label><input id="ytU" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="https://youtu.be/…">
       <p class="note" id="ytE" role="alert" style="text-align:left;color:#FF8A8F;min-height:20px"></p>
-      <button class="go" type="submit">モニターで再生</button></form>
+      <button class="go" type="submit" id="ytGo">モニターで再生</button></form>
     <div class="pre" id="ytC" style="margin-top:14px">
       <button type="button" class="sm" data-y="pause">一時停止</button><button type="button" class="sm" data-y="resume">再生</button>
       <button type="button" class="sm" data-y="down">音を小さく</button><button type="button" class="sm" data-y="up">音を大きく</button>
@@ -384,7 +385,8 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   var YTK = 'vibes-yt-list', ytList = []; try { ytList = JSON.parse(localStorage.getItem(YTK) || '[]') || []; } catch (e) { ytList = []; }
   function ytParse(u) { u = String(u || '').trim(); var id = '', list = '', m; if ((m = /[?&]list=([A-Za-z0-9_-]{10,64})/.exec(u))) list = m[1];
     if ((m = /(?:youtu\.be\/|[?&]v=|\/(?:embed|shorts|live)\/)([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/.exec(u))) id = m[1]; else if (/^[A-Za-z0-9_-]{11}$/.test(u)) id = u; return id || list ? { id: id, list: list } : null; }
-  function ytPlay(u) { var o = ytParse(u); if (!o) { $('ytE').textContent = 'YouTubeのリンクとして読めませんでした。「共有」→「リンクをコピー」で取ったリンクを貼り付けてください。'; return false; } $('ytE').textContent = ''; if (send({ type: 'yt', op: 'play', id: o.id, list: o.list })) $('ytS').textContent = 'モニターに送りました。'; return true; }
+  function ytPlay(u) { var o = ytParse(u); if (!o) { $('ytE').textContent = 'YouTubeのリンクとして読めませんでした。「共有」→「リンクをコピー」で取ったリンクを貼り付けてください。'; return false; } $('ytE').textContent = ''; if (last && last.kind !== 'menu') { $('ytE').textContent = 'モニターが試合の画面になっています。YouTubeは、トップ画面の時だけ流せます。'; return false; }
+    if (send({ type: 'yt', op: 'play', id: o.id, list: o.list })) { $('ytS').textContent = 'モニターに送りました。'; clearTimeout(ytPlay.t); ytPlay.t = setTimeout(function () { if (cur === 'vYt' && !(last && last.yt)) $('ytE').textContent = 'モニターが受け取れませんでした。モニターが古い画面のままの可能性があります。「戻る」を押して、メニューの一番下の「モニターを読み込み直す」を2回押してから、もう一度試してください。'; }, 3500); } else $('ytE').textContent = 'モニターとつながっていません。少し待ってから、もう一度押してください。'; return true; }
   function ytDraw() { var L = $('ytL2'); L.textContent = ''; ytList.forEach(function (x, i) { var r = document.createElement('div'); r.style.cssText = 'display:grid;grid-template-columns:1fr auto;gap:8px'; var b = document.createElement('button'); b.type = 'button'; b.className = 'sm'; b.style.cssText = 'text-align:left;border-radius:14px;min-height:48px'; b.textContent = x.n; b.onclick = function () { $('ytU').value = x.u; ytPlay(x.u); };
       var d = document.createElement('button'); d.type = 'button'; d.className = 'sm'; d.textContent = '消す'; d.onclick = function () { var n = Date.now(); if (n - (d._t || 0) < 3000) { ytList.splice(i, 1); try { localStorage.setItem(YTK, JSON.stringify(ytList)); } catch (e) {} ytDraw(); } else { d._t = n; d.textContent = 'もう一度'; setTimeout(function () { d.textContent = '消す'; }, 3000); } }; r.appendChild(b); r.appendChild(d); L.appendChild(r); });
     if (!ytList.length) { var p = document.createElement('p'); p.className = 'note'; p.style.textAlign = 'left'; p.textContent = 'まだ登録がありません。'; L.appendChild(p); } }
@@ -401,6 +403,7 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   $('mYt').onclick = function () { $('ytE').textContent = ''; $('ytS').textContent = last && last.yt ? 'モニターで再生中です。' : ''; ytDraw(); show('vYt'); };
   $('ytBack').onclick = function () { show(tvOf(last)); draw(); };
   $('ytFm').addEventListener('submit', function (e) { e.preventDefault(); ytPlay($('ytU').value); });
+  $('ytGo').addEventListener('click', function (e) { e.preventDefault(); try { $('ytU').blur(); } catch (x) {} ytPlay($('ytU').value); });
   $('ytAdd').onclick = function () { var u = $('ytU').value.trim(); if (!ytParse(u)) { $('ytE').textContent = '先に、上の欄にYouTubeのリンクを貼り付けてください。'; return; } var n = $('ytN').value.replace(/\s+/g, ' ').trim().slice(0, 24) || '動画 ' + (ytList.length + 1); ytList.unshift({ n: n, u: u.slice(0, 300) }); ytList = ytList.slice(0, 20); try { localStorage.setItem(YTK, JSON.stringify(ytList)); } catch (e) {} $('ytN').value = ''; $('ytE').textContent = ''; ytDraw(); };
   Array.prototype.forEach.call(document.querySelectorAll('#ytC [data-y]'), function (b) { b.onclick = function () { var y = b.getAttribute('data-y'); if (y === 'up' || y === 'down') send({ type: 'yt', op: 'vol', d: y === 'up' ? 1 : -1 }); else send({ type: 'yt', op: y }); if (y === 'stop') $('ytS').textContent = '止めました。'; }; });
   $('mReload').onclick = function () { var b = $('mReload'), n = Date.now(); if (n - (b._t || 0) < 3000) { send({ type: 'cmd', c: 'reload' }); b.textContent = '読み込み直しています…'; setTimeout(function () { location.reload(); }, 2500); } else { b._t = n; b.textContent = 'もう一度押すと読み込み直します'; setTimeout(function () { if (b.textContent.charAt(0) === 'も') b.textContent = 'モニターを読み込み直す'; }, 3000); } };
