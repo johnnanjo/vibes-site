@@ -1,5 +1,5 @@
 /* Offline support for the scoreboards: /pages/count (start), /pages/count-3c, /pages/count-pocket, /pages/count-remote. */
-var C = 'vibes-count-3c-offline-v40';
+var C = 'vibes-count-3c-offline-v41';
 var PAGES = ['/pages/count/', '/pages/count-3c/', '/pages/count-pocket/'];
 var pageKey = function (u) { var p = new URL(u, location.origin).pathname; return p.charAt(p.length - 1) === '/' ? p : p + '/'; };
 var CORE = PAGES.concat([ '/img/vibes-logo-t.png', '/img/favicon-64.png', '/count-3c.webmanifest', '/fonts/unbounded-latin-900-normal.woff2',
