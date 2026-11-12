@@ -40,7 +40,8 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 .pf{display:grid;grid-template-columns:1fr 1fr;gap:1.2vh 1.4vw;text-align:left}.pf label{display:block;font-weight:700;font-size:1.8vh;margin-bottom:.4vh;color:var(--chalk)}
 .pf input,.pf select,.rof input{width:100%;font:inherit;font-weight:700;font-size:2.4vh;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:1.2vh;padding:1vh 1vw}
 .rof{display:grid;grid-template-columns:1fr 1fr 9vw auto;gap:1vw;align-items:end;text-align:left}.rof label{display:block;font-weight:700;font-size:1.7vh;margin-bottom:.4vh}
-.rol{margin-top:1.6vh;max-height:42vh;overflow:auto;display:grid;gap:.6vh;text-align:left}.rol div{display:grid;grid-template-columns:1fr auto auto;gap:1vw;align-items:center;background:var(--night);border-radius:1.2vh;padding:.8vh 1vw;font-weight:900;font-size:2.3vh}
+.rqr{display:flex;align-items:center;gap:1.4vw;text-align:left;margin-top:1.6vh;background:var(--night);border-radius:1.4vh;padding:1.2vh 1.2vw}.rqr p{margin:0;font-size:1.9vh;line-height:1.7}.rqr .qr.sm{width:15vh;height:15vh}
+.rol{margin-top:1.6vh;max-height:30vh;overflow:auto;display:grid;gap:.6vh;text-align:left}.rol div{display:grid;grid-template-columns:1fr auto auto;gap:1vw;align-items:center;background:var(--night);border-radius:1.2vh;padding:.8vh 1vw;font-weight:900;font-size:2.3vh}
 .rol small{color:var(--sub);font-weight:700;font-size:1.6vh;margin-left:.8vw}.rol i{font-style:normal;color:var(--sub);font-size:1.9vh}.rol button{font:inherit;font-weight:700;font-size:1.6vh;color:var(--chalk);background:transparent;border:1px solid var(--line);border-radius:999px;padding:.4vh 1vw;cursor:pointer}
 .logo img{height:24vh;width:auto;max-width:70vw;filter:drop-shadow(0 1.4vh 3vh rgba(0,0,0,.5))}
 .tile{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:.6vh;text-align:left;text-decoration:none;color:#fff;font:inherit;border:0;cursor:pointer;border-radius:2.4vh;padding:2.2vh 1.8vw;min-height:0;min-width:0;
@@ -108,6 +109,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 <div class="ov" id="cfL" hidden><div class="panel" role="dialog" aria-label="各種設定"><h2>各種設定</h2><p style="font-size:1.9vh;color:var(--sub)">ここで決めた内容が、次の試合から使われます。</p><form id="cfF"><div class="pf" id="cfR"></div><div class="acts"><button type="button" class="btn" id="cfX">閉じる (Esc)</button><button type="submit" class="btn go">保存する</button></div></form></div></div>
 <div class="ov" id="roL" hidden><div class="panel" role="dialog" aria-label="選手登録"><h2>選手登録</h2><p style="font-size:1.9vh;color:var(--sub)">一度登録した選手は、ずっと残ります。持ち点はスリークッションの持ち点です。スマホ・タブレットからも登録できます。</p>
   <form class="rof" id="roF"><div><label for="roN">名前</label><input id="roN" maxlength="20" autocomplete="off" placeholder="山田 太郎"></div><div><label for="roY">よみがな</label><input id="roY" maxlength="30" autocomplete="off" placeholder="やまだたろう"></div><div><label for="roG">持ち点</label><input id="roG" type="number" min="1" max="999" value="25"></div><button type="submit" class="btn go">登録</button></form>
+  <div class="rqr" id="roQW" hidden><div class="qr sm" id="roQ"></div><p><b>お客様のスマホで登録</b><br>このQRコードを読むと、名前・よみがな・持ち点を自分で入力できます。入力すると、この名簿に入ります。</p></div>
   <div class="rol" id="roB"></div><div class="acts"><button type="button" class="btn" id="roX">閉じる (Esc)</button></div></div></div>
 <div class="ov" id="rmL" hidden>
   <div class="panel" role="dialog" aria-label="リモコン">
@@ -182,7 +184,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { ws = null; return; }
     ws.onopen = function () { tries = 0; draw(); push(); roPush(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } sawPhone(); if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'ctl' || m.type === 'cmd') sawPhone(); if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
     ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
@@ -217,7 +219,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
       n.style.cursor = 'pointer'; n.onclick = function () { $('roN').value = roFull(o); $('roY').value = (o.ys || '') + (o.ym || ''); $('roG').value = (o.gs && o.gs.three) || 25; $('roN').focus(); };
       d.appendChild(n); d.appendChild(g); d.appendChild(x); B.appendChild(d); });
     if (!a.length) { var e = document.createElement('p'); e.textContent = 'まだ誰も登録されていません。'; e.style.fontSize = '2vh'; B.appendChild(e); } }
-  function roPanel() { $('roL').hidden = false; roList(); $('roN').focus(); }
+  function roPanel() { $('roL').hidden = false; roList(); var on = !!(rm && rm.on); $('roQW').hidden = !on; if (on) { try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + rm.code + '&j=1'); q.make(); $('roQ').innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { $('roQW').hidden = true; } } $('roN').focus(); }
   $('roF').addEventListener('submit', function (e) { e.preventDefault(); if (!$('roN').value.trim()) return; roHandle({ op: 'save', p: { n: $('roN').value, y: $('roY').value, g: $('roG').value } }); $('roN').value = ''; $('roY').value = ''; $('roN').focus(); });
   function rmOpen() {
     if (!rm || !/^\d{6}$/.test(rm.code || '')) rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true };

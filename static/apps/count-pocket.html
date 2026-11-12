@@ -616,6 +616,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   function roHandle(m) {
     if (GK() !== plK) plLoad(); var su = {}; try { su = JSON.parse(rmState()).su || {}; } catch (e) {}
     if (m.op === 'del') { players = players.filter(function (o) { return o.id !== m.i; }); return savePlayers(); }
+    if (m.op === 'save' && m.p && m.p.self) toast('選手登録：' + String(m.p.n || '').slice(0, 20));
     if (m.op !== 'save' || !m.p) return; var a = nmSplit(m.p.n); if (!a[0] || /^GUEST/i.test(a[0])) return roPush();
     var o = null, old = ''; players.forEach(function (x) { if (m.p.i && x.id === m.p.i) o = x; });
     if (o) { old = full(o); o.sei = a[0]; o.mei = a[1]; } else o = roUp(m.p.n);
@@ -859,8 +860,9 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   $('bPz').onclick = function () { if (S.pz) pzOff(); else pzOn(); this.blur(); }; $('pzB').onclick = pzOff;
   function goHome() { location.href = U_HOME + (TB ? '?t=' + TB : ''); }
   function rmHandle(m) {
-    try { sessionStorage.setItem('vibes-remote-seen', '1'); } catch (e) {}
-    if (m.type === 'hello') { tSent = -9; toast('スマホがつながりました'); rmPush(); return roPush(); }
+    if (m.type === 'ctl' || m.type === 'cmd' || m.type === 'key' || m.type === 'setup') { try { sessionStorage.setItem('vibes-remote-seen', '1'); } catch (e) {} }
+    if (m.type === 'hello') { tSent = -9; rmPush(); return roPush(); }
+    if (m.type === 'ctl') { toast('スマホがつながりました'); return; }
     if (m.type === 'roster') return roHandle(m);
     if (m.type === 'cmd' && m.c === 'home') { goHome(); return; }
     if (m.type === 'setup' && m.p && m.p.length >= 1 && m.p.length <= 4) {

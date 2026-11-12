@@ -113,6 +113,7 @@ input:focus{outline:none;border-color:var(--lime)}
 #vMain .p .sc{font-size:min(190px,30vh)}#vMain .p .chg{min-height:110px;font-size:30px}
 #vPk:not([hidden]){display:grid!important;grid-template-columns:1fr 1fr;align-items:start;gap:16px}#vPk #pkOver,#vPk #pkRdy{grid-column:1/-1}#vPk #pkHead{grid-column:1;grid-row:span 2}
 }
+.qrb{background:#fff;border-radius:16px;padding:12px;width:min(72vw,360px);margin:10px auto 0}.qrb svg{display:block;width:100%;height:auto}
 .npick{display:flex;gap:8px;margin:0 0 14px}.npick .sm{flex:1;min-height:46px;font-size:16px}.npick .sm.on{background:var(--lime);color:var(--night);border-color:var(--lime)}
 .ph .sm{margin-left:auto}
 .sv{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
@@ -205,10 +206,31 @@ input:focus{outline:none;border-color:var(--lime)}
     </div>
   </section>
 
+  <section class="card" id="vSelf" hidden>
+    <h1>選手登録</h1>
+    <p id="sfLead">名前と持ち点を入れて「登録する」を押してください。お店の画面の名簿に入ります。</p>
+    <form id="fSf">
+      <div class="cfr"><label for="sfN">名前（漢字でも入れられます）</label><input id="sfN" maxlength="20" autocomplete="off" placeholder="例：山田 太郎"></div>
+      <div class="cfr"><label for="sfY">よみがな（ひらがな）</label><input id="sfY" maxlength="30" autocomplete="off" placeholder="例：やまだたろう"></div>
+      <div class="cfr" id="sfGR"><label for="sfG" id="sfGL">持ち点</label><input id="sfG" type="number" inputmode="numeric" min="1" max="999"></div>
+      <p class="err" id="sfErr"></p>
+      <button class="go" type="submit" id="sfGo">登録する</button>
+    </form>
+    <div id="sfDone" hidden><div class="over" id="sfOk"></div><p style="margin:12px 0">お店の名簿に入りました。試合の時は、名簿から名前を選べます。持ち点が変わったら、同じ名前でもう一度登録すると上書きされます。</p><button type="button" class="k" id="sfMore" style="width:100%;min-height:60px;font-size:18px">もう1人登録する</button></div>
+  </section>
+
+  <section class="card" id="vQr" hidden>
+    <h1>お客様のスマホで登録</h1>
+    <p>お客様のスマホのカメラで、このQRコードを読んでもらいます。名前・よみがな・持ち点を自分で入力すると、名簿に入ります。</p>
+    <div class="qrb" id="qrB"></div>
+    <button type="button" class="k" id="qrBack" style="width:100%;min-height:56px;font-size:18px;margin-top:12px">戻る</button>
+  </section>
+
   <section class="card" id="vRo" hidden>
     <h1>選手名簿</h1>
     <p id="roLead">一度登録した選手は、ずっと残ります。名前を押すと、持ち点などを直せます。</p>
     <button type="button" class="go" id="roNew">＋ 新しい選手を登録</button>
+    <button type="button" class="k" id="roQr" style="width:100%;min-height:60px;font-size:18px;margin-top:10px">お客様のスマホで登録<small>QRコードを出す</small></button>
     <label for="roQ" style="margin-top:14px">さがす（名前・よみがな）</label>
     <input id="roQ" autocomplete="off" placeholder="例：やまだ">
     <p class="note" id="roCnt" style="text-align:left;margin:8px 0"></p>
@@ -260,6 +282,7 @@ input:focus{outline:none;border-color:var(--lime)}
     </form>
   </section>
 </div>
+<script src="/js/qr.js"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -267,8 +290,9 @@ input:focus{outline:none;border-color:var(--lime)}
   var CK = 'vibes-count-remote-code', PK = 'vibes-count-remote-players';
   var code = '', ws = null, tries = 0, ping = null, last = null, newAt = 0, gotState = false, joinT = null;
   var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
-  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
-  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin'; };
+  var SELF = /[?&]j=1/.test(location.search), sfWait = '', sfT = null;
+  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
+  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
   function tvOf(m) { return !m ? 'vJoin' : m.kind === 'menu' ? 'vMenu' : m.over ? 'vRes' : m.kind === 'pocket' ? 'vPk' : 'vMain'; }
   var tmV = -1, tmL = -1, tmAt = 0;
@@ -283,9 +307,10 @@ input:focus{outline:none;border-color:var(--lime)}
     if (!code) return; if (ws && ws.readyState <= 1) return;
     status(false, '接続しています…');
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'つながっていません'); return; }
-    ws.onopen = function () { tries = 0; status(true, '番号 ' + code.slice(0, 3) + ' ' + code.slice(3)); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'roster') { if (!m.part) roTmp = []; roTmp = roTmp.concat(m.list || []); if ((m.part || 0) + 1 >= (m.of || 1)) { ro = { gk: m.gk || '', t: m.t || '', d: m.d || 0, list: roTmp }; roTmp = []; roDraw(); } return; }
+    ws.onopen = function () { tries = 0; status(true, SELF ? 'お店につながりました' : '番号 ' + code.slice(0, 3) + ' ' + code.slice(3)); if (!SELF) { try { ws.send('{"type":"ctl"}'); } catch (e) {} } clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'roster') { if (!m.part) roTmp = []; roTmp = roTmp.concat(m.list || []); if ((m.part || 0) + 1 >= (m.of || 1)) { ro = { gk: m.gk || '', t: m.t || '', d: m.d || 0, list: roTmp }; roTmp = []; roDraw(); sfDraw(); } return; }
       if (m.type === 't') { if (typeof m.l === 'number' && m.l >= 0) { tmL = m.l; tmAt = Date.now(); } else { tmL = -1; } tmTick(); return; }
+      if (m.type === 'state' && SELF) { last = m; gotState = true; clearTimeout(joinT); sfDraw(); return; }
       if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = tvOf(m); if (!OV[cur] && cur !== tv) show(tv); if ((cur === 'vPl' || cur === 'vCf' || cur === 'vPick') && tv === 'vMenu') show(tv); draw(); if (!m.wz) wzShown = false; if (m.wz && !wzShown && !OV[cur] && tv !== 'vMenu') { wzShown = true; plOpen(true); } } };
     ws.onclose = function () { clearInterval(ping); status(false, 'つなぎ直しています…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
@@ -332,7 +357,7 @@ input:focus{outline:none;border-color:var(--lime)}
   $('fJoin').addEventListener('submit', function (e) {
     e.preventDefault(); var v = $('iCode').value.replace(/\D/g, '');
     if (v.length !== 6) { $('eJoin').textContent = '6けたの番号を入れてください。'; return; }
-    $('eJoin').textContent = ''; code = v; gotState = false; try { localStorage.setItem(CK, code); } catch (x) {}
+    $('eJoin').textContent = ''; code = v; gotState = false; try { if (!SELF) localStorage.setItem(CK, code); } catch (x) {}
     if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; }
     connect(); clearTimeout(joinT);
     joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'この番号のモニターが見つかりません。番号と、モニター側で「リモコン」が入っているかを確かめてください。'; }, 5000);
@@ -389,6 +414,15 @@ input:focus{outline:none;border-color:var(--lime)}
     var dup = ro.list.filter(function (o) { return o.n === n && o.i !== edI; }).length; if (dup) { $('edErr').textContent = '同じ名前の選手が、もう登録されています。'; return; }
     var p = { i: edI, n: n, y: kana($('edY').value) }; if (ro.t) p.g = parseInt($('edG').value, 10) || 0;
     if (send({ type: 'roster', op: 'save', p: p })) { $('roQ').value = ''; show('vRo'); roDraw(); } else $('edErr').textContent = 'モニターにつながっていません。'; });
+  function sfDraw() { if (!SELF) return; $('sfGR').hidden = !ro.t; $('sfGL').textContent = (last && last.kind !== 'menu' && last.title ? last.title + 'の' : '') + (ro.t || '持ち点'); if (!$('sfG').value && ro.d) $('sfG').value = ro.d;
+    if (sfWait && ro.list.some(function (o) { return o.n === sfWait; })) { clearTimeout(sfT); $('sfOk').textContent = '登録しました：' + sfWait; sfWait = ''; $('fSf').hidden = true; $('sfDone').hidden = false; $('sfGo').disabled = false; } }
+  $('fSf').addEventListener('submit', function (e) { e.preventDefault(); var n = $('sfN').value.replace(/[\s\u3000]+/g, ' ').trim(); $('sfErr').textContent = ''; if (!n) { $('sfErr').textContent = '名前を入れてください。'; return; }
+    var p = { n: n, y: kana($('sfY').value), self: 1 }; if (ro.t) p.g = parseInt($('sfG').value, 10) || 0;
+    if (!send({ type: 'roster', op: 'save', p: p })) { $('sfErr').textContent = 'お店の画面につながっていません。少し待って、もう一度押してください。'; return; }
+    sfWait = n; $('sfGo').disabled = true; clearTimeout(sfT); sfT = setTimeout(function () { if (sfWait) { sfWait = ''; $('sfGo').disabled = false; $('sfErr').textContent = '登録を確認できませんでした。もう一度押してください。'; } }, 6000); });
+  $('sfMore').onclick = function () { $('sfN').value = ''; $('sfY').value = ''; $('sfG').value = ro.d || ''; $('fSf').hidden = false; $('sfDone').hidden = true; $('sfN').focus(); };
+  $('roQr').onclick = function () { var B = $('qrB'); B.textContent = ''; try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + code + '&j=1'); q.make(); B.innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { B.textContent = 'QRコードを出せませんでした。'; } show('vQr'); };
+  $('qrBack').onclick = function () { show('vRo'); roDraw(); };
   function cfOpen() {
     var R = $('cfRows'), cf = (last && last.cf) || []; R.textContent = '';
     cf.forEach(function (f) { var d = document.createElement('div'); d.className = 'cfr'; var l = document.createElement('label'); l.textContent = f.l; l.htmlFor = 'cf_' + f.k; var i;
@@ -414,8 +448,9 @@ input:focus{outline:none;border-color:var(--lime)}
   wake(); document.addEventListener('click', function once() { wake(); document.removeEventListener('click', once); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { connect(); wake(); } });
   var q = /[?&]r=(\d{6})/.exec(location.search); try { code = q ? q[1] : (localStorage.getItem(CK) || ''); } catch (e) {}
+  if (SELF && !code) SELF = false;
   if (code) { $('iCode').value = code.slice(0, 3) + ' ' + code.slice(3); connect(); joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'モニターを待っています。モニター側で「リモコン」を押してください。'; }, 5000); }
-  show('vJoin');
+  show(SELF ? 'vSelf' : 'vJoin');
 })();
 </script>
 </body>
