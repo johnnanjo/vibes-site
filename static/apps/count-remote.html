@@ -353,7 +353,7 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     if ($('mirW').hidden === on) $('mirW').hidden = !on; }
   window.addEventListener('message', function (ev) { if (ev.origin !== location.origin || ev.source !== $('mirF').contentWindow) return; var d = ev.data; if (!d || d.type !== 'mir') return;
     if (d.ready) { if (mirFull) mirPost(mirFull); return; }
-    if (d.nav === 'players') { var pb = document.querySelector('.prePl'); if (pb) pb.click(); return; } if (d.nav === 'home') { send({ type: 'cmd', c: 'home' }); return; }
+    if (d.nav === 'players') { var pb = document.querySelector('.prePl'); if (pb) pb.click(); return; } if (d.nav === 'home') { send({ type: 'cmd', c: 'home' }); return; } if (d.nav === 'reload') { send({ type: 'cmd', c: 'reload' }); setTimeout(function () { location.reload(); }, 2500); return; }
     var o = d.send; if (!o || (o.type !== 'key' && o.type !== 'cmd')) return; if (o.type === 'key' && o.k === '+' && !d.said) phoneSay(); send(o); if (navigator.vibrate) navigator.vibrate(15); });
   window.addEventListener('resize', function () { mirSync(); });
   setInterval(function () { $('mirS').textContent = ws && ws.readyState === 1 ? '' : 'つなぎ直しています…'; }, 1000);

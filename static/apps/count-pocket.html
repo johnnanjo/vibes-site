@@ -204,6 +204,7 @@ body.touch .board .keys span:active{background:rgba(255,255,255,.22)}
 body.touch .side,body.touch #tbox{cursor:pointer;touch-action:manipulation}
 body.mir .top>span:last-child,body.mir .rdp .keys,body.mir #rdWarm{display:none!important}body.mir #aHome{pointer-events:none}
 body.mirwait .board{visibility:hidden}
+#mirRl{position:fixed;left:50%;bottom:6vh;transform:translateX(-50%);z-index:90;font-size:2.6vh;padding:1.6vh 3vw}#mirRl[hidden]{display:none}
 body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .keys span{font-size:3vh;padding:1.6vh 2vw}
 /* 2026-11-12: thicker frame for the player at the table, larger high run / average, inning box stands apart from the clock, 25-inning sheet */
 .side{border-width:1.1vh}.side.on{box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 0 -8vh 12vh rgba(6,18,44,.3),0 0 0 .5vh rgba(192,252,9,.4),0 0 7vh rgba(192,252,9,.32),0 1.2vh 3vh rgba(0,0,0,.42)}
@@ -1063,7 +1064,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
   function mirInit() {
     var mt = null, mw = true, pInn = -1, pLen = []; document.body.classList.add('mir', 'mirwait'); save = function () {};
     var tidy = function () { Array.prototype.forEach.call(document.querySelectorAll('.board .keys span'), function (sp) { var kb = sp.querySelector('kbd'); if (!kb) return; var k = kb.textContent === 'BackSpace' ? 'Backspace' : kb.textContent; sp.hidden = !KOK.test(k) || /練習/.test(sp.textContent) || (k === '*' && !!S.cfg.easy && !S.cfg.mode); }); };
-    document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button,a'); if (!b) return; e.preventDefault(); e.stopPropagation(); var c = { rdGo: 'start', rdSwap: 'swap', pzB: 'pause' }[b.id]; if (c) act({ type: 'cmd', c: c }); else if (b.id === 'mirPl' || b.id === 'mirHome') { try { parent.postMessage({ type: 'mir', nav: b.id === 'mirPl' ? 'players' : 'home' }, location.origin); } catch (x) {} } }, true);
+    document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button,a'); if (!b) return; e.preventDefault(); e.stopPropagation(); var c = { rdGo: 'start', rdSwap: 'swap', pzB: 'pause' }[b.id]; if (c) act({ type: 'cmd', c: c }); else if (b.id === 'mirRl') { try { parent.postMessage({ type: 'mir', nav: 'reload' }, location.origin); } catch (x) {} b.textContent = '読み込み直しています…'; } else if (b.id === 'mirPl' || b.id === 'mirHome') { try { parent.postMessage({ type: 'mir', nav: b.id === 'mirPl' ? 'players' : 'home' }, location.origin); } catch (x) {} } }, true);
     window.addEventListener('keydown', function (e) { e.stopImmediatePropagation(); }, true);
     window.addEventListener('message', function (ev) { if (ev.origin !== location.origin) return; var m = ev.data; if (!m) return;
       if (m.type === 't') { if (typeof m.l === 'number' && m.l >= 0) { tOn = true; tLeft = m.l; if (tLeft > 10.5) mw = false; } else tOn = false; drawTimer(); return; }
@@ -1072,9 +1073,10 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0; mva = m.va === 0 ? 0 : 1; if (!tOn || tLeft > 10.5) mw = !tOn;
       if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!mw && tLeft <= 10 && tLeft > 7) { mw = true; if (typeof speak === 'function' && !S.cfg.mode && S.cfg.voice !== 0 && S.cfg.t > 10 && !(S.cfg.vdev === 'pc' && mva)) psay('ten seconds'); } drawTimer(); }, 200); }
       var tInn = 0; S.inn.forEach(function (a) { tInn += (a && a.length) || 0; }); if (pInn >= 0 && tInn > pInn && !S.over && !S.cfg.mode && typeof chime === 'function' && !(S.cfg.vdev === 'pc' && mva)) { pchime(); var who = -1; S.inn.forEach(function (a, i) { if (a.length > (pLen[i] || 0)) who = i; }); if (who >= 0 && S.cfg.voice !== 0) setTimeout(function (n) { psay(gotText(n), S.cfg.clang, gotText(n, 'en')); }, 350, S.inn[who][S.inn[who].length - 1]); } pInn = tInn; pLen = S.inn.map(function (a) { return a.length; });
-      render(); pzDraw(); $('winL').hidden = true; tidy(); document.body.classList.remove('mirwait');
+      render(); pzDraw(); $('winL').hidden = true; tidy(); $('mirRl').hidden = !(S.pz && !S.over); document.body.classList.remove('mirwait');
     });
     [['mirPl', '選手を変える', 'players'], ['mirHome', 'メニュー', 'home']].forEach(function (x) { var bt = el('button', 'btn', x[1]); bt.type = 'button'; bt.id = x[0]; $('rdGo').parentNode.insertBefore(bt, $('rdSwap')); });
+    var rl = el('button', 'btn', '画面を読み込み直す（更新を反映）'); rl.type = 'button'; rl.id = 'mirRl'; rl.hidden = true; document.body.appendChild(rl);
     tidy(); try { parent.postMessage({ type: 'mir', ready: 1 }, location.origin); } catch (e) {}
   }
   /* offline: cache this page and what it loaded; keep the screen awake */
