@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>運営管理｜VIBES BILLIARDS DIGITAL LABO</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/img/favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap">
+<style>
+:root{--night:#171A22;--night2:#20242E;--line:#3A3F4C;--lime:#C0FC09;--chalk:#F3F4EF;--sub:#A9AFBD;--red:#FF8A8F}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--night);color:var(--chalk);font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;font-weight:500;padding:20px max(16px,env(safe-area-inset-left)) 60px}
+[hidden]{display:none!important}
+.box{width:min(100%,760px);margin:0 auto;display:grid;gap:16px}
+.card{background:var(--night2);border-radius:18px;padding:20px;display:grid;gap:12px;min-width:0}
+h1{font-size:24px;margin:0;font-weight:900}h2{font-size:19px;margin:0;font-weight:900}
+p{margin:0;color:var(--sub);font-size:15px;line-height:1.7;font-weight:700}
+label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+input{width:100%;font:inherit;font-size:17px;font-weight:700;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:12px;padding:10px}
+input:focus{outline:none;border-color:var(--lime)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+button{font:inherit;font-weight:900;font-size:16px;color:var(--night);background:var(--lime);border:0;border-radius:12px;padding:12px 16px;cursor:pointer}
+button.s{font-size:13px;padding:7px 12px;background:transparent;color:var(--chalk);border:1.5px solid var(--line)}
+.err{color:var(--red);min-height:22px}
+.new{background:var(--chalk);color:var(--night);border-radius:14px;padding:16px;display:grid;gap:6px}.new b{font-size:18px}.new code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:22px;font-weight:700;user-select:all;overflow-wrap:anywhere}.new p{color:#3A3F4C}
+.acc{border:2px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:8px}
+.acc .h{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline}.acc .h b{font-size:19px}.acc .h code{color:var(--sub);font-weight:700}
+.tag{font-size:12px;font-weight:900;border-radius:999px;padding:2px 10px;background:var(--lime);color:var(--night)}.tag.off{background:var(--red)}.tag.exp{background:#F2C200}
+.acc small{color:var(--sub);font-weight:700}.acc .b{display:flex;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>運営管理</h1>
+  <form class="card" id="fk"><h2>管理キー</h2><p>運営だけが知っている管理キーを入れてください。このブラウザーを閉じるまで覚えています。</p>
+    <div><label for="key">管理キー</label><input id="key" type="password" autocomplete="off" required></div><p class="err" id="ek" role="alert"></p><button type="submit">開く</button></form>
+
+  <div id="main" hidden style="display:grid;gap:16px">
+    <form class="card" id="fc"><h2>店舗アカウントを発行する</h2>
+      <div class="g2"><div><label for="cid">ID（半角の英小文字・数字・ハイフン）</label><input id="cid" autocapitalize="none" spellcheck="false" placeholder="wind-billiards" required></div><div><label for="cshop">店名</label><input id="cshop" placeholder="WINDビリヤード" required></div></div>
+      <div class="g2"><div><label for="cdays">利用できる日数（0＝期限なし）</label><input id="cdays" type="number" min="0" max="3650" value="30"></div><div><label for="cnote">メモ（台数・連絡先など）</label><input id="cnote"></div></div>
+      <p class="err" id="ec" role="alert"></p><button type="submit">発行する</button></form>
+    <div class="new" id="np" hidden><b id="npT"></b><div>ID：<code id="npI"></code></div><div>パスワード：<code id="npP"></code></div><p>このパスワードは、今だけ表示されます。控えてから、お店に渡してください。お店の人は、ログイン後に自分で変更できます。</p></div>
+    <div class="card"><h2>店舗アカウント <span id="cnt"></span></h2><div id="list" style="display:grid;gap:10px"></div></div>
+  </div>
+</div>
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); }, key = ''; try { key = sessionStorage.getItem('labo-admin') || ''; } catch (e) {}
+  function api(op, d) { return fetch('/api/labo/admin', { method: 'POST', headers: { 'content-type': 'application/json', 'x-admin-key': key }, body: JSON.stringify(Object.assign({ op: op }, d || {})) }).then(function (r) { return r.json().catch(function () { return { ok: false, error: 'このページからは使えません。vibesdigilabo.com/admin で開いてください。' }; }); }); }
+  function day(t) { if (!t) return '—'; var d = new Date(t); return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate(); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function showPw(title, id, pw) { $('npT').textContent = title; $('npI').textContent = id; $('npP').textContent = pw; $('np').hidden = false; $('np').scrollIntoView({ block: 'center' }); }
+  function load() { return api('list').then(function (j) { if (!j.ok) { $('ek').textContent = j.error || '開けませんでした。'; $('fk').hidden = false; $('main').hidden = true; return; }
+    try { sessionStorage.setItem('labo-admin', key); } catch (e) {} $('fk').hidden = true; $('main').hidden = false; var L = $('list'); L.textContent = ''; $('cnt').textContent = '（' + j.accounts.length + '件）';
+    j.accounts.forEach(function (a) { var c = el('div', 'acc'), h = el('div', 'h'); h.appendChild(el('b', '', a.shop)); h.appendChild(el('code', '', a.id));
+      var expd = a.expires && j.now > a.expires; h.appendChild(el('span', 'tag' + (a.status !== 'active' ? ' off' : expd ? ' exp' : ''), a.status !== 'active' ? '停止中' : expd ? '期限切れ' : '利用中')); c.appendChild(h);
+      c.appendChild(el('small', '', '期限：' + (a.expires ? day(a.expires) + 'まで' : 'なし') + '　発行：' + day(a.created) + '　最終ログイン：' + day(a.last_login) + (a.note ? '　メモ：' + a.note : '')));
+      var b = el('div', 'b'), mk = function (t, fn) { var x = el('button', 's', t); x.type = 'button'; x.onclick = fn; b.appendChild(x); };
+      mk('＋30日', function () { api('update', { id: a.id, addDays: 30 }).then(load); }); mk('＋1年', function () { api('update', { id: a.id, addDays: 365 }).then(load); }); mk('期限なしにする', function () { api('update', { id: a.id, expires: 0 }).then(load); });
+      mk(a.status === 'active' ? '停止する' : '再開する', function () { api('update', { id: a.id, status: a.status === 'active' ? 'stopped' : 'active' }).then(load); });
+      var rs = el('button', 's', 'パスワードを作り直す'), at = 0; rs.type = 'button'; rs.onclick = function () { if (Date.now() - at < 3000) { api('reset', { id: a.id }).then(function (r) { if (r.ok) showPw(a.shop + ' の新しいパスワード', a.id, r.password); load(); }); } else { at = Date.now(); rs.textContent = 'もう一度押すと作り直します'; setTimeout(function () { rs.textContent = 'パスワードを作り直す'; }, 3000); } }; b.appendChild(rs);
+      c.appendChild(b); L.appendChild(c); });
+    if (!j.accounts.length) L.appendChild(el('p', '', 'まだアカウントがありません。')); }); }
+  $('fk').addEventListener('submit', function (e) { e.preventDefault(); key = $('key').value; $('ek').textContent = ''; load(); });
+  $('fc').addEventListener('submit', function (e) { e.preventDefault(); $('ec').textContent = '';
+    api('create', { id: $('cid').value, shop: $('cshop').value, days: +$('cdays').value, note: $('cnote').value }).then(function (j) { if (!j.ok) { $('ec').textContent = j.error || '発行できませんでした。'; return; } showPw(j.account.shop + ' のアカウントを発行しました', j.account.id, j.password); $('cid').value = ''; $('cshop').value = ''; $('cnote').value = ''; load(); }); });
+  if (key) load();
+})();
+</script>
+</body>
+</html>

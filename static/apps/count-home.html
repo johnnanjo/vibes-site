@@ -93,7 +93,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 </head>
 <body>
 <div class="home" id="home">
-  <div class="bar"><button type="button" id="bCamP">撮影・中継</button><button type="button" id="bRm">リモコン（スマホで操作）</button><button type="button" id="bFull">全画面 (F)</button></div>
+  <div class="bar"><button type="button" id="bAcc" hidden>アカウント</button><button type="button" id="bCamP">撮影・中継</button><button type="button" id="bRm">リモコン（スマホで操作）</button><button type="button" id="bFull">全画面 (F)</button></div>
   <div class="crumb" id="crumb"></div>
   <div class="ring" id="ring"></div>
   <div class="foot" id="foot"></div>
@@ -221,7 +221,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   }
   var PFK = 'vibes-count-prefs', PFD = { lim: 0, t: 40, to: 3, pm: 5, eq: 1, snd: 1, easy: 0, voice: 1 };
   function cfGet() { var o = {}, pf = null, st = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); if (!pf) { st = JSON.parse(localStorage.getItem('vibes-count-3c-v1') || 'null'); pf = st && st.cfg; } } catch (e) {} Object.keys(PFD).forEach(function (k) { o[k] = pf && typeof pf[k] === 'number' ? pf[k] : PFD[k]; }); return o; }
-  function shopGet() { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); return pf && typeof pf.shop === 'string' ? pf.shop : ''; } catch (e) { return ''; } }
+  function shopGet() { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); if (pf && typeof pf.shop === 'string' && pf.shop) return pf.shop; } catch (e) {} return window.LABO && typeof LABO.shop === 'string' ? LABO.shop : ''; }
   function shopDraw() { var n = shopGet(); $('soloShop').textContent = n; $('soloShop').hidden = !n; if (lv === 'top') { var cr = $('crumb'); cr.textContent = ''; if (n) { var sp = document.createElement('span'); sp.className = 'shop'; sp.textContent = n; cr.appendChild(sp); } } }
   function cfSchema() { var c = cfGet(), yn = [[1, 'あり'], [0, 'なし']]; return [
 
@@ -244,6 +244,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!a.length) { var e = document.createElement('p'); e.textContent = 'まだ誰も登録されていません。'; e.style.fontSize = '2vh'; B.appendChild(e); } }
   function roPanel() { $('roL').hidden = false; roList(); var on = !!(rm && rm.on); $('roQW').hidden = !on; if (on) { try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + rm.code + '&j=1'); q.make(); $('roQ').innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { $('roQW').hidden = true; } } $('roN').focus(); }
   $('roF').addEventListener('submit', function (e) { e.preventDefault(); if (!$('roN').value.trim()) return; roHandle({ op: 'save', p: { n: $('roN').value, y: $('roY').value, g: $('roG').value } }); $('roN').value = ''; $('roY').value = ''; $('roN').focus(); });
+  if (window.LABO) { $('bAcc').hidden = false; $('bAcc').onclick = function () { location.href = '/account'; }; }
   $('bCamP').onclick = function () { if (!rm || !/^\d{6}$/.test(rm.code || '')) rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true }; rm.on = true; saveRm(); connect(); draw();
     try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-cam/?r=' + rm.code); q.make(); $('cmQ').innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) {} $('cmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('cmL').hidden = false; };
   $('cmX').onclick = function () { $('cmL').hidden = true; };

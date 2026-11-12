@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>アカウント｜VIBES BILLIARDS DIGITAL LABO</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/img/favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap">
+<style>
+:root{--night:#171A22;--night2:#20242E;--line:#3A3F4C;--lime:#C0FC09;--chalk:#F3F4EF;--sub:#A9AFBD}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--night);color:var(--chalk);font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;font-weight:500;padding:24px max(18px,env(safe-area-inset-left))}
+.box{width:min(100%,520px);margin:0 auto;display:grid;gap:16px}
+.box>a img{height:90px;width:auto;display:block}
+.card{background:var(--night2);border-radius:18px;padding:22px;display:grid;gap:12px}
+h1{font-size:24px;margin:0;font-weight:900}h2{font-size:18px;margin:0;font-weight:900}
+p{margin:0;color:var(--sub);font-size:15px;line-height:1.7;font-weight:700}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-weight:700}dt{color:var(--sub)}dd{margin:0}
+label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+input{width:100%;font:inherit;font-size:18px;font-weight:700;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:12px;padding:11px}
+input:focus{outline:none;border-color:var(--lime)}
+button,.btn{font:inherit;font-weight:900;font-size:17px;color:var(--night);background:var(--lime);border:0;border-radius:14px;padding:13px;cursor:pointer;width:100%;text-align:center;text-decoration:none;display:block}
+button.ghost{background:transparent;color:var(--chalk);border:2px solid var(--line)}
+.msg{min-height:22px;color:#FF8A8F}.msg.ok{color:var(--chalk)}
+</style>
+</head>
+<body>
+<div class="box">
+  <a href="/" id="home"><img src="/img/vibes-digilabo-t.png" alt="VIBES DIGILABO" width="717" height="406"></a>
+  <div class="card"><h1>アカウント</h1><dl><dt>店名</dt><dd id="shop">—</dd><dt>ID</dt><dd id="uid">—</dd><dt>利用期限</dt><dd id="exp">—</dd></dl>
+    <a class="btn" href="/pages/count/">スコアボードを開く</a></div>
+  <form class="card" id="f"><h2>パスワードを変える</h2>
+    <div><label for="o">今のパスワード</label><input id="o" type="password" autocomplete="current-password" required></div>
+    <div><label for="n">新しいパスワード（8文字以上）</label><input id="n" type="password" autocomplete="new-password" minlength="8" required></div>
+    <p class="msg" id="m" role="status"></p><button type="submit">変更する</button></form>
+  <button type="button" class="ghost" id="out">ログアウト</button>
+</div>
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); }, labo = /vibesdigilabo\.com$|^labo\.localhost$/.test(location.hostname), login = labo ? '/login' : '/labo/login';
+  if (!labo) $('home').href = '/labo/';
+  fetch('/api/labo/me', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (j) { if (!j || !j.ok) return location.replace(login); $('shop').textContent = j.shop; $('uid').textContent = j.id; if (j.expires) { var d = new Date(j.expires); $('exp').textContent = d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日まで'; } else $('exp').textContent = '期限なし'; }).catch(function () { location.replace(login); });
+  $('f').addEventListener('submit', function (e) { e.preventDefault(); $('m').className = 'msg'; $('m').textContent = '';
+    fetch('/api/labo/password', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ old: $('o').value, new: $('n').value }) }).then(function (r) { return r.json(); })
+      .then(function (j) { if (j.ok) { $('m').className = 'msg ok'; $('m').textContent = 'パスワードを変更しました。'; $('o').value = ''; $('n').value = ''; } else $('m').textContent = j.error || '変更できませんでした。'; }).catch(function () { $('m').textContent = '通信できませんでした。'; }); });
+  $('out').onclick = function () { fetch('/api/labo/logout', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: '{}' }).then(function () { location.replace(login); }).catch(function () { location.replace(login); }); };
+})();
+</script>
+</body>
+</html>

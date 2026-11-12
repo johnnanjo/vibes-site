@@ -6,8 +6,9 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "drop-trailing-slash"
+    "html_handling": "drop-trailing-slash",
+    "run_worker_first": true
   },
-  "durable_objects": { "bindings": [{ "name": "COUNT_ROOM", "class_name": "CountRoom" }] },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CountRoom"] }]
+  "durable_objects": { "bindings": [{ "name": "COUNT_ROOM", "class_name": "CountRoom" }, { "name": "LABO", "class_name": "LaboAccounts" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CountRoom"] }, { "tag": "v2", "new_sqlite_classes": ["LaboAccounts"] }]
 }

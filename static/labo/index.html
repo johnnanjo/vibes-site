@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VIBES BILLIARDS DIGITAL LABO｜ビリヤード場のデジタルスコアボード</title>
+<meta name="description" content="モニターに映して、タブレットで押すだけ。スリークッション・ポケットに対応した、ビリヤード場のためのデジタルスコアボード。音声コール、選手名簿、撮影・中継まで。">
+<link rel="canonical" href="https://vibesdigilabo.com/">
+<link rel="icon" href="/img/favicon-64.png">
+<meta property="og:title" content="VIBES BILLIARDS DIGITAL LABO">
+<meta property="og:description" content="モニターに映して、タブレットで押すだけ。ビリヤード場のデジタルスコアボード。">
+<meta property="og:image" content="https://vibesdigilabo.com/img/labo-monitor.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap">
+<style>
+/* layout: the scoreboard itself is the hero; everything else is a quiet single column on night */
+:root{--night:#171A22;--night2:#20242E;--line:#343A48;--lime:#C0FC09;--chalk:#F3F4EF;--sub:#A9AFBD;--felt:#1E5AA8}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--night);color:var(--chalk);font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;font-weight:500;font-size:17px;line-height:1.85}
+a{color:inherit}
+.in{max-width:1080px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+header.top{position:sticky;top:0;z-index:5;background:rgba(23,26,34,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:10px;padding-bottom:10px}
+header.top img{height:46px;width:auto;display:block}
+nav{display:flex;align-items:center;gap:18px;font-weight:700;font-size:15px}nav a{text-decoration:none}nav a:hover{text-decoration:underline}
+.btn{display:inline-block;background:var(--lime);color:var(--night);font-weight:900;text-decoration:none;border-radius:999px;padding:10px 22px;line-height:1.4}
+.btn.ghost{background:transparent;color:var(--chalk);border:2px solid var(--chalk)}
+.btn:focus-visible,nav a:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+.hero{padding:56px 0 30px}
+.hero h1{font-size:clamp(34px,6.4vw,68px);font-weight:900;line-height:1.2;margin:0 0 14px;text-wrap:balance}
+.hero p{font-size:clamp(17px,2.2vw,21px);color:var(--sub);font-weight:700;margin:0 0 24px;max-width:36em}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.shots{position:relative;margin:40px 0 0}
+.shots .mon{display:block;width:100%;height:auto;border-radius:14px;border:6px solid #0C0E13;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.shots .tab{position:absolute;right:-6px;bottom:-34px;width:38%;height:auto;border-radius:16px;border:7px solid #0C0E13;box-shadow:0 20px 50px rgba(0,0,0,.6)}
+section{padding:64px 0}
+section h2{font-size:clamp(26px,4vw,38px);font-weight:900;line-height:1.3;margin:0 0 8px}
+section>.in>p.lead{color:var(--sub);font-weight:700;margin:0 0 28px;max-width:40em}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.feat div{background:var(--night);padding:22px 22px 24px}
+.feat b{display:block;font-size:20px;font-weight:900;margin-bottom:4px}.feat span{color:var(--sub);font-weight:700;font-size:15.5px;line-height:1.75;display:block}
+.band{background:var(--night2)}
+.need{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;list-style:none;padding:0;margin:0}
+.need li{border:2px solid var(--line);border-radius:14px;padding:16px 18px}.need b{display:block;font-size:19px}.need span{color:var(--sub);font-weight:700;font-size:15px}
+.price{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.price div{background:var(--night);border-radius:16px;padding:22px}.price small{display:block;color:var(--sub);font-weight:700;font-size:14px}
+.price b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:54px;line-height:1.15;letter-spacing:.01em}.price b i{font-style:normal;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:20px;margin-left:4px}
+.price p{margin:6px 0 0;color:var(--sub);font-weight:700;font-size:15px;line-height:1.7}
+.note{color:var(--sub);font-size:14px;font-weight:700;margin-top:16px}
+.flow{counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;list-style:none;padding:0;margin:0}
+.flow li{counter-increment:s;border-top:4px solid var(--lime);padding-top:14px}.flow li::before{content:counter(s);font-family:Anton,Impact,sans-serif;font-size:34px;line-height:1;display:block;margin-bottom:6px}
+.flow b{display:block;font-size:19px}.flow span{color:var(--sub);font-weight:700;font-size:15px}
+.end{text-align:center}.end h2{margin-bottom:18px}.end .cta{justify-content:center}
+footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--sub);font-size:14px;font-weight:700}
+footer .in{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between}
+@media (max-width:640px){nav a.hide{display:none}.shots .tab{position:static;width:78%;margin:14px auto 0;display:block}.hero{padding-top:36px}section{padding:48px 0}}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <a href="/" aria-label="VIBES BILLIARDS DIGITAL LABO"><img src="/img/vibes-digilabo-t.png" alt="VIBES DIGILABO" width="717" height="406"></a>
+  <nav><a class="hide" href="#feature">できること</a><a class="hide" href="#price">料金</a><a class="hide" href="#flow">導入の流れ</a><a class="btn" href="/login">ログイン</a></nav>
+</div></header>
+
+<main>
+<div class="hero"><div class="in">
+  <h1>モニターに映して、<br>タブレットで押すだけ。</h1>
+  <p>VIBES BILLIARDS DIGITAL LABO は、ビリヤード場のためのデジタルスコアボードです。得点、イニング、ハイラン、アベレージ、残り秒数まで、ひとつの画面で。</p>
+  <div class="cta"><a class="btn" href="https://vibesbilliards.com/pages/contact">導入のお問い合わせ</a><a class="btn ghost" href="/login">導入店舗の方はログイン</a></div>
+  <div class="shots">
+    <img class="mon" src="/img/labo-monitor.jpg" alt="モニターに映るスコア画面。2人の得点、試合時間、イニング、点数表、残り秒数が並ぶ" width="1280" height="720">
+    <img class="tab" src="/img/labo-tablet.jpg" alt="タブレットの操作画面。スコアを押すと1点、交代ボタンで交代" width="1180" height="820">
+  </div>
+</div></div>
+
+<section id="feature"><div class="in">
+  <h2>できること</h2>
+  <p class="lead">お店にあるPCとモニター、タブレットで始められます。専用の機械はいりません。</p>
+  <div class="feat">
+    <div><b>大きく見やすいスコア</b><span>得点、イニング、ハイラン、アベレージ、タイムアウト、イニングごとの点数表を1画面に。数字だけを大きく出すイージーモードもあります。</span></div>
+    <div><b>タブレットで操作</b><span>QRコードを読むだけでつながります。スコアを押すと1点、外したら「交代」。iPadでもAndroidでも使えます。</span></div>
+    <div><b>英語の音声コール</b><span>「ワン ポイント」「スリー モア」と、試合と同じように点数を読み上げます。</span></div>
+    <div><b>選手名簿と持ち点</b><span>一度登録すれば、次からは持ち点か苗字でさがして選ぶだけ。お客様が自分のスマホから登録することもできます。</span></div>
+    <div><b>撮影・中継</b><span>スマホで撮るだけで、スコア入りの動画と点数表を保存。別のモニターにライブ映像を映すこともできます。</span></div>
+    <div><b>キャロムもポケットも</b><span>スリークッション、バンド、ボーラード、9ボール、10ボール、5-9、5-10 に対応。2〜4人で使えます。</span></div>
+  </div>
+</div></section>
+
+<section class="band"><div class="in">
+  <h2>用意するもの</h2>
+  <p class="lead">ネットにつながるお店なら、今ある機器でそのまま使えます。</p>
+  <ul class="need">
+    <li><b>PCとモニター</b><span>スコアを映します。Chrome か Edge が動けば大丈夫です。</span></li>
+    <li><b>タブレット</b><span>手元の操作盤です。スマホでも使えます。</span></li>
+    <li><b>ネット（Wi-Fi）</b><span>PCとタブレットをつなぎます。</span></li>
+    <li><b>スピーカー</b><span>音声コールを出す時に使います。</span></li>
+  </ul>
+</div></section>
+
+<section id="price"><div class="in">
+  <h2>料金</h2>
+  <p class="lead">まず30日間、無料でお試しいただけます。</p>
+  <div class="price band" style="background:none">
+    <div class="band"><small>初期費用</small><b>0<i>円</i></b><p>機器の購入や工事はいりません。</p></div>
+    <div class="band"><small>最初の30日間</small><b>0<i>円</i></b><p>すべての基本機能を、お店で試せます。</p></div>
+    <div class="band"><small>31日目から（月額・税別）</small><b>5,000<i>円〜</i></b><p>買い取りをご希望の場合は、別途ご相談ください。</p></div>
+  </div>
+  <p class="note">撮影・中継の機能は、別料金です。料金の詳細は、お問い合わせの際にご案内します。</p>
+</div></section>
+
+<section id="flow" class="band"><div class="in">
+  <h2>導入の流れ</h2>
+  <p class="lead">お問い合わせから、早ければ当日に使い始められます。</p>
+  <ol class="flow">
+    <li><b>お問い合わせ</b><span>お店の名前と、台数をお知らせください。</span></li>
+    <li><b>アカウントの発行</b><span>お店専用のIDとパスワードをお渡しします。</span></li>
+    <li><b>ログイン</b><span>お店のPCでこのサイトを開き、ログインします。</span></li>
+    <li><b>利用開始</b><span>タブレットでQRコードを読めば、準備完了です。</span></li>
+  </ol>
+</div></section>
+
+<section class="end"><div class="in">
+  <h2>お店のテーブルで、試してみませんか。</h2>
+  <div class="cta"><a class="btn" href="https://vibesbilliards.com/pages/contact">導入のお問い合わせ</a><a class="btn ghost" href="/login">ログイン</a></div>
+</div></section>
+</main>
+
+<footer><div class="in"><span>VIBES BILLIARDS DIGITAL LABO</span><span><a href="https://vibesbilliards.com/">vibesbilliards.com</a></span></div></footer>
+<script>
+/* on the preview host the pretty paths live under /labo */
+(function () { if (/vibesdigilabo\.com$|^labo\.localhost$/.test(location.hostname)) return; Array.prototype.forEach.call(document.querySelectorAll('a[href="/login"]'), function (a) { a.href = '/labo/login'; }); Array.prototype.forEach.call(document.querySelectorAll('a[href="/"]'), function (a) { a.href = '/labo/'; }); })();
+</script>
+</body>
+</html>
