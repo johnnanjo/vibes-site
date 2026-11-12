@@ -206,6 +206,12 @@ body.touch .side,body.touch #tbox{cursor:pointer;touch-action:manipulation}
 body.mir .top>span:last-child,body.mir .rdp .keys,body.mir #rdWarm{display:none!important}body.mir #aHome{pointer-events:none}
 body.mirwait .board{visibility:hidden}
 body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .keys span{font-size:3vh;padding:1.6vh 2vw}
+/* 2026-11-12: thicker frame for the player at the table, larger high run / average, inning box stands apart from the clock, 25-inning sheet */
+.side{border-width:1.1vh}.side.on{box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 0 -8vh 12vh rgba(6,18,44,.3),0 0 0 .5vh rgba(192,252,9,.4),0 0 7vh rgba(192,252,9,.32),0 1.2vh 3vh rgba(0,0,0,.42)}
+.n2 .stat b{font-size:5.2vh;line-height:1.2}.n2 .stat small{font-size:2vh}
+.box.inn{background:var(--lime)}.box.inn small,.box.inn b{color:var(--night);text-shadow:none}
+.sheet .row span{width:2.55vw}
+.n2 .foot:has(.tos[hidden]){grid-template-columns:1fr}
 @media (prefers-reduced-motion:reduce){.side,.segs i{transition:none}}
 @media (max-width:760px){
   html,body{overflow:auto}.board{height:auto;min-height:100vh}
@@ -318,12 +324,14 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
 <script>
 (function () {
   var MIR = /[?&]mir=1/.test(location.search);
+  /* 2026-11: time-outs are off unless the shop turns them on in the settings (one-time change of the saved default) */
+  try { var pd = JSON.parse(localStorage.getItem('vibes-count-prefs') || 'null') || {}; if (!pd.d2) { pd.to = 0; pd.d2 = 1; localStorage.setItem('vibes-count-prefs', JSON.stringify(pd)); } } catch (e) {}
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
   var KEY = 'vibes-count-3c-v1' + (TB ? '-t' + TB : '');
   var $ = function (id) { return document.getElementById(id); };
   var PCOL = ['#FFFFFF', '#F2C200', '#E5484D', '#35C486'], PCN = ['白', '黄', '赤', '緑'];
   var isDefName = function (v) { return /^PLAYER [1-4]$/.test(v || ''); };
-  var def = function (c) { c = c || { n: ['PLAYER 1', 'PLAYER 2'], g: [25, 25], lim: 0, t: 40, eq: 1, snd: 1, pm: 5, to: 3 }; var N = c.n.length, z = function (f) { var a = []; for (var i = 0; i < N; i++) a.push(f()); return a; };
+  var def = function (c) { c = c || { n: ['PLAYER 1', 'PLAYER 2'], g: [25, 25], lim: 0, t: 40, eq: 1, snd: 1, pm: 5, to: 0 }; var N = c.n.length, z = function (f) { var a = []; for (var i = 0; i < N; i++) a.push(f()); return a; };
     return { cfg: c, sc: z(function () { return 0; }), inn: z(function () { return []; }), to: z(function () { return c.to; }), run: 0, typed: false, turn: 0, over: false, t0: 0, t1: 0, ready: false }; };
   var NP = function () { return S.cfg.n.length; };
   var fresh = function () { return !S.run && !S.over && S.inn.every(function (a) { return !a.length; }); };
@@ -391,7 +399,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       $('s' + p).classList.toggle('on', p === S.turn && !S.over);
       var tw = $('to' + p); tw.textContent = ''; tw.parentNode.hidden = !S.cfg.to;
       for (var k = 0; k < (S.cfg.to || 0); k++) { var c = el('i'); if (k >= S.to[p]) c.className = 'used'; tw.appendChild(c); }
-      var r = $('r' + p), NC = 18, mx = Math.max.apply(null, S.inn.map(function (x) { return x.length; })) + (S.over ? 0 : 1), i0 = Math.max(0, mx - NC); r.textContent = '';
+      var r = $('r' + p), NC = 25, mx = Math.max.apply(null, S.inn.map(function (x) { return x.length; })) + (S.over ? 0 : 1), i0 = Math.max(0, mx - NC); r.textContent = '';
       for (var ci = 0; ci < NC; ci++) { var cv = S.inn[p][i0 + ci], cs = document.createElement('span'); if (cv == null) cs.className = 'e'; else { cs.textContent = cv; if (!cv) cs.className = 'z'; } r.appendChild(cs); }
       if (!p) { var hh = $('rh'); hh.textContent = ''; for (var hi2 = 0; hi2 < NC; hi2++) { var hs = document.createElement('span'); hs.textContent = i0 + hi2 + 1; if (i0 + hi2 + 1 === S.inn[S.turn].length + 1 && !S.over) hs.className = 'now'; hh.appendChild(hs); } }
     }
@@ -412,24 +420,11 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
   function tStop() { tOn = false; clearInterval(tId); tId = null; drawTimer(); }
   function tStart() {
     if (!S.cfg.t || S.over) return; begin(); tStop(); tOn = true; tLeft = tRem || S.cfg.t; tRem = 0; var last = Date.now(), warned = false, done = false;
-    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('タイムアウトを使いました：' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
+    tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); if (S.cfg.voice !== 0 && S.cfg.vdev !== 'tab' && S.cfg.t > 10) speak('ten seconds'); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('タイムアウトを使いました：' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
     drawTimer();
   }
   var tKick = function () { if (tOn) tStart(); };
-  function add(n) { if (S.over) return; begin(); var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('持ち点に届きました。Enter で確定します'); return; } S.run = v; S.typed = false; if (n > 0 && S.cfg.t && !S.cfg.easy) tStart(); else tKick(); render(); if (n > 0) { callOut(); if (S.run % 5 === 0 && S.cfg.vdev !== 'tab') setTimeout(fanfare, 900, S.run); } }
-  /* a short brass-like fanfare for runs of 5, 10, 15, 20…: each step is a different phrase; past 20 the last one rises a tone each time */
-  function fanfare(run) {
-    var lv = Math.floor(run / 5); if (!S.cfg.snd || lv < 1 || run % 5) return;
-    try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume();
-      var tr = lv > 4 ? (lv - 4) * 2 : 0, t0 = actx.currentTime + .05, SEQ = {
-        1: [[72, 0, .14], [76, .14, .14], [79, .28, .45]],
-        2: [[72, 0, .12], [76, .12, .12], [79, .24, .12], [84, .36, .65], [76, .36, .65]],
-        3: [[67, 0, .12], [67, .14, .12], [67, .28, .12], [72, .42, .3], [76, .72, .14], [79, .86, .85], [72, .86, .85], [76, .86, .85]],
-        4: [[72, 0, .16], [72, .18, .08], [72, .27, .08], [76, .36, .3], [79, .66, .3], [84, .96, .2], [79, 1.16, .14], [84, 1.3, 1.2], [76, 1.3, 1.2], [79, 1.3, 1.2], [60, 1.3, 1.2]] };
-      SEQ[Math.min(lv, 4)].forEach(function (x) { var o = actx.createOscillator(), g = actx.createGain(), f = actx.createBiquadFilter(), a = t0 + x[1], e = a + x[2]; o.type = 'sawtooth'; o.frequency.value = 440 * Math.pow(2, (x[0] + tr - 69) / 12); f.type = 'lowpass'; f.frequency.value = 2400; o.connect(f); f.connect(g); g.connect(actx.destination);
-        g.gain.setValueAtTime(0, a); g.gain.linearRampToValueAtTime(.15, a + .02); g.gain.setValueAtTime(.15, Math.max(a + .03, e - .06)); g.gain.linearRampToValueAtTime(0, e); o.start(a); o.stop(e + .02); });
-    } catch (e) {}
-  }
+  function add(n) { if (S.over) return; begin(); var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('持ち点に届きました。Enter で確定します'); return; } S.run = v; S.typed = false; if (n > 0 && S.cfg.t && !S.cfg.easy) tStart(); else tKick(); render(); if (n > 0) callOut(); }
   /* referee-style call in English: "two points", then "three more" / "two more" / "one more" near the target */
   function callText(run, left) { var more = { 3: 'three more', 2: 'two more', 1: 'one more' }[left]; return NW(run) + (run === 1 ? ' point' : ' points') + (more ? ', ' + more : ''); }
   var NW = function (n) { var a = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'], t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']; return n < 20 ? a[n] : n < 100 ? t[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '') : String(n); };
@@ -727,7 +722,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
   var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), U_HOME = '/pages/count/', rm = null, rws = null, rTry = 0, rPing = null;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
   function rmState() { var N3 = NP(); return JSON.stringify({ type: 'state', vdev: S.cfg.vdev || 'both', il: S.inn, shop: (function () { try { return (JSON.parse(localStorage.getItem('vibes-count-prefs') || '{}') || {}).shop || ''; } catch (e) { return ''; } })(), voice: S.cfg.voice === 0 ? 0 : 1, va: navigator.userActivation ? (navigator.userActivation.hasBeenActive ? 1 : 0) : 1, pz: !!S.pz, tl: tOn ? Math.max(0, tLeft) : -1, gt: gtText(), resH: ['得点', 'イニング', 'ハイラン', 'アベレージ'], res: S.cfg.n.map(function (x, i) { return [x + ' (' + S.cfg.g[i] + ')', S.sc[i] + ' / ' + S.cfg.g[i], S.inn[i].length, hi(i), avg(i)]; }), kind: N3 > 2 ? 'pocket' : '3c', su: { min: 2, max: 4, t: '持ち点', d: 25 }, title: S.cfg.game === 'band' ? 'バンド' : 'スリークッション', lab: S.cfg.n.map(function (x, i) { return x + ' (' + S.cfg.g[i] + ')'; }), score: S.cfg.n.map(function (x, i) { return String(S.sc[i] + (i === S.turn && !S.over ? S.run : 0)); }), midL: 'INNING', mid: $('inn').textContent, info: S.run && !S.over ? 'この回 ' + S.run + '点' : '', keys: [['+', '1点'], ['-', '1点へらす'], ['Enter', '交代'], ['BackSpace', '戻る']], win: S.over ? $('wName').textContent : '', cf: cfSchema(), table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
-  function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); var fs = JSON.stringify({ type: 'full', now: Date.now(), tl: tOn ? Math.max(0, tLeft) : -1, s: S }); if (fs.length < 15500) rws.send(fs); } catch (e) {} } }
+  function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); var fs = JSON.stringify({ type: 'full', va: navigator.userActivation ? (navigator.userActivation.hasBeenActive ? 1 : 0) : 1, now: Date.now(), tl: tOn ? Math.max(0, tLeft) : -1, s: S }); if (fs.length < 15500) rws.send(fs); } catch (e) {} } }
   function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'つながっています' : '接続しています…') : '切'; $('bRm').textContent = rm && rm.on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'リモコン'; }
   function rmConnect() {
     if (!rm || !rm.on) return; if (rws && rws.readyState <= 1) return;
@@ -908,21 +903,19 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     if (t.closest('#tkPz')) return act({ type: 'cmd', c: 'pause' });
     if (t.closest('#tkEnd')) { var n = Date.now(); if (n - endAt < 3000) { endAt = 0; act({ type: 'cmd', c: 'end' }); } else { endAt = n; toast('もう一度押すと試合終了です'); } return; }
     if (t.closest('#tbox')) return act({ type: 'key', k: '*' });
-    var sd = t.closest('.side'); if (sd && !S.cfg.mode && !S.over) { var pi = +sd.id.slice(1); if (pi === S.turn) act({ type: 'key', k: '+' }); else if (pi === (S.turn + 1) % NP()) act({ type: 'key', k: 'Enter' }); }
+    var sd = t.closest('.side'); if (sd && !S.cfg.mode && !S.over) { var pi = +sd.id.slice(1); act({ type: 'key', k: pi === S.turn ? 'Enter' : '+' }); } /* the waiting player keeps score: tap your own panel to give the shooter a point; the shooter taps theirs to hand over */
   });
   function mirInit() {
-    var mt = null, pRun = -1, pTurn = -1; document.body.classList.add('mir', 'mirwait'); save = function () {};
+    var mt = null, mw = true, mva = 1; document.body.classList.add('mir', 'mirwait'); save = function () {};
     var tidy = function () { Array.prototype.forEach.call(document.querySelectorAll('.board .keys span'), function (sp) { var kb = sp.querySelector('kbd'); if (!kb) return; var k = kb.textContent === 'BackSpace' ? 'Backspace' : kb.textContent; sp.hidden = !KOK.test(k) || /練習/.test(sp.textContent) || (k === '*' && !!S.cfg.easy && !S.cfg.mode); }); };
     document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button,a'); if (!b) return; e.preventDefault(); e.stopPropagation(); var c = { rdGo: 'start', rdSwap: 'swap', pzB: 'pause' }[b.id]; if (c) act({ type: 'cmd', c: c }); else if (b.id === 'mirPl' || b.id === 'mirHome') { try { parent.postMessage({ type: 'mir', nav: b.id === 'mirPl' ? 'players' : 'home' }, location.origin); } catch (x) {} } }, true);
     window.addEventListener('keydown', function (e) { e.stopImmediatePropagation(); }, true);
     window.addEventListener('message', function (ev) { if (ev.origin !== location.origin) return; var m = ev.data; if (!m) return;
-      if (m.type === 't') { if (typeof m.l === 'number' && m.l >= 0) { tOn = true; tLeft = m.l; } else tOn = false; drawTimer(); return; }
+      if (m.type === 't') { if (typeof m.l === 'number' && m.l >= 0) { tOn = true; tLeft = m.l; if (tLeft > 10.5) mw = false; } else tOn = false; drawTimer(); return; }
       if (m.type !== 'full' || !m.s || !m.s.cfg || !m.s.sc) return;
       var sk = Date.now() - (m.now || Date.now()); S = m.s; ['t0', 't1', 'pz'].forEach(function (k) { if (S[k]) S[k] += sk; });
-      clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0;
-      if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; drawTimer(); }, 200); }
-      if (typeof fanfare === 'function' && !S.cfg.mode && pRun >= 0 && pTurn === S.turn && S.run > pRun && S.run % 5 === 0 && !S.over && S.cfg.vdev !== 'pc') setTimeout(fanfare, 900, S.run);
-      pRun = S.run; pTurn = S.turn;
+      clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0; mva = m.va === 0 ? 0 : 1; if (!tOn || tLeft > 10.5) mw = !tOn;
+      if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!mw && tLeft <= 10 && tLeft > 7) { mw = true; if (typeof speak === 'function' && !S.cfg.mode && S.cfg.voice !== 0 && S.cfg.t > 10 && !(S.cfg.vdev === 'pc' && mva)) speak('ten seconds'); } drawTimer(); }, 200); }
       render(); pzDraw(); $('winL').hidden = true; tidy(); document.body.classList.remove('mirwait');
     });
     [['mirPl', '選手を変える', 'players'], ['mirHome', 'メニュー', 'home']].forEach(function (x) { var bt = el('button', 'btn', x[1]); bt.type = 'button'; bt.id = x[0]; $('rdGo').parentNode.insertBefore(bt, $('rdSwap')); });
