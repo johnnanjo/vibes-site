@@ -196,6 +196,14 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
 .qrw{display:flex;align-items:center;gap:2vw;margin-bottom:1.6vh}.qrw p{margin:0;text-align:left;font-size:2.4vh;color:var(--chalk)}
 .qr{flex:none;background:#fff;border-radius:1.6vh;padding:1vh;width:24vh;height:24vh}.qr svg{width:100%;height:100%;display:block}
 #rmL .inp span.num{font-size:11vh!important}
+.krow{display:flex;flex-wrap:wrap;justify-content:center;gap:.3vh 1.2vw;margin-top:.8vh}.krow>.keys{display:contents}.tk span{display:none}
+.keys span[hidden]{display:none!important}.board .keys span:has(kbd){cursor:pointer}
+body.touch .krow{gap:1vh .9vw;margin-top:1.2vh}
+body.touch .board .keys span{font-size:2.4vh;color:var(--chalk);border:.25vh solid rgba(255,255,255,.28);background:rgba(255,255,255,.07);border-radius:1.2vh;padding:1.1vh 1.3vw;cursor:pointer;user-select:none;-webkit-user-select:none;display:inline-flex;align-items:center;touch-action:manipulation}
+body.touch .board .keys span:active{background:rgba(255,255,255,.22)}
+body.touch .side.on,body.touch #tbox{cursor:pointer;touch-action:manipulation}
+body.mir .top>span:last-child,body.mir .rdp .keys,body.mir #rdWarm{display:none!important}body.mir #aHome{pointer-events:none}
+body.mirwait .board{visibility:hidden}
 /* ---- pocket: cloth colour, bowling sheet, signed scores ---- */
 .side,.rdc{background:radial-gradient(120% 90% at 28% 0%,rgba(255,255,255,.16),transparent 56%),repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 4px),linear-gradient(180deg,#6E7683 0%,#5A616C 46%,#434953 100%)}
 .rdc{background:linear-gradient(180deg,#6E7683 0%,#5A616C 46%,#434953 100%)}
@@ -323,6 +331,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
 <script src="/js/names.js"></script>
 <script>
 (function () {
+  var MIR = /[?&]mir=1/.test(location.search);
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
   var KEY = 'vibes-count-pocket-v1' + (TB ? '-t' + TB : '');
   var $ = function (id) { return document.getElementById(id); };
@@ -842,7 +851,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
   function rmState() { var ks = []; Array.prototype.forEach.call($('mainK').children, function (sp) { var kb = sp.querySelector('kbd'); ks.push([kb.textContent, sp.textContent.slice(kb.textContent.length)]); });
     return JSON.stringify({ type: 'state', kind: 'pocket', pz: !!S.pz, tl: tOn ? Math.max(0, tLeft) : -1, gt: gtText(), resH: ['得点'], res: S.cfg.n.map(function (x, i) { return [label(i), scoreText(i)]; }), cf: cfSchema(), su: { min: M().min, max: M().max, t: M().target ? 'セット数' : '', d: 5 }, table: TB, mode: S.cfg.mode, title: M().jp, n: S.cfg.n, g: S.cfg.g, lab: S.cfg.n.map(function (x, i) { return label(i); }), score: S.cfg.n.map(function (x, i) { return scoreText(i); }), turn: S.turn, over: S.over, midL: M().mid, mid: $('inn').textContent, info: $('runS').textContent, keys: ks, t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over, win: S.over ? $('wName').textContent : '' }); }
-  function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); } catch (e) {} } }
+  function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); var fs = JSON.stringify({ type: 'full', now: Date.now(), tl: tOn ? Math.max(0, tLeft) : -1, s: S }); if (fs.length < 15500) rws.send(fs); } catch (e) {} } }
   function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'つながっています' : '接続しています…') : '切'; $('bRm').textContent = rm && rm.on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'リモコン'; }
   function rmConnect() {
     if (!rm || !rm.on) return; if (rws && rws.readyState <= 1) return;
@@ -867,7 +876,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   var tRem = 0, pzClock = 0;
   function pzOn() { if (S.over || S.ready || S.pz || !S.t0) return; S.pz = Date.now(); pzClock = tOn ? Math.max(1, tLeft) : 0; tStop(); render(); pzDraw(); }
   function pzOff() { if (!S.pz) return; if (S.t0) S.t0 += Date.now() - S.pz; S.pz = 0; var c = pzClock; pzClock = 0; if (c && !S.over) { tRem = c; tStart(); } render(); pzDraw(); }
-  function pzDraw() { var ez = !!S.cfg.easy && !S.cfg.mode; if (document.body.classList.contains('easy') !== ez) document.body.classList.toggle('easy', ez); if (ez && tOn) tStop(); var on = !!S.pz && !S.over; if ($('pzB').hidden === on) $('pzB').hidden = !on; $('bPz').textContent = on ? '再開' : '一時停止'; }
+  function pzDraw() { var ez = !!S.cfg.easy && !S.cfg.mode; if (document.body.classList.contains('easy') !== ez) document.body.classList.toggle('easy', ez); if (ez && tOn) tStop(); var on = !!S.pz && !S.over; if ($('pzB').hidden === on) $('pzB').hidden = !on; $('bPz').textContent = on ? '再開' : '一時停止'; if ($('tkPz')) $('tkPz').textContent = on ? '再開' : '一時停止'; }
   function endGame() { if (S.over || S.ready) return; if (S.pz) { if (S.t0) S.t0 += Date.now() - S.pz; S.pz = 0; pzClock = 0; } snap(); if (!S.cfg.mode && S.run > 0) { S.sc[S.turn] += S.run; S.inn[S.turn].push(S.run); S.run = 0; S.typed = false; } finish(); pzDraw(); }
   setInterval(pzDraw, 400);
   var tSent = -9; setInterval(function () { var v = tOn ? Math.max(0, Math.ceil(tLeft)) : -1; if (v === tSent || !(rws && rws.readyState === 1)) return; tSent = v; try { rws.send(JSON.stringify({ type: 't', v: v, l: tOn ? Math.max(0, tLeft) : -1 })); } catch (e) {} }, 100);
@@ -934,7 +943,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   $('bHome').onclick = goHome; $('aHome').onclick = function (e) { e.preventDefault(); goHome(); };
   $('bRm').onclick = rmOpen; $('rmOk').onclick = function () { $('rmL').hidden = true; };
   $('rmOff').onclick = function () { if (rm) { rm.on = false; try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} } if (rws) { try { rws.close(); } catch (e) {} } $('rmL').hidden = true; rmStatus(); };
-  rmStatus(); rmConnect();
+  rmStatus(); if (!MIR) rmConnect();
   /* ===== several tables on one PC: each keypad's key codes are learned per table and routed to that table's window ===== */
   var MK = 'vibes-count-pocket-keymap-v1', LOGI = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', 'Enter', 'Backspace', '*', '/', '.'], KM = null, chan = null;
   var NAMES = { '+': '+（1点）', '-': '-（1点へらす）', '*': '*（残り秒数）', '/': '/（設定）', '.': '.（新しい試合）', 'Backspace': 'BackSpace（戻る）', 'Enter': 'Enter（交代）' };
@@ -1006,6 +1015,40 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
     else hit = false;
     if (hit) e.preventDefault();
   }
+  /* ===== touch: the key hints double as buttons. With ?mir=1 this page is the tablet's copy of the monitor: it draws what the monitor sends and sends taps back ===== */
+  var KOK = /^([0-9+\-*]|Enter|Backspace)$/, endAt = 0;
+  (function () { var ks = document.querySelector('.board .keys'), row = el('div', 'krow'), tk = el('div', 'keys tk'); tk.id = 'tk'; ks.parentNode.insertBefore(row, ks); row.appendChild(ks); row.appendChild(tk); ks.style.marginTop = '';
+    var a = el('span', '', '一時停止'); a.id = 'tkPz'; a.setAttribute('role', 'button'); var b = el('span', '', '試合終了'); b.id = 'tkEnd'; b.setAttribute('role', 'button'); tk.appendChild(a); tk.appendChild(b); })();
+  if (MIR || (window.matchMedia && matchMedia('(pointer:coarse)').matches)) document.body.classList.add('touch');
+  function act(a) {
+    if (MIR) { try { parent.postMessage({ type: 'mir', send: a }, location.origin); } catch (e) {} return; }
+    if (a.type === 'key') onKey(a.k, noop); else if (a.c === 'pause') { if (S.pz) pzOff(); else pzOn(); } else if (a.c === 'end') endGame();
+  }
+  $('board').addEventListener('click', function (e) {
+    var t = e.target; if (!t.closest) return; var sp = t.closest('.keys span');
+    if (sp && sp.querySelector('kbd')) { var k = sp.querySelector('kbd').textContent; if (k === 'BackSpace') k = 'Backspace'; if (KOK.test(k) || (!MIR && (k === '/' || k === '.'))) act({ type: 'key', k: k }); return; }
+    if (!document.body.classList.contains('touch')) return;
+    if (t.closest('#tkPz')) return act({ type: 'cmd', c: 'pause' });
+    if (t.closest('#tkEnd')) { var n = Date.now(); if (n - endAt < 3000) { endAt = 0; act({ type: 'cmd', c: 'end' }); } else { endAt = n; toast('もう一度押すと試合終了です'); } return; }
+    if (t.closest('#tbox')) return act({ type: 'key', k: '*' });
+    var sd = t.closest('.side'); if (sd && !S.cfg.mode && sd.classList.contains('on')) act({ type: 'key', k: '+' });
+  });
+  function mirInit() {
+    var mt = null; document.body.classList.add('mir', 'mirwait'); save = function () {};
+    var tidy = function () { Array.prototype.forEach.call(document.querySelectorAll('.board .keys span'), function (sp) { var kb = sp.querySelector('kbd'); if (!kb) return; var k = kb.textContent === 'BackSpace' ? 'Backspace' : kb.textContent; sp.hidden = !KOK.test(k) || /練習/.test(sp.textContent); }); };
+    document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button,a'); if (!b) return; e.preventDefault(); e.stopPropagation(); var c = { rdGo: 'start', rdSwap: 'swap', pzB: 'pause' }[b.id]; if (c) act({ type: 'cmd', c: c }); else if (b.id === 'mirPl' || b.id === 'mirHome') { try { parent.postMessage({ type: 'mir', nav: b.id === 'mirPl' ? 'players' : 'home' }, location.origin); } catch (x) {} } }, true);
+    window.addEventListener('keydown', function (e) { e.stopImmediatePropagation(); }, true);
+    window.addEventListener('message', function (ev) { if (ev.origin !== location.origin) return; var m = ev.data; if (!m) return;
+      if (m.type === 't') { if (typeof m.l === 'number' && m.l >= 0) { tOn = true; tLeft = m.l; } else tOn = false; drawTimer(); return; }
+      if (m.type !== 'full' || !m.s || !m.s.cfg || !m.s.sc) return;
+      var sk = Date.now() - (m.now || Date.now()); S = m.s; ['t0', 't1', 'pz'].forEach(function (k) { if (S[k]) S[k] += sk; });
+      clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0;
+      if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; drawTimer(); }, 200); }
+      render(); pzDraw(); $('winL').hidden = true; tidy(); document.body.classList.remove('mirwait');
+    });
+    [['mirPl', '選手を変える', 'players'], ['mirHome', 'メニュー', 'home']].forEach(function (x) { var bt = el('button', 'btn', x[1]); bt.type = 'button'; bt.id = x[0]; $('rdGo').parentNode.insertBefore(bt, $('rdSwap')); });
+    tidy(); try { parent.postMessage({ type: 'mir', ready: 1 }, location.origin); } catch (e) {}
+  }
   /* offline: cache this page and what it loaded; keep the screen awake */
   if ('serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.href)) {
     navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count' }).then(function () { return navigator.serviceWorker.ready; }).then(function (reg) {
@@ -1017,9 +1060,9 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   wake(); document.addEventListener('visibilitychange', wake); document.addEventListener('keydown', function once() { if (!wl) wake(); document.removeEventListener('keydown', once); });
   var qg = /[?&]g=(band|three)/.exec(location.search); if (qg && (S.cfg.game || 'three') !== qg[1]) { var cg = S.cfg; cg.game = qg[1]; S = def(cg); hist = []; S.ready = !cg.n.every(isDefName); }
   if (S.cfg.game === 'band') { $('ttl').textContent = (TB ? 'TABLE ' + TB + ' · ' : '') + 'BAND GAME'; document.title = 'バンド デジタルカウント｜VIBES BILLIARDS'; }
-  menuInit();
+  if (!MIR) menuInit();
   var qm = /[?&]m=([a-z0-9]+)/.exec(location.search), viaMenu = false; if (qm && MODES[qm[1]] && (S.cfg.mode !== qm[1] || S.over)) { setMode(qm[1]); hist = []; S.ready = !S.cfg.n.every(isDefName); } if (qm && MODES[qm[1]]) viaMenu = true;
-  render(); setInterval(drawTime, 500); if (S.over) showWin(); else if (S.cfg.n.every(isDefName) && fresh()) { wzOpen(0); if (viaMenu) { W.step = M().min === M().max ? 'mode' : 'count'; wzDraw(); } }
+  render(); setInterval(drawTime, 500); if (MIR) mirInit(); else if (S.over) showWin(); else if (S.cfg.n.every(isDefName) && fresh()) { wzOpen(0); if (viaMenu) { W.step = M().min === M().max ? 'mode' : 'count'; wzDraw(); } }
 })();
 </script>
 </body>

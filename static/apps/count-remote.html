@@ -124,6 +124,9 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
 .ph i{width:16px;height:16px;border-radius:50%}
 .ph button{margin-left:auto}
 .over{background:var(--chalk);color:var(--night);border-radius:14px;padding:12px;text-align:center;font-weight:900;font-size:18px}
+#mirW{position:fixed;inset:0;z-index:60;background:#171A22;display:flex;align-items:flex-start;justify-content:center}#mirW[hidden]{display:none}
+#mirF{border:0;width:100vw;height:min(100vh,75vw);height:min(100dvh,75vw);display:block}
+#mirS{position:fixed;left:50%;top:8px;transform:translateX(-50%);background:#F3F4EF;color:#171A22;font-weight:900;font-size:15px;border-radius:999px;padding:4px 16px}#mirS:empty{display:none}
 </style>
 </head>
 <body>
@@ -172,6 +175,7 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     </div>
   </section>
 
+  <div id="mirW" hidden><iframe id="mirF" title="スコア画面"></iframe><div id="mirS" role="status"></div></div>
   <section id="vMain" hidden style="display:flex;flex-direction:column;gap:12px">
     <div class="over" id="over" hidden></div>
     <div class="card rdy" id="rdy" hidden>
@@ -323,8 +327,20 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
   var SELF = /[?&]j=1/.test(location.search), sfWait = '', sfT = null;
   var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1, vShop: 1, vBulk: 1, vCamQ: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
-  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop', 'vBulk', 'vCamQ'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; };
+  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop', 'vBulk', 'vCamQ'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; if (typeof mirSync === 'function') mirSync(); };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
+  /* tablets show the monitor's own screen (the scoreboard page in mirror mode) instead of the phone controls */
+  var mirFull = null, mirSrc = '';
+  function mirPost(m) { try { var w = $('mirF').contentWindow; if (w && mirSrc) w.postMessage(m, location.origin); } catch (e) {} }
+  function mirSync() { var m = last, on = !SELF && (cur === 'vMain' || cur === 'vPk') && !!m && m.kind !== 'menu' && !m.mode && !m.over && Math.min(window.innerWidth, window.innerHeight) >= 600;
+    if (on && !mirSrc) { mirSrc = location.pathname.replace(/count-remote\/?$/, 'count-3c/') + '?mir=1'; $('mirF').src = mirSrc; }
+    if ($('mirW').hidden === on) $('mirW').hidden = !on; }
+  window.addEventListener('message', function (ev) { if (ev.origin !== location.origin || ev.source !== $('mirF').contentWindow) return; var d = ev.data; if (!d || d.type !== 'mir') return;
+    if (d.ready) { if (mirFull) mirPost(mirFull); return; }
+    if (d.nav === 'players') { var pb = document.querySelector('.prePl'); if (pb) pb.click(); return; } if (d.nav === 'home') { send({ type: 'cmd', c: 'home' }); return; }
+    var o = d.send; if (!o || (o.type !== 'key' && o.type !== 'cmd')) return; if (o.type === 'key' && o.k === '+') phoneSay(); send(o); if (navigator.vibrate) navigator.vibrate(15); });
+  window.addEventListener('resize', function () { mirSync(); });
+  setInterval(function () { $('mirS').textContent = ws && ws.readyState === 1 ? '' : 'つなぎ直しています…'; }, 1000);
   function tvOf(m) { return !m ? 'vJoin' : m.kind === 'menu' ? 'vMenu' : m.over ? 'vRes' : m.kind === 'pocket' ? 'vPk' : 'vMain'; }
   var tmV = -1, tmL = -1, tmAt = 0;
   function tmTick() { var v = tmL < 0 || (last && last.pz) ? -1 : Math.max(0, Math.ceil(tmL - (Date.now() - tmAt) / 1000)); if (v !== tmV) { tmV = v; tmDraw(); } }
@@ -340,9 +356,10 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'つながっていません'); return; }
     ws.onopen = function () { tries = 0; status(true, SELF ? 'お店につながりました' : '番号 ' + code.slice(0, 3) + ' ' + code.slice(3)); if (!SELF) { try { ws.send('{"type":"ctl"}'); } catch (e) {} } clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
     ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'roster') { if (!m.part) roTmp = []; roTmp = roTmp.concat(m.list || []); if ((m.part || 0) + 1 >= (m.of || 1)) { ro = { gk: m.gk || '', t: m.t || '', d: m.d || 0, list: roTmp }; roTmp = []; roDraw(); sfDraw(); } return; }
-      if (m.type === 't') { if (typeof m.l === 'number' && m.l >= 0) { tmL = m.l; tmAt = Date.now(); } else { tmL = -1; } tmTick(); return; }
+      if (m.type === 'full') { mirFull = m; mirPost(m); return; }
+      if (m.type === 't') { mirPost(m); if (typeof m.l === 'number' && m.l >= 0) { tmL = m.l; tmAt = Date.now(); } else { tmL = -1; } tmTick(); return; }
       if (m.type === 'state' && SELF) { last = m; gotState = true; clearTimeout(joinT); sfDraw(); return; }
-      if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = tvOf(m); if (!OV[cur] && cur !== tv) show(tv); if ((cur === 'vPl' || cur === 'vCf' || cur === 'vPick') && tv === 'vMenu') show(tv); draw(); if (!m.wz) wzShown = false; if (m.wz && !wzShown && !OV[cur] && tv !== 'vMenu') { wzShown = true; plOpen(true); } } };
+      if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; var tv = tvOf(m); if (!OV[cur] && cur !== tv) show(tv); mirSync(); if ((cur === 'vPl' || cur === 'vCf' || cur === 'vPick') && tv === 'vMenu') show(tv); draw(); if (!m.wz) wzShown = false; if (m.wz && !wzShown && !OV[cur] && tv !== 'vMenu') { wzShown = true; plOpen(true); } } };
     ws.onclose = function () { clearInterval(ping); status(false, 'つなぎ直しています…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }

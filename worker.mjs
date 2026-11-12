@@ -164,7 +164,7 @@ async function laboSite(req, env, url, pre = '') {
   if (!pre && LABO_PAGES[p]) return asset(env, req, url, LABO_PAGES[p]);
   const app = /^\/pages\/count(-3c|-pocket|-remote|-cam|-live)?$/.exec(p);
   if (app) {
-    const gated = !app[1] || app[1] === '-3c' || app[1] === '-pocket';
+    const gated = (!app[1] || app[1] === '-3c' || app[1] === '-pocket') && url.searchParams.get('mir') !== '1'; /* mir=1 = the tablet's mirror of a monitor; it only draws what a room sends */
     let s = null;
     if (gated) { s = await accounts(env).session(cookieOf(req)); if (!s.ok) return Response.redirect(url.origin + pre + '/login?next=' + encodeURIComponent(url.pathname + url.search) + (s.why ? '&why=' + s.why : ''), 302); }
     const boot = `<script>window.LABO=${JSON.stringify(s ? { id: s.id, shop: s.shop, expires: s.expires, pre } : { pre }).replace(/</g, '\\u003c')}</script>`;
