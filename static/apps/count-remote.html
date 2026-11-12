@@ -331,7 +331,12 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop', 'vBulk', 'vCamQ'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; if (typeof mirSync === 'function') mirSync(); };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
   /* tablets show the monitor's own screen (the scoreboard page in mirror mode) instead of the phone controls */
-  var mirFull = null, mirSrc = '';
+  var mirFull = null, mirSrc = '', mAc = null, mUnl = false;
+  /* all sound for the mirrored screen is played by this (top) page: iPad only lets a page make sound once it has been touched, and the frame calls these straight from its touch events */
+  window.mirUnlock = function () { try { mAc = mAc || new (window.AudioContext || window.webkitAudioContext)(); if (mAc.state === 'suspended') mAc.resume(); } catch (e) {} if (!mUnl) { mUnl = true; try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; u.lang = 'en-US'; window.speechSynthesis.speak(u); } catch (e) {} } };
+  window.mirSay = function (t) { try { var ss = window.speechSynthesis; if (!ss) return; var u = new SpeechSynthesisUtterance(String(t)), vs = ss.getVoices().filter(function (v) { return /^en[-_]/i.test(v.lang); }); u.lang = 'en-US'; if (vs.length) u.voice = vs.filter(function (v) { return /en[-_]US/i.test(v.lang); })[0] || vs[0]; if (ss.speaking || ss.pending) ss.cancel(); ss.speak(u); } catch (e) {} };
+  window.mirChime = function () { try { window.mirUnlock(); var t0 = mAc.currentTime + .02; [[660, 0, .11], [990, .12, .17]].forEach(function (x) { var o = mAc.createOscillator(), g = mAc.createGain(); o.frequency.value = x[0]; o.connect(g); g.connect(mAc.destination); g.gain.value = .2; o.start(t0 + x[1]); o.stop(t0 + x[1] + x[2]); }); } catch (e) {} };
+  ['pointerdown', 'touchend', 'click'].forEach(function (ev) { document.addEventListener(ev, window.mirUnlock, true); });
   function mirPost(m) { try { var w = $('mirF').contentWindow; if (w && mirSrc) w.postMessage(m, location.origin); } catch (e) {} }
   function mirSync() { var m = last, on = !SELF && (cur === 'vMain' || cur === 'vPk') && !!m && m.kind !== 'menu' && !m.mode && !m.over && Math.min(window.innerWidth, window.innerHeight) >= 600;
     if (on && !mirSrc) { mirSrc = location.pathname.replace(/count-remote\/?$/, 'count-3c/') + '?mir=1'; $('mirF').src = mirSrc; }
