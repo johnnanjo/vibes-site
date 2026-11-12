@@ -155,6 +155,7 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     <div class="mg" id="mgBot"></div>
     <p class="note" style="text-align:center">種目を押すと、モニターが切り替わります。</p>
     <button type="button" class="k" id="mCam" style="width:100%;margin-top:14px;min-height:64px;font-size:18px">撮影・中継<small>スマホで試合を撮影する</small></button>
+    <button type="button" class="k" id="mYt" style="width:100%;margin-top:10px;min-height:64px;font-size:18px">YouTube<small>モニターで動画を流す</small></button>
     <button type="button" class="sm" id="mReload" style="display:block;margin:18px auto 0">モニターを読み込み直す</button>
   </section>
 
@@ -222,6 +223,25 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     <button type="button" class="go" id="buRead">読み取る</button>
     <div id="buPrev" hidden><p class="note" id="buCnt" style="text-align:left;margin:12px 0 8px"></p><div class="rl" id="buList"></div><button type="button" class="go" id="buGo" style="margin-top:12px">この内容で登録する</button></div>
     <button type="button" class="k" id="buBack" style="width:100%;min-height:56px;font-size:18px;margin-top:10px">戻る</button>
+  </section>
+
+  <section class="card" id="vYt" hidden>
+    <h1>YouTube</h1>
+    <p>YouTubeで流したい動画の「共有」→「リンクをコピー」を押してから、下の欄に貼り付けてください。モニターのトップ画面に動画が出ます。</p>
+    <form id="ytFm"><label for="ytU">動画のリンク</label><input id="ytU" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="https://youtu.be/…">
+      <p class="note" id="ytE" role="alert" style="text-align:left;color:#FF8A8F;min-height:20px"></p>
+      <button class="go" type="submit">モニターで再生</button></form>
+    <div class="pre" id="ytC" style="margin-top:14px">
+      <button type="button" class="sm" data-y="pause">一時停止</button><button type="button" class="sm" data-y="resume">再生</button>
+      <button type="button" class="sm" data-y="down">音を小さく</button><button type="button" class="sm" data-y="up">音を大きく</button>
+      <button type="button" class="sm" data-y="mute">消音</button><button type="button" class="sm" data-y="unmute">消音をやめる</button>
+      <button type="button" class="sm" data-y="next">次の動画</button><button type="button" class="sm" data-y="stop">止めてトップ画面に戻す</button>
+    </div>
+    <p class="note" id="ytS" style="margin-top:10px"></p>
+    <h1 style="font-size:20px;margin-top:22px">よく使う動画</h1>
+    <div class="sq" style="grid-template-columns:1.4fr 1fr"><input id="ytN" maxlength="24" autocomplete="off" placeholder="名前（例：店内用）"><button type="button" class="sm" id="ytAdd">上のリンクを登録</button></div>
+    <div id="ytL2" style="display:grid;gap:8px;margin-top:10px"></div>
+    <button type="button" class="k" id="ytBack" style="width:100%;min-height:56px;font-size:18px;margin-top:16px">戻る</button>
   </section>
 
   <section class="card" id="vCamQ" hidden>
@@ -327,8 +347,8 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   var code = '', ws = null, tries = 0, ping = null, last = null, newAt = 0, gotState = false, joinT = null;
   var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
   var SELF = /[?&]j=1/.test(location.search), sfWait = '', sfT = null;
-  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1, vShop: 1, vBulk: 1, vCamQ: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
-  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop', 'vBulk', 'vCamQ'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; if (typeof mirSync === 'function') mirSync(); };
+  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1, vShop: 1, vBulk: 1, vCamQ: 1, vYt: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
+  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop', 'vBulk', 'vCamQ', 'vYt'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; if (typeof mirSync === 'function') mirSync(); };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
   /* tablets show the monitor's own screen (the scoreboard page in mirror mode) instead of the phone controls */
   /* voices: the browser does not say whether a voice is male or female, so known voice names are matched; if only the other kind exists for a language, its pitch is shifted */
@@ -357,6 +377,19 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     var o = d.send; if (!o || (o.type !== 'key' && o.type !== 'cmd')) return; if (o.type === 'key' && o.k === '+' && !d.said) phoneSay(); send(o); if (navigator.vibrate) navigator.vibrate(15); });
   window.addEventListener('resize', function () { mirSync(); });
   setInterval(function () { $('mirS').textContent = ws && ws.readyState === 1 ? '' : 'つなぎ直しています…'; }, 1000);
+  /* YouTube on the monitor's top screen */
+  var YTK = 'vibes-yt-list', ytList = []; try { ytList = JSON.parse(localStorage.getItem(YTK) || '[]') || []; } catch (e) { ytList = []; }
+  function ytParse(u) { u = String(u || '').trim(); var id = '', list = '', m; if ((m = /[?&]list=([A-Za-z0-9_-]{10,64})/.exec(u))) list = m[1];
+    if ((m = /(?:youtu\.be\/|[?&]v=|\/(?:embed|shorts|live)\/)([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/.exec(u))) id = m[1]; else if (/^[A-Za-z0-9_-]{11}$/.test(u)) id = u; return id || list ? { id: id, list: list } : null; }
+  function ytPlay(u) { var o = ytParse(u); if (!o) { $('ytE').textContent = 'YouTubeのリンクとして読めませんでした。「共有」→「リンクをコピー」で取ったリンクを貼り付けてください。'; return false; } $('ytE').textContent = ''; if (send({ type: 'yt', op: 'play', id: o.id, list: o.list })) $('ytS').textContent = 'モニターに送りました。'; return true; }
+  function ytDraw() { var L = $('ytL2'); L.textContent = ''; ytList.forEach(function (x, i) { var r = document.createElement('div'); r.style.cssText = 'display:grid;grid-template-columns:1fr auto;gap:8px'; var b = document.createElement('button'); b.type = 'button'; b.className = 'sm'; b.style.cssText = 'text-align:left;border-radius:14px;min-height:48px'; b.textContent = x.n; b.onclick = function () { $('ytU').value = x.u; ytPlay(x.u); };
+      var d = document.createElement('button'); d.type = 'button'; d.className = 'sm'; d.textContent = '消す'; d.onclick = function () { var n = Date.now(); if (n - (d._t || 0) < 3000) { ytList.splice(i, 1); try { localStorage.setItem(YTK, JSON.stringify(ytList)); } catch (e) {} ytDraw(); } else { d._t = n; d.textContent = 'もう一度'; setTimeout(function () { d.textContent = '消す'; }, 3000); } }; r.appendChild(b); r.appendChild(d); L.appendChild(r); });
+    if (!ytList.length) { var p = document.createElement('p'); p.className = 'note'; p.style.textAlign = 'left'; p.textContent = 'まだ登録がありません。'; L.appendChild(p); } }
+  $('mYt').onclick = function () { $('ytE').textContent = ''; $('ytS').textContent = last && last.yt ? 'モニターで再生中です。' : ''; ytDraw(); show('vYt'); };
+  $('ytBack').onclick = function () { show(tvOf(last)); draw(); };
+  $('ytFm').addEventListener('submit', function (e) { e.preventDefault(); ytPlay($('ytU').value); });
+  $('ytAdd').onclick = function () { var u = $('ytU').value.trim(); if (!ytParse(u)) { $('ytE').textContent = '先に、上の欄にYouTubeのリンクを貼り付けてください。'; return; } var n = $('ytN').value.replace(/\s+/g, ' ').trim().slice(0, 24) || '動画 ' + (ytList.length + 1); ytList.unshift({ n: n, u: u.slice(0, 300) }); ytList = ytList.slice(0, 20); try { localStorage.setItem(YTK, JSON.stringify(ytList)); } catch (e) {} $('ytN').value = ''; $('ytE').textContent = ''; ytDraw(); };
+  Array.prototype.forEach.call(document.querySelectorAll('#ytC [data-y]'), function (b) { b.onclick = function () { var y = b.getAttribute('data-y'); if (y === 'up' || y === 'down') send({ type: 'yt', op: 'vol', d: y === 'up' ? 1 : -1 }); else send({ type: 'yt', op: y }); if (y === 'stop') $('ytS').textContent = '止めました。'; }; });
   $('mReload').onclick = function () { var b = $('mReload'), n = Date.now(); if (n - (b._t || 0) < 3000) { send({ type: 'cmd', c: 'reload' }); b.textContent = '読み込み直しています…'; setTimeout(function () { location.reload(); }, 2500); } else { b._t = n; b.textContent = 'もう一度押すと読み込み直します'; setTimeout(function () { if (b.textContent.charAt(0) === 'も') b.textContent = 'モニターを読み込み直す'; }, 3000); } };
   function tvOf(m) { return !m ? 'vJoin' : m.kind === 'menu' ? 'vMenu' : m.over ? 'vRes' : m.kind === 'pocket' ? 'vPk' : 'vMain'; }
   var tmV = -1, tmL = -1, tmAt = 0;

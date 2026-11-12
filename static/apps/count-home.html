@@ -69,6 +69,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 .solo p{margin:0;color:var(--sub);font-weight:700;font-size:2.2vh;letter-spacing:.08em;text-align:center}
 .solo p b{color:var(--chalk);font-family:Unbounded,Anton,sans-serif;font-weight:400;font-size:3.4vh;letter-spacing:.06em;margin:0 .6vw}
 .solo button{margin-top:1.4vh;font:inherit;font-weight:700;font-size:1.8vh;color:var(--chalk);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.8vh 2vw;cursor:pointer}
+#ytL{position:fixed;inset:0;z-index:50;background:#000}#ytL[hidden]{display:none}#ytF{width:100%;height:100%;border:0;display:block}
 .hq{position:fixed;left:2vw;top:2vh;display:flex;align-items:center;gap:1.2vw;background:rgba(14,16,21,.82);border:1px solid rgba(255,255,255,.16);border-radius:2vh;padding:1.4vh 1.4vw;z-index:5}.hq .qr.sm{width:13vh;height:13vh}.hq p{margin:0;font-weight:700;font-size:1.9vh;line-height:1.7;color:var(--sub)}.hq b{color:var(--chalk);font-size:2.4vh}
 .qrw{display:flex;align-items:center;gap:2vw;margin-bottom:1.6vh}.qrw p{margin:0;text-align:left;font-size:2.2vh}
 .qr{flex:none;background:#fff;border-radius:1.6vh;padding:1vh;width:24vh;height:24vh}.qr svg{width:100%;height:100%;display:block}.qr.sm{width:17vh;height:17vh}
@@ -97,6 +98,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   <div class="crumb" id="crumb"></div>
   <div class="ring" id="ring"></div>
   <div class="foot" id="foot"></div>
+  <div id="ytL" hidden><iframe id="ytF" title="YouTube" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
   <div class="hq" id="hq" hidden><div class="qr sm" id="hqQ"></div><p>スマホで操作<br>QRコードを読んでください<br>番号 <b id="hqC"></b></p></div>
 </div>
 <img id="logoSrc" src="/img/vibes-logo-t.png" alt="" hidden>
@@ -188,7 +190,19 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   var seen = false; try { seen = sessionStorage.getItem('vibes-remote-seen') === '1'; } catch (e) {}
   var sawPhone = function () { if (seen) return; seen = true; try { sessionStorage.setItem('vibes-remote-seen', '1'); } catch (e) {} showMenu = false; draw(); };
   var saveRm = function () { try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} };
-  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', shop: shopGet(), cf: cfSchema(), table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { var cl = colOf(x); return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d, col: cl.slice(0, 3), lt: cl[3] ? 1 : 0 }; }) }); };
+  /* YouTube on the monitor, chosen and controlled from the tablet (top screen only) */
+  var yt = null, ytVol = 100;
+  function ytCmd(fn, args) { try { $('ytF').contentWindow.postMessage(JSON.stringify({ event: 'command', func: fn, args: args || [] }), '*'); } catch (e) {} }
+  function ytStop() { yt = null; $('ytF').removeAttribute('src'); $('ytL').hidden = true; }
+  function ytHandle(m) {
+    if (m.op === 'play') { var id = /^[A-Za-z0-9_-]{11}$/.test(m.id || '') ? m.id : '', ls = /^[A-Za-z0-9_-]{10,64}$/.test(m.list || '') ? m.list : ''; if (!id && !ls) return;
+      yt = { id: id, list: ls }; ytVol = 100; $('ytF').src = 'https://www.youtube-nocookie.com/embed/' + (id || 'videoseries') + '?autoplay=1&enablejsapi=1&rel=0&playsinline=1' + (ls ? '&list=' + ls : '&loop=1&playlist=' + id); $('ytL').hidden = false; }
+    else if (m.op === 'stop') ytStop();
+    else if (!yt) return;
+    else if (m.op === 'pause') ytCmd('pauseVideo'); else if (m.op === 'resume') ytCmd('playVideo'); else if (m.op === 'mute') ytCmd('mute'); else if (m.op === 'unmute') ytCmd('unMute'); else if (m.op === 'next') ytCmd('nextVideo');
+    else if (m.op === 'vol') { ytVol = Math.max(0, Math.min(100, ytVol + (m.d > 0 ? 10 : -10))); ytCmd('unMute'); ytCmd('setVolume', [ytVol]); }
+  }
+  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', yt: yt ? 1 : 0, vol: ytVol, shop: shopGet(), cf: cfSchema(), table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { var cl = colOf(x); return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d, col: cl.slice(0, 3), lt: cl[3] ? 1 : 0 }; }) }); };
   var push = function () { if (ws && ws.readyState === 1) { try { ws.send(state()); } catch (e) {} } };
   function draw() {
     var on = !!(rm && rm.on), solo = on && seen && !showMenu; $('solo').hidden = !solo; $('home').hidden = solo; $('hq').hidden = !on; if (on && $('hqQ').getAttribute('data-c') !== rm.code) { $('hqQ').innerHTML = qrSvg(rm.code); $('hqQ').setAttribute('data-c', rm.code); $('hqC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); }
@@ -199,7 +213,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { ws = null; return; }
     ws.onopen = function () { tries = 0; draw(); push(); roPush(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'ctl' || m.type === 'cmd') sawPhone(); if (m.type === 'cmd' && m.c === 'reload') { location.reload(); return; } if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'ctl' || m.type === 'cmd') sawPhone(); if (m.type === 'cmd' && m.c === 'reload') { location.reload(); return; } if (m.type === 'yt') { ytHandle(m); return push(); } if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
     ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
