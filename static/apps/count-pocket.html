@@ -873,6 +873,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   $('bPz').onclick = function () { if (S.pz) pzOff(); else pzOn(); this.blur(); }; $('pzB').onclick = pzOff;
   function goHome() { location.href = U_HOME + (TB ? '?t=' + TB : ''); }
   function rmHandle(m) {
+    if (m.type === 'rtc') return;
     if (m.type === 'ctl' || m.type === 'cmd' || m.type === 'key' || m.type === 'setup') { try { sessionStorage.setItem('vibes-remote-seen', '1'); } catch (e) {} }
     if (m.type === 'hello') { tSent = -9; rmPush(); return roPush(); }
     if (m.type === 'ctl') { toast('スマホがつながりました'); return; }

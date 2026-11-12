@@ -93,7 +93,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 </head>
 <body>
 <div class="home" id="home">
-  <div class="bar"><button type="button" id="bRm">リモコン（スマホで操作）</button><button type="button" id="bFull">全画面 (F)</button></div>
+  <div class="bar"><button type="button" id="bCamP">撮影・中継</button><button type="button" id="bRm">リモコン（スマホで操作）</button><button type="button" id="bFull">全画面 (F)</button></div>
   <div class="crumb" id="crumb"></div>
   <div class="ring" id="ring"></div>
   <div class="foot" id="foot"></div>
@@ -112,6 +112,11 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   </div>
 </div>
 <div class="ov" id="ntL" hidden><div class="panel" role="alertdialog"><p id="ntT"></p><div class="acts"><button type="button" class="btn go" id="ntOk">OK (Enter)</button></div></div></div>
+<div class="ov" id="cmL" hidden><div class="panel" role="dialog" aria-label="撮影・中継"><h2>撮影・中継</h2>
+  <div class="qrw"><div class="qr" id="cmQ"></div><p><b>① 撮影用のスマホ</b><br>このQRコードをカメラで読み、「カメラを始める」を押します。スコアが入った動画を録画できます。</p></div>
+  <p style="text-align:left;font-size:2.1vh"><b>② 映像を映す別のモニター</b><br>そのモニターのPCで <b>vibesbilliards.com/pages/count-live/</b> を開き、番号 <b id="cmC" style="font-family:Unbounded,Anton,sans-serif"></b> を入れます。カメラの映像とスコアが映ります。</p>
+  <p style="font-size:1.8vh;color:var(--sub)">撮影用のスマホ・別のモニターとも、同じWi-Fiにつないでください。</p>
+  <div class="acts"><button type="button" class="btn go" id="cmX">閉じる (Esc)</button></div></div></div>
 <div class="ov" id="shL" hidden><div class="panel" role="dialog" aria-label="店名登録"><h2>店名登録</h2><p style="font-size:2vh;color:var(--sub)">お店の名前を入れて「登録する」を押します。トップ画面とタブレットのメニューに出ます。</p><p id="shNow" style="font-weight:900"></p><form id="shF"><div class="pf" style="grid-template-columns:1fr"><div><label for="shN">店名</label><input id="shN" maxlength="30" autocomplete="off" placeholder="例：WINDビリヤード"></div></div><div class="acts"><button type="button" class="btn" id="shX">閉じる (Esc)</button><button type="submit" class="btn go">登録する</button></div></form></div></div>
 <div class="ov" id="cfL" hidden><div class="panel" role="dialog" aria-label="各種設定"><h2>各種設定</h2><p style="font-size:1.9vh;color:var(--sub)">ここで決めた内容が、次の試合から使われます。</p><form id="cfF"><div class="pf" id="cfR"></div><div class="acts"><button type="button" class="btn" id="cfX">閉じる (Esc)</button><button type="submit" class="btn go">保存する</button></div></form></div></div>
 <div class="ov" id="roL" hidden><div class="panel" role="dialog" aria-label="選手登録"><h2>選手登録</h2><p style="font-size:1.9vh;color:var(--sub)">一度登録した選手は、ずっと残ります。持ち点はスリークッションの持ち点です。スマホ・タブレットからも登録できます。</p>
@@ -239,6 +244,9 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!a.length) { var e = document.createElement('p'); e.textContent = 'まだ誰も登録されていません。'; e.style.fontSize = '2vh'; B.appendChild(e); } }
   function roPanel() { $('roL').hidden = false; roList(); var on = !!(rm && rm.on); $('roQW').hidden = !on; if (on) { try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + rm.code + '&j=1'); q.make(); $('roQ').innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { $('roQW').hidden = true; } } $('roN').focus(); }
   $('roF').addEventListener('submit', function (e) { e.preventDefault(); if (!$('roN').value.trim()) return; roHandle({ op: 'save', p: { n: $('roN').value, y: $('roY').value, g: $('roG').value } }); $('roN').value = ''; $('roY').value = ''; $('roN').focus(); });
+  $('bCamP').onclick = function () { if (!rm || !/^\d{6}$/.test(rm.code || '')) rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true }; rm.on = true; saveRm(); connect(); draw();
+    try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-cam/?r=' + rm.code); q.make(); $('cmQ').innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) {} $('cmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('cmL').hidden = false; };
+  $('cmX').onclick = function () { $('cmL').hidden = true; };
   function rmOpen() {
     if (!rm || !/^\d{6}$/.test(rm.code || '')) rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true };
     rm.on = true; saveRm(); $('rmC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); $('rmQ').innerHTML = qrSvg(rm.code); $('rmL').hidden = false; showMenu = false; connect(); draw();
@@ -249,7 +257,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return; var k = e.key;
     if (!$('ntL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('ntL').hidden = true; } return; }
-    if (!$('cfL').hidden || !$('roL').hidden || !$('shL').hidden) { if (k === 'Escape') { e.preventDefault(); $('cfL').hidden = true; $('roL').hidden = true; $('shL').hidden = true; } return; }
+    if (!$('cfL').hidden || !$('roL').hidden || !$('shL').hidden || !$('cmL').hidden) { if (k === 'Escape' || (k === 'Enter' && !$('cmL').hidden)) { e.preventDefault(); $('cfL').hidden = true; $('roL').hidden = true; $('shL').hidden = true; $('cmL').hidden = true; } return; }
     if (!$('rmL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('rmL').hidden = true; } return; }
     if (k === 'f' || k === 'F') { e.preventDefault(); goFull(); return; }
     if (!$('solo').hidden) { if (k === 'Escape' || k === 'Enter') { e.preventDefault(); showMenu = true; draw(); } return; }

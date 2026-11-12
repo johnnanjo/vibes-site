@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ja" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>VIBES DIGITAL LABO 撮影カメラ｜VIBES BILLIARDS</title>
+<meta name="description" content="スマホで試合を撮影し、スコアを重ねて録画・中継するカメラ画面。">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://vibesbilliards.com/pages/count-cam">
+<link rel="icon" href="/img/favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap">
+<style>
+:root{--night:#171A22;--night2:#262A35;--line:#3A3F4C;--lime:#C0FC09;--chalk:#F3F4EF;--sub:#A3A8B5;--felt:#1E5AA8;--yellow:#F2C200;--red:#E5484D}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--night);color:var(--chalk);font-family:"Noto Sans JP",system-ui,sans-serif;touch-action:manipulation}
+[hidden]{display:none!important}
+.wrap{max-width:980px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
+.top{display:flex;align-items:center;gap:10px}.top img{height:34px;width:auto}.top b{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:.2em;font-size:14px;border-left:3px solid var(--lime);padding-left:10px}
+.st{margin-left:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--sub)}.st i{width:12px;height:12px;border-radius:50%;background:var(--red)}.st.ok i{background:var(--lime)}
+button{font:inherit;color:inherit;cursor:pointer;border:0}
+.card{background:var(--night2);border-radius:18px;padding:16px}
+h1{font-size:22px;margin:0 0 6px}h2{font-size:18px;margin:0 0 8px}
+p{margin:0 0 12px;color:var(--sub);font-size:15px;line-height:1.7}
+label{display:block;font-weight:700;font-size:14px;margin:0 0 6px}
+input.code{width:100%;font-family:Anton,Impact,sans-serif;font-size:44px;letter-spacing:.14em;text-align:center;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:12px;padding:12px}
+.go{background:var(--lime);color:var(--night);font-weight:900;font-size:20px;border-radius:14px;padding:16px;width:100%}
+.k{border-radius:16px;font-weight:900;font-size:19px;padding:14px 8px;background:var(--night2);border:2px solid var(--line);min-height:68px}
+.k small{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-top:2px}
+.k.rec{background:var(--red);border-color:var(--red);color:#fff}.k.rec small{color:#FFE3E4}
+.k:disabled{opacity:.45}
+.err{color:#FF8A8F;font-weight:700;font-size:14px;min-height:20px;margin:8px 0 0}
+.stage{position:relative;background:#000;border-radius:14px;overflow:hidden}.stage canvas{display:block;width:100%;height:auto}
+.badge{position:absolute;left:10px;top:10px;display:flex;gap:8px;align-items:center;background:rgba(10,12,18,.7);border-radius:999px;padding:6px 12px;font-weight:900;font-size:14px}
+.badge i{width:12px;height:12px;border-radius:50%;background:var(--sub)}.badge.on i{background:var(--red);animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:.2}}
+.live{position:absolute;right:10px;top:10px;background:rgba(10,12,18,.7);border-radius:999px;padding:6px 12px;font-weight:700;font-size:13px}
+.pad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;font-size:15px;padding:6px 0}
+.opt select{font:inherit;font-weight:700;font-size:16px;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:10px;padding:8px 10px}
+.clip{display:grid;gap:10px;background:var(--night);border:2px solid var(--line);border-radius:14px;padding:12px}.clip+.clip{margin-top:10px}
+.clip b{font-size:17px}.clip small{color:var(--sub);font-weight:700;font-size:13px}
+.clip .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.clip a,.clip button{display:block;text-align:center;text-decoration:none;border-radius:12px;padding:12px 8px;font-weight:900;font-size:15px;background:var(--night2);border:2px solid var(--line);color:var(--chalk)}
+.clip a.main{background:var(--lime);border-color:var(--lime);color:var(--night)}
+.clip img{width:100%;height:auto;border-radius:8px;display:block}
+video{display:none}
+@media (prefers-reduced-motion:reduce){.badge.on i{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"><b>DIGITAL LABO</b>
+    <span class="st" id="st"><i></i><span id="stT">つながっていません</span></span>
+  </div>
+
+  <section class="card" id="vJoin">
+    <h1>撮影カメラ</h1>
+    <p>このスマホで試合を撮影します。モニターに出ている6けたの番号を入れてください。</p>
+    <form id="fJoin">
+      <label for="iCode">番号</label>
+      <input id="iCode" class="code" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="000 000">
+      <p class="err" id="eJoin"></p>
+      <button class="go" type="submit">つなぐ</button>
+    </form>
+  </section>
+
+  <section class="card" id="vStart" hidden>
+    <h1>撮影カメラ</h1>
+    <p>スマホを横向きにして、台全体が映る場所に固定します。「カメラを始める」を押すと、カメラとマイクの許可を聞かれるので「許可」を押してください。</p>
+    <div class="opt"><span>画質</span><select id="oQ"><option value="720">標準（720p）</option><option value="1080">高画質（1080p・容量が大きい）</option><option value="480">軽い（480p）</option></select></div>
+    <div class="opt"><span>音声</span><select id="oA"><option value="1">入れる</option><option value="0">入れない</option></select></div>
+    <button class="go" type="button" id="bCam">カメラを始める</button>
+    <p class="err" id="eCam"></p>
+  </section>
+
+  <section id="vCam" hidden style="display:flex;flex-direction:column;gap:12px">
+    <div class="stage"><canvas id="cv" width="1280" height="720"></canvas>
+      <div class="badge" id="bdg"><i></i><span id="bdgT">待機中</span></div>
+      <div class="live" id="liv">別モニター：0台</div>
+    </div>
+    <div class="pad">
+      <button type="button" class="k" id="bRec">録画を始める<small>今すぐ録画する</small></button>
+      <button type="button" class="k" id="bAuto">自動録画：入<small>試合開始から終了まで</small></button>
+    </div>
+    <p style="margin:0;font-size:13px" id="hint">この画面を開いたままにしてください。画面を消したり、ほかのアプリに切り替えると、録画と中継が止まります。</p>
+    <div class="card" id="clips" hidden><h2>録画した試合</h2><p style="font-size:13px">「動画を保存」を押すと、このスマホに保存されます。保存するまで、このページを閉じないでください。</p><div id="clipL"></div></div>
+  </section>
+</div>
+<video id="vd" playsinline muted></video>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+  var CK = 'vibes-count-cam-code', code = '', ws = null, tries = 0, ping = null, last = null, gotState = false, joinT = null;
+  var stream = null, out = null, rec = null, chunks = [], recAt = 0, recBytes = 0, auto = true, manual = false, prevLive = false, recMeta = null, peers = {}, clipN = 0;
+  var vd = $('vd'), cv = $('cv'), cx = cv.getContext('2d');
+  var show = function (v) { ['vJoin', 'vStart', 'vCam'].forEach(function (x) { $(x).hidden = x !== v; }); $('vCam').style.display = v === 'vCam' ? 'flex' : 'none'; };
+  var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
+  function send(o) { if (ws && ws.readyState === 1) { try { ws.send(JSON.stringify(o)); return true; } catch (e) {} } return false; }
+  function connect() {
+    if (!code) return; if (ws && ws.readyState <= 1) return;
+    status(false, '接続しています…');
+    try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { status(false, 'つながっていません'); return; }
+    ws.onopen = function () { tries = 0; status(true, '番号 ' + code.slice(0, 3) + ' ' + code.slice(3)); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); if (out) send({ type: 'rtc', k: 'cam' }); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+      if (m.type === 'state') { gotState = true; clearTimeout(joinT); last = m; if (!$('vJoin').hidden) show(stream ? 'vCam' : 'vStart'); onState(); return; }
+      if (m.type === 'rtc') return rtc(m); };
+    ws.onclose = function () { clearInterval(ping); status(false, 'つなぎ直しています…'); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
+    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+  }
+  $('fJoin').addEventListener('submit', function (e) { e.preventDefault(); var v = $('iCode').value.replace(/\D/g, ''); if (v.length !== 6) { $('eJoin').textContent = '6けたの番号を入れてください。'; return; }
+    $('eJoin').textContent = ''; code = v; gotState = false; try { localStorage.setItem(CK, code); } catch (x) {} if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; } connect(); clearTimeout(joinT);
+    joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'この番号のモニターが見つかりません。番号を確かめてください。'; }, 5000); });
+  $('iCode').addEventListener('input', function () { var v = this.value.replace(/\D/g, '').slice(0, 6); this.value = v.length > 3 ? v.slice(0, 3) + ' ' + v.slice(3) : v; });
+
+  /* ---- score data from the monitor ---- */
+  function rows(m) { m = m || {}; var N = (m.n || []).length, a = [];
+    for (var i = 0; i < N; i++) { var is3 = !!m.sc && !!m.hr; a.push({ name: m.n[i] + (is3 && m.g ? ' (' + m.g[i] + ')' : ''), score: is3 ? String(m.sc[i] + (i === m.turn && !m.over ? (m.run || 0) : 0)) : String((m.score || [])[i] || 0), hr: is3 ? m.hr[i] : null, on: i === m.turn && !m.over }); }
+    return a; }
+  function inning(m) { if (!m) return ''; if (m.inn && m.sc) return String(m.inn[m.turn] + (m.over ? 0 : 1)); return String(m.mid || ''); }
+
+  /* ---- drawing: camera frame + score bar ---- */
+  var PC = ['#FFFFFF', '#F2C200', '#E5484D', '#35C486'];
+  function fit(t, w, px, wt) { cx.font = wt + ' ' + px + 'px "Noto Sans JP", sans-serif'; while (cx.measureText(t).width > w && px > 10) { px -= 1; cx.font = wt + ' ' + px + 'px "Noto Sans JP", sans-serif'; } return px; }
+  function drawBar() {
+    var W = cv.width, H = cv.height, bh = Math.round(H * 0.15), y = H - bh, m = last, R = rows(m), N = R.length, u = bh / 100;
+    cx.fillStyle = 'rgba(18,20,26,.9)'; cx.fillRect(0, y, W, bh); cx.fillStyle = '#C0FC09'; cx.fillRect(0, y, W, Math.max(2, Math.round(3 * u)));
+    if (!m || m.kind === 'menu' || !N) { cx.fillStyle = '#F3F4EF'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.font = '900 ' + Math.round(34 * u) + 'px "Noto Sans JP", sans-serif'; cx.fillText('VIBES DIGITAL LABO', W / 2, y + bh / 2); return; }
+    var midW = Math.round(W * 0.2), sideW = (W - midW) / (N <= 2 ? 2 : N), pad = Math.round(18 * u);
+    var cell = function (r, i, x, w, right) {
+      if (r.on) { cx.fillStyle = 'rgba(192,252,9,.16)'; cx.fillRect(x, y + 3 * u, w, bh - 3 * u); cx.fillStyle = '#C0FC09'; cx.fillRect(right ? x + w - 8 * u : x, y, 8 * u, bh); }
+      var sw = Math.round(120 * u); cx.textBaseline = 'middle';
+      cx.fillStyle = PC[i % 4]; cx.textAlign = 'center'; cx.font = Math.round(78 * u) + 'px Anton, Impact, sans-serif'; cx.fillText(r.score, right ? x + pad + sw / 2 : x + w - pad - sw / 2, y + bh * 0.54);
+      var nx = right ? x + pad + sw + pad : x + pad + 10 * u, nw = w - sw - pad * 3 - 10 * u;
+      cx.fillStyle = '#F3F4EF'; cx.textAlign = 'left'; fit(r.name, nw, Math.round(34 * u), '900'); cx.fillText(r.name, nx, y + bh * (r.hr == null ? 0.52 : 0.38));
+      if (r.hr != null) { cx.fillStyle = '#A9AFBD'; cx.font = '700 ' + Math.round(20 * u) + 'px "Noto Sans JP", sans-serif'; cx.fillText('HIGH RUN  ' + r.hr, nx, y + bh * 0.74); }
+    };
+    if (N <= 2) { cell(R[0], 0, 0, sideW, false); if (R[1]) cell(R[1], 1, W - sideW, sideW, true);
+      var mx = sideW; cx.fillStyle = 'rgba(0,0,0,.35)'; cx.fillRect(mx, y + 3 * u, midW, bh - 3 * u);
+      cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillStyle = '#A9AFBD'; cx.font = '900 ' + Math.round(17 * u) + 'px "Noto Sans JP", sans-serif'; cx.fillText(m.midL && m.kind === 'pocket' && !m.sc ? (m.midL === 'FRAME' ? 'FRAME' : m.midL === 'INNING' ? 'INNING' : 'RACK') : 'INNING', mx + midW / 2, y + bh * 0.24);
+      cx.fillStyle = '#F3F4EF'; cx.font = Math.round(58 * u) + 'px Anton, Impact, sans-serif'; cx.fillText(inning(m), mx + midW / 2, y + bh * 0.62);
+    } else { var cw = (W - midW) / N; R.forEach(function (r, i) { cell(r, i, i * cw, cw, false); });
+      cx.fillStyle = 'rgba(0,0,0,.35)'; cx.fillRect(W - midW, y + 3 * u, midW, bh - 3 * u); cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillStyle = '#A9AFBD'; cx.font = '900 ' + Math.round(17 * u) + 'px "Noto Sans JP", sans-serif'; cx.fillText('INNING', W - midW / 2, y + bh * 0.24);
+      cx.fillStyle = '#F3F4EF'; cx.font = Math.round(58 * u) + 'px Anton, Impact, sans-serif'; cx.fillText(inning(m), W - midW / 2, y + bh * 0.62); }
+    if (m.over && m.win) { cx.fillStyle = '#C0FC09'; var tw = Math.round(W * 0.5), th = Math.round(54 * u); cx.fillRect((W - tw) / 2, y - th - 10 * u, tw, th); cx.fillStyle = '#171A22'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; fit(m.win, tw - 30 * u, Math.round(30 * u), '900'); cx.fillText(m.win, W / 2, y - th / 2 - 10 * u); }
+    if (m.pz) { cx.fillStyle = 'rgba(18,20,26,.75)'; var pw = Math.round(260 * u), ph = Math.round(50 * u); cx.fillRect((W - pw) / 2, 20 * u, pw, ph); cx.fillStyle = '#F3F4EF'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.font = '900 ' + Math.round(26 * u) + 'px "Noto Sans JP", sans-serif'; cx.fillText('一時停止中', W / 2, 20 * u + ph / 2); }
+  }
+  function frame() {
+    if (!stream) return;
+    if (vd.videoWidth && (cv.width !== vd.videoWidth || cv.height !== vd.videoHeight) && !rec) { cv.width = vd.videoWidth; cv.height = vd.videoHeight; }
+    try { cx.drawImage(vd, 0, 0, cv.width, cv.height); } catch (e) {}
+    drawBar();
+    if (rec) { var s = Math.floor((Date.now() - recAt) / 1000); $('bdgT').textContent = '録画中 ' + Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2) + '　' + (recBytes / 1048576).toFixed(0) + 'MB'; }
+    if (vd.requestVideoFrameCallback) vd.requestVideoFrameCallback(frame); else requestAnimationFrame(frame);
+  }
+
+  /* ---- camera ---- */
+  $('bCam').onclick = function () {
+    var q = +$('oQ').value, wantA = $('oA').value === '1'; $('eCam').textContent = '';
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { $('eCam').textContent = 'このブラウザーではカメラが使えません。Safari か Chrome で開いてください。'; return; }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: q === 1080 ? 1920 : q === 480 ? 854 : 1280 }, height: { ideal: q }, frameRate: { ideal: 30 } }, audio: wantA })
+      .then(function (s) { stream = s; vd.srcObject = s; return vd.play(); })
+      .then(function () { var cs = cv.captureStream ? cv.captureStream(30) : null; if (!cs) { $('eCam').textContent = 'このブラウザーでは録画ができません。'; return; }
+        out = new MediaStream(cs.getVideoTracks().concat(stream.getAudioTracks())); show('vCam'); frame(); wake(); send({ type: 'rtc', k: 'cam' }); onState(); })
+      .catch(function (e) { $('eCam').textContent = /NotAllowed|Permission/.test(String(e && e.name)) ? 'カメラが許可されていません。ブラウザーの設定で、このページのカメラとマイクを許可してください。' : 'カメラを始められませんでした。ほかのアプリがカメラを使っていないか確かめてください。'; });
+  };
+
+  /* ---- recording (chunks go to the phone's storage, not memory, so long games do not run out of RAM) ---- */
+  var db = null, useDb = false; try { var rq = indexedDB.open('vibes-cam', 1); rq.onupgradeneeded = function () { rq.result.createObjectStore('c', { autoIncrement: true }); }; rq.onsuccess = function () { db = rq.result; try { db.transaction('c', 'readwrite').objectStore('c').clear(); } catch (e) {} }; } catch (e) {}
+  function pickMime() { var a = ['video/mp4;codecs="avc1.42E01E,mp4a.40.2"', 'video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4']; if (!window.MediaRecorder) return null; for (var i = 0; i < a.length; i++) if (MediaRecorder.isTypeSupported(a[i])) return a[i]; return ''; }
+  function recStart(byHand) {
+    if (rec || !out) return; var mime = pickMime(); if (mime === null) { $('hint').textContent = 'このブラウザーでは録画ができません（中継はできます）。'; return; }
+    var h = cv.height, bps = h >= 1000 ? 4000000 : h >= 700 ? 2000000 : 1000000;
+    try { rec = new MediaRecorder(out, mime ? { mimeType: mime, videoBitsPerSecond: bps, audioBitsPerSecond: 96000 } : { videoBitsPerSecond: bps }); } catch (e) { try { rec = new MediaRecorder(out); } catch (e2) { rec = null; $('hint').textContent = '録画を始められませんでした。'; return; } }
+    chunks = []; recBytes = 0; recAt = Date.now(); manual = !!byHand; useDb = !!db; recMeta = { at: new Date(), mime: rec.mimeType || mime || 'video/webm' };
+    rec.ondataavailable = function (e) { if (!e.data || !e.data.size) return; recBytes += e.data.size; if (useDb) { try { db.transaction('c', 'readwrite').objectStore('c').add(e.data); return; } catch (x) { useDb = false; } } chunks.push(e.data); };
+    rec.onstop = function () { setTimeout(recGather, 300); }; rec.start(2000);
+    $('bdg').classList.add('on'); $('bRec').classList.add('rec'); $('bRec').firstChild.textContent = '録画を止める'; $('bRec').querySelector('small').textContent = '止めると保存できます';
+  }
+  function recStop() { if (!rec) return; try { rec.stop(); } catch (e) { recGather(); } }
+  function recGather() { if (!useDb || !db) return recDone(chunks); try { var tx = db.transaction('c', 'readwrite'), st = tx.objectStore('c'), g = st.getAll(); g.onsuccess = function () { var parts = (g.result || []).concat(chunks); st.clear(); recDone(parts); }; g.onerror = function () { recDone(chunks); }; } catch (e) { recDone(chunks); } }
+  function two(n) { return (n < 10 ? '0' : '') + n; }
+  function recDone(parts) {
+    var mime = (recMeta && recMeta.mime) || 'video/webm', blob = new Blob(parts || [], { type: mime.split(';')[0] }), secs = Math.round((Date.now() - recAt) / 1000), m = last, d = recMeta.at;
+    rec = null; chunks = []; $('bdg').classList.remove('on'); $('bdgT').textContent = '待機中'; $('bRec').classList.remove('rec'); $('bRec').firstChild.textContent = '録画を始める'; $('bRec').querySelector('small').textContent = '今すぐ録画する';
+    if (!blob.size) return;
+    var ext = /mp4/.test(mime) ? 'mp4' : 'webm', stamp = d.getFullYear() + two(d.getMonth() + 1) + two(d.getDate()) + '-' + two(d.getHours()) + two(d.getMinutes()), base = 'VIBES-' + stamp + '-' + (++clipN);
+    var el = document.createElement('div'); el.className = 'clip'; var t = document.createElement('div'), b = document.createElement('b'); b.textContent = (m && m.n ? m.n.join(' vs ') : '録画') + '　' + two(d.getHours()) + ':' + two(d.getMinutes()); var sm = document.createElement('small'); sm.textContent = '　' + Math.floor(secs / 60) + '分' + (secs % 60) + '秒・' + (blob.size / 1048576).toFixed(1) + 'MB・' + ext.toUpperCase(); t.appendChild(b); t.appendChild(sm); el.appendChild(t);
+    var row = document.createElement('div'); row.className = 'row'; var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.className = 'main'; a.href = url; a.download = base + '.' + ext; a.textContent = '動画を保存'; row.appendChild(a);
+    var file = null; try { file = new File([blob], base + '.' + ext, { type: blob.type }); } catch (e) {}
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) { var sh = document.createElement('button'); sh.type = 'button'; sh.textContent = '動画を共有・写真に保存'; sh.onclick = function () { navigator.share({ files: [file] }).catch(function () {}); }; row.appendChild(sh); }
+    var png = sheet(m, d); if (png) { var a2 = document.createElement('a'); a2.href = png; a2.download = base + '-score.png'; a2.textContent = '点数表を保存'; row.appendChild(a2); }
+    el.appendChild(row); if (png) { var im = document.createElement('img'); im.src = png; im.alt = '点数表'; el.appendChild(im); }
+    $('clipL').insertBefore(el, $('clipL').firstChild); $('clips').hidden = false;
+  }
+  $('bRec').onclick = function () { if (rec) recStop(); else recStart(true); };
+  $('bAuto').onclick = function () { auto = !auto; this.firstChild.textContent = '自動録画：' + (auto ? '入' : '切'); };
+  function onState() { var m = last; if (!m || !out) return; var live = m.kind !== 'menu' && !m.rd && !m.over && !m.wz && (m.gt ? m.gt !== '0:00' : true);
+    if (auto) { if (live && !prevLive && !rec) recStart(false); if (prevLive && !live && rec && !manual && (m.over || m.kind === 'menu')) setTimeout(recStop, 4000); }
+    prevLive = live; }
+
+  /* ---- score sheet image ---- */
+  function sheet(m, d) {
+    if (!m || !m.n || !m.n.length) return ''; var c = document.createElement('canvas'), W = 1600, N = m.n.length, il = m.il || null, maxI = il ? Math.max.apply(null, il.map(function (x) { return x.length; })) : 0, per = 20, blocks = Math.max(1, Math.ceil(maxI / per));
+    var H = 330 + N * 84 + (il ? blocks * (60 + N * 56) + 30 : 0) + 70; c.width = W; c.height = H; var g = c.getContext('2d');
+    g.fillStyle = '#171A22'; g.fillRect(0, 0, W, H); g.fillStyle = '#C0FC09'; g.fillRect(0, 0, W, 10);
+    g.textBaseline = 'alphabetic'; g.fillStyle = '#F3F4EF'; g.font = '44px Anton, Impact, sans-serif'; g.textAlign = 'left'; g.fillText('VIBES DIGITAL LABO', 60, 84);
+    g.font = '700 26px "Noto Sans JP", sans-serif'; g.fillStyle = '#A9AFBD'; g.textAlign = 'right'; g.fillText((m.shop ? m.shop + '　' : '') + d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日', W - 60, 80);
+    g.textAlign = 'left'; g.fillStyle = '#F3F4EF'; g.font = '900 40px "Noto Sans JP", sans-serif'; g.fillText((m.title || '試合') + (m.gt ? '　試合時間 ' + m.gt : ''), 60, 160);
+    g.fillStyle = '#C0FC09'; g.fillRect(60, 186, 620, 62); g.fillStyle = '#171A22'; g.font = '900 34px "Noto Sans JP", sans-serif'; g.fillText(m.over ? (m.win || '試合終了') : '途中まで', 80, 230);
+    var y = 300, H3 = (m.resH || ['得点']), R = m.res || m.n.map(function (x, i) { return [x, (m.score || [])[i]]; }), colX = [820, 1040, 1240, 1460];
+    g.font = '700 22px "Noto Sans JP", sans-serif'; g.fillStyle = '#A9AFBD'; g.textAlign = 'center'; H3.forEach(function (h, i) { g.fillText(h, colX[i], y); });
+    R.forEach(function (r, i) { var yy = y + 20 + i * 84; g.fillStyle = '#262A35'; g.fillRect(60, yy, W - 120, 72); g.fillStyle = PC[i % 4]; g.beginPath(); g.arc(96, yy + 36, 12, 0, 7); g.fill(); g.fillStyle = '#F3F4EF'; g.textAlign = 'left'; g.font = '900 34px "Noto Sans JP", sans-serif'; g.fillText(String(r[0]), 124, yy + 48); g.textAlign = 'center'; g.font = '36px Anton, Impact, sans-serif'; for (var k = 1; k < r.length; k++) g.fillText(String(r[k]), colX[k - 1], yy + 50); });
+    if (il) { var by = y + 20 + N * 84 + 40;
+      for (var b = 0; b < blocks; b++) { var cw = (W - 120 - 300) / per, x0 = 360;
+        g.font = '900 20px "Noto Sans JP", sans-serif'; g.fillStyle = '#A9AFBD'; g.textAlign = 'left'; g.fillText('INNING', 60, by + 24); g.textAlign = 'center'; for (var k2 = 0; k2 < per; k2++) g.fillText(String(b * per + k2 + 1), x0 + k2 * cw + cw / 2, by + 24);
+        for (var p = 0; p < N; p++) { var ry = by + 40 + p * 56; g.fillStyle = PC[p % 4]; g.beginPath(); g.arc(72, ry + 24, 9, 0, 7); g.fill(); g.fillStyle = '#F3F4EF'; g.textAlign = 'left'; var nm = String(m.n[p]); g.font = '900 24px "Noto Sans JP", sans-serif'; while (g.measureText(nm).width > 250 && nm.length > 2) nm = nm.slice(0, -1); g.fillText(nm, 92, ry + 33);
+          for (var k3 = 0; k3 < per; k3++) { var v = il[p][b * per + k3]; g.fillStyle = v == null ? '#1F232C' : '#262A35'; g.fillRect(x0 + k3 * cw + 3, ry, cw - 6, 48); if (v != null) { g.fillStyle = v ? '#F3F4EF' : '#6B7180'; g.textAlign = 'center'; g.font = '28px Anton, Impact, sans-serif'; g.fillText(String(v), x0 + k3 * cw + cw / 2, ry + 35); } } }
+        by += 60 + N * 56; } }
+    g.fillStyle = '#A9AFBD'; g.font = '700 20px "Noto Sans JP", sans-serif'; g.textAlign = 'left'; g.fillText('vibesbilliards.com', 60, H - 30);
+    try { return c.toDataURL('image/png'); } catch (e) { return ''; }
+  }
+
+  /* ---- live view on another monitor (WebRTC, signalling over the same room) ---- */
+  function liveCount() { var n = 0; Object.keys(peers).forEach(function (k) { var s = peers[k].connectionState || peers[k].iceConnectionState; if (s === 'connected' || s === 'completed') n++; }); $('liv').textContent = '別モニター：' + n + '台'; }
+  function rtc(m) {
+    if (!out || !window.RTCPeerConnection || typeof m.id !== 'string') return;
+    if (m.k === 'want') { if (peers[m.id]) { try { peers[m.id].close(); } catch (e) {} } var pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }); peers[m.id] = pc;
+      out.getVideoTracks().forEach(function (t) { pc.addTrack(t, out); });
+      pc.onicecandidate = function (e) { if (e.candidate) send({ type: 'rtc', k: 'ice', id: m.id, from: 'c', c: e.candidate }); };
+      pc.onconnectionstatechange = function () { liveCount(); if (pc.connectionState === 'failed' || pc.connectionState === 'closed') { if (peers[m.id] === pc) delete peers[m.id]; liveCount(); } };
+      pc.createOffer().then(function (o) { return pc.setLocalDescription(o); }).then(function () { send({ type: 'rtc', k: 'offer', id: m.id, sdp: pc.localDescription }); }).catch(function () {}); return; }
+    var p = peers[m.id]; if (!p) return;
+    if (m.k === 'answer' && m.sdp) p.setRemoteDescription(m.sdp).catch(function () {});
+    else if (m.k === 'ice' && m.from === 'v' && m.c) p.addIceCandidate(m.c).catch(function () {});
+  }
+
+  var wl = null, wake = function () { try { if (navigator.wakeLock && document.visibilityState === 'visible') navigator.wakeLock.request('screen').then(function (l) { wl = l; }).catch(function () {}); } catch (e) {} };
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) { connect(); wake(); } });
+  window.addEventListener('beforeunload', function (e) { if (rec || $('clipL').children.length) { e.preventDefault(); e.returnValue = ''; } });
+  var q = /[?&]r=(\d{6})/.exec(location.search); try { code = q ? q[1] : (localStorage.getItem(CK) || ''); } catch (e) {}
+  if (code) { $('iCode').value = code.slice(0, 3) + ' ' + code.slice(3); connect(); joinT = setTimeout(function () { if (!gotState) $('eJoin').textContent = 'モニターを待っています。モニターのページが開いているか確かめてください。'; }, 5000); }
+  show('vJoin');
+})();
+</script>
+</body>
+</html>

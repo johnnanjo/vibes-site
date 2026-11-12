@@ -151,6 +151,7 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     <div class="mlogo"><img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"><span>DIGITAL LABO</span></div>
     <div class="mg" id="mgBot"></div>
     <p class="note" style="text-align:center">種目を押すと、モニターが切り替わります。</p>
+    <button type="button" class="k" id="mCam" style="width:100%;margin-top:14px;min-height:64px;font-size:18px">撮影・中継<small>スマホで試合を撮影する</small></button>
   </section>
 
   <section id="vPk" hidden style="display:none;flex-direction:column;gap:12px">
@@ -216,6 +217,15 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     <button type="button" class="go" id="buRead">読み取る</button>
     <div id="buPrev" hidden><p class="note" id="buCnt" style="text-align:left;margin:12px 0 8px"></p><div class="rl" id="buList"></div><button type="button" class="go" id="buGo" style="margin-top:12px">この内容で登録する</button></div>
     <button type="button" class="k" id="buBack" style="width:100%;min-height:56px;font-size:18px;margin-top:10px">戻る</button>
+  </section>
+
+  <section class="card" id="vCamQ" hidden>
+    <h1>撮影・中継</h1>
+    <p><b style="color:var(--chalk)">① 撮影用のスマホ</b><br>下のQRコードを、撮影用のスマホのカメラで読みます。「カメラを始める」を押すと、スコアが入った動画を録画できます。</p>
+    <div class="qrb" id="cqB"></div>
+    <p style="margin-top:14px"><b style="color:var(--chalk)">② 映像を映す別のモニター</b><br>そのモニターのPCで <b style="color:var(--chalk)">vibesbilliards.com/pages/count-live/</b> を開き、番号 <b style="color:var(--chalk)" id="cqC"></b> を入れます。</p>
+    <p class="note" style="text-align:left">撮影用のスマホ・別のモニターとも、同じWi-Fiにつないでください。録画した動画と点数表は、撮影用のスマホに保存されます。</p>
+    <button type="button" class="k" id="cqBack" style="width:100%;min-height:56px;font-size:18px;margin-top:6px">戻る</button>
   </section>
 
   <section class="card" id="vShop" hidden>
@@ -312,8 +322,8 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   var code = '', ws = null, tries = 0, ping = null, last = null, newAt = 0, gotState = false, joinT = null;
   var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
   var SELF = /[?&]j=1/.test(location.search), sfWait = '', sfT = null;
-  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1, vShop: 1, vBulk: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
-  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop', 'vBulk'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; };
+  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1, vShop: 1, vBulk: 1, vCamQ: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
+  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop', 'vBulk', 'vCamQ'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
   function tvOf(m) { return !m ? 'vJoin' : m.kind === 'menu' ? 'vMenu' : m.over ? 'vRes' : m.kind === 'pocket' ? 'vPk' : 'vMain'; }
   var tmV = -1, tmL = -1, tmAt = 0;
@@ -454,6 +464,8 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     buL.forEach(function (o) { var d = document.createElement('div'); d.className = 'rr'; var a = document.createElement('span'), n = document.createElement('b'); n.textContent = o.n; a.appendChild(n); var y = document.createElement('small'); y.textContent = o.y || '（よみがななし）'; a.appendChild(y); d.appendChild(a); var g = document.createElement('i'); g.textContent = o.g || '—'; d.appendChild(g); B.appendChild(d); }); };
   $('buGo').onclick = function () { var ok = true; for (var i = 0; i < buL.length; i += 50) ok = send({ type: 'roster', op: 'bulk', list: buL.slice(i, i + 50) }) && ok; if (!ok) { $('buErr').textContent = 'モニターにつながっていません。'; return; } $('buT').value = ''; buL = []; show('vRo'); roDraw(); };
   $('buBack').onclick = function () { show('vRo'); roDraw(); };
+  $('mCam').onclick = function () { var B = $('cqB'); B.textContent = ''; try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-cam/?r=' + code); q.make(); B.innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) {} $('cqC').textContent = code.slice(0, 3) + ' ' + code.slice(3); show('vCamQ'); };
+  $('cqBack').onclick = function () { show(tvOf(last)); };
   $('qrBack').onclick = function () { show('vRo'); roDraw(); };
   function cfOpen() {
     var R = $('cfRows'), cf = (last && last.cf) || []; R.textContent = '';

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VIBES DIGITAL LABO ライブ表示｜VIBES BILLIARDS</title>
+<meta name="description" content="撮影カメラの映像とスコアを、別のモニターに映すライブ表示。">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://vibesbilliards.com/pages/count-live">
+<link rel="icon" href="/img/favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@500;700;900&display=swap">
+<style>
+:root{--night:#171A22;--night2:#262A35;--line:#3A3F4C;--lime:#C0FC09;--chalk:#F3F4EF;--sub:#A3A8B5}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;color:var(--chalk);font-family:"Noto Sans JP",system-ui,sans-serif;overflow:hidden}
+[hidden]{display:none!important}
+video{position:fixed;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.ov{position:fixed;inset:0;display:grid;place-items:center;padding:4vh 4vw;background:radial-gradient(120% 90% at 50% 0%,#232836 0%,#171A22 55%,#0E1015 100%)}
+.box{display:grid;gap:2.4vh;justify-items:center;text-align:center;max-width:min(92vw,900px)}
+.box img{height:22vh;width:auto;max-width:70vw}
+.lab{font-family:Anton,Impact,sans-serif;letter-spacing:.3em;text-indent:.3em;font-size:3.4vh;border-top:.4vh solid var(--lime);padding-top:1.4vh}
+.box p{margin:0;font-weight:700;font-size:2.6vh;line-height:1.7;color:var(--chalk)}.box p small{display:block;color:var(--sub);font-size:2vh}
+form{display:grid;gap:1.6vh;justify-items:center}
+input{font-family:Anton,Impact,sans-serif;font-size:8vh;letter-spacing:.14em;text-align:center;width:min(80vw,9em);color:var(--chalk);background:var(--night);border:.4vh solid var(--line);border-radius:1.6vh;padding:1vh}
+input:focus{outline:none;border-color:var(--lime)}
+button{font:inherit;font-weight:900;font-size:2.8vh;color:var(--night);background:var(--lime);border:0;border-radius:999px;padding:1.4vh 4vw;cursor:pointer}
+.err{color:#FF8A8F;font-weight:700;font-size:2.2vh;min-height:3vh;margin:0}
+.bar{position:fixed;right:1.2vw;top:1.6vh;display:flex;gap:.8vw;opacity:.0;transition:opacity .3s}.bar.show{opacity:1}
+.bar button{font-size:1.8vh;color:var(--chalk);background:rgba(23,26,34,.8);border:1px solid rgba(255,255,255,.25);padding:.8vh 1.6vw}
+</style>
+</head>
+<body>
+<video id="v" autoplay playsinline muted></video>
+<div class="ov" id="ov">
+  <div class="box">
+    <img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LABO</div>
+    <form id="fJoin"><p>ライブ表示<small>スコアのモニターに出ている6けたの番号を入れてください</small></p>
+      <input id="iCode" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="000 000" aria-label="番号">
+      <button type="submit">つなぐ</button><p class="err" id="eJoin"></p></form>
+    <p id="wait" hidden>撮影カメラを待っています<small id="waitS">撮影用のスマホで「カメラを始める」を押すと、ここに映像が出ます</small></p>
+  </div>
+</div>
+<div class="bar" id="bar"><button type="button" id="bFull">全画面 (F)</button><button type="button" id="bCode">番号を変える</button></div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+  var CK = 'vibes-count-live-code', code = '', ws = null, tries = 0, ping = null, pc = null, id = Math.random().toString(36).slice(2, 10), want = null, playing = false, barT = null;
+  function send(o) { if (ws && ws.readyState === 1) { try { ws.send(JSON.stringify(o)); return true; } catch (e) {} } return false; }
+  function ask() { if (!playing) send({ type: 'rtc', k: 'want', id: id }); }
+  function connect() {
+    if (!code) return; if (ws && ws.readyState <= 1) return;
+    try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=display'); } catch (e) { return; }
+    ws.onopen = function () { tries = 0; $('fJoin').hidden = true; $('wait').hidden = false; clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); ask(); clearInterval(want); want = setInterval(ask, 5000); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type !== 'rtc') return;
+      if (m.k === 'cam') { playing = false; return ask(); }
+      if (m.id !== id) return;
+      if (m.k === 'offer' && m.sdp) { if (pc) { try { pc.close(); } catch (e) {} } pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }); var me = pc;
+        pc.ontrack = function (e) { $('v').srcObject = e.streams[0] || new MediaStream([e.track]); $('v').play().catch(function () {}); playing = true; $('ov').hidden = true; };
+        pc.onicecandidate = function (e) { if (e.candidate) send({ type: 'rtc', k: 'ice', id: id, from: 'v', c: e.candidate }); };
+        pc.onconnectionstatechange = function () { if (me !== pc) return; if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected' || pc.connectionState === 'closed') { playing = false; $('ov').hidden = false; $('waitS').textContent = '映像が切れました。撮影用のスマホの画面が開いているか確かめてください。'; ask(); } };
+        pc.setRemoteDescription(m.sdp).then(function () { return pc.createAnswer(); }).then(function (a) { return pc.setLocalDescription(a); }).then(function () { send({ type: 'rtc', k: 'answer', id: id, sdp: pc.localDescription }); }).catch(function () {}); }
+      else if (m.k === 'ice' && m.from === 'c' && m.c && pc) pc.addIceCandidate(m.c).catch(function () {}); };
+    ws.onclose = function () { clearInterval(ping); clearInterval(want); if (code) setTimeout(connect, Math.min(10000, 800 * Math.pow(2, tries++))); };
+    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+  }
+  $('fJoin').addEventListener('submit', function (e) { e.preventDefault(); var v = $('iCode').value.replace(/\D/g, ''); if (v.length !== 6) { $('eJoin').textContent = '6けたの番号を入れてください。'; return; } $('eJoin').textContent = ''; code = v; try { localStorage.setItem(CK, code); } catch (x) {} connect(); });
+  $('iCode').addEventListener('input', function () { var v = this.value.replace(/\D/g, '').slice(0, 6); this.value = v.length > 3 ? v.slice(0, 3) + ' ' + v.slice(3) : v; });
+  function full() { var d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {}); }
+  $('bFull').onclick = full; document.addEventListener('keydown', function (e) { if ((e.key === 'f' || e.key === 'F') && document.activeElement !== $('iCode')) { e.preventDefault(); full(); } });
+  $('bCode').onclick = function () { code = ''; try { localStorage.removeItem(CK); } catch (x) {} if (ws) { try { ws.onclose = null; ws.close(); } catch (x) {} ws = null; } clearInterval(want); if (pc) { try { pc.close(); } catch (x) {} pc = null; } playing = false; $('ov').hidden = false; $('fJoin').hidden = false; $('wait').hidden = true; };
+  document.addEventListener('mousemove', function () { $('bar').classList.add('show'); clearTimeout(barT); barT = setTimeout(function () { $('bar').classList.remove('show'); }, 2500); });
+  var q = /[?&]r=(\d{6})/.exec(location.search); try { code = q ? q[1] : (localStorage.getItem(CK) || ''); } catch (e) {}
+  if (code) { $('iCode').value = code.slice(0, 3) + ' ' + code.slice(3); connect(); }
+})();
+</script>
+</body>
+</html>

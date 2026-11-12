@@ -384,6 +384,8 @@ function contentPages() {
   put('/pages/count', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-home.html'), 'utf8') });
   put('/pages/count-pocket', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-pocket.html'), 'utf8') });
   put('/pages/count-remote', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-remote.html'), 'utf8') });
+  put('/pages/count-cam', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-cam.html'), 'utf8') });
+  put('/pages/count-live', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-live.html'), 'utf8') });
   const nd = fs.readFileSync(path.join(ROOT, 'static/apps/nine-drop.html'), 'utf8');
   put('/pages/nine-drop', { raw: `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/img/favicon-64.png"><link rel="canonical" href="${SITE}/pages/nine-drop"><meta name="description" content="ナインボールのルールで遊ぶ落ち物パズル。"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style></head><body>${nd.replace('<title>Nine Drop</title>', '<title>NINE DROP｜VIBES BILLIARDS</title>')}</body></html>` });
 
@@ -498,7 +500,7 @@ const urls = [];
 for (const [url, v] of out) {
   const html = v.raw ?? v.html;
   write(DIST, url, html); n++;
-  if (url !== '/404.html' && !/^\/pages\/count(-3c|-remote|-pocket)?$/.test(url)) urls.push(url); /* count-3c: in private testing, not listed */
+  if (url !== '/404.html' && !/^\/pages\/count(-3c|-remote|-pocket|-cam|-live)?$/.test(url)) urls.push(url); /* count-3c: in private testing, not listed */
   for (const [code, , prefix] of LANGS.slice(1)) { write(DIST, prefix + (url === '/' ? '/' : url), localize(html, code, prefix)); n++; }
 }
 const sm = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${SITE}${encodeURI(decodeURI(u))}</loc></url>`).join('\n')}\n</urlset>`;
