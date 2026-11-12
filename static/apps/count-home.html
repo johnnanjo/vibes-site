@@ -37,6 +37,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 .logo{grid-column:1/-1;display:grid;place-items:center;align-content:center;padding:1vh 0}
 .lab{margin-top:1.6vh;padding-top:1.4vh;border-top:.35vh solid var(--lime);font-family:Unbounded,Anton,sans-serif;font-weight:900;font-size:2.7vh;letter-spacing:.34em;text-indent:.34em;color:var(--chalk);white-space:nowrap}
 .solo .lab{font-size:4.6vh;margin-top:2.4vh;padding-top:2vh;justify-self:center}.solo .lg{display:grid;justify-items:center;align-self:center}
+.shop{font-weight:900;font-size:4.4vh;letter-spacing:.08em;color:var(--chalk);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw}.solo .shop{font-size:6vh;margin-bottom:3vh;max-width:90vw}
 .pf{display:grid;grid-template-columns:1fr 1fr;gap:1.2vh 1.4vw;text-align:left}.pf label{display:block;font-weight:700;font-size:1.8vh;margin-bottom:.4vh;color:var(--chalk)}
 .pf input,.pf select,.rof input{width:100%;font:inherit;font-weight:700;font-size:2.4vh;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:1.2vh;padding:1vh 1vw}
 .rof{display:grid;grid-template-columns:1fr 1fr 9vw auto;gap:1vw;align-items:end;text-align:left}.rof label{display:block;font-weight:700;font-size:1.7vh;margin-bottom:.4vh}
@@ -95,7 +96,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
 </div>
 <img id="logoSrc" src="/img/vibes-logo-t.png" alt="" hidden>
 <div class="solo" id="solo" hidden>
-  <div class="lg"><img id="soloLogo" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LAB</div></div>
+  <div class="lg"><div class="shop" id="soloShop" hidden></div><img id="soloLogo" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LAB</div></div>
   <div class="soloq"><div class="qr sm" id="soloQ"></div><div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div></div>
 </div>
 <div class="ov" id="zipL" hidden style="z-index:9">
@@ -161,6 +162,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     });
     var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LAB'; lg.appendChild(lb); r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
     var f = $('foot'); f.textContent = ''; [['1', '〜'], [String(m.items.length), '選ぶ'], ['Enter', '決定']].concat(m.back ? [['BackSpace', 'もどる']] : []).concat([['F', '全画面']]).forEach(function (x, i) { var sp2 = i === 1 ? f.lastChild : document.createElement('span'); var k2 = document.createElement('kbd'); k2.textContent = x[0]; sp2.appendChild(k2); sp2.appendChild(document.createTextNode(x[1])); if (i !== 1) f.appendChild(sp2); });
+    if (typeof shopDraw === 'function') shopDraw();
     if (typeof push === 'function') push();
   }
   function pick(i) { sel = i; tiles.forEach(function (t, k) { t.classList.toggle('sel', k === i); }); }
@@ -173,7 +175,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   var seen = false; try { seen = sessionStorage.getItem('vibes-remote-seen') === '1'; } catch (e) {}
   var sawPhone = function () { if (seen) return; seen = true; try { sessionStorage.setItem('vibes-remote-seen', '1'); } catch (e) {} showMenu = false; draw(); };
   var saveRm = function () { try { localStorage.setItem(RMK, JSON.stringify(rm)); } catch (e) {} };
-  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', cf: cfSchema(), table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { var cl = colOf(x); return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d, col: cl.slice(0, 3), lt: cl[3] ? 1 : 0 }; }) }); };
+  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', shop: shopGet(), cf: cfSchema(), table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { var cl = colOf(x); return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d, col: cl.slice(0, 3), lt: cl[3] ? 1 : 0 }; }) }); };
   var push = function () { if (ws && ws.readyState === 1) { try { ws.send(state()); } catch (e) {} } };
   function draw() {
     var on = !!(rm && rm.on), solo = on && seen && !showMenu; $('solo').hidden = !solo; $('home').hidden = solo; $('hq').hidden = !on; if (on && $('hqQ').getAttribute('data-c') !== rm.code) { $('hqQ').innerHTML = qrSvg(rm.code); $('hqQ').setAttribute('data-c', rm.code); $('hqC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); }
@@ -203,13 +205,16 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   }
   var PFK = 'vibes-count-prefs', PFD = { lim: 0, t: 40, to: 3, pm: 5, eq: 1, snd: 1, easy: 0, voice: 1 };
   function cfGet() { var o = {}, pf = null, st = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); if (!pf) { st = JSON.parse(localStorage.getItem('vibes-count-3c-v1') || 'null'); pf = st && st.cfg; } } catch (e) {} Object.keys(PFD).forEach(function (k) { o[k] = pf && typeof pf[k] === 'number' ? pf[k] : PFD[k]; }); return o; }
+  function shopGet() { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); return pf && typeof pf.shop === 'string' ? pf.shop : ''; } catch (e) { return ''; } }
+  function shopDraw() { var n = shopGet(); $('soloShop').textContent = n; $('soloShop').hidden = !n; if (lv === 'top') { var cr = $('crumb'); cr.textContent = ''; if (n) { var sp = document.createElement('span'); sp.className = 'shop'; sp.textContent = n; cr.appendChild(sp); } } }
   function cfSchema() { var c = cfGet(), yn = [[1, 'あり'], [0, 'なし']]; return [
+    { k: 'shop', l: '店舗名（トップ画面に出ます）', t: 'x', v: shopGet() },
     { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 't', l: '秒数カウント（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
     { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
     { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'voice', l: '音声コール（英語で点数を読み上げ）', t: 's', o: yn, v: c.voice ? 1 : 0 }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
-  function cfSave(v) { var c = cfGet(); cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = parseInt(v[f.k], 10); if (isNaN(x)) return; c[f.k] = f.t === 'n' ? Math.max(f.min, Math.min(f.max, x)) : (x ? 1 : 0); }); try { localStorage.setItem(PFK, JSON.stringify(c)); } catch (e) {} }
+  function cfSave(v) { var c = cfGet(); c.shop = shopGet(); cfSchema().forEach(function (f) { if (!(f.k in v)) return; if (f.t === 'x') { c[f.k] = String(v[f.k]).replace(/\s+/g, ' ').trim().slice(0, 30); return; } var x = parseInt(v[f.k], 10); if (isNaN(x)) return; c[f.k] = f.t === 'n' ? Math.max(f.min, Math.min(f.max, x)) : (x ? 1 : 0); }); try { localStorage.setItem(PFK, JSON.stringify(c)); } catch (e) {} shopDraw(); }
   function cfPanel() { var R = $('cfR'); R.textContent = ''; cfSchema().forEach(function (f) { var d = document.createElement('div'), l = document.createElement('label'), i; l.textContent = f.l; l.htmlFor = 'c_' + f.k;
-      if (f.t === 's') { i = document.createElement('select'); f.o.forEach(function (o) { var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; i.appendChild(op); }); } else { i = document.createElement('input'); i.type = 'number'; i.min = f.min; i.max = f.max; }
+      if (f.t === 's') { i = document.createElement('select'); f.o.forEach(function (o) { var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; i.appendChild(op); }); } else { i = document.createElement('input'); if (f.t === 'x') { i.maxLength = 30; i.placeholder = '例：WINDビリヤード'; d.style.gridColumn = '1/-1'; } else { i.type = 'number'; i.min = f.min; i.max = f.max; } }
       i.value = f.v; i.id = 'c_' + f.k; i.setAttribute('data-k', f.k); d.appendChild(l); d.appendChild(i); R.appendChild(d); }); $('cfL').hidden = false; }
   $('cfF').addEventListener('submit', function (e) { e.preventDefault(); var v = {}; Array.prototype.forEach.call(document.querySelectorAll('#cfR [data-k]'), function (i) { v[i.getAttribute('data-k')] = i.value; }); cfSave(v); $('cfL').hidden = true; push(); });
   $('cfX').onclick = function () { $('cfL').hidden = true; }; $('roX').onclick = function () { $('roL').hidden = true; }; $('ntOk').onclick = function () { $('ntL').hidden = true; };
@@ -244,6 +249,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     else if (k === 'Escape' && rm && rm.on) { e.preventDefault(); showMenu = false; draw(); }
   });
   if (!rm && /^https?:/.test(location.protocol) && navigator.onLine !== false) { rm = { code: String(Math.floor(100000 + Math.random() * 900000)), on: true }; saveRm(); }
+  var qs = /[?&]shop=([^&]+)/.exec(location.search); if (qs) { try { cfSave({ shop: decodeURIComponent(qs[1].replace(/\+/g, ' ')) }); history.replaceState(null, '', location.pathname); } catch (e) {} }
   menu(); draw(); connect();
   var PROBE = ''; if (PROBE) { var ps = document.createElement('script'); ps.src = PROBE; ps.onerror = function () { $('zipL').hidden = false; }; document.head.appendChild(ps); }
   if ('serviceWorker' in navigator && /^https:|^http:\/\/localhost/.test(location.href)) navigator.serviceWorker.register('/sw-count.js', { scope: '/pages/count' }).catch(function () {});
