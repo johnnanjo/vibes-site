@@ -252,6 +252,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
       <div class="f"><label for="fe">裏撞き（全員が撞いてから終了）</label><select id="fe"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fz">イージーモード（点数・イニング・名前・ハイランだけ）</label><select id="fz"><option value="0">なし</option><option value="1">あり</option></select></div>
       <div class="f"><label for="fv">音声コール（英語で点数を読み上げ）</label><select id="fv"><option value="1">あり</option><option value="0">なし</option></select></div>
+      <div class="f"><label for="fvd">音声コールを出す場所</label><select id="fvd"><option value="both">モニターとタブレット</option><option value="pc">モニターだけ</option><option value="tab">タブレットだけ</option></select></div>
       <div class="f"><label for="fs">音（残り10秒・時間切れ）</label><select id="fs"><option value="1">あり</option><option value="0">なし</option></select></div>
     </div>
     <datalist id="roster"></datalist>
@@ -410,7 +411,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   function callText(run, left) { var more = { 3: 'three more', 2: 'two more', 1: 'one more' }[left]; return NW(run) + (run === 1 ? ' point' : ' points') + (more ? ', ' + more : ''); }
   var NW = function (n) { var a = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'], t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']; return n < 20 ? a[n] : n < 100 ? t[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '') : String(n); };
   function speak(t) { try { var ss = window.speechSynthesis; if (!ss) return; var u = new SpeechSynthesisUtterance(t), vs = ss.getVoices().filter(function (v) { return /^en[-_]/i.test(v.lang); }); u.lang = 'en-US'; if (vs.length) u.voice = vs.filter(function (v) { return /en[-_]US/i.test(v.lang); })[0] || vs[0]; u.rate = 1; u.pitch = 1; ss.cancel(); ss.speak(u); } catch (e) {} }
-  function callOut() { if (S.cfg.voice === 0 || S.over || S.run < 1) return; speak(callText(S.run, S.cfg.g[S.turn] - S.sc[S.turn] - S.run)); }
+  function callOut() { if (S.cfg.voice === 0 || S.cfg.vdev === 'tab' || S.over || S.run < 1) return; speak(callText(S.run, S.cfg.g[S.turn] - S.sc[S.turn] - S.run)); }
   function digit(d) { if (S.over) return; begin(); var v = S.typed ? S.run * 10 + d : d; if (v > room()) v = d > room() ? room() : d; S.run = v; S.typed = true; render(); }
   function finish() { S.over = true; S.t1 = Date.now(); tStop(); render(); showWin(); if (typeof rmPush === 'function') rmPush(); }
   function commit() {
@@ -439,7 +440,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   function openSet() {
     for (var q = 0; q < 4; q++) { $('fn' + q).value = S.cfg.n[q] || 'PLAYER ' + (q + 1); $('fg' + q).value = S.cfg.g[q] || S.cfg.g[0]; }
     $('fnp').value = NP(); $('fnp').disabled = !fresh(); $('fto').value = S.cfg.to; setRows();
-    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1;
+    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1; $('fvd').value = S.cfg.vdev || 'both';
     $('setL').hidden = false; $('fn0').focus(); $('fn0').select();
   }
   function setRows() { var n = +$('fnp').value; for (var q = 0; q < 4; q++) Array.prototype.forEach.call(document.querySelectorAll('.pf' + q), function (e) { e.hidden = q >= n; }); }
@@ -449,7 +450,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
       var nn = fresh() ? +$('fnp').value : NP(), oldTo = S.cfg.to; if (nn !== NP()) setN(nn);
       for (var q = 0; q < nn; q++) { S.cfg.n[q] = $('fn' + q).value.trim() || 'PLAYER ' + (q + 1); S.cfg.g[q] = num('fg' + q, 1, 999, 25); }
       S.cfg.to = num('fto', 0, 9, 3); if (S.cfg.to !== oldTo) S.to = S.to.map(function (v) { return Math.max(0, v + S.cfg.to - oldTo); }); S.cfg.lim = num('fl', 0, 999, 0); S.cfg.t = num('ft', 0, 180, 40); S.cfg.pm = num('fp', 1, 60, 5);
-      S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value; S.cfg.easy = +$('fz').value; S.cfg.voice = +$('fv').value; prefSave();
+      S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value; S.cfg.easy = +$('fz').value; S.cfg.voice = +$('fv').value; S.cfg.vdev = $('fvd').value; prefSave();
       remember();
       for (var p = 0; p < NP(); p++) if (S.sc[p] > S.cfg.g[p]) S.cfg.g[p] = S.sc[p];
       if (S.run > room()) S.run = Math.max(0, room());
@@ -459,7 +460,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   function cfSchema() { var c = S.cfg, yn = [[1, 'あり'], [0, 'なし']]; return [
     { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 't', l: '残り秒数（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
     { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
-    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（英語で点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
+    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（英語で点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
   function cfApply(v) {
     var oldTo = S.cfg.to;
     cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = v[f.k];
@@ -702,7 +703,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), U_HOME = '/pages/count/', rm = null, rws = null, rTry = 0, rPing = null;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
-  function rmState() { var N3 = NP(); return JSON.stringify({ type: 'state', il: S.inn, shop: (function () { try { return (JSON.parse(localStorage.getItem('vibes-count-prefs') || '{}') || {}).shop || ''; } catch (e) { return ''; } })(), voice: S.cfg.voice === 0 ? 0 : 1, va: navigator.userActivation ? (navigator.userActivation.hasBeenActive ? 1 : 0) : 1, pz: !!S.pz, tl: tOn ? Math.max(0, tLeft) : -1, gt: gtText(), resH: ['得点', 'イニング', 'ハイラン', 'アベレージ'], res: S.cfg.n.map(function (x, i) { return [x + ' (' + S.cfg.g[i] + ')', S.sc[i] + ' / ' + S.cfg.g[i], S.inn[i].length, hi(i), avg(i)]; }), kind: N3 > 2 ? 'pocket' : '3c', su: { min: 2, max: 4, t: '持ち点', d: 25 }, title: S.cfg.game === 'band' ? 'バンド' : 'スリークッション', lab: S.cfg.n.map(function (x, i) { return x + ' (' + S.cfg.g[i] + ')'; }), score: S.cfg.n.map(function (x, i) { return String(S.sc[i] + (i === S.turn && !S.over ? S.run : 0)); }), midL: 'INNING', mid: $('inn').textContent, info: S.run && !S.over ? 'この回 ' + S.run + '点' : '', keys: [['+', '1点'], ['-', '1点へらす'], ['Enter', '交代'], ['BackSpace', '戻る']], win: S.over ? $('wName').textContent : '', cf: cfSchema(), table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
+  function rmState() { var N3 = NP(); return JSON.stringify({ type: 'state', vdev: S.cfg.vdev || 'both', il: S.inn, shop: (function () { try { return (JSON.parse(localStorage.getItem('vibes-count-prefs') || '{}') || {}).shop || ''; } catch (e) { return ''; } })(), voice: S.cfg.voice === 0 ? 0 : 1, va: navigator.userActivation ? (navigator.userActivation.hasBeenActive ? 1 : 0) : 1, pz: !!S.pz, tl: tOn ? Math.max(0, tLeft) : -1, gt: gtText(), resH: ['得点', 'イニング', 'ハイラン', 'アベレージ'], res: S.cfg.n.map(function (x, i) { return [x + ' (' + S.cfg.g[i] + ')', S.sc[i] + ' / ' + S.cfg.g[i], S.inn[i].length, hi(i), avg(i)]; }), kind: N3 > 2 ? 'pocket' : '3c', su: { min: 2, max: 4, t: '持ち点', d: 25 }, title: S.cfg.game === 'band' ? 'バンド' : 'スリークッション', lab: S.cfg.n.map(function (x, i) { return x + ' (' + S.cfg.g[i] + ')'; }), score: S.cfg.n.map(function (x, i) { return String(S.sc[i] + (i === S.turn && !S.over ? S.run : 0)); }), midL: 'INNING', mid: $('inn').textContent, info: S.run && !S.over ? 'この回 ' + S.run + '点' : '', keys: [['+', '1点'], ['-', '1点へらす'], ['Enter', '交代'], ['BackSpace', '戻る']], win: S.over ? $('wName').textContent : '', cf: cfSchema(), table: TB, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
   function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); } catch (e) {} } }
   function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'つながっています' : '接続しています…') : '切'; $('bRm').textContent = rm && rm.on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'リモコン'; }
   function rmConnect() {
@@ -715,11 +716,11 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
     rmStatus();
   }
   var PFK = 'vibes-count-prefs', PFL = ['lim', 't', 'to', 'pm', 'eq', 'snd', 'easy', 'voice'];
-  function prefSave() { if (S.cfg.mode) return; var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } PFL.forEach(function (k) { o[k] = k === 'voice' ? (S.cfg.voice === 0 ? 0 : 1) : +S.cfg[k] || 0; }); try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
+  function prefSave() { if (S.cfg.mode) return; var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } PFL.forEach(function (k) { o[k] = k === 'voice' ? (S.cfg.voice === 0 ? 0 : 1) : +S.cfg[k] || 0; }); o.vdev = S.cfg.vdev || 'both'; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
   function menuInit() {
     var q = /[?&]n=(new|again)/.exec(location.search); if (!q) return;
     var c = S.cfg, pf = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); } catch (e) {}
-    if (pf) (c.mode ? ['t', 'to', 'pm', 'snd'] : PFL).forEach(function (k) { if (typeof pf[k] === 'number') c[k] = pf[k]; });
+    if (pf) (c.mode ? ['t', 'to', 'pm', 'snd'] : PFL).forEach(function (k) { if (typeof pf[k] === 'number') c[k] = pf[k]; }); if (pf && !c.mode && /^(both|pc|tab)$/.test(pf.vdev || '')) c.vdev = pf.vdev;
     if (q[1] === 'new') c.n = c.n.map(function (x, i) { return 'PLAYER ' + (i + 1); });
     S = def(c); hist = []; S.ready = !c.n.every(isDefName);
     try { history.replaceState(null, '', location.pathname + location.search.replace(/([?&])n=(new|again)(&|$)/, '$1').replace(/[?&]$/, '')); } catch (e) {}
