@@ -268,6 +268,8 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       <div class="f"><label for="fz">イージーモード（点数・イニング・名前・ハイランだけ）</label><select id="fz"><option value="0">なし</option><option value="1">あり</option></select></div>
       <div class="f"><label for="fv">音声コール（英語で点数を読み上げ）</label><select id="fv"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fvd">音声コールを出す場所</label><select id="fvd"><option value="both">モニターとタブレット</option><option value="pc">モニターだけ</option><option value="tab">タブレットだけ</option></select></div>
+      <div class="f"><label for="fcl">交代の読み上げの言葉</label><select id="fcl"><option value="en">英語</option><option value="ja">日本語</option><option value="es">スペイン語</option><option value="fr">フランス語</option><option value="it">イタリア語</option><option value="ko">韓国語</option></select></div>
+      <div class="f"><label for="fcv">声</label><select id="fcv"><option value="f">女性</option><option value="m">男性</option></select></div>
       <div class="f"><label for="fs">音（残り10秒・時間切れ）</label><select id="fs"><option value="1">あり</option><option value="0">なし</option></select></div>
     </div>
     <datalist id="roster"></datalist>
@@ -324,6 +326,17 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
 <script>
 (function () {
   var MIR = /[?&]mir=1/.test(location.search);
+  /* voices: the browser does not say whether a voice is male or female, so known voice names are matched; if only the other kind exists for a language, its pitch is shifted */
+  var VL = { en: 'en-US', ja: 'ja-JP', es: 'es-ES', fr: 'fr-FR', it: 'it-IT', ko: 'ko-KR' };
+  var VFN = /samantha|karen|moira|tessa|victoria|allison|ava|susan|zira|aria|jenny|hazel|catherine|kyoko|haruka|ayumi|sayaka|nanami|o-ren|m[oó]nica|paulina|marisol|helena|laura|sabina|elvira|dalia|am[eé]lie|audrey|marie|aur[eé]lie|hortense|julie|denise|c[eé]line|alice|federica|elsa|isabella|paola|yuna|heami|sun-?hi|sora|jimin|seoyeon/i,
+    VMN = /daniel|alex|fred|aaron|arthur|gordon|rishi|david|mark|guy|ryan|george|otoya|ichiro|keita|hattori|jorge|diego|juan|pablo|[aá]lvaro|carlos|enrique|thomas|paul|claude|henri|jacques|luca|cosimo|rocko|in-?joon|minsu|eddy|reed|grandpa/i;
+  function vSex(v) { var n = String(v.name || ''); return /\bfemale\b|女性/i.test(n) ? 'f' : /\bmale\b|男性/i.test(n) ? 'm' : VFN.test(n) ? 'f' : VMN.test(n) ? 'm' : /google/i.test(n) ? 'f' : ''; }
+  function vPick(ss, lang, g) { var all = ss.getVoices() || [], vs = all.filter(function (v) { return String(v.lang || '').toLowerCase().replace('_', '-').indexOf(lang) === 0; }); if (!vs.length) return { none: all.length > 0 };
+    var best = function (a) { return a.filter(function (v) { return String(v.lang).replace('_', '-').toLowerCase() === VL[lang].toLowerCase(); })[0] || a[0]; }, want = vs.filter(function (v) { return vSex(v) === g; });
+    if (want.length) return { v: best(want) }; var v0 = best(vs), s0 = vSex(v0); return { v: v0, sh: s0 && s0 !== g ? (g === 'm' ? .6 : 1.45) : 0 }; }
+  function vSpeak(t, lang, g, fb) { try { var ss = window.speechSynthesis; if (!ss) return; lang = VL[lang] ? lang : 'en'; g = g === 'm' ? 'm' : 'f'; var r = vPick(ss, lang, g); if (r.none && lang !== 'en' && fb) { t = fb; lang = 'en'; r = vPick(ss, 'en', g); }
+    var u = new SpeechSynthesisUtterance(String(t)); u.lang = VL[lang]; if (r.v) u.voice = r.v; u.rate = 1; u.pitch = r.sh || 1; if (ss.speaking || ss.pending) ss.cancel(); ss.speak(u); } catch (e) {} }
+
   /* 2026-11: time-outs are off unless the shop turns them on in the settings (one-time change of the saved default) */
   try { var pd = JSON.parse(localStorage.getItem('vibes-count-prefs') || 'null') || {}; if (!pd.d2) { pd.to = 0; pd.d2 = 1; localStorage.setItem('vibes-count-prefs', JSON.stringify(pd)); } } catch (e) {}
   var TB = (function () { var m = /[?&]t=(\d)/.exec(location.search); return m ? +m[1] : 0; })();
@@ -428,7 +441,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
   /* referee-style call in English: "two points", then "three more" / "two more" / "one more" near the target */
   function callText(run, left) { var more = { 3: 'three more', 2: 'two more', 1: 'one more' }[left]; return NW(run) + (run === 1 ? ' point' : ' points') + (more ? ', ' + more : ''); }
   var NW = function (n) { var a = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'], t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']; return n < 20 ? a[n] : n < 100 ? t[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '') : String(n); };
-  function speak(t) { try { var ss = window.speechSynthesis; if (!ss) return; var u = new SpeechSynthesisUtterance(t), vs = ss.getVoices().filter(function (v) { return /^en[-_]/i.test(v.lang); }); u.lang = 'en-US'; if (vs.length) u.voice = vs.filter(function (v) { return /en[-_]US/i.test(v.lang); })[0] || vs[0]; u.rate = 1; u.pitch = 1; ss.cancel(); ss.speak(u); } catch (e) {} }
+  function speak(t, lang, fb) { vSpeak(t, lang || 'en', S.cfg.cvo === 'm' ? 'm' : 'f', fb); }
   function callOut() { if (S.cfg.voice === 0 || S.cfg.vdev === 'tab' || S.over || S.run < 1) return; speak(callText(S.run, S.cfg.g[S.turn] - S.sc[S.turn] - S.run)); }
   function digit(d) { if (S.over) return; begin(); var v = S.typed ? S.run * 10 + d : d; if (v > room()) v = d > room() ? room() : d; S.run = v; S.typed = true; render(); }
   function finish() { S.over = true; S.t1 = Date.now(); tStop(); render(); showWin(); if (typeof rmPush === 'function') rmPush(); }
@@ -439,9 +452,12 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     if (S.sc[p] >= S.cfg.g[p] && !S.cfg.eq) return finish();
     if (p === N - 1) { if (any) return finish(); if (S.cfg.lim && S.inn[p].length >= S.cfg.lim) return finish(); S.turn = 0; }
     else S.turn = p + 1;
-    tKick(); render(); if (S.cfg.vdev !== 'tab') { chime(); if (S.cfg.voice !== 0) setTimeout(speak, 350, gotText(S.inn[p][S.inn[p].length - 1])); }
+    tKick(); render(); if (S.cfg.vdev !== 'tab') { chime(); if (S.cfg.voice !== 0) setTimeout(function (n) { speak(gotText(n), S.cfg.clang, gotText(n, 'en')); }, 350, S.inn[p][S.inn[p].length - 1]); }
   }
-  var gotText = function (n) { return 'you got ' + (n ? NW(n) + (n === 1 ? ' point' : ' points') : 'no points'); };
+  var GOT = { en: function (n) { return 'you got ' + (n ? NW(n) + (n === 1 ? ' point' : ' points') : 'no points'); }, ja: function (n) { return n ? 'あなたは' + n + '点取りました' : 'あなたは0点でした'; },
+    es: function (n) { return n ? 'Has conseguido ' + n + (n === 1 ? ' punto' : ' puntos') : 'No has conseguido puntos'; }, fr: function (n) { return n ? 'Vous avez marqué ' + n + (n === 1 ? ' point' : ' points') : "Vous n'avez marqué aucun point"; },
+    it: function (n) { return n ? 'Hai fatto ' + n + (n === 1 ? ' punto' : ' punti') : 'Non hai fatto punti'; }, ko: function (n) { return n ? n + '점을 획득했습니다' : '득점이 없습니다'; } };
+  var gotText = function (n, l) { return (GOT[l || S.cfg.clang] || GOT.en)(n); };
   /* two rising notes when the turn passes to the next player */
   function chime() { beep(660, 110); setTimeout(function () { beep(990, 170); }, 120); }
   function undo() {
@@ -461,7 +477,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
   function openSet() {
     for (var q = 0; q < 4; q++) { $('fn' + q).value = S.cfg.n[q] || 'PLAYER ' + (q + 1); $('fg' + q).value = S.cfg.g[q] || S.cfg.g[0]; }
     $('fnp').value = NP(); $('fnp').disabled = !fresh(); $('fto').value = S.cfg.to; setRows();
-    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1; $('fvd').value = S.cfg.vdev || 'both';
+    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1; $('fvd').value = S.cfg.vdev || 'both'; $('fcl').value = S.cfg.clang || 'en'; $('fcv').value = S.cfg.cvo === 'm' ? 'm' : 'f';
     $('setL').hidden = false; $('fn0').focus(); $('fn0').select();
   }
   function setRows() { var n = +$('fnp').value; for (var q = 0; q < 4; q++) Array.prototype.forEach.call(document.querySelectorAll('.pf' + q), function (e) { e.hidden = q >= n; }); }
@@ -471,7 +487,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       var nn = fresh() ? +$('fnp').value : NP(), oldTo = S.cfg.to; if (nn !== NP()) setN(nn);
       for (var q = 0; q < nn; q++) { S.cfg.n[q] = $('fn' + q).value.trim() || 'PLAYER ' + (q + 1); S.cfg.g[q] = num('fg' + q, 1, 999, 25); }
       S.cfg.to = num('fto', 0, 9, 3); if (S.cfg.to !== oldTo) S.to = S.to.map(function (v) { return Math.max(0, v + S.cfg.to - oldTo); }); S.cfg.lim = num('fl', 0, 999, 0); S.cfg.t = num('ft', 0, 180, 40); S.cfg.pm = num('fp', 1, 60, 5);
-      S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value; S.cfg.easy = +$('fz').value; S.cfg.voice = +$('fv').value; S.cfg.vdev = $('fvd').value; prefSave();
+      S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value; S.cfg.easy = +$('fz').value; S.cfg.voice = +$('fv').value; S.cfg.vdev = $('fvd').value; S.cfg.clang = $('fcl').value; S.cfg.cvo = $('fcv').value; prefSave();
       remember();
       for (var p = 0; p < NP(); p++) if (S.sc[p] > S.cfg.g[p]) S.cfg.g[p] = S.sc[p];
       if (S.run > room()) S.run = Math.max(0, room());
@@ -481,7 +497,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
   function cfSchema() { var c = S.cfg, yn = [[1, 'あり'], [0, 'なし']]; return [
     { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 't', l: '残り秒数（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
     { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
-    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（英語で点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
+    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（英語で点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'clang', l: '交代の読み上げの言葉', t: 's', o: [['en', '英語'], ['ja', '日本語'], ['es', 'スペイン語'], ['fr', 'フランス語'], ['it', 'イタリア語'], ['ko', '韓国語']], v: c.clang || 'en' }, { k: 'cvo', l: '声', t: 's', o: [['f', '女性'], ['m', '男性']], v: c.cvo === 'm' ? 'm' : 'f' }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
   function cfApply(v) {
     var oldTo = S.cfg.to;
     cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = v[f.k];
@@ -737,11 +753,11 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     rmStatus();
   }
   var PFK = 'vibes-count-prefs', PFL = ['lim', 't', 'to', 'pm', 'eq', 'snd', 'easy', 'voice'];
-  function prefSave() { if (S.cfg.mode) return; var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } PFL.forEach(function (k) { o[k] = k === 'voice' ? (S.cfg.voice === 0 ? 0 : 1) : +S.cfg[k] || 0; }); o.vdev = S.cfg.vdev || 'both'; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
+  function prefSave() { if (S.cfg.mode) return; var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } PFL.forEach(function (k) { o[k] = k === 'voice' ? (S.cfg.voice === 0 ? 0 : 1) : +S.cfg[k] || 0; }); o.vdev = S.cfg.vdev || 'both'; o.clang = S.cfg.clang || 'en'; o.cvo = S.cfg.cvo === 'm' ? 'm' : 'f'; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
   function menuInit() {
     var q = /[?&]n=(new|again)/.exec(location.search); if (!q) return;
     var c = S.cfg, pf = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); } catch (e) {}
-    if (pf) (c.mode ? ['t', 'to', 'pm', 'snd'] : PFL).forEach(function (k) { if (typeof pf[k] === 'number') c[k] = pf[k]; }); if (pf && !c.mode && /^(both|pc|tab)$/.test(pf.vdev || '')) c.vdev = pf.vdev;
+    if (pf) (c.mode ? ['t', 'to', 'pm', 'snd'] : PFL).forEach(function (k) { if (typeof pf[k] === 'number') c[k] = pf[k]; }); if (pf && !c.mode && /^(both|pc|tab)$/.test(pf.vdev || '')) c.vdev = pf.vdev; if (pf && !c.mode && VL[pf.clang]) c.clang = pf.clang; if (pf && !c.mode && /^(f|m)$/.test(pf.cvo || '')) c.cvo = pf.cvo;
     if (q[1] === 'new') c.n = c.n.map(function (x, i) { return 'PLAYER ' + (i + 1); });
     S = def(c); hist = []; S.ready = !c.n.every(isDefName);
     try { history.replaceState(null, '', location.pathname + location.search.replace(/([?&])n=(new|again)(&|$)/, '$1').replace(/[?&]$/, '')); } catch (e) {}
@@ -894,7 +910,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
   var KOK = /^([0-9+\-*]|Enter|Backspace)$/, endAt = 0, mva = 1, unl = false;
   /* iPad and phones only play sound that was started by a touch: wake the audio and the voice on the first touch so later calls (change sound, "you got …", "ten seconds") can be heard */
   ['pointerdown', 'touchend'].forEach(function (ev) { document.addEventListener(ev, function () { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch (e) {} if (!unl) { unl = true; try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; window.speechSynthesis.speak(u); } catch (e) {} } if (MIR) { try { parent.mirUnlock(); } catch (e) {} } }, true); });
-  var psay = function (t) { try { if (parent !== window && parent.mirSay) return parent.mirSay(t); } catch (e) {} speak(t); }, pchime = function () { try { if (parent !== window && parent.mirChime) return parent.mirChime(); } catch (e) {} chime(); };
+  var psay = function (t, lang, fb) { var g = S.cfg.cvo === 'm' ? 'm' : 'f'; try { if (parent !== window && parent.mirSay) return parent.mirSay(t, lang || 'en', g, fb); } catch (e) {} vSpeak(t, lang || 'en', g, fb); }, pchime = function () { try { if (parent !== window && parent.mirChime) return parent.mirChime(); } catch (e) {} chime(); };
   (function () { var ks = document.querySelector('.board .keys'), row = el('div', 'krow'), tk = el('div', 'keys tk'); tk.id = 'tk'; ks.parentNode.insertBefore(row, ks); row.appendChild(ks); row.appendChild(tk); ks.style.marginTop = '';
     var a = el('span', '', '一時停止'); a.id = 'tkPz'; a.setAttribute('role', 'button'); var b = el('span', '', '試合終了'); b.id = 'tkEnd'; b.setAttribute('role', 'button'); tk.appendChild(a); tk.appendChild(b); })();
   if (MIR || (window.matchMedia && matchMedia('(pointer:coarse)').matches)) document.body.classList.add('touch');
@@ -923,7 +939,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       var sk = Date.now() - (m.now || Date.now()); S = m.s; ['t0', 't1', 'pz'].forEach(function (k) { if (S[k]) S[k] += sk; });
       clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0; mva = m.va === 0 ? 0 : 1; if (!tOn || tLeft > 10.5) mw = !tOn;
       if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!mw && tLeft <= 10 && tLeft > 7) { mw = true; if (typeof speak === 'function' && !S.cfg.mode && S.cfg.voice !== 0 && S.cfg.t > 10 && !(S.cfg.vdev === 'pc' && mva)) psay('ten seconds'); } drawTimer(); }, 200); }
-      var tInn = 0; S.inn.forEach(function (a) { tInn += (a && a.length) || 0; }); if (pInn >= 0 && tInn > pInn && !S.over && !S.cfg.mode && typeof chime === 'function' && !(S.cfg.vdev === 'pc' && mva)) { pchime(); var who = -1; S.inn.forEach(function (a, i) { if (a.length > (pLen[i] || 0)) who = i; }); if (who >= 0 && S.cfg.voice !== 0) setTimeout(psay, 350, gotText(S.inn[who][S.inn[who].length - 1])); } pInn = tInn; pLen = S.inn.map(function (a) { return a.length; });
+      var tInn = 0; S.inn.forEach(function (a) { tInn += (a && a.length) || 0; }); if (pInn >= 0 && tInn > pInn && !S.over && !S.cfg.mode && typeof chime === 'function' && !(S.cfg.vdev === 'pc' && mva)) { pchime(); var who = -1; S.inn.forEach(function (a, i) { if (a.length > (pLen[i] || 0)) who = i; }); if (who >= 0 && S.cfg.voice !== 0) setTimeout(function (n) { psay(gotText(n), S.cfg.clang, gotText(n, 'en')); }, 350, S.inn[who][S.inn[who].length - 1]); } pInn = tInn; pLen = S.inn.map(function (a) { return a.length; });
       render(); pzDraw(); $('winL').hidden = true; tidy(); document.body.classList.remove('mirwait');
     });
     [['mirPl', '選手を変える', 'players'], ['mirHome', 'メニュー', 'home']].forEach(function (x) { var bt = el('button', 'btn', x[1]); bt.type = 'button'; bt.id = x[0]; $('rdGo').parentNode.insertBefore(bt, $('rdSwap')); });
