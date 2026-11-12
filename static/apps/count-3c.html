@@ -395,7 +395,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       $('n' + p).textContent = S.cfg.n[p] + ' (' + S.cfg.g[p] + ')';
       $('ln' + p).textContent = S.cfg.n[p] + ' (' + S.cfg.g[p] + ')';
       $('sc' + p).textContent = S.sc[p] + (p === S.turn && !S.over ? S.run : 0); $('sc' + p).classList.toggle('d3', $('sc' + p).textContent.length > 2);
-      $('hr' + p).textContent = Math.max(hi(p), p === S.turn ? S.run : 0); $('av' + p).textContent = avg(p);
+      $('hr' + p).textContent = Math.max(hi(p), p === S.turn ? S.run : 0); $('av' + p).textContent = p === S.turn && !S.over && S.run > 0 ? ((S.sc[p] + S.run) / (S.inn[p].length + 1)).toFixed(3) : avg(p); /* the inning in progress counts as soon as a point is in */
       $('s' + p).classList.toggle('on', p === S.turn && !S.over);
       var tw = $('to' + p); tw.textContent = ''; tw.parentNode.hidden = !S.cfg.to;
       for (var k = 0; k < (S.cfg.to || 0); k++) { var c = el('i'); if (k >= S.to[p]) c.className = 'used'; tw.appendChild(c); }
