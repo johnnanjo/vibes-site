@@ -199,7 +199,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
     if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { ws = null; return; }
     ws.onopen = function () { tries = 0; draw(); push(); roPush(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'ctl' || m.type === 'cmd') sawPhone(); if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'ctl' || m.type === 'cmd') sawPhone(); if (m.type === 'cmd' && m.c === 'reload') { location.reload(); return; } if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
     ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }

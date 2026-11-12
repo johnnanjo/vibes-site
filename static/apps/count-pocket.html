@@ -889,6 +889,7 @@ body.mirwait .board{visibility:hidden}
     if (m.type === 'ctl') { toast('スマホがつながりました'); return; }
     if (m.type === 'roster') return roHandle(m);
     if (m.type === 'cmd' && m.c === 'home') { goHome(); return; }
+    if (m.type === 'cmd' && m.c === 'reload') { location.reload(); return; }
     if (m.type === 'setup' && m.p && m.p.length >= 1 && m.p.length <= 4) {
       if (KM) return; if (!$('setL').hidden) closeSet(false); if (!$('rmL').hidden) $('rmL').hidden = true; if (!$('prL').hidden) prClose();
       if (W) { W = null; $('wzL').hidden = true; }
