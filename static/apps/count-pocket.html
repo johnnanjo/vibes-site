@@ -616,6 +616,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   function roHandle(m) {
     if (GK() !== plK) plLoad(); var su = {}; try { su = JSON.parse(rmState()).su || {}; } catch (e) {}
     if (m.op === 'del') { players = players.filter(function (o) { return o.id !== m.i; }); return savePlayers(); }
+    if (m.op === 'bulk' && Array.isArray(m.list)) { var nb = 0; m.list.slice(0, 100).forEach(function (x) { if (!x || !x.n || /^GUEST/i.test(x.n)) return; var gg = parseInt(x.g, 10); if (roUp(x.n, su.t && gg >= 1 && gg <= 999 ? gg : 0, typeof x.y === 'string' ? x.y.replace(/\s+/g, '') : '')) nb++; }); toast('選手登録：' + nb + '人'); return savePlayers(); }
     if (m.op === 'save' && m.p && m.p.self) toast('選手登録：' + String(m.p.n || '').slice(0, 20));
     if (m.op !== 'save' || !m.p) return; var a = nmSplit(m.p.n); if (!a[0] || /^GUEST/i.test(a[0])) return roPush();
     var o = null, old = ''; players.forEach(function (x) { if (m.p.i && x.id === m.p.i) o = x; });
@@ -646,7 +647,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
     wzClose();
   }
   function wzNext() { if (W.p < NP() - 1) { W.p++; W.step = 'mode'; wzDraw(); } else wzFinish(); }
-  function kanaStart(purpose, part) { W.step = 'kana'; W.purpose = purpose; W.part = part; W.kana = ''; W.row = null; wzDraw(); }
+  function kanaStart(purpose, part) { W.gq = 0; W.step = 'kana'; W.purpose = purpose; W.part = part; W.kana = ''; W.row = null; wzDraw(); }
   function kanaKey(d) {
     var RW = W.abc ? AROWS : KROWS;
     if (W.row === null) { if (RW[d]) W.row = d; }
@@ -664,7 +665,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
   }
   function pickLoad() {
     var q = W.kana; W.step = 'pick'; W.sel = 0; W.page = 0;
-    W.list = players.filter(function (o) { var y = (o.ys || '') + (o.ym || ''); return !q || y.indexOf(q) === 0 || (o.ym || '').indexOf(q) === 0; })
+    W.list = players.filter(function (o) { var y = (o.ys || '') + (o.ym || ''); if (W.gq) return o.g === W.gq; return !q || y.indexOf(q) === 0 || (o.ym || '').indexOf(q) === 0; })
       .sort(function (a, b) { return ((a.ys || a.sei) + (a.ym || '')).localeCompare((b.ys || b.sei) + (b.ym || ''), 'ja'); });
     wzDraw();
   }
@@ -707,7 +708,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
     if (W.step === 'mode') {
       h.appendChild(el('small', '', isDef ? '' : '今：' + cur + ' (' + S.cfg.g[W.p] + ')'));
       var box = el('div', 'opts');
-      [['1', '登録した選手をさがす', players.length + '人'], ['2', '新しい選手を登録', ''], ['3', 'ゲスト（名前なし）', '']].forEach(function (a) { var o = el('div', 'opt'); o.appendChild(el('kbd', '', a[0])); o.appendChild(el('span', '', a[1])); if (a[2]) o.appendChild(el('small', '', a[2])); box.appendChild(o); });
+      [['1', '登録した選手をさがす', players.length + '人'], ['2', '新しい選手を登録', ''], ['3', 'ゲスト（名前なし）', ''], ['4', '持ち点でさがす', '']].forEach(function (a) { var o = el('div', 'opt'); o.appendChild(el('kbd', '', a[0])); o.appendChild(el('span', '', a[1])); if (a[2]) o.appendChild(el('small', '', a[2])); box.appendChild(o); });
       b.appendChild(box);
       keysHelp([['1-3', '選ぶ']].concat(isDef ? [] : [['Enter', cur + ' のまま']]).concat([['BackSpace', '戻る']]));
     } else if (W.step === 'kana') {
@@ -727,6 +728,10 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
       var pg2 = listDraw(b, W.list, function (o) { return full(o); });
       if (W.del != null && W.list[W.del]) b.appendChild(el('p', 'note', full(W.list[W.del]) + ' を消しますか？ もう一度 - を押すと消えます。'));
       keysHelp([['1-9', '選ぶ']].concat(pg2 > 1 ? [['0', '次のページ']] : []).concat([['Enter', '決定'], ['-', '2回で選手を消す'], ['BackSpace', '戻る']]));
+    } else if (W.step === 'gq') {
+      h.appendChild(el('small', '', '持ち点でさがす'));
+      var inp3 = el('div', 'inp'); inp3.appendChild(el('span', 'num', W.num)); inp3.appendChild(el('span', 'cur')); inp3.appendChild(el('small', '', '点の選手')); b.appendChild(inp3);
+      keysHelp([['0-9', '持ち点を入れる'], ['Enter', 'さがす'], ['BackSpace', '消す・戻る']]);
     } else if (W.step === 'target') {
       h.appendChild(el('small', '', 'セット数（先取） — ' + (W.cur.guest ? 'GUEST' : full(W.cur))));
       var inp2 = el('div', 'inp'); inp2.appendChild(el('span', 'num', W.num)); inp2.appendChild(el('span', 'cur')); inp2.appendChild(el('small', '', 'セット先取')); b.appendChild(inp2);
@@ -752,6 +757,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
     if (W.step === 'mode') {
       if (d === 1) kanaStart('search', 'sei'); else if (d === 2) { W.cur = { sei: '', mei: '', ys: '', ym: '' }; kanaStart('new', 'sei'); }
       else if (d === 3) { W.cur = { guest: true }; targetStart(S.cfg.g[W.p]); }
+      else if (d === 4) { W.step = 'gq'; W.num = ''; wzDraw(); }
       else if (k === 'Enter' && !isDefName(S.cfg.n[W.p])) wzNext();
       else if (k === 'Backspace' && W.p > 0) { W.p--; wzDraw(); }
       else if (k === 'Backspace' && fresh()) { W.step = M().min === M().max ? 'game' : 'count'; wzDraw(); }
@@ -789,6 +795,11 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
         else if (W.part === 'sei') { W.cur.sei = it; W.cur.ys = W.kana; kanaStart('new', 'mei'); }
         else { W.cur.mei = it; W.cur.ym = W.kana; var old = null; players.forEach(function (o) { if (o.sei === W.cur.sei && (o.mei || '') === it) old = o; }); targetStart(old ? old.g : 25); }
       } else return false;
+    } else if (W.step === 'gq') {
+      if (d >= 0) { W.num = String(parseInt((W.num + d).slice(-3), 10) || 0); if (W.num === '0') W.num = ''; wzDraw(); }
+      else if (k === 'Backspace') { if (!W.num) W.step = 'mode'; else W.num = W.num.slice(0, -1); wzDraw(); }
+      else if (k === 'Enter') { if (W.num) { W.kana = ''; W.gq = +W.num; pickLoad(); } }
+      else return false;
     } else if (W.step === 'target') {
       if (d >= 0) { W.num = (W.fresh ? '' : W.num) + d; W.fresh = false; if (W.num.length > 3) W.num = W.num.slice(-3); W.num = String(parseInt(W.num, 10) || 0); wzDraw(); }
       else if (k === 'Backspace') { if (W.fresh || W.num.length <= 1) { if (W.fresh) { W.step = 'mode'; } else { W.num = '0'; W.fresh = true; } } else W.num = W.num.slice(0, -1); wzDraw(); }

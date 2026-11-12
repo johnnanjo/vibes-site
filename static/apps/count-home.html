@@ -204,8 +204,11 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:"Noto Sans JP",sys
   function roSet(a) { try { localStorage.setItem(PLK, JSON.stringify(a)); } catch (e) {} roPush(); if (!$('roL').hidden) roList(); }
   var roFull = function (o) { return o.mei ? o.sei + ' ' + o.mei : o.sei; };
   function roPush() { if (!(ws && ws.readyState === 1)) return; var L = roGet().map(function (o) { return { i: o.id, n: roFull(o), y: (o.ys || '') + (o.ym || ''), g: (o.gs && o.gs.three) || 0 }; }), of = Math.max(1, Math.ceil(L.length / 100)); try { for (var k = 0; k < of; k++) ws.send(JSON.stringify({ type: 'roster', gk: 'three', t: 'スリークッションの持ち点', d: 25, part: k, of: of, list: L.slice(k * 100, k * 100 + 100) })); } catch (e) {} }
+  function roOne(a, x) { var n = String(x.n || '').replace(/[\s\u3000]+/g, ' ').trim().slice(0, 20), i = n.indexOf(' '), sei = i > 0 ? n.slice(0, i) : n, mei = i > 0 ? n.slice(i + 1) : ''; if (!sei || /^GUEST/i.test(sei)) return; var o = null; a.forEach(function (q) { if (q.sei === sei && (q.mei || '') === mei) o = q; });
+    if (!o) { o = { id: Math.random().toString(36).slice(2, 10), gs: {}, ys: '', ym: '', sei: sei, mei: mei }; a.push(o); } if (typeof x.y === 'string' && x.y) { o.ys = x.y.replace(/\s+/g, '').slice(0, 30); o.ym = ''; } var g = parseInt(x.g, 10); if (g >= 1 && g <= 999) { o.gs = o.gs || {}; o.gs.three = g; } }
   function roHandle(m) {
     var a = roGet(); if (m.op === 'del') return roSet(a.filter(function (o) { return o.id !== m.i; }));
+    if (m.op === 'bulk' && Array.isArray(m.list)) { m.list.slice(0, 100).forEach(function (x) { if (x && x.n) roOne(a, x); }); return roSet(a); }
     if (m.op !== 'save' || !m.p) return; var n = String(m.p.n || '').replace(/[\s\u3000]+/g, ' ').trim().slice(0, 20), i = n.indexOf(' '), sei = i > 0 ? n.slice(0, i) : n, mei = i > 0 ? n.slice(i + 1) : ''; if (!sei || /^GUEST/i.test(sei)) return roPush();
     var o = null; a.forEach(function (x) { if ((m.p.i && x.id === m.p.i) || (!m.p.i && x.sei === sei && (x.mei || '') === mei)) o = x; });
     if (!o) { o = { id: Math.random().toString(36).slice(2, 10), gs: {}, ys: '', ym: '' }; a.push(o); } o.sei = sei; o.mei = mei;

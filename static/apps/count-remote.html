@@ -114,6 +114,8 @@ input:focus{outline:none;border-color:var(--lime)}
 #vPk:not([hidden]){display:grid!important;grid-template-columns:1fr 1fr;align-items:start;gap:16px}#vPk #pkOver,#vPk #pkRdy{grid-column:1/-1}#vPk #pkHead{grid-column:1;grid-row:span 2}
 }
 .qrb{background:#fff;border-radius:16px;padding:12px;width:min(72vw,360px);margin:10px auto 0}.qrb svg{display:block;width:100%;height:auto}
+.sq{display:grid;grid-template-columns:1fr 1.4fr;gap:10px}.sq label{font-size:14px}.sq input{width:100%}
+textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:12px;padding:12px;line-height:1.6}
 .npick{display:flex;gap:8px;margin:0 0 14px}.npick .sm{flex:1;min-height:46px;font-size:16px}.npick .sm.on{background:var(--lime);color:var(--night);border-color:var(--lime)}
 .ph .sm{margin-left:auto}
 .sv{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
@@ -206,6 +208,16 @@ input:focus{outline:none;border-color:var(--lime)}
     </div>
   </section>
 
+  <section class="card" id="vBulk" hidden>
+    <h1>まとめて登録</h1>
+    <p>名簿を貼り付けて「読み取る」を押します。1行に1人で、<b>名前・よみがな・持ち点</b>の順に書きます（間はタブ・カンマ・空白のどれでも大丈夫です。先頭の番号は無視します）。</p>
+    <textarea id="buT" rows="9" placeholder="例：&#10;山田 太郎,やまだたろう,25&#10;鈴木 一郎,すずきいちろう,20"></textarea>
+    <p class="err" id="buErr"></p>
+    <button type="button" class="go" id="buRead">読み取る</button>
+    <div id="buPrev" hidden><p class="note" id="buCnt" style="text-align:left;margin:12px 0 8px"></p><div class="rl" id="buList"></div><button type="button" class="go" id="buGo" style="margin-top:12px">この内容で登録する</button></div>
+    <button type="button" class="k" id="buBack" style="width:100%;min-height:56px;font-size:18px;margin-top:10px">戻る</button>
+  </section>
+
   <section class="card" id="vShop" hidden>
     <h1>店名登録</h1>
     <p>お店の名前を入れて「登録する」を押します。モニターのトップ画面と、このメニューに出ます。</p>
@@ -240,8 +252,8 @@ input:focus{outline:none;border-color:var(--lime)}
     <p id="roLead">一度登録した選手は、ずっと残ります。名前を押すと、持ち点などを直せます。</p>
     <button type="button" class="go" id="roNew">＋ 新しい選手を登録</button>
     <button type="button" class="k" id="roQr" style="width:100%;min-height:60px;font-size:18px;margin-top:10px">お客様のスマホで登録<small>QRコードを出す</small></button>
-    <label for="roQ" style="margin-top:14px">さがす（名前・よみがな）</label>
-    <input id="roQ" autocomplete="off" placeholder="例：やまだ">
+    <button type="button" class="k" id="roBulk" style="width:100%;min-height:60px;font-size:18px;margin-top:10px">まとめて登録<small>名簿を貼り付ける</small></button>
+    <div style="margin-top:14px"><div class="sq"><div><label for="roG">① 持ち点でさがす</label><input id="roG" type="number" inputmode="numeric" min="1" max="999" autocomplete="off" placeholder="例：25"></div><div><label for="roQ">② 苗字でさがす</label><input id="roQ" autocomplete="off" placeholder="例：やまだ・山田"></div></div></div>
     <p class="note" id="roCnt" style="text-align:left;margin:8px 0"></p>
     <div class="rl" id="roList"></div>
     <button type="button" class="k" id="roBack" style="width:100%;min-height:56px;font-size:18px;margin-top:10px">戻る</button>
@@ -263,8 +275,8 @@ input:focus{outline:none;border-color:var(--lime)}
 
   <section class="card" id="vPick" hidden>
     <h1 id="pkH">名簿から選ぶ</h1>
-    <label for="piQ">さがす（名前・よみがな）</label>
-    <input id="piQ" autocomplete="off" placeholder="例：やまだ">
+    <p>持ち点か苗字のどちらかを入れると、下に候補が出ます。名前を押すと決まります。</p>
+    <div class="sq"><div><label for="piG">① 持ち点でさがす</label><input id="piG" type="number" inputmode="numeric" min="1" max="999" autocomplete="off" placeholder="例：25"></div><div><label for="piQ">② 苗字でさがす</label><input id="piQ" autocomplete="off" placeholder="例：やまだ・山田"></div></div>
     <div class="rl" id="piList" style="margin-top:10px"></div>
     <button type="button" class="k" id="piBack" style="width:100%;min-height:56px;font-size:18px;margin-top:10px">戻る</button>
   </section>
@@ -300,8 +312,8 @@ input:focus{outline:none;border-color:var(--lime)}
   var code = '', ws = null, tries = 0, ping = null, last = null, newAt = 0, gotState = false, joinT = null;
   var players = []; try { players = JSON.parse(localStorage.getItem(PK) || '[]') || []; } catch (e) {}
   var SELF = /[?&]j=1/.test(location.search), sfWait = '', sfT = null;
-  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1, vShop: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
-  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; };
+  var OV = { vPl: 1, vCf: 1, vRo: 1, vEd: 1, vPick: 1, vQr: 1, vSelf: 1, vShop: 1, vBulk: 1 }, ro = { gk: '', t: '', d: 0, list: [] }, roTmp = [], roFrom = 'vMenu', edI = '', edFrom = 'vRo', piP = 0, delAt = 0;
+  var cur = 'vJoin', show = function (v) { cur = v; ['vJoin', 'vMain', 'vPl', 'vMenu', 'vPk', 'vCf', 'vRo', 'vEd', 'vPick', 'vRes', 'vSelf', 'vQr', 'vShop', 'vBulk'].forEach(function (x) { $(x).hidden = x !== v; }); $('vMain').style.display = v === 'vMain' ? 'flex' : 'none'; $('vPk').style.display = v === 'vPk' ? 'flex' : 'none'; $('bCode').hidden = v === 'vJoin' || SELF; };
   var status = function (ok, t) { $('st').classList.toggle('ok', ok); $('stT').textContent = t; };
   function tvOf(m) { return !m ? 'vJoin' : m.kind === 'menu' ? 'vMenu' : m.over ? 'vRes' : m.kind === 'pocket' ? 'vPk' : 'vMain'; }
   var tmV = -1, tmL = -1, tmAt = 0;
@@ -392,7 +404,7 @@ input:focus{outline:none;border-color:var(--lime)}
     for (var n = su.min; n <= su.max; n++) (function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = 'sm' + (n === plN ? ' on' : ''); b.textContent = n + '人'; b.onclick = function () { plN = n; plBuild(true); }; NB.appendChild(b); })(n);
     for (var p = 0; p < plN; p++) (function (p) {
       var ph = document.createElement('div'); ph.className = 'ph'; var dot = document.createElement('i'); dot.style.background = PCOL[p]; ph.appendChild(dot); ph.appendChild(document.createTextNode('選手' + (p + 1) + '（' + PCN[p] + '）'));
-      var gb = document.createElement('button'); gb.type = 'button'; gb.className = 'sm'; gb.textContent = 'ゲスト'; var sb = document.createElement('button'); sb.type = 'button'; sb.className = 'sm pick'; sb.textContent = '名簿から選ぶ'; sb.onclick = function () { piP = p; $('pkH').textContent = '選手' + (p + 1) + 'を名簿から選ぶ'; $('piQ').value = ''; piDraw(); show('vPick'); }; ph.appendChild(sb); ph.appendChild(gb);
+      var gb = document.createElement('button'); gb.type = 'button'; gb.className = 'sm'; gb.textContent = 'ゲスト'; var sb = document.createElement('button'); sb.type = 'button'; sb.className = 'sm pick'; sb.textContent = '名簿から選ぶ'; sb.onclick = function () { piP = p; $('pkH').textContent = '選手' + (p + 1) + 'を名簿から選ぶ'; $('piQ').value = ''; $('piG').value = ''; piDraw(); show('vPick'); }; ph.appendChild(sb); ph.appendChild(gb);
       var row = document.createElement('div'); row.className = 'row2' + (su.t ? '' : ' one');
       var d1 = document.createElement('div'), l1 = document.createElement('label'); l1.textContent = '名前'; l1.htmlFor = 'pn' + p; var i1 = document.createElement('input'); i1.id = 'pn' + p; i1.maxLength = 20; i1.autocomplete = 'off'; d1.appendChild(l1); d1.appendChild(i1); row.appendChild(d1);
       if (su.t) { var d2 = document.createElement('div'), l2 = document.createElement('label'); l2.textContent = su.t; l2.htmlFor = 'pg' + p; var i2 = document.createElement('input'); i2.id = 'pg' + p; i2.type = 'number'; i2.inputMode = 'numeric'; i2.min = 1; i2.max = 999; d2.appendChild(l2); d2.appendChild(i2); row.appendChild(d2); }
@@ -405,15 +417,16 @@ input:focus{outline:none;border-color:var(--lime)}
   }
   function plOpen(auto) { var su = suOf(); plN = last && last.n ? last.n.length : su.min; plBackTo = cur === 'vPl' ? plBackTo : cur; $('plLead').textContent = (last && last.title ? last.title + '：' : '') + '「名簿から選ぶ」で選手を選ぶか、名前を入れてください。新しい名前は自動で名簿に入ります。'; plBuild(false); show('vPl'); }
   var kana = function (t) { return String(t || '').replace(/[ァ-ヶ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); }).replace(/[\s\u3000]/g, '').toLowerCase(); };
-  function roFilter(q) { q = kana(q); return ro.list.filter(function (o) { return !q || kana(o.n).indexOf(q) >= 0 || kana(o.y).indexOf(q) >= 0; }).sort(function (a, b) { return (a.y || a.n).localeCompare(b.y || b.n, 'ja'); }); }
-  function roRows(box, q, fn) { box.textContent = ''; var L = roFilter(q); L.slice(0, 200).forEach(function (o) { var b = document.createElement('button'); b.type = 'button'; b.className = 'rr'; var a = document.createElement('span'); var n = document.createElement('b'); n.textContent = o.n; a.appendChild(n); if (o.y) { var y = document.createElement('small'); y.textContent = o.y; a.appendChild(y); } b.appendChild(a); if (ro.t && o.g) { var g = document.createElement('i'); g.textContent = o.g; b.appendChild(g); } b.onclick = function () { fn(o); }; box.appendChild(b); });
+  function roFilter(q, g) { q = kana(q); g = parseInt(g, 10) || 0; return ro.list.filter(function (o) { if (g) return o.g === g; return !q || kana(o.n).indexOf(q) === 0 || kana(o.y).indexOf(q) === 0; }).sort(function (a, b) { return (a.y || a.n).localeCompare(b.y || b.n, 'ja'); }); }
+  function roRows(box, q, fn, g) { box.textContent = ''; var L = roFilter(q, g); L.slice(0, 200).forEach(function (o) { var b = document.createElement('button'); b.type = 'button'; b.className = 'rr'; var a = document.createElement('span'); var n = document.createElement('b'); n.textContent = o.n; a.appendChild(n); if (o.y) { var y = document.createElement('small'); y.textContent = o.y; a.appendChild(y); } b.appendChild(a); if (ro.t && o.g) { var g = document.createElement('i'); g.textContent = o.g; b.appendChild(g); } b.onclick = function () { fn(o); }; box.appendChild(b); });
     if (!L.length) { var e = document.createElement('p'); e.className = 'note'; e.textContent = ro.list.length ? '見つかりません。' : 'まだ誰も登録されていません。'; box.appendChild(e); } return L.length; }
-  function roDraw() { if (cur === 'vRo') { roRows($('roList'), $('roQ').value, edOpen); $('roCnt').textContent = '登録 ' + ro.list.length + '人' + (ro.t ? '（右の数字は' + (last && last.kind !== 'menu' && last.title ? last.title + 'の' : '') + ro.t + '）' : ''); } if (cur === 'vPick') piDraw(); }
-  function piDraw() { roRows($('piList'), $('piQ').value, function (o) { var i = $('pn' + piP); if (i) { i.value = o.n; if (ro.t && o.g && $('pg' + piP)) $('pg' + piP).value = o.g; chips(piP); } show('vPl'); }); }
-  function roOpen() { if (cur !== 'vRo' && cur !== 'vEd') roFrom = cur; $('roQ').value = ''; show('vRo'); roDraw(); }
+  function roDraw() { if (cur === 'vRo') { roRows($('roList'), $('roQ').value, edOpen, $('roG').value); $('roCnt').textContent = '登録 ' + ro.list.length + '人' + (ro.t ? '（右の数字は' + (last && last.kind !== 'menu' && last.title ? last.title + 'の' : '') + ro.t + '）' : ''); } if (cur === 'vPick') piDraw(); }
+  function piDraw() { roRows($('piList'), $('piQ').value, function (o) { var i = $('pn' + piP); if (i) { i.value = o.n; if (ro.t && o.g && $('pg' + piP)) $('pg' + piP).value = o.g; chips(piP); } show('vPl'); }, $('piG').value); }
+  function roOpen() { if (cur !== 'vRo' && cur !== 'vEd' && cur !== 'vBulk' && cur !== 'vQr') roFrom = cur; $('roQ').value = ''; $('roG').value = ''; show('vRo'); roDraw(); }
   function edOpen(o) { edI = o ? o.i : ''; $('edH').textContent = o ? '選手を直す' : '新しい選手を登録'; $('edN').value = o ? o.n : $('roQ').value.trim(); $('edY').value = o ? o.y : ''; $('edGR').hidden = !ro.t; $('edGL').textContent = (last && last.kind !== 'menu' && last.title ? last.title + 'の' : '') + ro.t; $('edG').value = o && o.g ? o.g : (ro.d || ''); $('edNote').textContent = ro.t ? (last && last.kind === 'menu' ? 'ほかの種目の持ち点は、その種目を選んだあとで直せます。' : '') : ''; $('edDel').hidden = !o; $('edErr').textContent = ''; delAt = 0; show('vEd'); }
   Array.prototype.forEach.call(document.querySelectorAll('.rob'), function (b) { b.onclick = roOpen; });
-  $('roQ').addEventListener('input', roDraw); $('piQ').addEventListener('input', piDraw);
+  $('roQ').addEventListener('input', function () { $('roG').value = ''; roDraw(); }); $('piQ').addEventListener('input', function () { $('piG').value = ''; piDraw(); });
+  $('roG').addEventListener('input', function () { $('roQ').value = ''; roDraw(); }); $('piG').addEventListener('input', function () { $('piQ').value = ''; piDraw(); });
   $('roNew').onclick = function () { edOpen(null); };
   $('roBack').onclick = function () { if (roFrom === 'vPl') { for (var p = 0; p < 4; p++) (function (p) { var i = $('pn' + p), g = $('pg' + p); if (!i || !g || !ro.t) return; ro.list.forEach(function (o) { if (o.n === i.value.trim() && o.g) g.value = o.g; }); })(p); show('vPl'); return; } show(tvOf(last)); };
   $('piBack').onclick = function () { show('vPl'); };
@@ -432,6 +445,15 @@ input:focus{outline:none;border-color:var(--lime)}
   $('sfMore').onclick = function () { $('sfN').value = ''; $('sfY').value = ''; $('sfG').value = ro.d || ''; $('fSf').hidden = false; $('sfDone').hidden = true; $('sfN').focus(); };
   $('roQr').onclick = function () { var B = $('qrB'); B.textContent = ''; try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + code + '&j=1'); q.make(); B.innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { B.textContent = 'QRコードを出せませんでした。'; } show('vQr'); };
   $('fSh').addEventListener('submit', function (e) { e.preventDefault(); if (send({ type: 'config', v: { shop: $('shN').value } })) show(tvOf(last)); }); $('shBack').onclick = function () { show(tvOf(last)); };
+  var buL = [];
+  function buParse(t) { var out = [], seen = {}; String(t || '').split(/\r?\n/).forEach(function (ln) { var tk = ln.split(/[\t,，、]+|[ ]+/).map(function (x) { return x.trim(); }).filter(Boolean); if (!tk.length) return;
+      var g = 0; if (/^[0-9０-９]+$/.test(tk[tk.length - 1]) && tk.length > 1) g = parseInt(tk.pop().replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }), 10); if (tk.length > 1 && /^[0-9０-９]+[.．]?$/.test(tk[0])) tk.shift();
+      var nm = [], ym = []; tk.forEach(function (x) { (/^[ぁ-ゖァ-ヶー・\u3000]+$/.test(x) && nm.length ? ym : nm).push(x); }); var n = nm.join(' ').replace(/[\s\u3000]+/g, ' ').trim().slice(0, 20); if (!n || seen[n]) return; seen[n] = 1; out.push({ n: n, y: kana(ym.join('')), g: g >= 1 && g <= 999 ? g : 0 }); }); return out; }
+  $('roBulk').onclick = function () { $('buPrev').hidden = true; $('buErr').textContent = ''; show('vBulk'); };
+  $('buRead').onclick = function () { buL = buParse($('buT').value); $('buErr').textContent = buL.length ? '' : '読み取れる行がありませんでした。'; $('buPrev').hidden = !buL.length; $('buCnt').textContent = buL.length + '人を読み取りました。内容を確かめてから登録してください。'; var B = $('buList'); B.textContent = '';
+    buL.forEach(function (o) { var d = document.createElement('div'); d.className = 'rr'; var a = document.createElement('span'), n = document.createElement('b'); n.textContent = o.n; a.appendChild(n); var y = document.createElement('small'); y.textContent = o.y || '（よみがななし）'; a.appendChild(y); d.appendChild(a); var g = document.createElement('i'); g.textContent = o.g || '—'; d.appendChild(g); B.appendChild(d); }); };
+  $('buGo').onclick = function () { var ok = true; for (var i = 0; i < buL.length; i += 50) ok = send({ type: 'roster', op: 'bulk', list: buL.slice(i, i + 50) }) && ok; if (!ok) { $('buErr').textContent = 'モニターにつながっていません。'; return; } $('buT').value = ''; buL = []; show('vRo'); roDraw(); };
+  $('buBack').onclick = function () { show('vRo'); roDraw(); };
   $('qrBack').onclick = function () { show('vRo'); roDraw(); };
   function cfOpen() {
     var R = $('cfRows'), cf = (last && last.cf) || []; R.textContent = '';
