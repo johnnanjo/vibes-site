@@ -463,7 +463,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   function speak(t, lang, fb) { vSpeak(t, lang || 'en', S.cfg.cvo === 'm' ? 'm' : 'f', fb); }
   function callOut() { if (S.cfg.voice === 0 || S.cfg.vdev === 'tab' || S.over || S.run < 1) return; var lf = S.cfg.g[S.turn] - S.sc[S.turn] - S.run; speak(callText(S.run, lf, cl()), cl(), callText(S.run, lf)); }
   function digit(d) { if (S.over) return; begin(); var v = S.typed ? S.run * 10 + d : d; if (v > room()) v = d > room() ? room() : d; S.run = v; S.typed = true; render(); }
-  function finish() { S.over = true; S.t1 = Date.now(); tStop(); render(); showWin(); if (typeof rmPush === 'function') rmPush(); }
+  function finish() { S.over = true; S.t1 = Date.now(); tStop(); render(); showWin(); if (typeof rmPush === 'function') rmPush(); if (S.cfg.voice !== 0 && S.cfg.vdev !== 'tab') setTimeout(function () { if (S.over) speak(winSay(), cl(), winSay('en')); }, 400); }
   function commit() {
     if (S.over) return; begin(); snap();
     var p = S.turn, N = NP(); S.sc[p] += S.run; S.inn[p].push(S.run); S.run = 0; S.typed = false;
@@ -471,12 +471,18 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
     if (S.sc[p] >= S.cfg.g[p] && !S.cfg.eq) return finish();
     if (p === N - 1) { if (any) return finish(); if (S.cfg.lim && S.inn[p].length >= S.cfg.lim) return finish(); S.turn = 0; }
     else S.turn = p + 1;
-    tKick(); render(); if (S.cfg.vdev !== 'tab') { chime(); if (S.cfg.voice !== 0) setTimeout(function (n) { speak(gotText(n), S.cfg.clang, gotText(n, 'en')); }, 350, S.inn[p][S.inn[p].length - 1]); }
+    tKick(); render(); if (S.cfg.vdev !== 'tab') { chime(); if (S.cfg.voice !== 0) setTimeout(function () { speak(gotSay(p), cl(), gotSay(p, 'en')); }, 350); }
   }
   var GOT = { en: function (n) { return 'you got ' + (n ? NW(n) + (n === 1 ? ' point' : ' points') : 'no points'); }, ja: function (n) { return n ? n + '点です' : 'なし'; },
     es: function (n) { return n ? 'Has conseguido ' + n + (n === 1 ? ' punto' : ' puntos') : 'No has conseguido puntos'; }, fr: function (n) { return n ? 'Vous avez marqué ' + n + (n === 1 ? ' point' : ' points') : "Vous n'avez marqué aucun point"; },
     it: function (n) { return n ? 'Hai fatto ' + n + (n === 1 ? ' punto' : ' punti') : 'Non hai fatto punti'; }, ko: function (n) { return n ? n + '점을 획득했습니다' : '득점이 없습니다'; } };
   var gotText = function (n, l) { return (GOT[l || S.cfg.clang] || GOT.en)(n); };
+  /* reached the target with others still to shoot (equalizing inning) / result of the game */
+  var OUT1 = { en: 'First out. The opponent has the equalizing inning.', ja: 'いちあがり。裏撞きがあります。', es: 'Ha terminado primero. Hay contrasalida.', fr: 'Premier arrivé. Il y a une reprise égalisatrice.', it: "Ha chiuso per primo. L'avversario ha ancora un turno.", ko: '먼저 도달했습니다. 후구가 있습니다.' },
+    DRAWT = { en: 'Draw', ja: 'ドロー', es: 'Empate', fr: 'Match nul', it: 'Pareggio', ko: '무승부' }, WINT = { en: 'Winner, ', ja: 'ウィナー、', es: 'Ganador, ', fr: 'Vainqueur, ', it: 'Vincitore, ', ko: '승자, ' };
+  /* what to say when player p has just handed over: the points, plus the first-out notice */
+  function gotSay(p, l) { var n = S.inn[p][S.inn[p].length - 1] || 0, out = !S.over && S.sc[p] >= S.cfg.g[p]; l = l || cl(); return out ? (n ? gotText(n, l) + (l === 'ja' || l === 'ko' ? '。' : '. ') : '') + OUT1[l] : gotText(n, l); }
+  function winSay(l) { l = l || cl(); var pct = function (p) { return S.sc[p] / S.cfg.g[p]; }, w = 0, tie = false; S.cfg.n.forEach(function (x, p) { if (p && pct(p) > pct(w)) { w = p; tie = false; } else if (p && pct(p) === pct(w)) tie = true; }); return tie ? DRAWT[l] : WINT[l] + S.cfg.n[w]; }
   /* two rising notes when the turn passes to the next player */
   function chime() { beep(660, 110); setTimeout(function () { beep(990, 170); }, 120); }
   function undo() {
@@ -948,7 +954,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
     var sd = t.closest('.side'); if (sd && !S.cfg.mode && !S.over) { var pi = +sd.id.slice(1); act({ type: 'key', k: pi === S.turn ? 'Enter' : '+' }); } /* the waiting player keeps score: tap your own panel to give the shooter a point; the shooter taps theirs to hand over */
   });
   function mirInit() {
-    var mt = null, mw = true, pInn = -1, pLen = []; document.body.classList.add('mir', 'mirwait'); save = function () {};
+    var mt = null, mw = true, pInn = -1, pLen = [], pOver = null; document.body.classList.add('mir', 'mirwait'); save = function () {};
     var tidy = function () { Array.prototype.forEach.call(document.querySelectorAll('.board .keys span'), function (sp) { var kb = sp.querySelector('kbd'); if (!kb) return; var k = kb.textContent === 'BackSpace' ? 'Backspace' : kb.textContent; sp.hidden = !KOK.test(k) || /練習/.test(sp.textContent) || (k === '*' && !!S.cfg.easy && !S.cfg.mode); }); };
     document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button,a'); if (!b) return; e.preventDefault(); e.stopPropagation(); var c = { rdGo: 'start', rdSwap: 'swap', pzB: 'pause' }[b.id]; if (c) act({ type: 'cmd', c: c }); else if (b.id === 'mirRl') { try { parent.postMessage({ type: 'mir', nav: 'reload' }, location.origin); } catch (x) {} b.textContent = '読み込み直しています…'; } else if (b.id === 'mirPl' || b.id === 'mirHome') { try { parent.postMessage({ type: 'mir', nav: b.id === 'mirPl' ? 'players' : 'home' }, location.origin); } catch (x) {} } }, true);
     window.addEventListener('keydown', function (e) { e.stopImmediatePropagation(); }, true);
@@ -958,7 +964,8 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
       var sk = Date.now() - (m.now || Date.now()); S = m.s; ['t0', 't1', 'pz'].forEach(function (k) { if (S[k]) S[k] += sk; });
       clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0; mva = m.va === 0 ? 0 : 1; if (!tOn || tLeft > 10.5) mw = !tOn;
       if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!mw && tLeft <= 10 && tLeft > 7) { mw = true; if (typeof speak === 'function' && !S.cfg.mode && S.cfg.voice !== 0 && S.cfg.t > 10 && !(S.cfg.vdev === 'pc' && mva)) psay(TEN[cl()], cl(), TEN.en); } drawTimer(); }, 200); }
-      var tInn = 0; S.inn.forEach(function (a) { tInn += (a && a.length) || 0; }); if (pInn >= 0 && tInn > pInn && !S.over && !S.cfg.mode && typeof chime === 'function' && !(S.cfg.vdev === 'pc' && mva)) { pchime(); var who = -1; S.inn.forEach(function (a, i) { if (a.length > (pLen[i] || 0)) who = i; }); if (who >= 0 && S.cfg.voice !== 0) setTimeout(function (n) { psay(gotText(n), S.cfg.clang, gotText(n, 'en')); }, 350, S.inn[who][S.inn[who].length - 1]); } pInn = tInn; pLen = S.inn.map(function (a) { return a.length; });
+      var tInn = 0; S.inn.forEach(function (a) { tInn += (a && a.length) || 0; }); if (pInn >= 0 && tInn > pInn && !S.over && !S.cfg.mode && typeof chime === 'function' && !(S.cfg.vdev === 'pc' && mva)) { pchime(); var who = -1; S.inn.forEach(function (a, i) { if (a.length > (pLen[i] || 0)) who = i; }); if (who >= 0 && S.cfg.voice !== 0) setTimeout(function () { psay(gotSay(who), cl(), gotSay(who, 'en')); }, 350); } pInn = tInn; pLen = S.inn.map(function (a) { return a.length; });
+      if (pOver === false && S.over && !S.cfg.mode && typeof winSay === 'function' && S.cfg.voice !== 0 && !(S.cfg.vdev === 'pc' && mva)) setTimeout(function () { psay(winSay(), cl(), winSay('en')); }, 400); pOver = !!S.over;
       render(); pzDraw(); $('winL').hidden = true; tidy(); $('mirRl').hidden = !(S.pz && !S.over); document.body.classList.remove('mirwait');
     });
     [['mirPl', '選手を変える', 'players'], ['mirHome', 'メニュー', 'home']].forEach(function (x) { var bt = el('button', 'btn', x[1]); bt.type = 'button'; bt.id = x[0]; $('rdGo').parentNode.insertBefore(bt, $('rdSwap')); });
