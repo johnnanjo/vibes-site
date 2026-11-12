@@ -202,7 +202,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
 body.touch .krow{gap:1vh .9vw;margin-top:1.2vh}
 body.touch .board .keys span{font-size:2.4vh;color:var(--chalk);border:.25vh solid rgba(255,255,255,.28);background:rgba(255,255,255,.07);border-radius:1.2vh;padding:1.1vh 1.3vw;cursor:pointer;user-select:none;-webkit-user-select:none;display:inline-flex;align-items:center;touch-action:manipulation}
 body.touch .board .keys span:active{background:rgba(255,255,255,.22)}
-body.touch .side.on,body.touch #tbox{cursor:pointer;touch-action:manipulation}
+body.touch .side,body.touch #tbox{cursor:pointer;touch-action:manipulation}
 body.mir .top>span:last-child,body.mir .rdp .keys,body.mir #rdWarm{display:none!important}body.mir #aHome{pointer-events:none}
 body.mirwait .board{visibility:hidden}
 body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .keys span{font-size:3vh;padding:1.6vh 2vw}
@@ -300,7 +300,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     <img id="rdLogo" alt="VIBES BILLIARDS">
     <div class="rdm" id="rdM"></div>
     <p class="rdn" id="rdN"></p>
-    <div class="acts" style="justify-content:center"><button type="button" class="btn" id="rdSwap">入れ替え (/)</button><button type="button" class="btn" id="rdWarm">練習時間 (-)</button><button type="button" class="btn go big" id="rdGo">試合開始 (Enter)</button></div>
+    <div class="acts" style="justify-content:center"><button type="button" class="btn" id="rdSwap">先攻・後攻の入れ替え (/)</button><button type="button" class="btn" id="rdWarm">練習時間 (-)</button><button type="button" class="btn go big" id="rdGo">試合開始 (Enter)</button></div>
     <div class="keys"><span><kbd>/</kbd>先攻・後攻を入れ替え</span><span><kbd>-</kbd>練習時間</span><span><kbd>BackSpace</kbd>選手の登録</span><span><kbd>Enter</kbd>試合開始</span></div>
   </div>
 </div>
@@ -374,7 +374,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       var g = el('div', 'rdg'); g.appendChild(el('b', 'num', String(S.cfg.g[p]))); g.appendChild(el('small', '', '点')); c.appendChild(g); m.appendChild(c);
     }
     $('rdN').textContent = N === 2 ? 'バンキングで先攻・後攻を決めます。先攻が左です。入れ替える時は / を押します。' : '順番を決めます。/ を押すと順番が回ります。';
-    $('rdSwap').textContent = (N === 2 ? '入れ替え' : '順番を回す') + ' (/)';
+    $('rdSwap').textContent = (N === 2 ? '先攻・後攻の入れ替え' : '順番を回す') + ' (/)';
   }
   function rdSwap() { if (!S.ready) return; var c = S.cfg; if (NP() === 2) { c.n.reverse(); c.g.reverse(); } else { c.n.push(c.n.shift()); c.g.push(c.g.shift()); } render(); }
   function rdStart() { if (!S.ready) return; S.ready = false; begin(); render(); }
@@ -416,7 +416,20 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     drawTimer();
   }
   var tKick = function () { if (tOn) tStart(); };
-  function add(n) { if (S.over) return; begin(); var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('持ち点に届きました。Enter で確定します'); return; } S.run = v; S.typed = false; tKick(); render(); if (n > 0) callOut(); }
+  function add(n) { if (S.over) return; begin(); var v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('持ち点に届きました。Enter で確定します'); return; } S.run = v; S.typed = false; if (n > 0 && S.cfg.t && !S.cfg.easy) tStart(); else tKick(); render(); if (n > 0) { callOut(); if (S.run % 5 === 0 && S.cfg.vdev !== 'tab') setTimeout(fanfare, 900, S.run); } }
+  /* a short brass-like fanfare for runs of 5, 10, 15, 20…: each step is a different phrase; past 20 the last one rises a tone each time */
+  function fanfare(run) {
+    var lv = Math.floor(run / 5); if (!S.cfg.snd || lv < 1 || run % 5) return;
+    try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume();
+      var tr = lv > 4 ? (lv - 4) * 2 : 0, t0 = actx.currentTime + .05, SEQ = {
+        1: [[72, 0, .14], [76, .14, .14], [79, .28, .45]],
+        2: [[72, 0, .12], [76, .12, .12], [79, .24, .12], [84, .36, .65], [76, .36, .65]],
+        3: [[67, 0, .12], [67, .14, .12], [67, .28, .12], [72, .42, .3], [76, .72, .14], [79, .86, .85], [72, .86, .85], [76, .86, .85]],
+        4: [[72, 0, .16], [72, .18, .08], [72, .27, .08], [76, .36, .3], [79, .66, .3], [84, .96, .2], [79, 1.16, .14], [84, 1.3, 1.2], [76, 1.3, 1.2], [79, 1.3, 1.2], [60, 1.3, 1.2]] };
+      SEQ[Math.min(lv, 4)].forEach(function (x) { var o = actx.createOscillator(), g = actx.createGain(), f = actx.createBiquadFilter(), a = t0 + x[1], e = a + x[2]; o.type = 'sawtooth'; o.frequency.value = 440 * Math.pow(2, (x[0] + tr - 69) / 12); f.type = 'lowpass'; f.frequency.value = 2400; o.connect(f); f.connect(g); g.connect(actx.destination);
+        g.gain.setValueAtTime(0, a); g.gain.linearRampToValueAtTime(.15, a + .02); g.gain.setValueAtTime(.15, Math.max(a + .03, e - .06)); g.gain.linearRampToValueAtTime(0, e); o.start(a); o.stop(e + .02); });
+    } catch (e) {}
+  }
   /* referee-style call in English: "two points", then "three more" / "two more" / "one more" near the target */
   function callText(run, left) { var more = { 3: 'three more', 2: 'two more', 1: 'one more' }[left]; return NW(run) + (run === 1 ? ' point' : ' points') + (more ? ', ' + more : ''); }
   var NW = function (n) { var a = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'], t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']; return n < 20 ? a[n] : n < 100 ? t[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '') : String(n); };
@@ -895,10 +908,10 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     if (t.closest('#tkPz')) return act({ type: 'cmd', c: 'pause' });
     if (t.closest('#tkEnd')) { var n = Date.now(); if (n - endAt < 3000) { endAt = 0; act({ type: 'cmd', c: 'end' }); } else { endAt = n; toast('もう一度押すと試合終了です'); } return; }
     if (t.closest('#tbox')) return act({ type: 'key', k: '*' });
-    var sd = t.closest('.side'); if (sd && !S.cfg.mode && sd.classList.contains('on')) act({ type: 'key', k: '+' });
+    var sd = t.closest('.side'); if (sd && !S.cfg.mode && !S.over) { var pi = +sd.id.slice(1); if (pi === S.turn) act({ type: 'key', k: '+' }); else if (pi === (S.turn + 1) % NP()) act({ type: 'key', k: 'Enter' }); }
   });
   function mirInit() {
-    var mt = null; document.body.classList.add('mir', 'mirwait'); save = function () {};
+    var mt = null, pRun = -1, pTurn = -1; document.body.classList.add('mir', 'mirwait'); save = function () {};
     var tidy = function () { Array.prototype.forEach.call(document.querySelectorAll('.board .keys span'), function (sp) { var kb = sp.querySelector('kbd'); if (!kb) return; var k = kb.textContent === 'BackSpace' ? 'Backspace' : kb.textContent; sp.hidden = !KOK.test(k) || /練習/.test(sp.textContent) || (k === '*' && !!S.cfg.easy && !S.cfg.mode); }); };
     document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button,a'); if (!b) return; e.preventDefault(); e.stopPropagation(); var c = { rdGo: 'start', rdSwap: 'swap', pzB: 'pause' }[b.id]; if (c) act({ type: 'cmd', c: c }); else if (b.id === 'mirPl' || b.id === 'mirHome') { try { parent.postMessage({ type: 'mir', nav: b.id === 'mirPl' ? 'players' : 'home' }, location.origin); } catch (x) {} } }, true);
     window.addEventListener('keydown', function (e) { e.stopImmediatePropagation(); }, true);
@@ -908,6 +921,8 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       var sk = Date.now() - (m.now || Date.now()); S = m.s; ['t0', 't1', 'pz'].forEach(function (k) { if (S[k]) S[k] += sk; });
       clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0;
       if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; drawTimer(); }, 200); }
+      if (typeof fanfare === 'function' && !S.cfg.mode && pRun >= 0 && pTurn === S.turn && S.run > pRun && S.run % 5 === 0 && !S.over && S.cfg.vdev !== 'pc') setTimeout(fanfare, 900, S.run);
+      pRun = S.run; pTurn = S.turn;
       render(); pzDraw(); $('winL').hidden = true; tidy(); document.body.classList.remove('mirwait');
     });
     [['mirPl', '選手を変える', 'players'], ['mirHome', 'メニュー', 'home']].forEach(function (x) { var bt = el('button', 'btn', x[1]); bt.type = 'button'; bt.id = x[0]; $('rdGo').parentNode.insertBefore(bt, $('rdSwap')); });

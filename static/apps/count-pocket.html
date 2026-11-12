@@ -201,7 +201,7 @@ body.easy .score{font-size:min(54vh,24vw)}body.easy .score.d3{font-size:min(40vh
 body.touch .krow{gap:1vh .9vw;margin-top:1.2vh}
 body.touch .board .keys span{font-size:2.4vh;color:var(--chalk);border:.25vh solid rgba(255,255,255,.28);background:rgba(255,255,255,.07);border-radius:1.2vh;padding:1.1vh 1.3vw;cursor:pointer;user-select:none;-webkit-user-select:none;display:inline-flex;align-items:center;touch-action:manipulation}
 body.touch .board .keys span:active{background:rgba(255,255,255,.22)}
-body.touch .side.on,body.touch #tbox{cursor:pointer;touch-action:manipulation}
+body.touch .side,body.touch #tbox{cursor:pointer;touch-action:manipulation}
 body.mir .top>span:last-child,body.mir .rdp .keys,body.mir #rdWarm{display:none!important}body.mir #aHome{pointer-events:none}
 body.mirwait .board{visibility:hidden}
 body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .keys span{font-size:3vh;padding:1.6vh 2vw}
@@ -315,7 +315,7 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     <img id="rdLogo" alt="VIBES BILLIARDS">
     <div class="rdm" id="rdM"></div>
     <p class="rdn" id="rdN"></p>
-    <div class="acts" style="justify-content:center"><button type="button" class="btn" id="rdSwap">入れ替え (/)</button><button type="button" class="btn" id="rdWarm">練習時間 (-)</button><button type="button" class="btn go big" id="rdGo">試合開始 (Enter)</button></div>
+    <div class="acts" style="justify-content:center"><button type="button" class="btn" id="rdSwap">先攻・後攻の入れ替え (/)</button><button type="button" class="btn" id="rdWarm">練習時間 (-)</button><button type="button" class="btn go big" id="rdGo">試合開始 (Enter)</button></div>
     <div class="keys"><span><kbd>/</kbd>先攻・後攻を入れ替え</span><span><kbd>-</kbd>練習時間</span><span><kbd>BackSpace</kbd>選手の登録</span><span><kbd>Enter</kbd>試合開始</span></div>
   </div>
 </div>
@@ -1033,10 +1033,10 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
     if (t.closest('#tkPz')) return act({ type: 'cmd', c: 'pause' });
     if (t.closest('#tkEnd')) { var n = Date.now(); if (n - endAt < 3000) { endAt = 0; act({ type: 'cmd', c: 'end' }); } else { endAt = n; toast('もう一度押すと試合終了です'); } return; }
     if (t.closest('#tbox')) return act({ type: 'key', k: '*' });
-    var sd = t.closest('.side'); if (sd && !S.cfg.mode && sd.classList.contains('on')) act({ type: 'key', k: '+' });
+    var sd = t.closest('.side'); if (sd && !S.cfg.mode && !S.over) { var pi = +sd.id.slice(1); if (pi === S.turn) act({ type: 'key', k: '+' }); else if (pi === (S.turn + 1) % NP()) act({ type: 'key', k: 'Enter' }); }
   });
   function mirInit() {
-    var mt = null; document.body.classList.add('mir', 'mirwait'); save = function () {};
+    var mt = null, pRun = -1, pTurn = -1; document.body.classList.add('mir', 'mirwait'); save = function () {};
     var tidy = function () { Array.prototype.forEach.call(document.querySelectorAll('.board .keys span'), function (sp) { var kb = sp.querySelector('kbd'); if (!kb) return; var k = kb.textContent === 'BackSpace' ? 'Backspace' : kb.textContent; sp.hidden = !KOK.test(k) || /練習/.test(sp.textContent) || (k === '*' && !!S.cfg.easy && !S.cfg.mode); }); };
     document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button,a'); if (!b) return; e.preventDefault(); e.stopPropagation(); var c = { rdGo: 'start', rdSwap: 'swap', pzB: 'pause' }[b.id]; if (c) act({ type: 'cmd', c: c }); else if (b.id === 'mirPl' || b.id === 'mirHome') { try { parent.postMessage({ type: 'mir', nav: b.id === 'mirPl' ? 'players' : 'home' }, location.origin); } catch (x) {} } }, true);
     window.addEventListener('keydown', function (e) { e.stopImmediatePropagation(); }, true);
@@ -1046,6 +1046,8 @@ body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .k
       var sk = Date.now() - (m.now || Date.now()); S = m.s; ['t0', 't1', 'pz'].forEach(function (k) { if (S[k]) S[k] += sk; });
       clearInterval(mt); tOn = m.tl >= 0; tLeft = tOn ? m.tl : 0;
       if (tOn && !S.pz) { var last = Date.now(); mt = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; drawTimer(); }, 200); }
+      if (typeof fanfare === 'function' && !S.cfg.mode && pRun >= 0 && pTurn === S.turn && S.run > pRun && S.run % 5 === 0 && !S.over && S.cfg.vdev !== 'pc') setTimeout(fanfare, 900, S.run);
+      pRun = S.run; pTurn = S.turn;
       render(); pzDraw(); $('winL').hidden = true; tidy(); document.body.classList.remove('mirwait');
     });
     [['mirPl', '選手を変える', 'players'], ['mirHome', 'メニュー', 'home']].forEach(function (x) { var bt = el('button', 'btn', x[1]); bt.type = 'button'; bt.id = x[0]; $('rdGo').parentNode.insertBefore(bt, $('rdSwap')); });
