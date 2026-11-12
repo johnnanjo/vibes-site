@@ -6,10 +6,10 @@ def img(name,w):
     if im.width>w: im=im.resize((w,round(im.height*w/im.width)),Image.LANCZOS)
     b=io.BytesIO(); im.save(b,'JPEG',quality=78,optimize=True); return 'data:image/jpeg;base64,'+base64.b64encode(b.getvalue()).decode(),im.width,im.height
 def fig(name,cap,notes=None,dev=None,small=False):
-    dev=dev or ('pc' if name.startswith('pc') else 'ipad')
+    dev=dev or ('pc' if name.startswith('pc') else 'phone' if name.startswith('ph') else 'ipad')
     src,w,h=img(name,1180 if dev=='pc' else 1100)
     ms=M.get(name,[]) if notes else []
-    o=f'<figure class="shot {dev}{" small" if small else ""}"><div class="dev"><span class="tag">{"PCの画面（モニター）" if dev=="pc" else "iPadの画面"}</span><div class="scr" style="aspect-ratio:{w}/{h}"><img src="{src}" alt="{html.escape(cap)}" width="{w}" height="{h}">'
+    o=f'<figure class="shot {dev}{" small" if small else ""}"><div class="dev"><span class="tag">{"PCの画面（モニター）" if dev=="pc" else "お客様のスマホ" if dev=="phone" else "iPadの画面"}</span><div class="scr" style="aspect-ratio:{w}/{h}"><img src="{src}" alt="{html.escape(cap)}" width="{w}" height="{h}">'
     for i,m in enumerate(ms):
         if i>=len(notes): break
         o+=f'<i class="box" style="left:{m[0]}%;top:{m[1]}%;width:{m[2]}%;height:{m[3]}%"><b>{i+1}</b></i>'
@@ -78,8 +78,18 @@ S.append(sec(7,'end','試合を終える','持ち点に届くと、自動で結�
  fig('ip_result','iPadの結果の画面です。',['<b>勝者</b>（引き分けの時は「引き分け（DRAW）」）','<b>2人の成績</b>：得点、イニング、ハイラン、アベレージ。','<b>新しい試合（同じ選手）</b>：同じ2人でもう1試合。','<b>選手を変える</b>：選手を入れ直します。','<b>トップへ戻る</b>：最初のメニューに戻ります。次のお客さんに代わる時はこれ。','<b>戻る</b>：間違えて終了した時に、試合に戻ります。'])+
  fig('pc_result','PCの画面にも同じ結果が出ます。',small=True)))
 S.append(sec(8,'roster','選手登録と持ち点の修正','一度登録した選手は、ずっと残ります。次からは名簿から選ぶだけです。',
- fig('ip_roster','メニューの「選手登録」を押すと、名簿が出ます。',['<b>＋ 新しい選手を登録</b>','<b>さがす</b>：名前か、よみがなを入れます。','<b>名前を押す</b>と、その選手を直せます。右の数字が持ち点です。'])+
+ fig('ip_roster','メニューの「選手登録」を押すと、名簿が出ます。',['<b>＋ 新しい選手を登録</b>：お店の人がiPadで入力します。','<b>お客様のスマホで登録</b>：お客様に自分で入力してもらいます（下で説明します）。','<b>さがす</b>：名前か、よみがなを入れます。','<b>名前を押す</b>と、その選手を直せます。右の数字が持ち点です。'])+
  fig('ip_edit','登録・修正の画面です。',['<b>名前</b>：漢字でそのまま入れます。姓と名の間は空けます。','<b>よみがな</b>：ひらがなで入れます。さがす時に使います。','<b>持ち点</b>：変わったら、ここを直すだけです。','<b>保存する</b>を押すと、名簿に入ります。'])+
+ '<h3>お客様が自分のスマホで登録する</h3><p>名前の漢字や持ち点は、本人に入れてもらうのが一番確かです。アプリも会員登録もいりません。</p>'+
+ steps([('iPadで「お客様のスマホで登録」を押します','選手名簿の画面にあります。iPadに大きなQRコードが出ます。'),
+        ('お客様に、自分のスマホのカメラで読んでもらいます','iPadの画面を見せます。出てきたリンクを押すと、入力の画面が開きます。'),
+        ('名前・よみがな・持ち点を入れて「登録する」を押してもらいます','「登録しました」と出たら完了です。お店の名簿にすぐ入ります。'),
+        ('iPadの「戻る」を押します','名簿に新しい名前が入っています。試合の時は「名簿から選ぶ」で選べます。')])+
+ fig('ip_qr','iPadに出る、登録用のQRコードです。',['このQRコードを、お客様のスマホで読んでもらいます。'],small=True)+
+ '<div class="pair">'+fig('ph_self','お客様のスマホに出る画面です。',['名前（漢字で入れられます）','よみがな（ひらがな）','持ち点','<b>登録する</b>'],small=True)+fig('ph_done','この画面が出たら完了です。',['登録された名前'],small=True)+'</div>'+
+ tip('持ち点が変わった時は、同じ名前でもう一度登録してもらうと、持ち点が上書きされます。PCのトップ画面の「選手登録」にも、同じQRコードが出ます。')+
+ tip('お客様の画面は登録専用です。スコアの操作はできません。試合中に登録しても、試合は止まりません。')+
+ tip('同姓同名の方がいると、同じ選手として上書きされます。その時は「山田 太郎2」のように、名前を少し変えてもらいます。','warn')+
  tip('持ち点は、試合前の「選手の登録」の画面で直しても、名簿に上書きされます。わざわざ名簿を開かなくても大丈夫です。')+tip('間違えて登録した選手は、名前を押して「名簿から消す」を2回押します。','warn')))
 S.append(sec(9,'settings','各種設定とイージーモード','メニューの「各種設定」で、お店に合わせて変えられます。',
  fig('ip_config','変えたい所を直して、下の緑の「モニターに送る」を押します。',['<b>イージーモード</b>：「あり」にすると、点数・イニング・名前・ハイランだけの大きな表示になります。','<b>秒数カウント</b>：1ショットの秒数。使わない時は 0 にします。','<b>音声コール</b>：点数の読み上げ。うるさい時は「なし」にします。','<b>モニターに送る</b>'])+
@@ -97,7 +107,7 @@ S.append(sec(10,'komatta','困った時は','あわてずに、下の表を見�
 S.append(sec(11,'matome','1枚まとめ','台のそばに貼っておくと便利です。',
  '<div class="sum"><div><h3>開店の時（PC）</h3><ol><li>Chrome を開く</li><li>vibesbilliards.com/pages/count/ を開く</li><li>F で全画面、画面を1回クリック</li></ol></div><div><h3>始める時（iPad）</h3><ol><li>カメラでQRコードを読む</li><li>ニューゲーム → 種目</li><li>選手を選ぶ → モニターに送る</li><li>試合開始</li></ol></div><div><h3>試合中（iPad）</h3><ol><li>当たった → スコアを押す</li><li>外した → 交代</li><li>間違えた → −1 か 戻る</li></ol></div><div><h3>終わったら（iPad）</h3><ol><li>同じ2人 → 新しい試合</li><li>次の人 → トップへ戻る</li></ol></div></div>'))
 
-TOC=''.join(f'<li><a href="#{i}"><b>{n}</b>{t}</a></li>' for n,(i,t) in enumerate([('shikumi','しくみ'),('youi','用意するもの'),('pc','PCの準備'),('ipad','iPadをつなぐ'),('start','試合を始める'),('play','試合中の操作'),('end','試合を終える'),('roster','選手登録と持ち点'),('settings','各種設定・イージーモード'),('komatta','困った時は'),('matome','1枚まとめ')],1))
+TOC=''.join(f'<li><a href="#{i}"><b>{n}</b>{t}</a></li>' for n,(i,t) in enumerate([('shikumi','しくみ'),('youi','用意するもの'),('pc','PCの準備'),('ipad','iPadをつなぐ'),('start','試合を始める'),('play','試合中の操作'),('end','試合を終える'),('roster','選手登録と持ち点（お客様のスマホでも）'),('settings','各種設定・イージーモード'),('komatta','困った時は'),('matome','1枚まとめ')],1))
 css=open('page.css').read()
 page=f'''<title>デジタルカウント はじめての使い方</title>
 <meta name="claude:viewport-fit-sides" content="cover">

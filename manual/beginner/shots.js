@@ -19,7 +19,11 @@ const { chromium } = require('playwright'); const fs = require('fs');
   await shot(r, 'ip_menu', [['#vMenu .mt', 0], ['#vMenu .mt', 1], ['#vMenu .mt', 2], ['#vMenu .mt', 3]]); await shot(d, 'pc_solo', []);
   // settings + roster from the top
   await tap(r, '#vMenu .mt', 3); await shot(r, 'ip_config', [['#cf_easy'], ['#cf_t'], ['#cf_voice'], ['#fCf .go']]); await tap(r, '#bCfBack');
-  await tap(r, '#vMenu .mt', 2); await shot(r, 'ip_roster', [['#roNew'], ['#roQ'], ['#roList .rr', 0]]);
+  await tap(r, '#vMenu .mt', 2); await shot(r, 'ip_roster', [['#roNew'], ['#roQr'], ['#roQ'], ['#roList .rr', 0]]);
+  await tap(r, '#roQr'); await shot(r, 'ip_qr', [['#qrB']]);
+  const g = await ctx.newPage(); await g.setViewportSize({ width: 390, height: 640 }); await g.goto(B + '/pages/count-remote/?r=482915&j=1'); await g.waitForTimeout(900);
+  await g.fill('#sfN', '中村 翔'); await g.fill('#sfY', 'なかむらしょう'); await g.fill('#sfG', '17'); await shot(g, 'ph_self', [['#sfN'], ['#sfY'], ['#sfG'], ['#sfGo']]); await g.click('#sfGo'); await g.waitForTimeout(600); await shot(g, 'ph_done', [['#sfOk']]); await g.close();
+  await tap(r, '#qrBack');
   await tap(r, '#roNew'); await r.fill('#edN', '小林 直樹'); await r.fill('#edY', 'こばやしなおき'); await r.fill('#edG', '22'); await shot(r, 'ip_edit', [['#edN'], ['#edY'], ['#edG'], ['#fEd .go']]); await r.click('#fEd .go'); await r.waitForTimeout(300); await tap(r, '#roBack');
   await tap(r, '#vMenu .mt', 0); await shot(r, 'ip_game', [['#vMenu .mt', 0]]); await tap(r, '#vMenu .mt', 0); await shot(r, 'ip_carom', [['#vMenu .mt', 0]]);
   await tap(r, '#vMenu .mt', 0); await d.waitForTimeout(1500); await r.waitForTimeout(500);
