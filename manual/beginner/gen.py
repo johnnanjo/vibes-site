@@ -114,9 +114,9 @@ page=f'''<title>デジタルカウント はじめての使い方</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;900&family=Anton&display=swap">
 <style>{css}</style>
 <div class="wrap">
-<div class="cover"><p class="brand">VIBES DIGITAL LABO</p><h1>デジタルカウント<br>はじめての使い方</h1><p class="sub">PCとタブレットで使う スリークッションのスコアボード</p><ul class="env"><li>ネットあり</li><li>デスクトップPC</li><li>タブレット</li></ul></div>
+<div class="cover"><p class="brand">VIBES DIGITAL LAB</p><h1>デジタルカウント<br>はじめての使い方</h1><p class="sub">PCとタブレットで使う スリークッションのスコアボード</p><ul class="env"><li>ネットあり</li><li>デスクトップPC</li><li>タブレット</li></ul></div>
 <nav class="toc" aria-label="もくじ"><h2>もくじ</h2><ol>{TOC}</ol></nav>
 {''.join(S)}
-<p class="foot">VIBES BILLIARDS ／ VIBES DIGITAL LABO　2026年11月12日版</p>
+<p class="foot">VIBES BILLIARDS ／ VIBES DIGITAL LAB　2026年11月13日版</p>
 </div>'''
 open('wind-manual.html','w').write(page); print(len(page)//1024,'KB')
