@@ -106,7 +106,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
 </div>
 <img id="logoSrc" src="/img/vibes-logo-t.png" alt="" hidden>
 <div class="solo" id="solo" hidden>
-  <div class="lg"><div class="shop" id="soloShop" hidden></div><img id="soloLogo" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LABO</div></div>
+  <div class="lg"><div class="shop" id="soloShop" hidden></div><img id="soloLogo" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LAB</div></div>
   <div class="soloq"><div class="qr sm" id="soloQ"></div><div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div></div>
 </div>
 <div class="ov" id="zipL" hidden style="z-index:9">
@@ -178,7 +178,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
       var kb = document.createElement('kbd'); kb.textContent = String(i + 1); var sm = document.createElement('small'); sm.textContent = it.s; var b = document.createElement('b'); b.textContent = it.b; var sp = document.createElement('span'); sp.textContent = it.d;
       a.appendChild(kb); a.appendChild(sm); a.appendChild(b); a.appendChild(sp); a.onclick = function () { open(it.id); }; r.appendChild(a); tiles.push(a);
     });
-    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LABO'; lg.appendChild(lb); r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
+    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LAB'; lg.appendChild(lb); r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
     var f = $('foot'); f.textContent = ''; [['1', '〜'], [String(m.items.length), '選ぶ'], ['Enter', '決定']].concat(m.back ? [['BackSpace', 'もどる']] : []).concat([['F', '全画面']]).forEach(function (x, i) { var sp2 = i === 1 ? f.lastChild : document.createElement('span'); var k2 = document.createElement('kbd'); k2.textContent = x[0]; sp2.appendChild(k2); sp2.appendChild(document.createTextNode(x[1])); if (i !== 1) f.appendChild(sp2); });
     if (typeof shopDraw === 'function') shopDraw();
     if (typeof push === 'function') push();

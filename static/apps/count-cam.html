@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>VIBES DIGITAL LABO 撮影カメラ｜VIBES BILLIARDS</title>
+<title>VIBES DIGITAL LAB 撮影カメラ｜VIBES BILLIARDS</title>
 <meta name="description" content="スマホで試合を撮影し、スコアを重ねて録画・中継するカメラ画面。">
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://vibesbilliards.com/pages/count-cam">
@@ -50,7 +50,7 @@ video{display:none}
 <body>
 <div class="wrap">
   <div class="top">
-    <img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"><b>DIGITAL LABO</b>
+    <img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"><b>DIGITAL LAB</b>
     <span class="st" id="st"><i></i><span id="stT">つながっていません</span></span>
   </div>
 
@@ -126,7 +126,7 @@ video{display:none}
   function drawBar() {
     var W = cv.width, H = cv.height, bh = Math.round(H * 0.15), y = H - bh, m = last, R = rows(m), N = R.length, u = bh / 100;
     cx.fillStyle = 'rgba(18,20,26,.9)'; cx.fillRect(0, y, W, bh); cx.fillStyle = '#C0FC09'; cx.fillRect(0, y, W, Math.max(2, Math.round(3 * u)));
-    if (!m || m.kind === 'menu' || !N) { cx.fillStyle = '#F3F4EF'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.font = '900 ' + Math.round(34 * u) + 'px "Noto Sans JP", sans-serif'; cx.fillText('VIBES DIGITAL LABO', W / 2, y + bh / 2); return; }
+    if (!m || m.kind === 'menu' || !N) { cx.fillStyle = '#F3F4EF'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.font = '900 ' + Math.round(34 * u) + 'px "Noto Sans JP", sans-serif'; cx.fillText('VIBES DIGITAL LAB', W / 2, y + bh / 2); return; }
     var midW = Math.round(W * 0.2), sideW = (W - midW) / (N <= 2 ? 2 : N), pad = Math.round(18 * u);
     var cell = function (r, i, x, w, right) {
       if (r.on) { cx.fillStyle = 'rgba(192,252,9,.16)'; cx.fillRect(x, y + 3 * u, w, bh - 3 * u); cx.fillStyle = '#C0FC09'; cx.fillRect(right ? x + w - 8 * u : x, y, 8 * u, bh); }
@@ -206,7 +206,7 @@ video{display:none}
     if (!m || !m.n || !m.n.length) return ''; var c = document.createElement('canvas'), W = 1600, N = m.n.length, il = m.il || null, maxI = il ? Math.max.apply(null, il.map(function (x) { return x.length; })) : 0, per = 20, blocks = Math.max(1, Math.ceil(maxI / per));
     var H = 330 + N * 84 + (il ? blocks * (60 + N * 56) + 30 : 0) + 70; c.width = W; c.height = H; var g = c.getContext('2d');
     g.fillStyle = '#171A22'; g.fillRect(0, 0, W, H); g.fillStyle = '#C0FC09'; g.fillRect(0, 0, W, 10);
-    g.textBaseline = 'alphabetic'; g.fillStyle = '#F3F4EF'; g.font = '44px Anton, Impact, sans-serif'; g.textAlign = 'left'; g.fillText('VIBES DIGITAL LABO', 60, 84);
+    g.textBaseline = 'alphabetic'; g.fillStyle = '#F3F4EF'; g.font = '44px Anton, Impact, sans-serif'; g.textAlign = 'left'; g.fillText('VIBES DIGITAL LAB', 60, 84);
     g.font = '700 26px "Noto Sans JP", sans-serif'; g.fillStyle = '#A9AFBD'; g.textAlign = 'right'; g.fillText((m.shop ? m.shop + '　' : '') + d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日', W - 60, 80);
     g.textAlign = 'left'; g.fillStyle = '#F3F4EF'; g.font = '900 40px "Noto Sans JP", sans-serif'; g.fillText((m.title || '試合') + (m.gt ? '　試合時間 ' + m.gt : ''), 60, 160);
     g.fillStyle = '#C0FC09'; g.fillRect(60, 186, 620, 62); g.fillStyle = '#171A22'; g.font = '900 34px "Noto Sans JP", sans-serif'; g.fillText(m.over ? (m.win || '試合終了') : '途中まで', 80, 230);
