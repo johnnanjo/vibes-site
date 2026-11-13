@@ -57,7 +57,7 @@ ${official.slice(1, 4).map((t) => `<div class="only-pc">${oRow(t, today, daysBet
 <main class="wrap">
 <div class="sec" style="padding-top:20px">
 <form class="search-m" action="/pages/tournaments" role="search">${svg('search', 20, '#5B5F6B')}<input type="search" name="q" placeholder="大会・ビリヤード場を検索" aria-label="大会・ビリヤード場を検索"></form>
-<div class="quick">${[['/pages/tournaments', '大会', 'cal'], ['/blogs/results', '結果', 'trophy'], ['/blogs/live', '速報', 'camera'], ['/pages/players', '選手', 'user'], ['/pages/near', '近くの店', 'pin'], ['/pages/live-table', 'カウント', 'count'], ['/blogs/news', 'NEWS', 'news'], ['/pages/shaft', 'SHOP', 'bag']].map(([h, l, i]) => `<a href="${h}"><i>${svg(i, 18, '#C0FC09', 2.2)}</i>${l}</a>`).join('')}</div>
+<div class="quick">${[['/pages/tournaments', '大会', 'cal'], ['/blogs/results', '結果', 'trophy'], ['/blogs/live', '速報', 'camera'], ['/pages/players', '選手', 'user'], ['/pages/near', '近くの店', 'pin'], ['/pages/bowlard', 'ボーラード', 'count'], ['/blogs/news', 'NEWS', 'news'], ['/pages/shaft', 'SHOP', 'bag']].map(([h, l, i]) => `<a href="${h}"><i>${svg(i, 18, '#C0FC09', 2.2)}</i>${l}</a>`).join('')}</div>
 </div>
 
 <section class="sec"><div class="sec-h"><h2>今日のビリヤード</h2></div>
@@ -81,8 +81,9 @@ ${ps.length ? `<section class="sec"><div class="sec-h"><h2>${psLabel}</h2><a hre
 
 <section class="sec"><div class="sec-h"><h2>ビリヤード場</h2><a href="/pages/near">地図でさがす</a></div>
 <div class="cols eq"><div style="display:flex;flex-direction:column;gap:10px"><div class="chips"><a class="chip" href="/pages/near?auto=1">現在地から探す</a>${prefs.map((p) => `<a class="chip" href="/pages/near?pref=${encodeURIComponent(p)}">${p.replace(/[都府県]$/, '')}</a>`).join('')}<a class="chip" href="/pages/near">すべて</a></div>
-${wind ? `<a class="card pad" href="${wind.url}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;text-decoration:none"><span><span class="badge b-off" style="margin-bottom:6px">デジタルカウント導入店</span><span style="display:block;font-size:16px;font-weight:900">ビリヤードWIND</span><span style="display:block;font-size:12px" class="muted">埼玉県志木市・18:00〜深夜・旋盤あり</span></span>${svg('next', 18, '#5B5F6B', 2.4)}</a>` : ''}</div>
-<a class="dc" href="/pages/live-table"><span><span class="cue-pair"><i style="background:#fff"></i>先攻<i style="background:var(--b1);margin-left:6px"></i>後攻</span><span class="en">DIGITAL COUNT</span><span class="tx">スマホが台のスコアボードに。キャロム版・ポケット版、無料。</span></span><span class="go-c">${svg('next', 18, '#171A22', 2.6)}</span></a>
+${wind ? `<a class="card pad" href="${wind.url}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;text-decoration:none"><span><span class="badge b-off" style="margin-bottom:6px">VIBES DIGITAL LAB導入（キャロム）</span><span style="display:block;font-size:16px;font-weight:900">ビリヤードWIND</span><span style="display:block;font-size:12px" class="muted">埼玉県志木市・18:00〜深夜・旋盤あり</span></span>${svg('next', 18, '#5B5F6B', 2.4)}</a>` : ''}</div>
+<div style="display:flex;flex-direction:column;gap:10px"><a class="dc" href="/pages/bowlard"><span><span class="tx" style="margin-top:0">ポケットビリヤード練習プログラム</span><span class="en">BOWLARD SCORE</span><span class="tx">ボーラードのスコア表。スマホでそのまま付けられます。無料。</span></span><span class="go-c">${svg('next', 18, '#171A22', 2.6)}</span></a>
+<div class="dc" aria-disabled="true" style="grid-template-columns:minmax(0,1fr);opacity:.72"><span><span class="en" style="margin-top:0;color:var(--chalk)">VIBES DIGITAL LAB</span><span class="tx">開発中</span></span></div></div>
 </div></section>
 
 <section class="sec"><div class="sec-h"><h2>はじめての方へ</h2></div><div class="tiles">
@@ -94,7 +95,7 @@ ${wind ? `<a class="card pad" href="${wind.url}" style="display:grid;grid-templa
 <section class="sec"><div class="sec-h"><h2>SHOP</h2><a href="/pages/shaft#faq">よくある質問</a></div><div class="tiles">
 <a class="tile dark full" href="/pages/shaft"><small>パターンオーダー・税込・送料込・銀行振込</small><b style="font-size:17px">Vibes Carbon Shaft</b><span class="disp" style="font-size:36px;color:var(--lime)">¥25,000</span></a>
 <a class="tile" href="/pages/wear"><b>Wear Vibes</b><small>ロゴTシャツ</small></a><a class="tile" href="/pages/shaft#maintenance"><b>メンテナンス</b><small>タップ交換 ¥1,000〜</small></a>
-<a class="tile" href="/pages/app"><span class="en">VIBES APP</span><small>ホーム画面に追加</small></a><a class="tile" href="/pages/live-table"><span class="en">COUNT</span><small>デジタルカウント</small></a>
+<a class="tile" href="/pages/app"><span class="en">VIBES APP</span><small>ホーム画面に追加</small></a><a class="tile" href="/pages/bowlard"><span class="en">BOWLARD</span><small>ボーラードスコア</small></a>
 </div></section>
 
 <section class="sec">${shopCta()}</section>
@@ -208,7 +209,7 @@ function venue(s) {
   const body = `
 <div class="band"><div class="wrap band-in">
 <p class="crumb"><a href="/">トップ</a> ／ <a href="/pages/near">ビリヤード場</a>${s.prefecture ? ` ／ <a href="/pages/near?pref=${encodeURIComponent(s.prefecture)}">${esc(s.prefecture)}</a>` : ''}</p>
-<div style="display:flex;gap:6px;flex-wrap:wrap">${isWind ? '<span class="badge b-off">デジタルカウント導入店</span><span class="badge b-soft">旋盤あり</span>' : ''}${s.tables.map((x) => `<span class="badge b-soft">${esc(x)}</span>`).join('')}</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">${isWind ? '<span class="badge b-off">VIBES DIGITAL LAB導入（キャロム）</span><span class="badge b-soft">旋盤あり</span>' : ''}${s.tables.map((x) => `<span class="badge b-soft">${esc(x)}</span>`).join('')}</div>
 <h1 style="font-size:clamp(26px,3.4vw,40px);font-weight:900">${esc(s.name)}</h1>
 <p class="hero-sub">${esc(s.address || (s.prefecture || '') + (s.city || ''))}</p>
 <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:520px">
@@ -269,7 +270,7 @@ function blogIndex(b) {
   if (b === 'house-tournament') extra = `<section class="sec"><div class="sec-h"><h2>これからのハウストーナメント</h2><a href="/pages/tournaments?k=house">すべて</a></div><div class="card list">${upcoming.filter((t) => t.cat === 'house' && t.d >= today).slice(0, 20).map((t) => tRow(t, { showDate: true })).join('')}</div></section>`;
   const liveTop = b === 'live' ? `<section class="sec"><div class="cols eq">
 <div class="card pad" style="display:flex;flex-direction:column;gap:10px"><h2 style="font-size:18px">送り方</h2><ol style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px">${['公式LINEで「速報」と送る', 'スコア表・トーナメント表の写真を送る', 'VIBESが確認して、ここと大会ページに掲載'].map((x, i) => `<li style="display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center"><span class="disp" style="font-size:26px">0${i + 1}</span><b style="font-size:14px">${x}</b></li>`).join('')}</ol><a class="btn btn-lime" href="https://line.me/R/oaMessage/${encodeURIComponent(LINE_ID)}/?${encodeURIComponent('速報')}" target="_blank" rel="noopener">LINEで速報を送る</a></div>
-<div class="card dark pad" style="display:flex;flex-direction:column;gap:8px"><b class="disp" style="font-size:20px;color:var(--lime);letter-spacing:.04em">LIVE</b><p style="font-size:13px;line-height:1.7">台のスコアをそのまま中継する機能は、準備ができ次第リリースします。</p><a class="btn btn-line btn-sm" href="/pages/live-table">デジタルカウントを使う</a></div>
+<div class="card dark pad" style="display:flex;flex-direction:column;gap:8px"><b class="disp" style="font-size:20px;color:var(--lime);letter-spacing:.04em">LIVE</b><p style="font-size:13px;line-height:1.7">台のスコアをそのまま中継する機能は、準備ができ次第リリースします。</p><span class="badge b-soft" style="align-self:flex-start">VIBES DIGITAL LAB 開発中</span></div>
 </div></section>` : '';
   const body = `<div class="band"><div class="wrap band-in"><p class="crumb"><a href="/">トップ</a></p><div class="ph"><h1>${blogs[b]}</h1><p>${intro}</p></div></div></div>
 <main class="wrap">${liveTop}
@@ -374,7 +375,12 @@ function contentPages() {
   const lt = fs.readFileSync(path.join(THEME, 'templates/page.live-table.liquid'), 'utf8')
     .replace('{% layout none %}', '').replace(/\{\{\s*canonical_url\s*\}\}/g, SITE + '/pages/live-table').replace(/\{%-? if settings\.favicon[\s\S]*?endif -?%\}/, '<link rel="icon" href="/img/favicon-64.png">').replace('{{ content_for_header }}', '')
     .replace(/https:\/\/cdn\.shopify\.com\/s\/files\/1\/0792\/5533\/9107\/files\/vibes-live-table-v3\.css\?v=\d+/, '/apps/live-table/vibes-live-table-v3.css').replace(/https:\/\/cdn\.shopify\.com\/s\/files\/1\/0792\/5533\/9107\/files\/vibes-live-table-v4\.js\?v=\d+/, '/apps/live-table/vibes-live-table-v4.js');
-  put('/pages/live-table', { raw: fixHtml(lt).replace('</head>', '<style>#lt-root input,#lt-root select{min-width:0;max-width:100%;box-sizing:border-box}</style></head>') });
+  const ltHtml = fixHtml(lt).replace('</head>', '<style>#lt-root input,#lt-root select{min-width:0;max-width:100%;box-sizing:border-box}</style></head>');
+  /* the old phone scoreboard stays at its URL but is no longer linked from the site (DIGITAL LAB is in development) */
+  put('/pages/live-table', { raw: ltHtml.replace('</head>', '<meta name="robots" content="noindex"></head>') });
+  /* ポケットビリヤード練習プログラム：ボーラードスコア = the same app opened on the pocket tab with ボーラード preselected and the carom tab hidden */
+  put('/pages/bowlard', { raw: ltHtml.split(SITE + '/pages/live-table').join(SITE + '/pages/bowlard').replace(/<title>[^<]*<\/title>/, '<title>ボーラードスコア｜ポケットビリヤード練習プログラム｜VIBES BILLIARDS</title>')
+    .replace('<head>', `<head><script>try{var k='vibes-live-table-v1',d=JSON.parse(localStorage.getItem(k)||'{}')||{};d.prefs=d.prefs||{};d.prefs.pocket=d.prefs.pocket||{};if(!d.pocket)d.prefs.pocket.disc='bowl';localStorage.setItem(k,JSON.stringify(d));if(!/[?&]mode=/.test(location.search))history.replaceState(null,'',location.pathname+'?mode=pocket')}catch(e){}</script><style>.tab[data-v="carom"]{display:none!important}</style>`) });
   const kids = fs.readFileSync(path.join(THEME, 'templates/page.kids.liquid'), 'utf8')
     .replace('{% layout none %}', '').replace(/\{\{\s*canonical_url\s*\}\}/g, SITE + '/pages/kids').replace(/\{%-? if settings\.favicon[\s\S]*?endif -?%\}/, '<link rel="icon" href="/img/favicon-64.png">').replace('{{ content_for_header }}', '')
     .replace(/https:\/\/cdn\.shopify\.com\/s\/files\/1\/0792\/5533\/9107\/files\/vibes-kids-v2\.css\?v=\d+/, '/apps/kids/vibes-kids-v2.css').replace(/https:\/\/cdn\.shopify\.com\/s\/files\/1\/0792\/5533\/9107\/files\/vibes-kids-v2\.js\?v=\d+/, '/apps/kids/vibes-kids-v2.js');
