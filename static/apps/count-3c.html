@@ -208,6 +208,10 @@ body.touch .board .keys span:active{background:rgba(255,255,255,.22)}
 body.touch .side,body.touch #tbox{cursor:pointer;touch-action:manipulation}
 body.mir .top>span:last-child,body.mir .rdp .keys,body.mir #rdWarm{display:none!important}body.mir #aHome{pointer-events:none}
 body.mirwait .board{visibility:hidden}
+.tpad{display:none}body.touch .tpad{display:grid;grid-template-columns:repeat(3,1fr);gap:1vh;width:min(100%,62vh);margin:2vh auto 0}
+.tpad button{font:inherit;font-family:VLNum,"Noto Sans JP",sans-serif;font-weight:900;font-size:4.4vh;min-height:8.4vh;border-radius:1.6vh;border:.3vh solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:var(--chalk);cursor:pointer;touch-action:manipulation}
+.tpad button[data-k=Backspace],.tpad button[data-k=Enter]{font-size:2.6vh}.tpad button.go{background:var(--lime);color:var(--night);border-color:var(--lime)}.tpad button:active{background:rgba(255,255,255,.26)}
+body.touch .opt,body.touch #wzK span{cursor:pointer;touch-action:manipulation}body.touch .wz{max-height:96vh}
 #mirRl{position:fixed;left:50%;bottom:6vh;transform:translateX(-50%);z-index:90;font-size:2.6vh;padding:1.6vh 3vw}#mirRl[hidden]{display:none}
 body.easy.touch .krow>.keys{display:contents!important}body.easy.touch .board .keys span{font-size:3vh;padding:1.6vh 2vw}
 /* 2026-11-12: thicker frame for the player at the table, larger high run / average, inning box stands apart from the clock, 25-inning sheet */
@@ -943,6 +947,11 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   (function () { var ks = document.querySelector('.board .keys'), row = el('div', 'krow'), tk = el('div', 'keys tk'); tk.id = 'tk'; ks.parentNode.insertBefore(row, ks); row.appendChild(ks); row.appendChild(tk); ks.style.marginTop = '';
     var a = el('span', '', '一時停止'); a.id = 'tkPz'; a.setAttribute('role', 'button'); var b = el('span', '', '試合終了'); b.id = 'tkEnd'; b.setAttribute('role', 'button'); tk.appendChild(a); tk.appendChild(b); })();
   if (MIR || (window.matchMedia && matchMedia('(pointer:coarse)').matches)) document.body.classList.add('touch');
+  /* touch screens: the player-entry steps are driven by number keys, so show a number pad and let each choice be tapped */
+  (function () { var pad = el('div', 'tpad'); pad.id = 'tpad'; ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'Backspace', '0', 'Enter'].forEach(function (k) { var b = el('button', k === 'Enter' ? 'go' : '', k === 'Backspace' ? '消す・戻る' : k === 'Enter' ? '決定' : k); b.type = 'button'; b.setAttribute('data-k', k); pad.appendChild(b); }); $('wzK').parentNode.appendChild(pad);
+    $('wzL').addEventListener('click', function (e) { if (MIR || !W || !e.target.closest) return; var b = e.target.closest('[data-k]'), o = e.target.closest('.opt'), h = e.target.closest('#wzK span'), k = '';
+      if (b) k = b.getAttribute('data-k'); else if (o && o.querySelector('kbd')) k = o.querySelector('kbd').textContent; else if (h && h.querySelector('kbd')) k = h.querySelector('kbd').textContent;
+      if (k === 'BackSpace') k = 'Backspace'; if (/^([0-9]|Enter|Backspace)$/.test(k)) { e.preventDefault(); onKey(k, noop); } }); })();
   function act(a) {
     if (MIR) { var said = 0; if (a.type === 'key' && a.k === '+' && !S.cfg.mode && typeof callText === 'function' && S.cfg.voice !== 0 && !S.over && !S.ready && !S.pz && !(S.cfg.vdev === 'pc' && mva)) { var rm0 = S.cfg.g[S.turn] - S.sc[S.turn]; if (S.run < rm0) { said = 1; if (fresh1(S.run, S.run + 1)) psay(callText(S.run + 1, rm0 - S.run - 1, cl()), cl(), callText(S.run + 1, rm0 - S.run - 1)); S.run++; /* count ahead so quick taps are called in order; the monitor's next message replaces this */ } }
       try { parent.postMessage({ type: 'mir', send: a, said: said }, location.origin); } catch (e) {} return; }
