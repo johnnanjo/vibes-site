@@ -206,7 +206,13 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
     else if (m.op === 'pause') ytCmd('pauseVideo'); else if (m.op === 'resume') ytCmd('playVideo'); else if (m.op === 'mute') ytCmd('mute'); else if (m.op === 'unmute') ytCmd('unMute'); else if (m.op === 'next') ytCmd('nextVideo');
     else if (m.op === 'vol') { ytVol = Math.max(0, Math.min(100, ytVol + (m.d > 0 ? 10 : -10))); ytCmd('unMute'); ytCmd('setVolume', [ytVol]); }
   }
-  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', yt: yt ? 1 : 0, vol: ytVol, shop: shopGet(), cf: cfSchema(), table: TB, title: m.t, back: !!m.back, items: m.items.map(function (x) { var cl = colOf(x); return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d, col: cl.slice(0, 3), lt: cl[3] ? 1 : 0 }; }) }); };
+  /* tournament: a match sent by the organiser's device opens the three-cushion scoreboard, which picks it up from TPK */
+  function tdGet() { try { var a = JSON.parse(localStorage.getItem('vibes-tour-done') || '[]'); return Array.isArray(a) ? a.slice(-6) : []; } catch (e) { return []; } }
+  function tourHandle(m) {
+    if (m.op === 'ack') { try { localStorage.setItem('vibes-tour-done', JSON.stringify(tdGet().filter(function (x) { return x.id !== m.id; }))); } catch (e) {} return push(); }
+    if (m.op !== 'start' || !m.p || m.p.length !== 2) return; try { localStorage.setItem('vibes-tour-pending', JSON.stringify({ at: Date.now(), m: m })); } catch (e) { return; } ytStop(); location.href = url('3c');
+  }
+  var state = function () { var m = MENU[lv]; return JSON.stringify({ type: 'state', kind: 'menu', yt: yt ? 1 : 0, vol: ytVol, shop: shopGet(), cf: cfSchema(), table: TB, td: tdGet(), title: m.t, back: !!m.back, items: m.items.map(function (x) { var cl = colOf(x); return { id: x.id, b: x.b, s: x.s, c: x.c, d: x.d, col: cl.slice(0, 3), lt: cl[3] ? 1 : 0 }; }) }); };
   var push = function () { if (ws && ws.readyState === 1) { try { ws.send(state()); } catch (e) {} } };
   function draw() {
     var on = !!(rm && rm.on), solo = on && seen && !showMenu; $('solo').hidden = !solo; $('home').hidden = solo; $('hq').hidden = !on; if (on && $('hqQ').getAttribute('data-c') !== rm.code) { $('hqQ').innerHTML = qrSvg(rm.code); $('hqQ').setAttribute('data-c', rm.code); $('hqC').textContent = rm.code.slice(0, 3) + ' ' + rm.code.slice(3); }
@@ -217,7 +223,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
     if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { ws = null; return; }
     ws.onopen = function () { tries = 0; draw(); push(); roPush(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'ctl' || m.type === 'cmd') sawPhone(); if (m.type === 'cmd' && m.c === 'reload') { location.reload(); return; } if (m.type === 'yt') { ytHandle(m); return push(); } if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'ctl' || m.type === 'cmd') sawPhone(); if (m.type === 'cmd' && m.c === 'reload') { location.reload(); return; } if (m.type === 'yt') { ytHandle(m); return push(); } if (m.type === 'tour') return tourHandle(m); if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
     ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }

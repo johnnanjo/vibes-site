@@ -921,6 +921,25 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   setInterval(pzDraw, 400);
   var tSent = -9; setInterval(function () { var v = tOn ? Math.max(0, Math.ceil(tLeft)) : -1; if (v === tSent || !(rws && rws.readyState === 1)) return; tSent = v; try { rws.send(JSON.stringify({ type: 't', v: v, l: tOn ? Math.max(0, tLeft) : -1 })); } catch (e) {} }, 100);
   $('bPz').onclick = function () { if (S.pz) pzOff(); else pzOn(); this.blur(); }; $('pzB').onclick = pzOff;
+  /* ===== tournament (count-tour): the organiser's device sends a match to this table and reads the result from the state =====
+     results wait in TDK until the organiser's device has acknowledged them, so nothing is lost if it was offline when the game ended */
+  var TDK = 'vibes-tour-done', TPK = 'vibes-tour-pending';
+  function tdGet() { try { var a = JSON.parse(localStorage.getItem(TDK) || '[]'); return Array.isArray(a) ? a.slice(-6) : []; } catch (e) { return []; } }
+  function tdSet(a) { try { localStorage.setItem(TDK, JSON.stringify(a.slice(-6))); } catch (e) {} }
+  function tdAdd() { var a = tdGet().filter(function (x) { return x.id !== S.tour.id; }); a.push({ id: S.tour.id, n: S.cfg.n.slice(0, 2), sc: S.sc.slice(0, 2), inn: [S.inn[0].length, S.inn[1].length], hr: [hi(0), hi(1)] }); tdSet(a); }
+  function tourHandle(m) {
+    if (S.cfg.mode || typeof wzOpen !== 'function') return;
+    if (m.op === 'ack') { tdSet(tdGet().filter(function (x) { return x.id !== m.id; })); return rmPush(); }
+    if (m.op === 'cancel') { if (S.tour && S.tour.id === m.id && fresh()) { var c0 = S.cfg; c0.n = ['PLAYER 1', 'PLAYER 2']; S = def(c0); hist = []; render(); } return; }
+    if (m.op !== 'start' || !m.p || m.p.length !== 2 || typeof m.id !== 'string' || m.id.length > 40) return;
+    if (KM) return; if (!fresh() && !S.over) { toast('試合中のため、大会の試合を受け取れません'); return rmPush(); }
+    if (!$('setL').hidden) closeSet(false); if (!$('rmL').hidden) $('rmL').hidden = true; if (!$('prL').hidden) prClose(); if (W) { W = null; $('wzL').hidden = true; }
+    if (S.cfg.game === 'band') { try { localStorage.setItem(TPK, JSON.stringify({ at: Date.now(), m: m })); } catch (e) { return; } location.href = location.pathname + '?g=three' + (TB ? '&t=' + TB : ''); return; }
+    var c = S.cfg; c.n = m.p.map(function (x, i) { return String(x.n || '').slice(0, 20).trim() || 'PLAYER ' + (i + 1); }); c.g = m.p.map(function (x) { var g = parseInt(x.g, 10); return isNaN(g) ? 25 : Math.max(1, Math.min(999, g)); });
+    var lim = parseInt(m.lim, 10); c.lim = isNaN(lim) ? 0 : Math.max(0, Math.min(999, lim)); c.eq = m.eq === 0 ? 0 : 1; c.game = 'three';
+    S = def(c); hist = []; S.tour = { id: m.id, tt: String(m.tt || '').slice(0, 60) }; S.ready = true; tStop(); $('winL').hidden = true; render(); toast('大会の試合：' + S.tour.tt);
+  }
+  function tourInit() { try { var p = JSON.parse(localStorage.getItem(TPK) || 'null'); localStorage.removeItem(TPK); if (p && p.m && Date.now() - p.at < 30000) tourHandle(p.m); } catch (e) {} }
   function goHome() { location.href = U_HOME + (TB ? '?t=' + TB : ''); }
   function rmHandle(m) {
     if (m.type === 'rtc') return;
@@ -928,6 +947,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
     if (m.type === 'hello') { tSent = -9; rmPush(); return roPush(); }
     if (m.type === 'ctl') { toast('スマホがつながりました'); return; }
     if (m.type === 'roster') return roHandle(m);
+    if (m.type === 'tour') return tourHandle(m);
     if (m.type === 'cmd' && m.c === 'home') { goHome(); return; }
     if (m.type === 'cmd' && m.c === 'reload') { location.reload(); return; }
     if (m.type === 'setup' && m.p && m.p.length >= 1 && m.p.length <= 4) {
@@ -1113,7 +1133,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   wake(); document.addEventListener('visibilitychange', wake); document.addEventListener('keydown', function once() { if (!wl) wake(); document.removeEventListener('keydown', once); });
   var qg = /[?&]g=(band|three)/.exec(location.search); if (qg && (S.cfg.game || 'three') !== qg[1]) { var cg = S.cfg; cg.game = qg[1]; S = def(cg); hist = []; S.ready = !cg.n.every(isDefName); }
   if (S.cfg.game === 'band') { $('ttl').textContent = (TB ? 'TABLE ' + TB + ' · ' : '') + 'BAND GAME'; document.title = 'バンド デジタルカウント｜VIBES BILLIARDS'; }
-  if (!MIR) menuInit();
+  if (!MIR) { menuInit(); tourInit(); }
   var qm = /[?&]m=([a-z0-9]+)/.exec(location.search), viaMenu = false; if (qm && MODES[qm[1]] && (S.cfg.mode !== qm[1] || S.over)) { setMode(qm[1]); hist = []; S.ready = !S.cfg.n.every(isDefName); } if (qm && MODES[qm[1]]) viaMenu = true;
   render(); setInterval(drawTime, 500); if (MIR) mirInit(); else if (S.over) showWin(); else if (S.cfg.n.every(isDefName) && fresh()) { wzOpen(0); if (viaMenu) { W.step = M().min === M().max ? 'mode' : 'count'; wzDraw(); } }
 })();
