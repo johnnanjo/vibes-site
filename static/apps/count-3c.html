@@ -350,9 +350,10 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   function vSex(v) { var n = String(v.name || ''); return /\bfemale\b|女性/i.test(n) ? 'f' : /\bmale\b|男性/i.test(n) ? 'm' : VFN.test(n) ? 'f' : VMN.test(n) ? 'm' : /google/i.test(n) ? 'f' : ''; }
   function vPick(ss, lang, g) { var all = ss.getVoices() || [], vs = all.filter(function (v) { return String(v.lang || '').toLowerCase().replace('_', '-').indexOf(lang) === 0; }); if (!vs.length) return { none: all.length > 0 };
     var best = function (a) { return a.filter(function (v) { return String(v.lang).replace('_', '-').toLowerCase() === VL[lang].toLowerCase(); })[0] || a[0]; }, want = vs.filter(function (v) { return vSex(v) === g; });
-    if (want.length) return { v: best(want) }; var v0 = best(vs), s0 = vSex(v0); return { v: v0, sh: s0 && s0 !== g ? (g === 'm' ? .6 : 1.45) : 0 }; }
+    if (want.length) return { v: best(want) }; var loc = vs.filter(function (v) { return v.localService !== false && !/google/i.test(v.name || ''); }), v0 = best(loc.length ? loc : vs), s0 = vSex(v0); return { v: v0, sh: s0 !== g ? (g === 'm' ? .5 : s0 ? 1.45 : 0) : 0 }; }
+  try { if (window.speechSynthesis) { speechSynthesis.getVoices(); speechSynthesis.addEventListener('voiceschanged', function () { speechSynthesis.getVoices(); }); } } catch (e) {}
   function vSpeak(t, lang, g, fb) { try { var ss = window.speechSynthesis; if (!ss) return; lang = VL[lang] ? lang : 'en'; g = g === 'm' ? 'm' : 'f'; var r = vPick(ss, lang, g); if (r.none && lang !== 'en' && fb) { t = fb; lang = 'en'; r = vPick(ss, 'en', g); }
-    var u = new SpeechSynthesisUtterance(String(t)); u.lang = VL[lang]; if (r.v) u.voice = r.v; u.rate = 1; u.pitch = r.sh || 1; if (ss.speaking || ss.pending) ss.cancel(); ss.speak(u); } catch (e) {} }
+    var u = new SpeechSynthesisUtterance(String(t)); u.lang = VL[lang]; if (r.v) u.voice = r.v; u.rate = r.sh && r.sh < 1 ? .92 : 1; u.pitch = r.sh || 1; if (ss.speaking || ss.pending) ss.cancel(); ss.speak(u); } catch (e) {} }
 
   /* 2026-11: time-outs are off unless the shop turns them on in the settings (one-time change of the saved default) */
   try { var pd = JSON.parse(localStorage.getItem('vibes-count-prefs') || 'null') || {}; if (!pd.d2) { pd.to = 0; pd.d2 = 1; localStorage.setItem('vibes-count-prefs', JSON.stringify(pd)); } } catch (e) {}
