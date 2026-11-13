@@ -279,7 +279,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return; var k = e.key;
     if (!$('ntL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('ntL').hidden = true; } return; }
-    if (!$('cfL').hidden || !$('roL').hidden || !$('shL').hidden || !$('cmL').hidden) { if (k === 'Escape' || (k === 'Enter' && !$('cmL').hidden)) { e.preventDefault(); $('cfL').hidden = true; $('roL').hidden = true; $('shL').hidden = true; $('cmL').hidden = true; } return; }
+    if (!$('cfL').hidden || !$('roL').hidden || !$('shL').hidden || !$('cmL').hidden) { if (k === 'Escape' || k === '*' || (k === 'Enter' && !$('cmL').hidden)) { /* '*' closes a panel from a numeric keypad, which has no Esc */ e.preventDefault(); $('cfL').hidden = true; $('roL').hidden = true; $('shL').hidden = true; $('cmL').hidden = true; } return; }
     if (!$('rmL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('rmL').hidden = true; } return; }
     if (k === 'f' || k === 'F') { e.preventDefault(); goFull(); return; }
     if (!$('solo').hidden) { if (k === 'Escape' || k === 'Enter') { e.preventDefault(); showMenu = true; draw(); } return; }
