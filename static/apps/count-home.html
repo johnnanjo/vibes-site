@@ -84,15 +84,10 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
 .solo p{margin:0;color:var(--sub);font-weight:700;font-size:2.2vh;letter-spacing:.08em;text-align:center}
 .solo p b{color:var(--chalk);font-family:VLNum,Unbounded,Anton,sans-serif;font-weight:400;font-size:3.4vh;letter-spacing:.06em;margin:0 .6vw}
 .solo button{margin-top:1.4vh;font:inherit;font-weight:700;font-size:1.8vh;color:var(--chalk);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.8vh 2vw;cursor:pointer}
-/* title screen: the monitor becomes a table seen from above — rails with sights around the cloth of the edition (blue for carom, grey with pockets for pocket), logo in the middle, the official LINE and the site as QR codes, NEXT goes to the menu */
-.ttl{position:fixed;inset:0;z-index:6;background:#0B0D12;padding:3.6vh}
-.ttl::before,.ttl::after{content:"";position:absolute;left:3.6vh;right:3.6vh;height:3.6vh;background:radial-gradient(circle,rgba(243,244,239,.9) 0 .4vh,transparent .48vh) 0 0/12.5% 100%}
-.ttl::before{top:0}.ttl::after{bottom:0}
-.tf{position:relative;height:100%;border-radius:1.4vh;display:grid;grid-template-rows:minmax(0,1fr) auto;justify-items:center;padding:2vh 4vw 3.2vh;
-  background:repeating-linear-gradient(115deg,rgba(255,255,255,.022) 0 2px,transparent 2px 5px),radial-gradient(85% 75% at 50% 38%,var(--f1,#2B72CF) 0%,var(--f2,#1E5AA8) 45%,var(--f3,#113766) 100%);box-shadow:inset 0 0 0 .35vh rgba(0,0,0,.4),inset 0 0 14vh rgba(0,0,0,.5)}
-.tf::before,.tf::after{content:"";position:absolute;top:0;bottom:0;width:3.6vh;background:radial-gradient(circle,rgba(243,244,239,.9) 0 .4vh,transparent .48vh) 0 0/100% 25%}
-.tf::before{left:-3.6vh}.tf::after{right:-3.6vh}
-.tf .pk{position:absolute;width:6.4vh;height:6.4vh;border-radius:50%;background:#07080B;box-shadow:inset 0 0 0 .5vh #1B1E27;transform:translate(-50%,-50%)}
+/* title screen: black, framed by a neon line; logo in the middle, the official LINE and the site as QR codes, NEXT goes to the menu */
+.ttl{position:fixed;inset:0;z-index:6;background:#000;padding:3.2vh 1.8vw}
+.tf{position:relative;height:100%;border-radius:2.6vh;display:grid;grid-template-rows:minmax(0,1fr) auto;justify-items:center;padding:2vh 3.6vw 3.4vh;background:#000;border:.5vh solid #D6FF4A;
+  box-shadow:0 0 1.2vh var(--lime),0 0 4.5vh rgba(192,252,9,.6),0 0 11vh rgba(192,252,9,.22),inset 0 0 1.2vh rgba(192,252,9,.75),inset 0 0 6vh rgba(192,252,9,.16)}
 .ttl .lg{display:grid;justify-items:center;align-content:center}
 .ttl .lg img{height:43vh;width:auto;max-width:78vw;filter:drop-shadow(0 2.4vh 4vh rgba(0,0,0,.5))}
 .ttl .lab{font-size:4vh;letter-spacing:.42em;text-indent:.42em;margin-top:2vh;padding-top:1.8vh;border-top-width:.45vh}.ttl .lab::after{content:none}
@@ -100,11 +95,11 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
 .tb{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:end;gap:2vw}
 .tq{display:flex;align-items:center;gap:1.2vw}.tq.r{justify-content:flex-end;text-align:right}
 .tq .qr{width:15vh;height:15vh;padding:.8vh;border-radius:1vh}
-.tq b{display:block;font-weight:900;font-size:2.7vh;line-height:1.3;letter-spacing:.04em}.tq span{display:block;font-weight:700;font-size:1.8vh;line-height:1.55;color:#DCE3F0;margin-top:.4vh}
+.tq b{display:block;font-weight:900;font-size:2.7vh;line-height:1.3;letter-spacing:.04em}.tq span{display:block;font-weight:700;font-size:1.8vh;line-height:1.55;color:var(--sub);margin-top:.4vh}
 .ttl .nx{font:inherit;font-weight:900;font-size:3vh;letter-spacing:.2em;text-indent:.2em;color:var(--night);background:var(--lime);border:0;border-radius:999px;padding:1.5vh 4.4vw;cursor:pointer;box-shadow:0 1vh 2.4vh rgba(0,0,0,.4)}
 .ttl .nx small{display:block;font-weight:700;font-size:1.5vh;letter-spacing:.1em;text-indent:.1em;margin-top:.2vh}
 .ttl .nx:focus-visible{outline:3px solid var(--chalk);outline-offset:3px}
-@media (max-width:760px){.ttl{position:static;min-height:100vh}.tf{min-height:calc(100vh - 7.2vh);gap:4vh}.tb{grid-template-columns:1fr;justify-items:center}.tq.r{flex-direction:row-reverse;text-align:left}.ttl .lg img{height:38vw}.ttl .lab{font-size:4.4vw}.tq b{font-size:4.6vw}.tq span{font-size:3.2vw}.ttl .nx{font-size:5vw;order:3}}
+@media (max-width:760px){.ttl{position:static;min-height:100vh}.tf{min-height:calc(100vh - 6.4vh);gap:4vh}.tb{grid-template-columns:1fr;justify-items:center}.tq.r{flex-direction:row-reverse;text-align:left}.ttl .lg img{height:38vw}.ttl .lab{font-size:4.4vw}.tq b{font-size:4.6vw}.tq span{font-size:3.2vw}.ttl .nx{font-size:5vw;order:3}}
 #ytL{position:fixed;inset:0;z-index:50;background:#000}#ytL[hidden]{display:none}#ytF{width:100%;height:100%;border:0;display:block}
 .hq{position:fixed;left:2vw;top:2vh;display:flex;align-items:center;gap:1.2vw;background:rgba(14,16,21,.82);border:1px solid rgba(255,255,255,.16);border-radius:2vh;padding:1.4vh 1.4vw;z-index:5}.hq .qr.sm{width:13vh;height:13vh}.hq p{margin:0;font-weight:700;font-size:1.9vh;line-height:1.7;color:var(--sub)}.hq b{color:var(--chalk);font-size:2.4vh}
 .qrw{display:flex;align-items:center;gap:2vw;margin-bottom:1.6vh}.qrw p{margin:0;text-align:left;font-size:2.2vh}
@@ -247,10 +242,9 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   /* title screen */
   var LINE_URL = 'https://line.me/R/ti/p/@361mehjz', SITE_URL = 'https://vibesbilliards.com/';
   function ttQr(id, u) { try { var q = qrcode(0, 'M'); q.addData(u); q.make(); $(id).innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) {} }
-  var BALLS = { carom: ['#F7F7F2', '#F2C200', '#D7262E'], pocket: ['#F7F7F2', '#F2C200', '#12141A'] }, FELT = { carom: ['#2B72CF', '#1E5AA8', '#113766'], pocket: ['#737B88', '#5A616C', '#2F343C'] };
+  var BALLS = { carom: ['#F7F7F2', '#F2C200', '#D7262E'], pocket: ['#F7F7F2', '#F2C200', '#12141A'] };
   function edPlate(e) { e.textContent = ''; var bl = document.createElement('span'); bl.className = 'bl'; (BALLS[ED] || []).forEach(function (c) { var b = document.createElement('b'); b.style.background = c; bl.appendChild(b); }); var tx = document.createElement('span'); tx.className = 'tx'; tx.textContent = EDN[ED] || ''; e.appendChild(bl); e.appendChild(tx); }
-  function ttDraw() { var e = $('ttEd'), F = $('ttF'), fc = FELT[ED] || FELT.carom; e.hidden = !ED; edPlate(e); ['--f1', '--f2', '--f3'].forEach(function (k, i) { F.style.setProperty(k, fc[i]); });
-    Array.prototype.forEach.call(F.querySelectorAll('.pk'), function (x) { F.removeChild(x); }); if (ED === 'pocket') [[0, 0], [50, 0], [100, 0], [0, 100], [50, 100], [100, 100]].forEach(function (p) { var d = document.createElement('i'); d.className = 'pk'; d.style.left = p[0] + '%'; d.style.top = p[1] + '%'; F.appendChild(d); }); }
+  function ttDraw() { var e = $('ttEd'); e.hidden = !ED; edPlate(e); }
   function ttOff() { if ($('ttl').hidden) return; $('ttl').hidden = true; if (typeof push === 'function') push(); }
   ttQr('ttQL', LINE_URL); ttQr('ttQS', SITE_URL); ttDraw(); $('ttGo').onclick = ttOff;
   /* remote: same room as the scoreboards, so the phone keeps its connection when the monitor changes page */
