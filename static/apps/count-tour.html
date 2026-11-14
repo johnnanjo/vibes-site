@@ -144,7 +144,11 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
   <!-- list of tournaments -->
   <section id="vList">
     <div class="card"><h2>新しい大会を作る</h2>
-      <form id="fNew" class="row"><div class="w2"><label for="nName">大会の名前</label><input id="nName" maxlength="40" placeholder="例：11月 ハンデキャップ戦" required></div><button class="go" type="submit">作る</button></form>
+      <form id="fNew" class="row"><div class="w2"><label for="nName">大会名</label><input id="nName" maxlength="40" placeholder="例：11月 ハウストーナメント" required></div>
+        <div><label for="nCap">参加人数</label><input id="nCap" type="number" min="3" max="64" inputmode="numeric" placeholder="例：12" required></div>
+        <div><label for="nPct">ルール（持ち点の何％）</label><input id="nPct" type="number" min="10" max="100" inputmode="numeric" value="40" required></div>
+        <button class="go" type="submit">作る</button></form>
+      <p class="hint">試合点数は「持ち点 × ％」で決まります（四捨五入）。例：持ち点25・40％ → 10点。参加人数と％は、あとから変えられます。</p>
     </div>
     <div class="card" id="lsC" hidden><h2>これまでの大会</h2><div id="lsB"></div></div>
   </section>
@@ -156,12 +160,14 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
     <div id="pEntry">
       <div class="card"><h2>大会の決まり</h2>
         <div class="grid">
-          <div><label for="cPct">試合点数（持ち点に対する割合）</label><select id="cPct"></select></div>
+          <div><label for="cName">大会名</label><input id="cName" maxlength="40"></div>
+          <div><label for="cCap">参加人数</label><input id="cCap" type="number" min="3" max="64" inputmode="numeric"></div>
+          <div><label for="cPct">ルール（持ち点の何％）</label><input id="cPct" type="number" min="10" max="100" inputmode="numeric"></div>
           <div><label for="cLim">イニング制限（0＝なし）</label><input id="cLim" type="number" min="0" max="99" inputmode="numeric"></div>
           <div><label for="cEq">裏撞き</label><select id="cEq"><option value="1">あり</option><option value="0">なし</option></select></div>
           <div><label for="cSize">1リーグの人数</label><select id="cSize"></select></div>
           <div><label for="cAdv">決勝に進む人数（各リーグ上位）</label><select id="cAdv"></select></div>
-          <div><label for="cFp">決勝の試合点数（割合）</label><select id="cFp"></select></div>
+          <div><label for="cFp">決勝のルール（持ち点の何％）</label><input id="cFp" type="number" min="10" max="100" inputmode="numeric"></div>
           <div><label for="cFl">決勝のイニング制限（0＝なし）</label><input id="cFl" type="number" min="0" max="99" inputmode="numeric"></div>
           <div><label for="cWm">勝った試合の書き方</label><select id="cWm"><option value="p">点数を書く</option><option value="w">W と書く</option></select></div>
         </div>
@@ -332,18 +338,19 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
       a.appendChild(o); a.appendChild(x); r.appendChild(w); r.appendChild(a); B.appendChild(r); }); }
   function opts(s, a, v) { s.textContent = ''; a.forEach(function (x) { var o = el('option', '', x[1]); o.value = x[0]; s.appendChild(o); }); s.value = v; }
   function drawEntry() {
-    var lock = T.st !== 'entry', pc = [35, 40, 45, 50].map(function (p) { return [p, p + '%']; });
-    opts($('cPct'), pc, T.pct); opts($('cFp'), pc, T.fpct); opts($('cSize'), [3, 4, 5, 6].map(function (n) { return [n, n + '人']; }), T.size); opts($('cAdv'), [1, 2, 3].map(function (n) { return [n, '上位' + n + '人']; }), T.adv);
+    var lock = T.st !== 'entry';
+    $('cPct').value = T.pct; $('cFp').value = T.fpct; $('cName').value = T.name; $('cCap').value = T.cap || ''; $('cCap').disabled = lock; opts($('cSize'), [3, 4, 5, 6].map(function (n) { return [n, n + '人']; }), T.size); opts($('cAdv'), [1, 2, 3].map(function (n) { return [n, '上位' + n + '人']; }), T.adv);
     $('cLim').value = T.lim; $('cFl').value = T.flim; $('cEq').value = T.eq; $('cWm').value = T.wm || 'p';
     ['cPct', 'cSize'].forEach(function (id) { $(id).disabled = lock; }); ['cLim', 'cEq'].forEach(function (id) { $(id).disabled = lock && T.M.some(function (m) { return m.res; }); }); ['cFp', 'cAdv'].forEach(function (id) { $(id).disabled = !!T.F; });
-    $('cHint').textContent = '試合点数は「持ち点 × 割合」を四捨五入します。勝ち2点・引き分け1点・負け0点。順位は、勝ち点 → HCアベレージ（試合点数 ÷ アベレージ。小さいほど上） → ハイラン の順で決めます。' + (lock ? '　組み合わせを決めたあとは、割合とリーグの人数は変えられません。' : '');
+    $('cHint').textContent = '試合点数は「持ち点 × ％」を四捨五入します。勝ち2点・引き分け1点・負け0点。順位は、勝ち点 → HCアベレージ（試合点数 ÷ アベレージ。小さいほど上） → ハイラン の順で決めます。' + (lock ? '　組み合わせを決めたあとは、％とリーグの人数は変えられません。' : '');
     $('enAdd').hidden = lock; $('drawC').hidden = lock;
-    var B = $('enB'); B.textContent = ''; $('enNone').hidden = T.E.length > 0; $('enCnt').textContent = T.E.length + '人';
+    var B = $('enB'); B.textContent = ''; $('enNone').hidden = T.E.length > 0; $('enCnt').textContent = T.E.length + '人' + (T.cap ? ' ／ 参加人数 ' + T.cap + '人' : '');
     T.E.forEach(function (e) { var tr = el('tr'); tr.appendChild(el('td', '', e.n)); tr.appendChild(el('td', '', e.s || '')); tr.appendChild(el('td', '', e.d || '')); tr.appendChild(el('td', 'n num', e.g)); tr.appendChild(el('td', 'n num', tg(e))); var td = el('td', 'n');
       if (!lock) { var x = el('button', 'dn', '外す'); x.type = 'button'; x.onclick = function () { T.E = T.E.filter(function (q) { return q.id !== e.id; }); save(); drawEntry(); }; td.appendChild(x); } tr.appendChild(td); B.appendChild(tr); });
     var sd = $('shDl'), seen = {}; sd.textContent = ''; T.E.forEach(function (e) { if (e.s && !seen[e.s]) { seen[e.s] = 1; var o = el('option'); o.value = e.s; sd.appendChild(o); } });
     var n = T.E.length, gs = n >= 3 ? groups(n, T.size) : [];
-    $('drawH').textContent = n < 3 ? '3人以上エントリーすると、組み合わせを決められます。' : n + '人 → ' + gs.length + 'リーグ（' + gs.join('人・') + '人）。1人あたり最低' + (Math.min.apply(null, gs) - 1) + '試合です。組み合わせはランダムに決まります。'; $('bDraw').disabled = n < 3;
+    var capN = T.cap && T.cap !== n ? '参加人数は' + T.cap + '人ですが、エントリーは' + n + '人です。このまま決めると、' + n + '人で組み合わせます。　' : '';
+    $('drawH').textContent = n < 3 ? '3人以上エントリーすると、組み合わせを決められます。' + (T.cap >= 3 ? '（' + T.cap + '人なら ' + groups(T.cap, T.size).join('人・') + '人 の' + groups(T.cap, T.size).length + 'リーグ）' : '') : capN + n + '人 → ' + gs.length + 'リーグ（' + gs.join('人・') + '人）。1人あたり最低' + (Math.min.apply(null, gs) - 1) + '試合です。組み合わせはランダムに決まります。'; $('bDraw').disabled = n < 3;
   }
   function addEntry(n, g, d, sh) { n = String(n || '').replace(/[\s　]+/g, ' ').trim().slice(0, 20); g = parseInt(g, 10); if (!n || isNaN(g) || g < 1 || g > 999) return 'bad'; if (T.E.some(function (e) { return e.n === n; })) return 'dup'; if (T.E.length >= 64) return 'full'; T.E.push({ id: rid(), n: n, g: g, d: String(d || '').trim().slice(0, 8), s: String(sh || '').replace(/[\s\u3000]+/g, ' ').trim().slice(0, 16) }); return ''; }
   function cell(m, s) { /* s: 0 = row player is m.a */
@@ -440,9 +447,10 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
   $('sdX').onclick = function () { $('sdL').hidden = true; };
 
   /* ---------- events ---------- */
-  $('fNew').addEventListener('submit', function (e) { e.preventDefault(); var n = $('nName').value.trim().slice(0, 40); if (!n) return; var d = new Date(), t = { id: rid(), name: n, date: d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate(), pct: 40, fpct: 40, lim: 0, flim: 0, eq: 1, size: 4, adv: 2, wm: 'p', st: 'entry', E: [], L: [], M: [], F: null }; DB.list.push(t); $('nName').value = ''; openT(t.id); });
+  $('fNew').addEventListener('submit', function (e) { e.preventDefault(); var n = $('nName').value.trim().slice(0, 40); if (!n) return; var cap = Math.max(3, Math.min(64, parseInt($('nCap').value, 10) || 0)), pc0 = Math.max(10, Math.min(100, parseInt($('nPct').value, 10) || 40)); var d = new Date(), t = { id: rid(), name: n, cap: cap, date: d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate(), pct: pc0, fpct: pc0, lim: 0, flim: 0, eq: 1, size: 4, adv: 2, wm: 'p', st: 'entry', E: [], L: [], M: [], F: null }; DB.list.push(t); $('nName').value = ''; $('nCap').value = ''; openT(t.id); });
   $('bList').onclick = function () { T = null; DB.cur = ''; save(); paint(); };
-  [['cPct', 'pct'], ['cFp', 'fpct'], ['cSize', 'size'], ['cAdv', 'adv'], ['cEq', 'eq'], ['cLim', 'lim'], ['cFl', 'flim']].forEach(function (x) { $(x[0]).addEventListener('change', function () { var v = parseInt(this.value, 10); if (isNaN(v)) v = 0; T[x[1]] = Math.max(0, Math.min(99, v)); save(); drawEntry(); }); });
+  [['cPct', 'pct', 10, 100], ['cFp', 'fpct', 10, 100], ['cCap', 'cap', 3, 64], ['cSize', 'size', 3, 6], ['cAdv', 'adv', 1, 3], ['cEq', 'eq', 0, 1], ['cLim', 'lim', 0, 99], ['cFl', 'flim', 0, 99]].forEach(function (x) { $(x[0]).addEventListener('change', function () { var v = parseInt(this.value, 10); if (isNaN(v)) v = x[1] === 'pct' || x[1] === 'fpct' ? 40 : 0; T[x[1]] = Math.max(x[2], Math.min(x[3], v)); save(); drawEntry(); }); });
+  $('cName').addEventListener('change', function () { var v = this.value.trim().slice(0, 40); if (v) { T.name = v; save(); } paint(); });
   $('cWm').addEventListener('change', function () { T.wm = this.value === 'w' ? 'w' : 'p'; save(); });
   $('eN').addEventListener('change', function () { var g = RO[this.value.trim()]; if (g && !$('eG').value) $('eG').value = g; });
   $('fEn').addEventListener('submit', function (e) { e.preventDefault(); var r = addEntry($('eN').value, $('eG').value, $('eD').value, $('eS').value); if (r) return toast(r === 'dup' ? '同じ名前の人がすでにいます' : r === 'full' ? '64人までです' : '名前と持ち点を確かめてください'); save(); $('eN').value = ''; $('eG').value = ''; $('eD').value = ''; drawEntry(); $('eN').focus(); });
