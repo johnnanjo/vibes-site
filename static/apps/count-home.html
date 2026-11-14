@@ -46,8 +46,11 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
 /* top screen of an edition (FOR CAROM / FOR POCKET): the name plate on the left, the big NEW GAME tile and the shared tools on the right */
 .ring.ed{grid-template-columns:minmax(0,32fr) minmax(0,34fr) minmax(0,34fr);grid-template-rows:minmax(0,30vh) minmax(0,19vh) minmax(0,19vh);align-content:center;gap:2vh 1.6vw}
 .ring.ed .logo{grid-column:1;grid-row:1/3;padding:0 1vw;justify-items:center}.ring.ed .logo img{height:21vh;max-width:26vw}
-.ring.ed .lab{font-size:2.5vh;margin-top:1.4vh;padding-top:1.2vh}.ring.ed .lab::after{content:none}
-.edp{margin-top:1.8vh;font-family:VLNum,Unbounded,Anton,sans-serif;font-weight:900;font-size:min(4.2vh,2.5vw);letter-spacing:.2em;text-indent:.2em;line-height:1;color:#fff;background:var(--ec,#1E5AA8);border-radius:1.2vh;padding:1.5vh 1.6vw;white-space:nowrap;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 1vh 2.4vh rgba(0,0,0,.4)}
+.ring.ed .lab{font-size:2.5vh;margin-top:1.4vh;padding-top:1.2vh}.ring.ed .edp{font-size:min(2.7vh,1.45vw);letter-spacing:.18em;gap:.7vw;margin-top:1.6vh}.ring.ed .edp::before,.ring.ed .edp::after{content:none}.ring.ed .edp .tx{margin-right:-.18em}.ring.ed .lab::after{content:none}
+.edp{margin-top:1.8vh;display:flex;align-items:center;justify-content:center;gap:1vw;font-family:VLNum,Unbounded,Anton,sans-serif;font-weight:900;font-size:min(3.4vh,2vw);letter-spacing:.26em;line-height:1;color:var(--chalk);white-space:nowrap}
+.edp::before,.edp::after{content:"";flex:none;width:2.4vw;height:.35vh;background:var(--lime);border-radius:1vh}
+.edp .bl{display:flex;gap:.45em;margin-right:.2em}.edp .bl b{width:.78em;height:.78em;border-radius:50%;box-shadow:inset -.12em -.14em .2em rgba(0,0,0,.35),0 .1em .3em rgba(0,0,0,.4)}
+.edp .tx{margin-right:-.26em}
 .ring.ed .tile{overflow:hidden;padding:1.8vh 1.6vw}.ring.ed .tile b{font-size:min(4.2vh,2.5vw);white-space:nowrap}.ring.ed .tile span{font-size:1.9vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ring.ed .tile.big b{font-size:min(8vh,4.6vw)}.ring.ed .tile.big span{font-size:2.5vh}.ring.ed .tile.big small{font-size:2vh}
 .ring.ed .tile.sh b{font-size:min(3.4vh,2vw)}
@@ -81,20 +84,27 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
 .solo p{margin:0;color:var(--sub);font-weight:700;font-size:2.2vh;letter-spacing:.08em;text-align:center}
 .solo p b{color:var(--chalk);font-family:VLNum,Unbounded,Anton,sans-serif;font-weight:400;font-size:3.4vh;letter-spacing:.06em;margin:0 .6vw}
 .solo button{margin-top:1.4vh;font:inherit;font-weight:700;font-size:1.8vh;color:var(--chalk);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.8vh 2vw;cursor:pointer}
-/* title screen: logo in the middle, the official LINE and the site as QR codes, NEXT goes to the menu */
-.ttl{position:fixed;inset:0;z-index:6;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;justify-items:center;align-items:center;gap:2vh;padding:3vh 4vw 3vh;background:radial-gradient(120% 90% at 50% 0%,#232836 0%,#171A22 55%,#0E1015 100%)}
-.ttl .shop{font-size:4vh;min-height:5vh;max-width:90vw}
+/* title screen: the monitor becomes a table seen from above — rails with sights around the cloth of the edition (blue for carom, grey with pockets for pocket), logo in the middle, the official LINE and the site as QR codes, NEXT goes to the menu */
+.ttl{position:fixed;inset:0;z-index:6;background:#0B0D12;padding:3.6vh}
+.ttl::before,.ttl::after{content:"";position:absolute;left:3.6vh;right:3.6vh;height:3.6vh;background:radial-gradient(circle,rgba(243,244,239,.9) 0 .4vh,transparent .48vh) 0 0/12.5% 100%}
+.ttl::before{top:0}.ttl::after{bottom:0}
+.tf{position:relative;height:100%;border-radius:1.4vh;display:grid;grid-template-rows:minmax(0,1fr) auto;justify-items:center;padding:2vh 4vw 3.2vh;
+  background:repeating-linear-gradient(115deg,rgba(255,255,255,.022) 0 2px,transparent 2px 5px),radial-gradient(85% 75% at 50% 38%,var(--f1,#2B72CF) 0%,var(--f2,#1E5AA8) 45%,var(--f3,#113766) 100%);box-shadow:inset 0 0 0 .35vh rgba(0,0,0,.4),inset 0 0 14vh rgba(0,0,0,.5)}
+.tf::before,.tf::after{content:"";position:absolute;top:0;bottom:0;width:3.6vh;background:radial-gradient(circle,rgba(243,244,239,.9) 0 .4vh,transparent .48vh) 0 0/100% 25%}
+.tf::before{left:-3.6vh}.tf::after{right:-3.6vh}
+.tf .pk{position:absolute;width:6.4vh;height:6.4vh;border-radius:50%;background:#07080B;box-shadow:inset 0 0 0 .5vh #1B1E27;transform:translate(-50%,-50%)}
 .ttl .lg{display:grid;justify-items:center;align-content:center}
-.ttl .lg img{height:27vh;width:auto;max-width:76vw;filter:drop-shadow(0 2vh 4vh rgba(0,0,0,.55))}
-.ttl .lab{font-size:3.3vh;margin-top:1.6vh;padding-top:1.4vh}.ttl .lab::after{content:none}
-.ttl .edp{font-size:min(4.2vh,3vw);margin-top:1.6vh;padding:1.3vh 1.8vw}
-.tq{display:flex;gap:3vw;justify-content:center}
-.tq>div{display:flex;align-items:center;gap:1.4vw;background:rgba(14,16,21,.7);border:1px solid rgba(255,255,255,.16);border-radius:2vh;padding:1.6vh 1.8vw 1.6vh 1.2vw;min-width:30vw}
-.tq .qr{width:17vh;height:17vh;padding:.9vh;border-radius:1.2vh}
-.tq b{display:block;font-weight:900;font-size:3vh;line-height:1.3}.tq span{display:block;font-weight:700;font-size:1.9vh;line-height:1.6;color:var(--sub);margin-top:.5vh}
-.ttl .nx{font:inherit;font-weight:900;font-size:2.8vh;color:var(--night);background:var(--lime);border:0;border-radius:999px;padding:1.3vh 5vw;cursor:pointer}
+.ttl .lg img{height:43vh;width:auto;max-width:78vw;filter:drop-shadow(0 2.4vh 4vh rgba(0,0,0,.5))}
+.ttl .lab{font-size:4vh;letter-spacing:.42em;text-indent:.42em;margin-top:2vh;padding-top:1.8vh;border-top-width:.45vh}.ttl .lab::after{content:none}
+.ttl .edp{font-size:min(4.6vh,3vw);margin-top:2.6vh;gap:1.6vw}.ttl .edp::before,.ttl .edp::after{width:6vw;height:.45vh}
+.tb{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:end;gap:2vw}
+.tq{display:flex;align-items:center;gap:1.2vw}.tq.r{justify-content:flex-end;text-align:right}
+.tq .qr{width:15vh;height:15vh;padding:.8vh;border-radius:1vh}
+.tq b{display:block;font-weight:900;font-size:2.7vh;line-height:1.3;letter-spacing:.04em}.tq span{display:block;font-weight:700;font-size:1.8vh;line-height:1.55;color:#DCE3F0;margin-top:.4vh}
+.ttl .nx{font:inherit;font-weight:900;font-size:3vh;letter-spacing:.2em;text-indent:.2em;color:var(--night);background:var(--lime);border:0;border-radius:999px;padding:1.5vh 4.4vw;cursor:pointer;box-shadow:0 1vh 2.4vh rgba(0,0,0,.4)}
+.ttl .nx small{display:block;font-weight:700;font-size:1.5vh;letter-spacing:.1em;text-indent:.1em;margin-top:.2vh}
 .ttl .nx:focus-visible{outline:3px solid var(--chalk);outline-offset:3px}
-@media (max-width:760px){.ttl{position:static;min-height:100vh}.tq{flex-direction:column;gap:2vh}.tq>div{min-width:0}.ttl .lg img{height:34vw}.ttl .shop{font-size:6vw}.ttl .lab{font-size:4.4vw}.tq b{font-size:4.6vw}.tq span{font-size:3.2vw}.ttl .nx{font-size:5vw}}
+@media (max-width:760px){.ttl{position:static;min-height:100vh}.tf{min-height:calc(100vh - 7.2vh);gap:4vh}.tb{grid-template-columns:1fr;justify-items:center}.tq.r{flex-direction:row-reverse;text-align:left}.ttl .lg img{height:38vw}.ttl .lab{font-size:4.4vw}.tq b{font-size:4.6vw}.tq span{font-size:3.2vw}.ttl .nx{font-size:5vw;order:3}}
 #ytL{position:fixed;inset:0;z-index:50;background:#000}#ytL[hidden]{display:none}#ytF{width:100%;height:100%;border:0;display:block}
 .hq{position:fixed;left:2vw;top:2vh;display:flex;align-items:center;gap:1.2vw;background:rgba(14,16,21,.82);border:1px solid rgba(255,255,255,.16);border-radius:2vh;padding:1.4vh 1.4vw;z-index:5}.hq .qr.sm{width:13vh;height:13vh}.hq p{margin:0;font-weight:700;font-size:1.9vh;line-height:1.7;color:var(--sub)}.hq b{color:var(--chalk);font-size:2.4vh}
 .qrw{display:flex;align-items:center;gap:2vw;margin-bottom:1.6vh}.qrw p{margin:0;text-align:left;font-size:2.2vh}
@@ -129,12 +139,14 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   <div class="hq" id="hq" hidden><div class="qr sm" id="hqQ"></div><p>スマホで操作<br>QRコードを読んでください<br>番号 <b id="hqC"></b></p></div>
 </div>
 <img id="logoSrc" src="/img/vibes-logo-t.png" alt="" hidden>
-<div class="ttl" id="ttl">
-  <div class="shop" id="ttShop"></div>
+<div class="ttl" id="ttl"><div class="tf" id="ttF">
   <div class="lg"><img id="ttLogo" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LAB</div><div class="edp" id="ttEd" hidden></div></div>
-  <div class="tq"><div><div class="qr" id="ttQL"></div><p style="margin:0"><b>公式LINE</b><span>友だち追加で<br>大会・試合の情報が届きます</span></p></div><div><div class="qr" id="ttQS"></div><p style="margin:0"><b>VIBES BILLIARDS</b><span>大会・試合結果・ビリヤード場<br>vibesbilliards.com</span></p></div></div>
-  <button type="button" class="nx" id="ttGo">次へ (Enter)</button>
-</div>
+  <div class="tb">
+    <div class="tq"><div class="qr" id="ttQL"></div><p style="margin:0"><b>公式LINE</b><span>友だち追加で<br>大会・試合の情報が届きます</span></p></div>
+    <button type="button" class="nx" id="ttGo">次へ<small>enter</small></button>
+    <div class="tq r"><p style="margin:0"><b>VIBES BILLIARDS</b><span>大会・試合結果・ビリヤード場<br>vibesbilliards.com</span></p><div class="qr" id="ttQS"></div></div>
+  </div>
+</div></div>
 <div class="solo" id="solo" hidden>
   <div class="lg"><div class="shop" id="soloShop" hidden></div><img id="soloLogo" alt="VIBES BILLIARDS"><div class="lab" id="soloLab">DIGITAL LAB</div></div>
   <div class="soloq"><div class="qr sm" id="soloQ"></div><div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div></div>
@@ -224,7 +236,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
       a.appendChild(kb); a.appendChild(sm); a.appendChild(b); a.appendChild(sp); a.onclick = function () { open(it.id); }; r.appendChild(a); tiles.push(a);
       if (edTop) { var N = m.items.length, last = i === N - 1, k = i - 1, odd = (N - 2) % 2 === 1; if (!i) { a.className += ' big'; a.style.gridColumn = '2/4'; a.style.gridRow = '1'; } else if (last) { a.className += ' sh'; a.style.gridColumn = '1'; a.style.gridRow = '3'; } else { a.style.gridRow = String(2 + Math.floor(k / 2)); a.style.gridColumn = odd && i === N - 2 ? '2/4' : String(2 + k % 2); } }
     });
-    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LAB'; lb.setAttribute('data-ed', EDN[ED] || ''); lg.appendChild(lb); if (edTop) { var ep = document.createElement('div'); ep.className = 'edp'; ep.textContent = EDN[ED]; lg.appendChild(ep); } r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
+    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LAB'; lb.setAttribute('data-ed', EDN[ED] || ''); lg.appendChild(lb); if (edTop) { var ep = document.createElement('div'); ep.className = 'edp'; edPlate(ep); lg.appendChild(ep); } r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
     var f = $('foot'); f.textContent = ''; [['1', '〜'], [String(m.items.length), '選ぶ'], ['Enter', '決定']].concat(m.back ? [['BackSpace', 'もどる']] : []).concat([['F', '全画面']]).forEach(function (x, i) { var sp2 = i === 1 ? f.lastChild : document.createElement('span'); var k2 = document.createElement('kbd'); k2.textContent = x[0]; sp2.appendChild(k2); sp2.appendChild(document.createTextNode(x[1])); if (i !== 1) f.appendChild(sp2); });
     if (typeof shopDraw === 'function') shopDraw();
     if (typeof push === 'function') push();
@@ -235,7 +247,10 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   /* title screen */
   var LINE_URL = 'https://line.me/R/ti/p/@361mehjz', SITE_URL = 'https://vibesbilliards.com/';
   function ttQr(id, u) { try { var q = qrcode(0, 'M'); q.addData(u); q.make(); $(id).innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) {} }
-  function ttDraw() { var e = $('ttEd'); e.hidden = !ED; e.textContent = EDN[ED] || ''; e.style.background = EDC[ED] || ''; }
+  var BALLS = { carom: ['#F7F7F2', '#F2C200', '#D7262E'], pocket: ['#F7F7F2', '#F2C200', '#12141A'] }, FELT = { carom: ['#2B72CF', '#1E5AA8', '#113766'], pocket: ['#737B88', '#5A616C', '#2F343C'] };
+  function edPlate(e) { e.textContent = ''; var bl = document.createElement('span'); bl.className = 'bl'; (BALLS[ED] || []).forEach(function (c) { var b = document.createElement('b'); b.style.background = c; bl.appendChild(b); }); var tx = document.createElement('span'); tx.className = 'tx'; tx.textContent = EDN[ED] || ''; e.appendChild(bl); e.appendChild(tx); }
+  function ttDraw() { var e = $('ttEd'), F = $('ttF'), fc = FELT[ED] || FELT.carom; e.hidden = !ED; edPlate(e); ['--f1', '--f2', '--f3'].forEach(function (k, i) { F.style.setProperty(k, fc[i]); });
+    Array.prototype.forEach.call(F.querySelectorAll('.pk'), function (x) { F.removeChild(x); }); if (ED === 'pocket') [[0, 0], [50, 0], [100, 0], [0, 100], [50, 100], [100, 100]].forEach(function (p) { var d = document.createElement('i'); d.className = 'pk'; d.style.left = p[0] + '%'; d.style.top = p[1] + '%'; F.appendChild(d); }); }
   function ttOff() { if ($('ttl').hidden) return; $('ttl').hidden = true; if (typeof push === 'function') push(); }
   ttQr('ttQL', LINE_URL); ttQr('ttQS', SITE_URL); ttDraw(); $('ttGo').onclick = ttOff;
   /* remote: same room as the scoreboards, so the phone keeps its connection when the monitor changes page */
@@ -298,7 +313,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   var PFK = 'vibes-count-prefs', PFD = { lim: 0, t: 40, to: 0, pm: 5, eq: 1, snd: 1, easy: 0, voice: 1, ten: 1 };
   function cfGet() { var o = {}, pf = null, st = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); if (!pf) { st = JSON.parse(localStorage.getItem('vibes-count-3c-v1') || 'null'); pf = st && st.cfg; } } catch (e) {} Object.keys(PFD).forEach(function (k) { o[k] = pf && typeof pf[k] === 'number' ? pf[k] : PFD[k]; }); return o; }
   function shopGet() { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); if (pf && typeof pf.shop === 'string' && pf.shop) return pf.shop; } catch (e) {} return window.LABO && typeof LABO.shop === 'string' ? LABO.shop : ''; }
-  function shopDraw() { var n = shopGet(); $('soloShop').textContent = n; $('soloShop').hidden = !n; $('ttShop').textContent = n; if (lv === 'top') { var cr = $('crumb'); cr.textContent = ''; if (n) { var sp = document.createElement('span'); sp.className = 'shop'; sp.textContent = n; cr.appendChild(sp); } } }
+  function shopDraw() { var n = shopGet(); $('soloShop').textContent = n; $('soloShop').hidden = !n;  if (lv === 'top') { var cr = $('crumb'); cr.textContent = ''; if (n) { var sp = document.createElement('span'); sp.className = 'shop'; sp.textContent = n; cr.appendChild(sp); } } }
   function strGet(k, re, d) { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); return pf && re.test(pf[k] || '') ? pf[k] : d; } catch (e) { return d; } }
   function vdevGet() { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); return pf && /^(both|pc|tab)$/.test(pf.vdev || '') ? pf.vdev : 'both'; } catch (e) { return 'both'; } }
   function cfSchema() { var c = cfGet(), yn = [[1, 'あり'], [0, 'なし']]; return [
