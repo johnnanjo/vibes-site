@@ -86,52 +86,51 @@ table.lg td.rk.q{background:var(--lime)}
 .tb:last-child{border-bottom:0}
 .tb b{font-size:16px;min-width:70px}.tb span{flex:1;min-width:180px;font-size:14px;font-weight:700;color:var(--sub)}
 .tb i{width:12px;height:12px;border-radius:50%;background:var(--red);flex:none}.tb.ok i{background:var(--lime)}
-/* knockout bracket: a tree read left to right, on the same paper as the league sheets */
-.bkS{background:var(--chalk);color:var(--ink);border-radius:14px;padding:16px 16px 12px;margin-bottom:14px}
-.bkS h3{margin:0 0 2px;font-size:18px;font-weight:900}
-.bkS p.sub{margin:0 0 14px;font-size:12px;font-weight:700;color:#555B66}
+/* knockout bracket, drawn like the result sheets of official events: champion on top, each pair of players joined to the winner above */
+.bkS{background:var(--chalk);color:var(--ink);border-radius:14px;padding:18px 14px 16px;margin-bottom:14px}
+.bkS h3{margin:0 0 4px;font-size:20px;font-weight:900;text-align:center}
+.bkS p.sub{margin:0 0 6px;font-size:12px;font-weight:700;color:#555B66;text-align:center}
 .bk{overflow-x:auto;padding-bottom:8px}
-.bkG{display:flex;min-width:min-content}
-.bkC{display:flex;flex-direction:column;flex:none;width:262px}
-.bkC h4{margin:0 34px 10px 0;font-size:13px;font-weight:900;text-align:center;background:var(--ink);color:var(--chalk);border-radius:999px;padding:6px 0}
-.bkC.fin h4{background:var(--lime);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
-.bkC .col{display:flex;flex-direction:column;flex:1}
-.sl{flex:1;display:flex;align-items:center;position:relative;padding:8px 34px 8px 0;min-height:124px}
-.sl.e{visibility:hidden}
-/* connectors: elbow out of each match, joined in pairs, then a short line into the next match */
-.sl.j::after{content:"";position:absolute;right:17px;width:17px;border:0 solid var(--ink);border-right-width:2px}
-.sl.j.t::after{top:50%;height:50%;border-top-width:2px}
-.sl.j.b::after{top:0;height:50%;border-bottom-width:2px}
-.sl.in::before{content:"";position:absolute;left:-17px;width:17px;top:50%;border-top:2px solid var(--ink)}
-.bm{flex:1;background:#fff;border:2px solid var(--ink);border-radius:10px;overflow:hidden;cursor:pointer;position:relative}
-.bm .st{display:block;font-size:11px;font-weight:900;padding:3px 9px;background:#E1E3DC;color:#555B66;border-bottom:2px solid var(--ink)}
-.bm .st.live{background:var(--lime);color:var(--ink)}
-.bm .pl{display:flex;align-items:stretch;min-height:44px}
-.bm .pl+.pl{border-top:1.5px solid var(--ink)}
-.bm .sd{flex:none;width:26px;display:flex;align-items:center;justify-content:center;font-family:VLNum,sans-serif;font-size:13px;font-weight:900;background:#E1E3DC;border-right:1.5px solid var(--ink)}
-.bm .nm{flex:1;min-width:0;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;line-height:1.25}
-.bm .nm b{font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bm .nm small{font-size:10.5px;font-weight:700;color:#555B66;white-space:nowrap}
-.bm .pt{flex:none;width:52px;position:relative;display:flex;align-items:center;justify-content:center;border-left:1.5px solid var(--ink);font-family:VLNum,"Noto Sans JP",sans-serif;font-size:21px;font-weight:900}
-.bm .pt i{position:absolute;font-style:normal;font-size:10px;font-weight:900;line-height:1;font-family:VLDig,"Noto Sans JP",sans-serif}
-.bm .pt i.h{top:3px;right:4px}.bm .pt i.i{bottom:3px;left:4px}
-.bm .pl.w{background:var(--ink);color:var(--chalk)}.bm .pl.w .sd{background:var(--lime);color:var(--ink);border-right-color:var(--ink)}.bm .pl.w .nm small{color:#C9CDD6}.bm .pl.w .pt{border-left-color:#555B66}
-.bm .pl.l .pt{color:var(--red)}.bm .pl.l .nm b{color:#555B66}
-.bm .pl.tbd .nm b{color:#8A8F99;font-weight:700}
-.bkW{flex:none;width:210px;display:flex;flex-direction:column}
-.bkW h4{margin:0 0 10px;font-size:13px;font-weight:900;text-align:center;visibility:hidden;padding:6px 0}
-.bkW .col{flex:1;display:flex;align-items:center}
-.cup{flex:1;border:3px solid var(--ink);border-radius:14px;text-align:center;padding:16px 10px;background:#fff}
-.cup em{display:block;font-style:normal;font-size:13px;font-weight:900;letter-spacing:.3em;margin-bottom:8px}
-.cup b{display:block;font-size:22px;font-weight:900;line-height:1.3}
-.cup small{display:block;font-size:11px;font-weight:700;color:#555B66;margin-top:6px}
-.cup.on{background:var(--lime)}.cup.on small{color:var(--ink)}
+.bkG{min-width:min-content}
+.tr{display:flex;flex-direction:column;align-items:center}
+.cl{font-size:26px;font-weight:900;color:var(--red);letter-spacing:.5em;margin:8px 0 2px;padding-left:.5em}
+.cb{border:5px double var(--red);background:#fff;padding:8px 40px 7px;text-align:center;min-width:280px}
+.cb b{display:block;font-size:30px;font-weight:900;line-height:1.3;white-space:nowrap}.cb small{display:block;font-size:13px;font-weight:700}
+.cb.no b{color:#B9BDC6}
+.stem{width:0;height:16px;border-left:1.5px solid var(--ink)}
+.ch{display:flex;justify-content:center}
+.nd{display:flex;flex-direction:column;align-items:center;position:relative;padding:16px 5px 0}
+.ch>.nd::before{content:"";position:absolute;top:0;height:16px;width:50%;border-top:1.5px solid var(--ink)}
+.ch>.nd:first-child::before{left:50%;border-left:1.5px solid var(--ink)}
+.ch>.nd:last-child::before{right:50%;border-right:1.5px solid var(--ink)}
+.pb{display:flex;border:1.5px solid var(--ink);background:#fff;cursor:pointer;--w:104px;--f:13px;--s:18px;--m:10px;--q:36px}
+.pb.R{flex-direction:row-reverse}
+.pb.z1{--w:200px;--f:24px;--s:30px;--m:13px;--q:64px}.pb.z2{--w:150px;--f:18px;--s:24px;--m:12px;--q:50px}.pb.z3{--w:118px;--f:14px;--s:20px;--m:10.5px;--q:40px}
+.pb .in{width:var(--w);display:flex;flex-direction:column}
+.pb .in b{flex:1;display:flex;align-items:center;justify-content:center;font-size:var(--f);font-weight:900;padding:5px 4px;white-space:nowrap;overflow:hidden;line-height:1.3}
+.pb .in div{display:flex;border-top:1.5px solid var(--ink);font-size:var(--m);font-weight:700;line-height:1.5}
+.pb .in div span{flex:1;text-align:center;white-space:nowrap}.pb .in div span.g{flex:none;width:32%;font-family:VLNum,sans-serif;font-weight:900}
+.pb.L .in div span.g{border-right:1.5px solid var(--ink)}.pb.R .in div span.g{border-left:1.5px solid var(--ink);order:2}
+.pb .sc{width:var(--q);position:relative;display:flex;align-items:center;justify-content:center;font-family:VLNum,"Noto Sans JP",sans-serif;font-size:var(--s);font-weight:900}
+.pb.L .sc{border-right:1.5px solid var(--ink)}.pb.R .sc{border-left:1.5px solid var(--ink)}
+.pb .sc i{position:absolute;font-style:normal;font-size:var(--m);font-weight:900;line-height:1;font-family:VLDig,"Noto Sans JP",sans-serif}
+.pb .sc i.h{top:3px;right:4px}.pb .sc i.i{bottom:3px;left:4px}
+.pb.l .sc{color:var(--red)}.pb.d .sc{color:var(--blue)}
+.pb.live .sc{background:var(--lime)}
+.pb.tbd .in b{color:#B9BDC6;font-weight:700}
+.cap{font-size:11px;font-weight:700;color:var(--blue);margin-top:3px;white-space:nowrap}
+.cap.live{color:var(--ink);background:var(--lime);border-radius:999px;padding:1px 8px}
+table.fr{border-collapse:collapse;margin:22px auto 4px;font-size:16px;background:#fff}
+table.fr th,table.fr td{border:1.5px solid var(--ink);padding:9px 16px;text-align:center;font-weight:700;white-space:nowrap}
+table.fr th{font-size:13px}table.fr td.n{font-family:VLNum,sans-serif}
+table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td:first-child{color:var(--blue);font-weight:900}
 .ov{position:fixed;inset:0;background:rgba(10,12,16,.82);display:flex;align-items:flex-start;justify-content:center;padding:5vh 14px;overflow:auto;z-index:20}
 .ov .card{width:100%;max-width:520px;margin:0}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--chalk);color:var(--ink);font-weight:900;border-radius:999px;padding:12px 20px;z-index:30;font-size:14px;max-width:92vw}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .two h4{margin:0 0 6px;font-size:15px}
-@media print{html,body{background:#fff}.wrap{max-width:none;padding:0}header.top,.tabs,.noprint,.toast{display:none!important}.sheet{border-radius:0;page-break-inside:avoid;background:#fff;padding:6mm 0}table.lg td.c.p{background:#fff}.card{background:#fff;color:#000;border:1px solid #000;page-break-inside:avoid}.bkS{border-radius:0;padding:6mm 0;background:#fff}.bk{overflow:visible}.bm .pl.w{-webkit-print-color-adjust:exact;print-color-adjust:exact}table.ls th,table.ls td{border-color:#000;color:#000}.card h2 small{color:#000}}
+@media print{html,body{background:#fff}.wrap{max-width:none;padding:0}header.top,.tabs,.noprint,.toast{display:none!important}.sheet{border-radius:0;page-break-inside:avoid;background:#fff;padding:6mm 0}table.lg td.c.p{background:#fff}.card{background:#fff;color:#000;border:1px solid #000;page-break-inside:avoid}.bkS{border-radius:0;padding:4mm 0;background:#fff}.bk{overflow:visible}body.pf #fnQ,body.pf #fnStart{display:none}table.ls th,table.ls td{border-color:#000;color:#000}.card h2 small{color:#000}}
+@page{size:A4 landscape;margin:8mm}
 </style>
 </head>
 <body>
@@ -395,21 +394,32 @@ table.lg td.rk.q{background:var(--lime)}
     if (!T.F) return; var QB = $('fnQB'); QB.textContent = '';
     T.F.q.forEach(function (q, i) { var e = ent(q.id), tr = el('tr'); [[i + 1, 'n num'], [e.n, ''], ['リーグ' + LN(q.l), ''], [tg(e, 1), 'n num'], [q.rk, 'n num'], [q.wp, 'n num'], [q.ha < 9999 ? q.ha.toFixed(2) : '−', 'n num']].forEach(function (x) { tr.appendChild(el('td', x[1], x[0])); }); QB.appendChild(tr); });
     var B = $('fnB'); B.textContent = ''; var info = {}; T.F.q.forEach(function (q, i) { info[q.id] = { s: i + 1, t: 'リーグ' + LN(q.l) + ' ' + q.rk + '位' }; });
-    var real = function (m) { return !!m && !m.bye; }, c = champ();
-    $('fnT').textContent = T.name + '　決勝トーナメント'; $('fnW').textContent = T.date + '　' + T.F.q.length + '人　試合点数＝持ち点×' + T.fpct + '%' + (T.flim ? '　' + T.flim + 'イニング打切り' : '') + '　点数の右上＝ハイラン・左下＝イニング';
-    for (var r = 0; r < T.F.rounds; r++) { var cw = el('div', 'bkC' + (r === T.F.rounds - 1 ? ' fin' : '')), col = el('div', 'col'); cw.appendChild(el('h4', '', rName(r)));
-      for (var i = 0; i < T.F.n >> (r + 1); i++) (function (m) {
-        var sl = el('div', 'sl'); if (m.bye) { sl.className = 'sl e'; return col.appendChild(sl); }
-        if (r < T.F.rounds - 1) sl.className += ' j ' + (m.i % 2 ? 'b' : 't'); if (r && (real(fm(r - 1, m.i * 2)) || real(fm(r - 1, m.i * 2 + 1)))) sl.className += ' in';
-        var bx = el('div', 'bm'), w = fWin(m), lv = liveOf(m), o = m.res ? outcome(m, m.res) : null, tbl = null; TBS.forEach(function (t) { if (t.id === m.tb) tbl = t; });
-        bx.appendChild(el('span', 'st' + (lv ? ' live' : ''), m.res ? (o === null ? '勝者を選んでください' : '終了') : lv ? lv.t.name + ' 試合中　' + (lv.s.mid || '') + 'イニング' : tbl ? tbl.name + ' に送信済み' : m.a && m.b ? 'これから' : '対戦相手を待っています'));
-        [m.a, m.b].forEach(function (id, s) { var p = el('div', 'pl' + (!id ? ' tbd' : w ? (w === id ? ' w' : ' l') : '')), nm = el('div', 'nm'); p.appendChild(el('span', 'sd', id ? info[id].s : ''));
-          nm.appendChild(el('b', '', id ? ent(id).n : '（未定）')); if (id) nm.appendChild(el('small', '', info[id].t + '・' + tg(ent(id), 1) + '点')); p.appendChild(nm);
-          var pt = el('div', 'pt'); if (m.res) { pt.appendChild(document.createTextNode(w === id && T.wm === 'w' ? 'W' : m.res.sc[s])); pt.appendChild(el('i', 'h', m.res.hr[s])); pt.appendChild(el('i', 'i', m.res.inn[s])); } else if (lv && lv.s.score) { var sw = lv.s.n && lv.s.n[0] !== ent(m.a).n ? 1 : 0; pt.textContent = lv.s.score[sw ? 1 - s : s]; } p.appendChild(pt); bx.appendChild(p); });
-        if (m.a && m.b) bx.onclick = function () { openRes(m); }; sl.appendChild(bx); col.appendChild(sl); })(fm(r, i));
-      cw.appendChild(col); B.appendChild(cw); }
-    var ww = el('div', 'bkW'), wc = el('div', 'col'), cup = el('div', 'cup' + (c ? ' on' : '')); ww.appendChild(el('h4', '', '優勝')); cup.appendChild(el('em', '', '優勝')); cup.appendChild(el('b', '', c ? ent(c).n : '−')); if (c) cup.appendChild(el('small', '', info[c].t + '・持ち点 ' + ent(c).g)); wc.appendChild(cup); ww.appendChild(wc); B.appendChild(ww);
+    var c = champ(), R = T.F.rounds;
+    $('fnT').textContent = T.name + '【決勝】'; $('fnW').textContent = T.date + '　' + T.F.q.length + '人　試合点数＝持ち点×' + T.fpct + '%' + (T.flim ? '　' + T.flim + 'イニング打切り' : '') + '　点数の右上＝ハイラン・左下＝イニング';
+    /* one box per player per match; the two boxes of a match hang under the box of its winner */
+    var node = function (m, s) {
+      var id = s ? m.b : m.a, z = R - m.r, nd = el('div', 'nd'), w = fWin(m), o = m.res ? outcome(m, m.res) : null, lv = liveOf(m), fd = m.r > 0 ? fm(m.r - 1, m.i * 2 + s) : null, leaf = !fd || fd.bye;
+      var pb = el('div', 'pb ' + (s ? 'R' : 'L') + (z <= 3 ? ' z' + z : '') + (!id ? ' tbd' : w ? (w === id ? ' w' : ' l') : lv ? ' live' : '')), sc = el('div', 'sc'), inn = el('div', 'in'), mt = el('div');
+      if (m.res && id) { sc.appendChild(document.createTextNode(w === id && T.wm === 'w' ? 'W' : m.res.sc[s])); sc.appendChild(el('i', 'h', m.res.hr[s])); sc.appendChild(el('i', 'i', m.res.inn[s])); }
+      else if (lv && lv.s.score && id) { var sw = lv.s.n && lv.s.n[0] !== ent(m.a).n ? 1 : 0; sc.textContent = lv.s.score[sw ? 1 - s : s]; }
+      inn.appendChild(el('b', '', id ? ent(id).n : '（未定）')); mt.appendChild(el('span', 'g', id ? tg(ent(id), 1) : '')); mt.appendChild(el('span', '', id ? info[id].t : '')); inn.appendChild(mt); pb.appendChild(sc); pb.appendChild(inn);
+      if (m.a && m.b) pb.onclick = function () { openRes(m); }; nd.appendChild(pb);
+      if (lv && !s) nd.appendChild(el('span', 'cap live', lv.t.name + ' 試合中'));
+      if (leaf) { if (id && !(lv && !s)) nd.appendChild(el('span', 'cap', '予選' + info[id].s + '番')); }
+      else { nd.appendChild(el('div', 'stem')); var ch = el('div', 'ch'); ch.appendChild(node(fd, 0)); ch.appendChild(node(fd, 1)); nd.appendChild(ch); }
+      return nd; };
+    var tr = el('div', 'tr'), cb = el('div', 'cb' + (c ? '' : ' no')), fin = fm(R - 1, 0), ch0 = el('div', 'ch'); tr.appendChild(el('div', 'cl', '優勝')); cb.appendChild(el('b', '', c ? ent(c).n : '　　　　')); cb.appendChild(el('small', '', c ? info[c].t + '　持ち点 ' + ent(c).g : '　')); tr.appendChild(cb); tr.appendChild(el('div', 'stem'));
+    ch0.appendChild(node(fin, 0)); ch0.appendChild(node(fin, 1)); tr.appendChild(ch0); B.appendChild(tr); fitTree();
+    /* placings with the totals of the knockout games */
+    var tot = function (id) { var p = 0, n = 0; T.M.forEach(function (m) { if (m.k !== 'F' || !m.res || m.bye) return; if (m.a === id) { p += m.res.sc[0]; n += m.res.inn[0]; } else if (m.b === id) { p += m.res.sc[1]; n += m.res.inn[1]; } }); return [p, n, n ? (p / n).toFixed(3) : '−']; }, rows = [];
+    if (c) { rows.push(['優勝', c, 'c1']); rows.push(['準優勝', fin.a === c ? fin.b : fin.a, 'c2']); if (R > 1) [fm(R - 2, 0), fm(R - 2, 1)].forEach(function (m) { var w = fWin(m), lo = m.bye ? '' : m.a === w ? m.b : m.a; if (lo) rows.push(['三位タイ', lo, '']); }); }
+    if (rows.length) { var tb = el('table', 'fr'), hd = el('tr'); ['順位', '名前', '段位', '持ち点', '総得点', '総イニング', 'アベレージ'].forEach(function (x) { hd.appendChild(el('th', '', x)); }); tb.appendChild(hd);
+      rows.forEach(function (x) { var e = ent(x[1]), t = tot(x[1]), r2 = el('tr', x[2]); [[x[0]], [e.n], [e.d || ''], [e.g, 1], [t[0], 1], [t[1], 1], [t[2], 1]].forEach(function (v) { r2.appendChild(el('td', v[1] ? 'n' : '', v[0])); }); tb.appendChild(r2); }); B.appendChild(tb); }
   }
+
+  /* a wide bracket is shrunk to fit the screen (down to 60%); beyond that it scrolls sideways */
+  function fitTree() { var B = $('fnB'), t = B.querySelector('.tr'); if (!t || document.body.classList.contains('pf')) return; B.style.zoom = ''; var w = t.scrollWidth, a = B.parentNode.clientWidth; B.style.zoom = w > a && a > 0 ? Math.max(.6, a / w).toFixed(3) : ''; }
+  window.addEventListener('resize', function () { if (T && T.F && tab === 'final') fitTree(); });
 
   /* ---------- dialogs ---------- */
   var RM = null;
@@ -437,7 +447,10 @@ table.lg td.rk.q{background:var(--lime)}
   $('bBulk').onclick = function () { var ok = 0, ng = 0; $('eBulk').value.split(/\n/).forEach(function (l) { var p = l.split(/[,、，\t]/); if (!l.trim()) return; if (addEntry(p[0], p[1], p[2])) ng++; else ok++; }); save(); if (ok) $('eBulk').value = ''; toast(ok + '人を追加しました' + (ng ? '（' + ng + '行は入れられませんでした）' : '')); drawEntry(); };
   $('bDraw').onclick = function () { draw(); tab = 'league'; paint(); toast('組み合わせを決めました'); };
   var rdAt = 0; $('bRedraw').onclick = function () { if (Date.now() - rdAt < 2500) { draw(); this.textContent = '組み合わせをやり直す'; paint(); toast('組み合わせをやり直しました'); } else { rdAt = Date.now(); var b = this; b.textContent = 'もう一度押すとやり直します'; setTimeout(function () { b.textContent = '組み合わせをやり直す'; }, 2500); } };
-  $('bPrint').onclick = $('bPrint2').onclick = function () { window.print(); };
+  $('bPrint').onclick = function () { window.print(); };
+  /* the bracket is shrunk to the width of a landscape A4 sheet for printing */
+  $('bPrint2').onclick = function () { document.body.classList.add('pf'); $('fnB').style.zoom = ''; var t = document.querySelector('#fnB .tr'), w = t ? t.scrollWidth : 0; if (w > 1000) $('fnB').style.zoom = (1000 / w).toFixed(3); window.print(); };
+  window.addEventListener('afterprint', function () { document.body.classList.remove('pf'); fitTree(); });
   $('bFinal').onclick = function () { makeFinal(); paint(); };
   var fxAt = 0; $('bFinalX').onclick = function () { if (Date.now() - fxAt < 2500) { T.M = T.M.filter(function (m) { return m.k !== 'F'; }); T.F = null; T.st = 'league'; save(); this.textContent = '決勝を作り直す'; paint(); } else { fxAt = Date.now(); var b = this; b.textContent = 'もう一度押すと決勝の結果が消えます'; setTimeout(function () { b.textContent = '決勝を作り直す'; }, 2500); } };
   $('fTb').addEventListener('submit', function (e) { e.preventDefault(); var c = $('tC').value.replace(/\D/g, ''), n = $('tN').value.trim().slice(0, 10); if (!/^\d{6}$/.test(c)) return toast('モニターの番号は6けたの数字です'); if (TBS.some(function (t) { return t.code === c; })) return toast('その番号の台はすでにあります'); if (TBS.length >= 16) return toast('台は16台までです'); var t = { id: rid(), code: c, name: n }; TBS.push(t); saveT(); tbConnect(t); $('tC').value = ''; $('tN').value = ''; drawTables(); });
