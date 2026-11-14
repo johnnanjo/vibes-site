@@ -109,7 +109,7 @@ table.lg td.rk.q{background:var(--lime)}
 .pb .in{width:var(--w);display:flex;flex-direction:column}
 .pb .in b{flex:1;display:flex;align-items:center;justify-content:center;font-size:var(--f);font-weight:900;padding:5px 4px;white-space:nowrap;overflow:hidden;line-height:1.3}
 .pb .in div{display:flex;border-top:1.5px solid var(--ink);font-size:var(--m);font-weight:700;line-height:1.5}
-.pb .in div span{flex:1;text-align:center;white-space:nowrap}.pb .in div span.g{flex:none;width:32%;font-family:VLNum,sans-serif;font-weight:900}
+.pb .in div span{flex:1;min-width:0;text-align:center;white-space:nowrap;overflow:hidden}.pb .in div span.g{flex:none;width:32%;font-family:VLNum,sans-serif;font-weight:900}
 .pb.L .in div span.g{border-right:1.5px solid var(--ink)}.pb.R .in div span.g{border-left:1.5px solid var(--ink);order:2}
 .pb .sc{width:var(--q);position:relative;display:flex;align-items:center;justify-content:center;font-family:VLNum,"Noto Sans JP",sans-serif;font-size:var(--s);font-weight:900}
 .pb.L .sc{border-right:1.5px solid var(--ink)}.pb.R .sc{border-left:1.5px solid var(--ink)}
@@ -172,13 +172,14 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
           <div class="w2"><label for="eN">名前</label><input id="eN" maxlength="20" list="roDl" autocomplete="off" required><datalist id="roDl"></datalist></div>
           <div><label for="eG">持ち点</label><input id="eG" type="number" min="1" max="999" inputmode="numeric" required></div>
           <div><label for="eD">段位</label><input id="eD" maxlength="8" placeholder="例：三段"></div>
+          <div><label for="eS">所属（店名など）</label><input id="eS" maxlength="16" list="shDl" autocomplete="off" placeholder="例：WIND"><datalist id="shDl"></datalist></div>
           <button class="go" type="submit">追加</button>
         </form>
-        <p class="hint">まとめて入れるときは、下に「名前,持ち点,段位」を1行に1人ずつ書いて「まとめて追加」を押します。</p>
-        <textarea id="eBulk" rows="3" placeholder="山田 太郎,25,三段&#10;佐藤 花子,18,初段"></textarea>
+        <p class="hint">まとめて入れるときは、下に「名前,持ち点,段位,所属」を1行に1人ずつ書いて「まとめて追加」を押します。</p>
+        <textarea id="eBulk" rows="3" placeholder="山田 太郎,25,三段,WIND&#10;佐藤 花子,18,初段,ヤマニ"></textarea>
         <div style="margin-top:8px"><button type="button" class="sm" id="bBulk">まとめて追加</button></div>
       </div>
-      <div class="card"><h2>エントリーした人</h2><div style="overflow-x:auto"><table class="ls"><thead><tr><th>名前</th><th>段位</th><th class="n">持ち点</th><th class="n">試合点数</th><th></th></tr></thead><tbody id="enB"></tbody></table></div>
+      <div class="card"><h2>エントリーした人</h2><div style="overflow-x:auto"><table class="ls"><thead><tr><th>名前</th><th>所属</th><th>段位</th><th class="n">持ち点</th><th class="n">試合点数</th><th></th></tr></thead><tbody id="enB"></tbody></table></div>
         <p class="hint" id="enNone">まだ誰もエントリーしていません。</p>
       </div>
       <div class="card noprint" id="drawC"><h2>組み合わせ</h2>
@@ -202,7 +203,7 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
 
     <div id="pFinal" hidden>
       <div class="card noprint" id="fnStart"><h2>決勝トーナメント</h2><p class="hint" id="fnH" style="margin:0 0 12px"></p><button type="button" class="go" id="bFinal">決勝トーナメントを作る</button></div>
-      <div class="card" id="fnQ" hidden><h2>決勝進出者</h2><div style="overflow-x:auto"><table class="ls"><thead><tr><th class="n">番号</th><th>名前</th><th>リーグ</th><th class="n">決勝の試合点数</th><th class="n">リーグ順位</th><th class="n">勝ち点</th><th class="n">HCアベレージ</th></tr></thead><tbody id="fnQB"></tbody></table></div></div>
+      <div class="card" id="fnQ" hidden><h2>決勝進出者</h2><div style="overflow-x:auto"><table class="ls"><thead><tr><th class="n">番号</th><th>名前</th><th>所属</th><th>リーグ</th><th class="n">決勝の試合点数</th><th class="n">リーグ順位</th><th class="n">勝ち点</th><th class="n">HCアベレージ</th></tr></thead><tbody id="fnQB"></tbody></table></div></div>
       <div id="fnK" hidden><div class="bkS"><h3 id="fnT">決勝トーナメント</h3><p class="sub" id="fnW"></p><div class="bk"><div class="bkG" id="fnB"></div></div></div>
         <div class="noprint" style="margin-top:12px;display:flex;gap:8px"><button type="button" class="sm" id="bPrint2">印刷する</button><button type="button" class="dn" id="bFinalX">決勝を作り直す</button></div></div>
     </div>
@@ -338,12 +339,13 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
     $('cHint').textContent = '試合点数は「持ち点 × 割合」を四捨五入します。勝ち2点・引き分け1点・負け0点。順位は、勝ち点 → HCアベレージ（試合点数 ÷ アベレージ。小さいほど上） → ハイラン の順で決めます。' + (lock ? '　組み合わせを決めたあとは、割合とリーグの人数は変えられません。' : '');
     $('enAdd').hidden = lock; $('drawC').hidden = lock;
     var B = $('enB'); B.textContent = ''; $('enNone').hidden = T.E.length > 0; $('enCnt').textContent = T.E.length + '人';
-    T.E.forEach(function (e) { var tr = el('tr'); tr.appendChild(el('td', '', e.n)); tr.appendChild(el('td', '', e.d || '')); tr.appendChild(el('td', 'n num', e.g)); tr.appendChild(el('td', 'n num', tg(e))); var td = el('td', 'n');
+    T.E.forEach(function (e) { var tr = el('tr'); tr.appendChild(el('td', '', e.n)); tr.appendChild(el('td', '', e.s || '')); tr.appendChild(el('td', '', e.d || '')); tr.appendChild(el('td', 'n num', e.g)); tr.appendChild(el('td', 'n num', tg(e))); var td = el('td', 'n');
       if (!lock) { var x = el('button', 'dn', '外す'); x.type = 'button'; x.onclick = function () { T.E = T.E.filter(function (q) { return q.id !== e.id; }); save(); drawEntry(); }; td.appendChild(x); } tr.appendChild(td); B.appendChild(tr); });
+    var sd = $('shDl'), seen = {}; sd.textContent = ''; T.E.forEach(function (e) { if (e.s && !seen[e.s]) { seen[e.s] = 1; var o = el('option'); o.value = e.s; sd.appendChild(o); } });
     var n = T.E.length, gs = n >= 3 ? groups(n, T.size) : [];
     $('drawH').textContent = n < 3 ? '3人以上エントリーすると、組み合わせを決められます。' : n + '人 → ' + gs.length + 'リーグ（' + gs.join('人・') + '人）。1人あたり最低' + (Math.min.apply(null, gs) - 1) + '試合です。組み合わせはランダムに決まります。'; $('bDraw').disabled = n < 3;
   }
-  function addEntry(n, g, d) { n = String(n || '').replace(/[\s　]+/g, ' ').trim().slice(0, 20); g = parseInt(g, 10); if (!n || isNaN(g) || g < 1 || g > 999) return 'bad'; if (T.E.some(function (e) { return e.n === n; })) return 'dup'; if (T.E.length >= 64) return 'full'; T.E.push({ id: rid(), n: n, g: g, d: String(d || '').trim().slice(0, 8) }); return ''; }
+  function addEntry(n, g, d, sh) { n = String(n || '').replace(/[\s　]+/g, ' ').trim().slice(0, 20); g = parseInt(g, 10); if (!n || isNaN(g) || g < 1 || g > 999) return 'bad'; if (T.E.some(function (e) { return e.n === n; })) return 'dup'; if (T.E.length >= 64) return 'full'; T.E.push({ id: rid(), n: n, g: g, d: String(d || '').trim().slice(0, 8), s: String(sh || '').replace(/[\s\u3000]+/g, ' ').trim().slice(0, 16) }); return ''; }
   function cell(m, s) { /* s: 0 = row player is m.a */
     var td = el('td', 'c'); td.onclick = function () { openRes(m); };
     if (!m.res) { var lv = liveOf(m); td.className = 'c p'; td.appendChild(el('b', '', lv ? lv.t.name : '')); return td; }
@@ -358,7 +360,7 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
       g.forEach(function (id) { tr.appendChild(el('th', 'o', ent(id).n.split(' ')[0])); });
       [['勝/負', '分'], ['勝ち点'], ['ハイラン', 'ベスト'], ['総得点', '総イニング'], ['アベレージ', 'HCアベレージ'], ['順位']].forEach(function (x) { var c = el('th', '', x[0]); if (x[1]) { c.appendChild(el('br')); c.appendChild(document.createTextNode(x[1])); } tr.appendChild(c); });
       th.appendChild(tr); tb.appendChild(th); var bd = el('tbody'), st = stand(li), by = {}; st.forEach(function (r) { by[r.id] = r; });
-      g.forEach(function (id) { var e = ent(id), r = by[id], row = el('tr'), nm = el('th', 'nm', e.n); nm.appendChild(el('small', '', (e.d ? e.d + '　' : '') + '持ち点 ' + e.g)); row.appendChild(nm); row.appendChild(el('td', 'hc', tg(e)));
+      g.forEach(function (id) { var e = ent(id), r = by[id], row = el('tr'), nm = el('th', 'nm', e.n); nm.appendChild(el('small', '', (e.s ? e.s + '　' : '') + (e.d ? e.d + '　' : '') + '持ち点 ' + e.g)); row.appendChild(nm); row.appendChild(el('td', 'hc', tg(e)));
         g.forEach(function (id2) { if (id2 === id) return row.appendChild(el('td', 'x')); var m = null; T.M.forEach(function (q) { if (q.k === 'L' && ((q.a === id && q.b === id2) || (q.a === id2 && q.b === id))) m = q; }); row.appendChild(cell(m, m.a === id ? 0 : 1)); });
         var two = function (a, b, w, red) { var c = el('td', 's' + (w ? ' w' : '')); c.appendChild(document.createTextNode(a)); var u = el('u', red ? 'r' : '', b); c.appendChild(u); return c; };
         var wl = el('td', 's'); wl.appendChild(document.createTextNode(r.w + ' / ')); wl.appendChild(el('span', 'r', r.l)); wl.appendChild(el('u', '', r.d)); row.appendChild(wl);
@@ -392,7 +394,7 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
     var done = lgDone(); $('fnStart').hidden = !!T.F; $('fnQ').hidden = !T.F; $('fnK').hidden = !T.F;
     $('fnH').textContent = done ? '各リーグの上位' + T.adv + '人が進みます。番号は、リーグ順位 → 勝ち点 → HCアベレージ の順です。人数が半端なときは、上の番号の人が1回戦なしになります。' : 'リーグ戦の試合がまだ残っています。すべて終わると作れます。'; $('bFinal').disabled = !done;
     if (!T.F) return; var QB = $('fnQB'); QB.textContent = '';
-    T.F.q.forEach(function (q, i) { var e = ent(q.id), tr = el('tr'); [[i + 1, 'n num'], [e.n, ''], ['リーグ' + LN(q.l), ''], [tg(e, 1), 'n num'], [q.rk, 'n num'], [q.wp, 'n num'], [q.ha < 9999 ? q.ha.toFixed(2) : '−', 'n num']].forEach(function (x) { tr.appendChild(el('td', x[1], x[0])); }); QB.appendChild(tr); });
+    T.F.q.forEach(function (q, i) { var e = ent(q.id), tr = el('tr'); [[i + 1, 'n num'], [e.n, ''], [e.s || '', ''], ['リーグ' + LN(q.l), ''], [tg(e, 1), 'n num'], [q.rk, 'n num'], [q.wp, 'n num'], [q.ha < 9999 ? q.ha.toFixed(2) : '−', 'n num']].forEach(function (x) { tr.appendChild(el('td', x[1], x[0])); }); QB.appendChild(tr); });
     var B = $('fnB'); B.textContent = ''; var info = {}; T.F.q.forEach(function (q, i) { info[q.id] = { s: i + 1, t: 'リーグ' + LN(q.l) + ' ' + q.rk + '位' }; });
     var c = champ(), R = T.F.rounds;
     $('fnT').textContent = T.name + '【決勝】'; $('fnW').textContent = T.date + '　' + T.F.q.length + '人　試合点数＝持ち点×' + T.fpct + '%' + (T.flim ? '　' + T.flim + 'イニング打切り' : '') + '　点数の右上＝ハイラン・左下＝イニング';
@@ -402,19 +404,19 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
       var pb = el('div', 'pb ' + (s ? 'R' : 'L') + (z <= 3 ? ' z' + z : '') + (!id ? ' tbd' : w ? (w === id ? ' w' : ' l') : lv ? ' live' : '')), sc = el('div', 'sc'), inn = el('div', 'in'), mt = el('div');
       if (m.res && id) { sc.appendChild(document.createTextNode(w === id && T.wm === 'w' ? 'W' : m.res.sc[s])); sc.appendChild(el('i', 'h', m.res.hr[s])); sc.appendChild(el('i', 'i', m.res.inn[s])); }
       else if (lv && lv.s.score && id) { var sw = lv.s.n && lv.s.n[0] !== ent(m.a).n ? 1 : 0; sc.textContent = lv.s.score[sw ? 1 - s : s]; }
-      inn.appendChild(el('b', '', id ? ent(id).n : '（未定）')); mt.appendChild(el('span', 'g', id ? tg(ent(id), 1) : '')); mt.appendChild(el('span', '', id ? info[id].t : '')); inn.appendChild(mt); pb.appendChild(sc); pb.appendChild(inn);
+      inn.appendChild(el('b', '', id ? ent(id).n : '（未定）')); mt.appendChild(el('span', 'g', id ? tg(ent(id), 1) : '')); mt.appendChild(el('span', '', id ? ent(id).s || info[id].t : '')); inn.appendChild(mt); pb.appendChild(sc); pb.appendChild(inn);
       if (m.a && m.b) pb.onclick = function () { openRes(m); }; nd.appendChild(pb);
       if (lv && !s) nd.appendChild(el('span', 'cap live', lv.t.name + ' 試合中'));
-      if (leaf) { if (id && !(lv && !s)) nd.appendChild(el('span', 'cap', '予選' + info[id].s + '番')); }
+      if (leaf) { if (id && !(lv && !s)) nd.appendChild(el('span', 'cap', '予選' + info[id].s + '番' + (ent(id).s ? '（' + info[id].t + '）' : ''))); }
       else { nd.appendChild(el('div', 'stem')); var ch = el('div', 'ch'); ch.appendChild(node(fd, 0)); ch.appendChild(node(fd, 1)); nd.appendChild(ch); }
       return nd; };
-    var tr = el('div', 'tr'), cb = el('div', 'cb' + (c ? '' : ' no')), fin = fm(R - 1, 0), ch0 = el('div', 'ch'); tr.appendChild(el('div', 'cl', '優勝')); cb.appendChild(el('b', '', c ? ent(c).n : '　　　　')); cb.appendChild(el('small', '', c ? info[c].t + '　持ち点 ' + ent(c).g : '　')); tr.appendChild(cb); tr.appendChild(el('div', 'stem'));
+    var tr = el('div', 'tr'), cb = el('div', 'cb' + (c ? '' : ' no')), fin = fm(R - 1, 0), ch0 = el('div', 'ch'); tr.appendChild(el('div', 'cl', '優勝')); cb.appendChild(el('b', '', c ? ent(c).n : '　　　　')); cb.appendChild(el('small', '', c ? ent(c).s || info[c].t : '　')); tr.appendChild(cb); tr.appendChild(el('div', 'stem'));
     ch0.appendChild(node(fin, 0)); ch0.appendChild(node(fin, 1)); tr.appendChild(ch0); B.appendChild(tr); fitTree();
     /* placings with the totals of the knockout games */
     var tot = function (id) { var p = 0, n = 0; T.M.forEach(function (m) { if (m.k !== 'F' || !m.res || m.bye) return; if (m.a === id) { p += m.res.sc[0]; n += m.res.inn[0]; } else if (m.b === id) { p += m.res.sc[1]; n += m.res.inn[1]; } }); return [p, n, n ? (p / n).toFixed(3) : '−']; }, rows = [];
     if (c) { rows.push(['優勝', c, 'c1']); rows.push(['準優勝', fin.a === c ? fin.b : fin.a, 'c2']); if (R > 1) [fm(R - 2, 0), fm(R - 2, 1)].forEach(function (m) { var w = fWin(m), lo = m.bye ? '' : m.a === w ? m.b : m.a; if (lo) rows.push(['三位タイ', lo, '']); }); }
-    if (rows.length) { var tb = el('table', 'fr'), hd = el('tr'); ['順位', '名前', '段位', '持ち点', '総得点', '総イニング', 'アベレージ'].forEach(function (x) { hd.appendChild(el('th', '', x)); }); tb.appendChild(hd);
-      rows.forEach(function (x) { var e = ent(x[1]), t = tot(x[1]), r2 = el('tr', x[2]); [[x[0]], [e.n], [e.d || ''], [e.g, 1], [t[0], 1], [t[1], 1], [t[2], 1]].forEach(function (v) { r2.appendChild(el('td', v[1] ? 'n' : '', v[0])); }); tb.appendChild(r2); }); B.appendChild(tb); }
+    if (rows.length) { var tb = el('table', 'fr'), hd = el('tr'); ['順位', '名前', '所属', '段位', '持ち点', '総得点', '総イニング', 'アベレージ'].forEach(function (x) { hd.appendChild(el('th', '', x)); }); tb.appendChild(hd);
+      rows.forEach(function (x) { var e = ent(x[1]), t = tot(x[1]), r2 = el('tr', x[2]); [[x[0]], [e.n], [e.s || ''], [e.d || ''], [e.g, 1], [t[0], 1], [t[1], 1], [t[2], 1]].forEach(function (v) { r2.appendChild(el('td', v[1] ? 'n' : '', v[0])); }); tb.appendChild(r2); }); B.appendChild(tb); }
   }
 
   /* a wide bracket is shrunk to fit the screen (down to 60%); beyond that it scrolls sideways */
@@ -443,8 +445,8 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
   [['cPct', 'pct'], ['cFp', 'fpct'], ['cSize', 'size'], ['cAdv', 'adv'], ['cEq', 'eq'], ['cLim', 'lim'], ['cFl', 'flim']].forEach(function (x) { $(x[0]).addEventListener('change', function () { var v = parseInt(this.value, 10); if (isNaN(v)) v = 0; T[x[1]] = Math.max(0, Math.min(99, v)); save(); drawEntry(); }); });
   $('cWm').addEventListener('change', function () { T.wm = this.value === 'w' ? 'w' : 'p'; save(); });
   $('eN').addEventListener('change', function () { var g = RO[this.value.trim()]; if (g && !$('eG').value) $('eG').value = g; });
-  $('fEn').addEventListener('submit', function (e) { e.preventDefault(); var r = addEntry($('eN').value, $('eG').value, $('eD').value); if (r) return toast(r === 'dup' ? '同じ名前の人がすでにいます' : r === 'full' ? '64人までです' : '名前と持ち点を確かめてください'); save(); $('eN').value = ''; $('eG').value = ''; $('eD').value = ''; drawEntry(); $('eN').focus(); });
-  $('bBulk').onclick = function () { var ok = 0, ng = 0; $('eBulk').value.split(/\n/).forEach(function (l) { var p = l.split(/[,、，\t]/); if (!l.trim()) return; if (addEntry(p[0], p[1], p[2])) ng++; else ok++; }); save(); if (ok) $('eBulk').value = ''; toast(ok + '人を追加しました' + (ng ? '（' + ng + '行は入れられませんでした）' : '')); drawEntry(); };
+  $('fEn').addEventListener('submit', function (e) { e.preventDefault(); var r = addEntry($('eN').value, $('eG').value, $('eD').value, $('eS').value); if (r) return toast(r === 'dup' ? '同じ名前の人がすでにいます' : r === 'full' ? '64人までです' : '名前と持ち点を確かめてください'); save(); $('eN').value = ''; $('eG').value = ''; $('eD').value = ''; drawEntry(); $('eN').focus(); });
+  $('bBulk').onclick = function () { var ok = 0, ng = 0; $('eBulk').value.split(/\n/).forEach(function (l) { var p = l.split(/[,、，\t]/); if (!l.trim()) return; if (addEntry(p[0], p[1], p[2], p[3])) ng++; else ok++; }); save(); if (ok) $('eBulk').value = ''; toast(ok + '人を追加しました' + (ng ? '（' + ng + '行は入れられませんでした）' : '')); drawEntry(); };
   $('bDraw').onclick = function () { draw(); tab = 'league'; paint(); toast('組み合わせを決めました'); };
   var rdAt = 0; $('bRedraw').onclick = function () { if (Date.now() - rdAt < 2500) { draw(); this.textContent = '組み合わせをやり直す'; paint(); toast('組み合わせをやり直しました'); } else { rdAt = Date.now(); var b = this; b.textContent = 'もう一度押すとやり直します'; setTimeout(function () { b.textContent = '組み合わせをやり直す'; }, 2500); } };
   $('bPrint').onclick = function () { window.print(); };
