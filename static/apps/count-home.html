@@ -81,6 +81,20 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
 .solo p{margin:0;color:var(--sub);font-weight:700;font-size:2.2vh;letter-spacing:.08em;text-align:center}
 .solo p b{color:var(--chalk);font-family:VLNum,Unbounded,Anton,sans-serif;font-weight:400;font-size:3.4vh;letter-spacing:.06em;margin:0 .6vw}
 .solo button{margin-top:1.4vh;font:inherit;font-weight:700;font-size:1.8vh;color:var(--chalk);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.8vh 2vw;cursor:pointer}
+/* title screen: logo in the middle, the official LINE and the site as QR codes, NEXT goes to the menu */
+.ttl{position:fixed;inset:0;z-index:6;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;justify-items:center;align-items:center;gap:2vh;padding:3vh 4vw 3vh;background:radial-gradient(120% 90% at 50% 0%,#232836 0%,#171A22 55%,#0E1015 100%)}
+.ttl .shop{font-size:4vh;min-height:5vh;max-width:90vw}
+.ttl .lg{display:grid;justify-items:center;align-content:center}
+.ttl .lg img{height:27vh;width:auto;max-width:76vw;filter:drop-shadow(0 2vh 4vh rgba(0,0,0,.55))}
+.ttl .lab{font-size:3.3vh;margin-top:1.6vh;padding-top:1.4vh}.ttl .lab::after{content:none}
+.ttl .edp{font-size:min(4.2vh,3vw);margin-top:1.6vh;padding:1.3vh 1.8vw}
+.tq{display:flex;gap:3vw;justify-content:center}
+.tq>div{display:flex;align-items:center;gap:1.4vw;background:rgba(14,16,21,.7);border:1px solid rgba(255,255,255,.16);border-radius:2vh;padding:1.6vh 1.8vw 1.6vh 1.2vw;min-width:30vw}
+.tq .qr{width:17vh;height:17vh;padding:.9vh;border-radius:1.2vh}
+.tq b{display:block;font-weight:900;font-size:3vh;line-height:1.3}.tq span{display:block;font-weight:700;font-size:1.9vh;line-height:1.6;color:var(--sub);margin-top:.5vh}
+.ttl .nx{font:inherit;font-weight:900;font-size:2.8vh;color:var(--night);background:var(--lime);border:0;border-radius:999px;padding:1.3vh 5vw;cursor:pointer}
+.ttl .nx:focus-visible{outline:3px solid var(--chalk);outline-offset:3px}
+@media (max-width:760px){.ttl{position:static;min-height:100vh}.tq{flex-direction:column;gap:2vh}.tq>div{min-width:0}.ttl .lg img{height:34vw}.ttl .shop{font-size:6vw}.ttl .lab{font-size:4.4vw}.tq b{font-size:4.6vw}.tq span{font-size:3.2vw}.ttl .nx{font-size:5vw}}
 #ytL{position:fixed;inset:0;z-index:50;background:#000}#ytL[hidden]{display:none}#ytF{width:100%;height:100%;border:0;display:block}
 .hq{position:fixed;left:2vw;top:2vh;display:flex;align-items:center;gap:1.2vw;background:rgba(14,16,21,.82);border:1px solid rgba(255,255,255,.16);border-radius:2vh;padding:1.4vh 1.4vw;z-index:5}.hq .qr.sm{width:13vh;height:13vh}.hq p{margin:0;font-weight:700;font-size:1.9vh;line-height:1.7;color:var(--sub)}.hq b{color:var(--chalk);font-size:2.4vh}
 .qrw{display:flex;align-items:center;gap:2vw;margin-bottom:1.6vh}.qrw p{margin:0;text-align:left;font-size:2.2vh}
@@ -115,6 +129,12 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   <div class="hq" id="hq" hidden><div class="qr sm" id="hqQ"></div><p>スマホで操作<br>QRコードを読んでください<br>番号 <b id="hqC"></b></p></div>
 </div>
 <img id="logoSrc" src="/img/vibes-logo-t.png" alt="" hidden>
+<div class="ttl" id="ttl">
+  <div class="shop" id="ttShop"></div>
+  <div class="lg"><img id="ttLogo" alt="VIBES BILLIARDS"><div class="lab">DIGITAL LAB</div><div class="edp" id="ttEd" hidden></div></div>
+  <div class="tq"><div><div class="qr" id="ttQL"></div><p style="margin:0"><b>公式LINE</b><span>友だち追加で<br>大会・試合の情報が届きます</span></p></div><div><div class="qr" id="ttQS"></div><p style="margin:0"><b>VIBES BILLIARDS</b><span>大会・試合結果・ビリヤード場<br>vibesbilliards.com</span></p></div></div>
+  <button type="button" class="nx" id="ttGo">次へ (Enter)</button>
+</div>
 <div class="solo" id="solo" hidden>
   <div class="lg"><div class="shop" id="soloShop" hidden></div><img id="soloLogo" alt="VIBES BILLIARDS"><div class="lab" id="soloLab">DIGITAL LAB</div></div>
   <div class="soloq"><div class="qr sm" id="soloQ"></div><div><p>スマホで種目を選んでください　番号<b id="soloC"></b><span id="soloS"></span></p><div style="text-align:center"><button type="button" id="soloMenu">この画面で選ぶ (Esc)</button></div></div></div>
@@ -181,7 +201,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   var lv = ED ? 'top' : 'pick', tiles = [], sel = -1;
   var url = function (id) { var u = id === '3c' ? U['3c'] + '?g=three' : id === 'band' ? U['3c'] + '?g=band' : U.pocket + '?m=' + id.replace('-set', ''); u += '&n=new'; if (TB) u += '&t=' + TB; return u; };
   function open(id) {
-    if (id === 'ed-carom' || id === 'ed-pocket') { if (lv !== 'pick') return; ED = id.slice(3); try { localStorage.setItem(EDK, ED); } catch (e) {} edMenu(); lv = 'top'; menu(); return; }
+    if (id === 'ed-carom' || id === 'ed-pocket') { if (lv !== 'pick') return; ED = id.slice(3); try { localStorage.setItem(EDK, ED); } catch (e) {} edMenu(); lv = 'top'; menu(); ttDraw(); return; }
     if (id === 'tour') return tourPanel();
     if (id === 'again') { var L = lastGame(); if (!L) return note('まだ試合の記録がありません。「ニューゲーム」から始めてください。'); location.href = L.u + (L.u.indexOf('?') < 0 ? '?' : '&') + 'n=again'; return; }
     if (id === 'roster') return roPanel();
@@ -211,7 +231,13 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   }
   function pick(i) { sel = i; tiles.forEach(function (t, k) { t.classList.toggle('sel', k === i); }); }
   function goFull() { var d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {}); }
-  $('bFull').onclick = goFull; $('soloLogo').src = $('logoSrc').src;
+  $('bFull').onclick = goFull; $('soloLogo').src = $('logoSrc').src; $('ttLogo').src = $('logoSrc').src;
+  /* title screen */
+  var LINE_URL = 'https://line.me/R/ti/p/@361mehjz', SITE_URL = 'https://vibesbilliards.com/';
+  function ttQr(id, u) { try { var q = qrcode(0, 'M'); q.addData(u); q.make(); $(id).innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) {} }
+  function ttDraw() { var e = $('ttEd'); e.hidden = !ED; e.textContent = EDN[ED] || ''; e.style.background = EDC[ED] || ''; }
+  function ttOff() { if ($('ttl').hidden) return; $('ttl').hidden = true; if (typeof push === 'function') push(); }
+  ttQr('ttQL', LINE_URL); ttQr('ttQS', SITE_URL); ttDraw(); $('ttGo').onclick = ttOff;
   /* remote: same room as the scoreboards, so the phone keeps its connection when the monitor changes page */
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), rm = null, ws = null, tries = 0, ping = null, showMenu = false;
@@ -248,7 +274,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
     if (!rm || !rm.on) return; if (ws && ws.readyState <= 1) return;
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + rm.code + '?role=display'); } catch (e) { ws = null; return; }
     ws.onopen = function () { tries = 0; draw(); push(); roPush(); clearInterval(ping); ping = setInterval(function () { if (ws && ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'ctl' || m.type === 'cmd') sawPhone(); if (m.type === 'cmd' && m.c === 'reload') { location.reload(); return; } if (m.type === 'yt') { ytHandle(m); return push(); } if (m.type === 'tour') return tourHandle(m); if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'cmd' || m.type === 'yt' || m.type === 'tour') ttOff(); if (m.type === 'ctl' || m.type === 'cmd') sawPhone(); if (m.type === 'cmd' && m.c === 'reload') { location.reload(); return; } if (m.type === 'yt') { ytHandle(m); return push(); } if (m.type === 'tour') return tourHandle(m); if (m.type === 'hello') { push(); return roPush(); } if (m.type === 'roster') return roHandle(m); if (m.type === 'config' && m.v && typeof m.v === 'object') { cfSave(m.v); return push(); } if (m.type === 'cmd' && m.c === 'open' && typeof m.v === 'string' && /^[a-z0-9-]{1,12}$/.test(m.v)) open(m.v); };
     ws.onclose = function () { clearInterval(ping); draw(); if (rm && rm.on) setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
@@ -272,7 +298,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   var PFK = 'vibes-count-prefs', PFD = { lim: 0, t: 40, to: 0, pm: 5, eq: 1, snd: 1, easy: 0, voice: 1, ten: 1 };
   function cfGet() { var o = {}, pf = null, st = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); if (!pf) { st = JSON.parse(localStorage.getItem('vibes-count-3c-v1') || 'null'); pf = st && st.cfg; } } catch (e) {} Object.keys(PFD).forEach(function (k) { o[k] = pf && typeof pf[k] === 'number' ? pf[k] : PFD[k]; }); return o; }
   function shopGet() { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); if (pf && typeof pf.shop === 'string' && pf.shop) return pf.shop; } catch (e) {} return window.LABO && typeof LABO.shop === 'string' ? LABO.shop : ''; }
-  function shopDraw() { var n = shopGet(); $('soloShop').textContent = n; $('soloShop').hidden = !n; if (lv === 'top') { var cr = $('crumb'); cr.textContent = ''; if (n) { var sp = document.createElement('span'); sp.className = 'shop'; sp.textContent = n; cr.appendChild(sp); } } }
+  function shopDraw() { var n = shopGet(); $('soloShop').textContent = n; $('soloShop').hidden = !n; $('ttShop').textContent = n; if (lv === 'top') { var cr = $('crumb'); cr.textContent = ''; if (n) { var sp = document.createElement('span'); sp.className = 'shop'; sp.textContent = n; cr.appendChild(sp); } } }
   function strGet(k, re, d) { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); return pf && re.test(pf[k] || '') ? pf[k] : d; } catch (e) { return d; } }
   function vdevGet() { try { var pf = JSON.parse(localStorage.getItem(PFK) || 'null'); return pf && /^(both|pc|tab)$/.test(pf.vdev || '') ? pf.vdev : 'both'; } catch (e) { return 'both'; } }
   function cfSchema() { var c = cfGet(), yn = [[1, 'あり'], [0, 'なし']]; return [
@@ -310,6 +336,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   $('soloMenu').onclick = function () { showMenu = true; draw(); };
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return; var k = e.key;
+    if (!$('ttl').hidden) { if (k === 'Enter' || k === ' ' || k === 'Escape') { e.preventDefault(); ttOff(); } else if (k === 'f' || k === 'F') { e.preventDefault(); goFull(); } return; }
     if (!$('ntL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('ntL').hidden = true; } return; }
     if (!$('cfL').hidden || !$('roL').hidden || !$('shL').hidden || !$('cmL').hidden || !$('trL').hidden) { if (k === 'Escape' || k === '*' || (k === 'Enter' && (!$('cmL').hidden || !$('trL').hidden))) { /* '*' closes a panel from a numeric keypad, which has no Esc */ e.preventDefault(); $('cfL').hidden = true; $('roL').hidden = true; $('shL').hidden = true; $('cmL').hidden = true; $('trL').hidden = true; } return; }
     if (!$('rmL').hidden) { if (k === 'Enter' || k === 'Escape') { e.preventDefault(); $('rmL').hidden = true; } return; }
