@@ -49,7 +49,6 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
 .ring.ed .lab{font-size:2.5vh;margin-top:1.4vh;padding-top:1.2vh}.ring.ed .edp{font-size:min(2.7vh,1.45vw);letter-spacing:.18em;gap:.7vw;margin-top:1.6vh}.ring.ed .edp::before,.ring.ed .edp::after{content:none}.ring.ed .edp .tx{margin-right:-.18em}.ring.ed .lab::after{content:none}
 .edp{margin-top:1.8vh;display:flex;align-items:center;justify-content:center;gap:1vw;font-family:VLNum,Unbounded,Anton,sans-serif;font-weight:900;font-size:min(3.4vh,2vw);letter-spacing:.26em;line-height:1;color:var(--chalk);white-space:nowrap}
 .edp::before,.edp::after{content:"";flex:none;width:2.4vw;height:.35vh;background:var(--lime);border-radius:1vh}
-.edp .bl{display:flex;gap:.45em;margin-right:.2em}.edp .bl b{width:.78em;height:.78em;border-radius:50%;box-shadow:inset -.12em -.14em .2em rgba(0,0,0,.35),0 .1em .3em rgba(0,0,0,.4)}
 .edp .tx{margin-right:-.26em}
 .ring.ed .tile{overflow:hidden;padding:1.8vh 1.6vw}.ring.ed .tile b{font-size:min(4.2vh,2.5vw);white-space:nowrap}.ring.ed .tile span{font-size:1.9vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ring.ed .tile.big b{font-size:min(8vh,4.6vw)}.ring.ed .tile.big span{font-size:2.5vh}.ring.ed .tile.big small{font-size:2vh}
@@ -242,8 +241,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   /* title screen */
   var LINE_URL = 'https://line.me/R/ti/p/@361mehjz', SITE_URL = 'https://vibesbilliards.com/';
   function ttQr(id, u) { try { var q = qrcode(0, 'M'); q.addData(u); q.make(); $(id).innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) {} }
-  var BALLS = { carom: ['#F7F7F2', '#F2C200', '#D7262E'], pocket: ['#F7F7F2', '#F2C200', '#12141A'] };
-  function edPlate(e) { e.textContent = ''; var bl = document.createElement('span'); bl.className = 'bl'; (BALLS[ED] || []).forEach(function (c) { var b = document.createElement('b'); b.style.background = c; bl.appendChild(b); }); var tx = document.createElement('span'); tx.className = 'tx'; tx.textContent = EDN[ED] || ''; e.appendChild(bl); e.appendChild(tx); }
+  function edPlate(e) { e.textContent = ''; var tx = document.createElement('span'); tx.className = 'tx'; tx.textContent = EDN[ED] || ''; e.appendChild(tx); }
   function ttDraw() { var e = $('ttEd'); e.hidden = !ED; edPlate(e); }
   function ttOff() { if ($('ttl').hidden) return; $('ttl').hidden = true; if (typeof push === 'function') push(); }
   ttQr('ttQL', LINE_URL); ttQr('ttQS', SITE_URL); ttDraw(); $('ttGo').onclick = ttOff;
