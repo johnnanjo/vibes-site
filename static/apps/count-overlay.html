@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ja" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>配信用スコア表示｜VIBES BILLIARDS DIGITAL LAB</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/img/favicon-64.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap">
+<style>
+/* score strip laid over the camera picture in the streaming software (browser source, 1920x1080, transparent). ?r=<6-digit number of the monitor>  ?pos=top|bottom  ?bg=1 shows a dark ground for checking */
+@font-face{font-family:VLNum;src:url(/fonts/vibes-num.woff2) format("woff2");unicode-range:U+0030-003A,U+002E;font-display:swap}
+:root{--night:#171A22;--lime:#C0FC09;--chalk:#F3F4EF;--sub:#A3A8B5}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:transparent;color:var(--chalk);font-family:"Noto Sans JP",system-ui,sans-serif;overflow:hidden}
+body.bg{background:#2A3B2E}
+[hidden]{display:none!important}
+.bar{position:fixed;left:2.2vw;bottom:3.4vh;display:flex;align-items:stretch;gap:.5vw;filter:drop-shadow(0 .6vh 1.6vh rgba(0,0,0,.55))}
+body.top .bar{bottom:auto;top:3.4vh}
+.tt{display:flex;flex-direction:column;justify-content:center;gap:.5vh;background:var(--night);border-radius:1.2vh;padding:1vh 1.1vw}
+.tt img{height:3.4vh;width:auto;display:block}
+.tt b{font-size:1.7vh;font-weight:900;letter-spacing:.06em;white-space:nowrap}
+.pl{display:flex;align-items:center;gap:1vw;background:var(--night);border-radius:1.2vh;padding:.8vh 1.1vw .8vh 1.3vw;border:.4vh solid transparent;min-width:13vw}
+.pl.on{border-color:var(--lime)}
+.pl span{font-size:2.6vh;font-weight:900;white-space:nowrap;max-width:16vw;overflow:hidden;text-overflow:ellipsis;flex:1}
+.pl b{font-family:VLNum,"Noto Sans JP",sans-serif;font-size:5.4vh;font-weight:900;line-height:1;min-width:1.4em;text-align:right;font-variant-numeric:tabular-nums}
+.md{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--lime);color:var(--night);border-radius:1.2vh;padding:.6vh 1vw;min-width:5.4vw}
+.md small{font-size:1.3vh;font-weight:900;letter-spacing:.14em}
+.md b{font-family:VLNum,"Noto Sans JP",sans-serif;font-size:3.8vh;font-weight:900;line-height:1.05}
+.win{position:fixed;left:2.2vw;bottom:14.5vh;background:var(--lime);color:var(--night);font-weight:900;font-size:2.8vh;border-radius:1.2vh;padding:1vh 1.4vw;filter:drop-shadow(0 .6vh 1.6vh rgba(0,0,0,.55))}
+body.top .win{bottom:auto;top:14.5vh}
+.msg{position:fixed;inset:0;display:grid;place-items:center;font-size:3vh;font-weight:900;background:rgba(23,26,34,.85);text-align:center;line-height:1.8;padding:4vh}
+</style>
+</head>
+<body>
+<div class="bar" id="bar" hidden><div class="tt"><img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"><b id="tt"></b></div><div id="ps" style="display:flex;gap:.5vw"></div><div class="md"><small id="ml"></small><b id="mv"></b></div></div>
+<div class="win" id="win" hidden></div>
+<div class="msg" id="msg" hidden></div>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); }, q = location.search;
+  var code = (/[?&]r=(\d{6})/.exec(q) || [])[1] || '', WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+  if (/[?&]pos=top/.test(q)) document.body.classList.add('top'); if (/[?&]bg=1/.test(q)) document.body.classList.add('bg');
+  var ML = { INNING: 'イニング', FRAME: 'フレーム', RACK: 'ラック' }, ws = null, tries = 0;
+  function draw(m) {
+    var game = m && m.kind !== 'menu' && m.lab && m.score; $('bar').hidden = !game; $('win').hidden = !(game && m.over && m.win); if (!game) return;
+    $('tt').textContent = m.title || ''; var P = $('ps'); P.textContent = '';
+    m.lab.forEach(function (x, i) { var d = document.createElement('div'); d.className = 'pl' + (i === m.turn && !m.over ? ' on' : ''); var n = document.createElement('span'); n.textContent = x; var v = document.createElement('b'); v.textContent = m.score[i]; d.appendChild(n); d.appendChild(v); P.appendChild(d); });
+    $('ml').textContent = ML[m.midL] || m.midL || ''; $('mv').textContent = m.mid == null ? '' : m.mid; if (m.over && m.win) $('win').textContent = m.win;
+  }
+  function connect() {
+    try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=remote'); } catch (e) { return; }
+    var ping; ws.onopen = function () { tries = 0; ping = setInterval(function () { if (ws.readyState === 1) ws.send('ping'); }, 25000); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'state') draw(m); };
+    ws.onclose = function () { clearInterval(ping); setTimeout(connect, Math.min(15000, 1000 * Math.pow(2, tries++))); }; ws.onerror = function () { try { ws.close(); } catch (e) {} };
+  }
+  if (!code) { $('msg').hidden = false; $('msg').textContent = 'アドレスの最後に、モニターの番号（6けた）を付けて開いてください。例：/pages/count-overlay/?r=123456'; } else connect();
+})();
+</script>
+</body>
+</html>
