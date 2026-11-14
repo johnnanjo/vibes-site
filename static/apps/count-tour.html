@@ -86,21 +86,52 @@ table.lg td.rk.q{background:var(--lime)}
 .tb:last-child{border-bottom:0}
 .tb b{font-size:16px;min-width:70px}.tb span{flex:1;min-width:180px;font-size:14px;font-weight:700;color:var(--sub)}
 .tb i{width:12px;height:12px;border-radius:50%;background:var(--red);flex:none}.tb.ok i{background:var(--lime)}
-.bk{display:flex;gap:18px;overflow-x:auto;padding-bottom:6px}
-.bk>div{display:flex;flex-direction:column;justify-content:space-around;gap:12px;min-width:230px}
-.bk h4{margin:0 0 4px;font-size:13px;color:var(--sub);font-weight:900}
-.bm{background:var(--night);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer}
-.bm div{display:flex;justify-content:space-between;gap:8px;padding:9px 11px;font-weight:900;font-size:15px}
-.bm div+div{border-top:1px solid var(--line)}
-.bm div.w{background:var(--chalk);color:var(--ink)}
-.bm div span{font-family:VLNum,sans-serif}
-.bm div small{font-weight:700;color:var(--sub);font-size:12px;margin-left:6px}.bm div.w small{color:#555B66}
+/* knockout bracket: a tree read left to right, on the same paper as the league sheets */
+.bkS{background:var(--chalk);color:var(--ink);border-radius:14px;padding:16px 16px 12px;margin-bottom:14px}
+.bkS h3{margin:0 0 2px;font-size:18px;font-weight:900}
+.bkS p.sub{margin:0 0 14px;font-size:12px;font-weight:700;color:#555B66}
+.bk{overflow-x:auto;padding-bottom:8px}
+.bkG{display:flex;min-width:min-content}
+.bkC{display:flex;flex-direction:column;flex:none;width:262px}
+.bkC h4{margin:0 34px 10px 0;font-size:13px;font-weight:900;text-align:center;background:var(--ink);color:var(--chalk);border-radius:999px;padding:6px 0}
+.bkC.fin h4{background:var(--lime);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.bkC .col{display:flex;flex-direction:column;flex:1}
+.sl{flex:1;display:flex;align-items:center;position:relative;padding:8px 34px 8px 0;min-height:124px}
+.sl.e{visibility:hidden}
+/* connectors: elbow out of each match, joined in pairs, then a short line into the next match */
+.sl.j::after{content:"";position:absolute;right:17px;width:17px;border:0 solid var(--ink);border-right-width:2px}
+.sl.j.t::after{top:50%;height:50%;border-top-width:2px}
+.sl.j.b::after{top:0;height:50%;border-bottom-width:2px}
+.sl.in::before{content:"";position:absolute;left:-17px;width:17px;top:50%;border-top:2px solid var(--ink)}
+.bm{flex:1;background:#fff;border:2px solid var(--ink);border-radius:10px;overflow:hidden;cursor:pointer;position:relative}
+.bm .st{display:block;font-size:11px;font-weight:900;padding:3px 9px;background:#E1E3DC;color:#555B66;border-bottom:2px solid var(--ink)}
+.bm .st.live{background:var(--lime);color:var(--ink)}
+.bm .pl{display:flex;align-items:stretch;min-height:44px}
+.bm .pl+.pl{border-top:1.5px solid var(--ink)}
+.bm .sd{flex:none;width:26px;display:flex;align-items:center;justify-content:center;font-family:VLNum,sans-serif;font-size:13px;font-weight:900;background:#E1E3DC;border-right:1.5px solid var(--ink)}
+.bm .nm{flex:1;min-width:0;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;line-height:1.25}
+.bm .nm b{font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bm .nm small{font-size:10.5px;font-weight:700;color:#555B66;white-space:nowrap}
+.bm .pt{flex:none;width:52px;position:relative;display:flex;align-items:center;justify-content:center;border-left:1.5px solid var(--ink);font-family:VLNum,"Noto Sans JP",sans-serif;font-size:21px;font-weight:900}
+.bm .pt i{position:absolute;font-style:normal;font-size:10px;font-weight:900;line-height:1;font-family:VLDig,"Noto Sans JP",sans-serif}
+.bm .pt i.h{top:3px;right:4px}.bm .pt i.i{bottom:3px;left:4px}
+.bm .pl.w{background:var(--ink);color:var(--chalk)}.bm .pl.w .sd{background:var(--lime);color:var(--ink);border-right-color:var(--ink)}.bm .pl.w .nm small{color:#C9CDD6}.bm .pl.w .pt{border-left-color:#555B66}
+.bm .pl.l .pt{color:var(--red)}.bm .pl.l .nm b{color:#555B66}
+.bm .pl.tbd .nm b{color:#8A8F99;font-weight:700}
+.bkW{flex:none;width:210px;display:flex;flex-direction:column}
+.bkW h4{margin:0 0 10px;font-size:13px;font-weight:900;text-align:center;visibility:hidden;padding:6px 0}
+.bkW .col{flex:1;display:flex;align-items:center}
+.cup{flex:1;border:3px solid var(--ink);border-radius:14px;text-align:center;padding:16px 10px;background:#fff}
+.cup em{display:block;font-style:normal;font-size:13px;font-weight:900;letter-spacing:.3em;margin-bottom:8px}
+.cup b{display:block;font-size:22px;font-weight:900;line-height:1.3}
+.cup small{display:block;font-size:11px;font-weight:700;color:#555B66;margin-top:6px}
+.cup.on{background:var(--lime)}.cup.on small{color:var(--ink)}
 .ov{position:fixed;inset:0;background:rgba(10,12,16,.82);display:flex;align-items:flex-start;justify-content:center;padding:5vh 14px;overflow:auto;z-index:20}
 .ov .card{width:100%;max-width:520px;margin:0}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--chalk);color:var(--ink);font-weight:900;border-radius:999px;padding:12px 20px;z-index:30;font-size:14px;max-width:92vw}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .two h4{margin:0 0 6px;font-size:15px}
-@media print{html,body{background:#fff}.wrap{max-width:none;padding:0}header.top,.tabs,.noprint,.toast{display:none!important}.sheet{border-radius:0;page-break-inside:avoid;background:#fff;padding:6mm 0}table.lg td.c.p{background:#fff}.card{background:#fff;color:#000;border:1px solid #000;page-break-inside:avoid}.bm{background:#fff;border-color:#000;color:#000}.bm div+div{border-color:#000}.bm div.w{background:#ddd}table.ls th,table.ls td{border-color:#000;color:#000}.bk h4,.card h2 small{color:#000}}
+@media print{html,body{background:#fff}.wrap{max-width:none;padding:0}header.top,.tabs,.noprint,.toast{display:none!important}.sheet{border-radius:0;page-break-inside:avoid;background:#fff;padding:6mm 0}table.lg td.c.p{background:#fff}.card{background:#fff;color:#000;border:1px solid #000;page-break-inside:avoid}.bkS{border-radius:0;padding:6mm 0;background:#fff}.bk{overflow:visible}.bm .pl.w{-webkit-print-color-adjust:exact;print-color-adjust:exact}table.ls th,table.ls td{border-color:#000;color:#000}.card h2 small{color:#000}}
 </style>
 </head>
 <body>
@@ -173,7 +204,7 @@ table.lg td.rk.q{background:var(--lime)}
     <div id="pFinal" hidden>
       <div class="card noprint" id="fnStart"><h2>決勝トーナメント</h2><p class="hint" id="fnH" style="margin:0 0 12px"></p><button type="button" class="go" id="bFinal">決勝トーナメントを作る</button></div>
       <div class="card" id="fnQ" hidden><h2>決勝進出者</h2><div style="overflow-x:auto"><table class="ls"><thead><tr><th class="n">番号</th><th>名前</th><th>リーグ</th><th class="n">決勝の試合点数</th><th class="n">リーグ順位</th><th class="n">勝ち点</th><th class="n">HCアベレージ</th></tr></thead><tbody id="fnQB"></tbody></table></div></div>
-      <div class="card" id="fnK" hidden><h2>トーナメント表<small id="fnW"></small></h2><div class="bk" id="fnB"></div>
+      <div id="fnK" hidden><div class="bkS"><h3 id="fnT">決勝トーナメント</h3><p class="sub" id="fnW"></p><div class="bk"><div class="bkG" id="fnB"></div></div></div>
         <div class="noprint" style="margin-top:12px;display:flex;gap:8px"><button type="button" class="sm" id="bPrint2">印刷する</button><button type="button" class="dn" id="bFinalX">決勝を作り直す</button></div></div>
     </div>
   </section>
@@ -275,7 +306,7 @@ table.lg td.rk.q{background:var(--lime)}
       var m = null; T.M.forEach(function (q) { if (q.id === p[1]) m = q; });
       if (m && !m.res && m.a && m.b && x.n && x.sc && x.inn && x.hr) { var na = ent(m.a).n, sw = x.n[0] !== na && x.n[1] === na ? 1 : 0, f = function (a) { return [+a[sw] || 0, +a[1 - sw] || 0]; }; m.res = { sc: f(x.sc), inn: f(x.inn), hr: f(x.hr), by: t.name }; m.tb = ''; flow(); ch = true; if (tt === keep) toast(t.name + '：' + ent(m.a).n + ' ' + m.res.sc[0] + ' − ' + m.res.sc[1] + ' ' + ent(m.b).n); }
       T = keep; tbSend(t, { type: 'tour', op: 'ack', id: x.id }); });
-    if (ch) save(); if (ch || tab === 'match' || tab === 'league') paint();
+    if (ch) save(); if (ch || tab !== 'entry') paint();
   }
   var liveOf = function (m) { if (!T || m.res) return null; var id = T.id + ':' + m.id; for (var i = 0; i < TBS.length; i++) { var s = CON[TBS[i].id] && CON[TBS[i].id].st; if (tbOn(TBS[i]) && s && s.tour === id && !s.over) return { t: TBS[i], s: s }; } return null; };
   function sendMatch(m, t) {
@@ -363,11 +394,21 @@ table.lg td.rk.q{background:var(--lime)}
     $('fnH').textContent = done ? '各リーグの上位' + T.adv + '人が進みます。番号は、リーグ順位 → 勝ち点 → HCアベレージ の順です。人数が半端なときは、上の番号の人が1回戦なしになります。' : 'リーグ戦の試合がまだ残っています。すべて終わると作れます。'; $('bFinal').disabled = !done;
     if (!T.F) return; var QB = $('fnQB'); QB.textContent = '';
     T.F.q.forEach(function (q, i) { var e = ent(q.id), tr = el('tr'); [[i + 1, 'n num'], [e.n, ''], ['リーグ' + LN(q.l), ''], [tg(e, 1), 'n num'], [q.rk, 'n num'], [q.wp, 'n num'], [q.ha < 9999 ? q.ha.toFixed(2) : '−', 'n num']].forEach(function (x) { tr.appendChild(el('td', x[1], x[0])); }); QB.appendChild(tr); });
-    var B = $('fnB'); B.textContent = ''; var seed = {}; T.F.q.forEach(function (q, i) { seed[q.id] = i + 1; });
-    for (var r = 0; r < T.F.rounds; r++) { var col = el('div'); col.appendChild(el('h4', '', rName(r)));
-      for (var i = 0; i < T.F.n >> (r + 1); i++) (function (m) { var bx = el('div', 'bm'), w = fWin(m); [m.a, m.b].forEach(function (id, s) { var d = el('div', id && w === id ? 'w' : ''), nm = el('b', '', id ? ent(id).n : m.bye ? '（なし）' : '（未定）'); if (id) nm.appendChild(el('small', '', seed[id] + '番・' + tg(ent(id), 1) + '点')); d.appendChild(nm); d.appendChild(el('span', '', m.res ? m.res.sc[s] : '')); bx.appendChild(d); }); if (m.a && m.b) bx.onclick = function () { openRes(m); }; col.appendChild(bx); })(fm(r, i));
-      B.appendChild(col); }
-    var c = champ(); $('fnW').textContent = c ? '優勝：' + ent(c).n : '';
+    var B = $('fnB'); B.textContent = ''; var info = {}; T.F.q.forEach(function (q, i) { info[q.id] = { s: i + 1, t: 'リーグ' + LN(q.l) + ' ' + q.rk + '位' }; });
+    var real = function (m) { return !!m && !m.bye; }, c = champ();
+    $('fnT').textContent = T.name + '　決勝トーナメント'; $('fnW').textContent = T.date + '　' + T.F.q.length + '人　試合点数＝持ち点×' + T.fpct + '%' + (T.flim ? '　' + T.flim + 'イニング打切り' : '') + '　点数の右上＝ハイラン・左下＝イニング';
+    for (var r = 0; r < T.F.rounds; r++) { var cw = el('div', 'bkC' + (r === T.F.rounds - 1 ? ' fin' : '')), col = el('div', 'col'); cw.appendChild(el('h4', '', rName(r)));
+      for (var i = 0; i < T.F.n >> (r + 1); i++) (function (m) {
+        var sl = el('div', 'sl'); if (m.bye) { sl.className = 'sl e'; return col.appendChild(sl); }
+        if (r < T.F.rounds - 1) sl.className += ' j ' + (m.i % 2 ? 'b' : 't'); if (r && (real(fm(r - 1, m.i * 2)) || real(fm(r - 1, m.i * 2 + 1)))) sl.className += ' in';
+        var bx = el('div', 'bm'), w = fWin(m), lv = liveOf(m), o = m.res ? outcome(m, m.res) : null, tbl = null; TBS.forEach(function (t) { if (t.id === m.tb) tbl = t; });
+        bx.appendChild(el('span', 'st' + (lv ? ' live' : ''), m.res ? (o === null ? '勝者を選んでください' : '終了') : lv ? lv.t.name + ' 試合中　' + (lv.s.mid || '') + 'イニング' : tbl ? tbl.name + ' に送信済み' : m.a && m.b ? 'これから' : '対戦相手を待っています'));
+        [m.a, m.b].forEach(function (id, s) { var p = el('div', 'pl' + (!id ? ' tbd' : w ? (w === id ? ' w' : ' l') : '')), nm = el('div', 'nm'); p.appendChild(el('span', 'sd', id ? info[id].s : ''));
+          nm.appendChild(el('b', '', id ? ent(id).n : '（未定）')); if (id) nm.appendChild(el('small', '', info[id].t + '・' + tg(ent(id), 1) + '点')); p.appendChild(nm);
+          var pt = el('div', 'pt'); if (m.res) { pt.appendChild(document.createTextNode(w === id && T.wm === 'w' ? 'W' : m.res.sc[s])); pt.appendChild(el('i', 'h', m.res.hr[s])); pt.appendChild(el('i', 'i', m.res.inn[s])); } else if (lv && lv.s.score) { var sw = lv.s.n && lv.s.n[0] !== ent(m.a).n ? 1 : 0; pt.textContent = lv.s.score[sw ? 1 - s : s]; } p.appendChild(pt); bx.appendChild(p); });
+        if (m.a && m.b) bx.onclick = function () { openRes(m); }; sl.appendChild(bx); col.appendChild(sl); })(fm(r, i));
+      cw.appendChild(col); B.appendChild(cw); }
+    var ww = el('div', 'bkW'), wc = el('div', 'col'), cup = el('div', 'cup' + (c ? ' on' : '')); ww.appendChild(el('h4', '', '優勝')); cup.appendChild(el('em', '', '優勝')); cup.appendChild(el('b', '', c ? ent(c).n : '−')); if (c) cup.appendChild(el('small', '', info[c].t + '・持ち点 ' + ent(c).g)); wc.appendChild(cup); ww.appendChild(wc); B.appendChild(ww);
   }
 
   /* ---------- dialogs ---------- */
