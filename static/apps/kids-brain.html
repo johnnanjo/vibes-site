@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1F2C38">
+<title>__TITLE__｜VIBES BILLIARDS -KIDS-</title>
+<meta name="description" content="__DESC__">
+<link rel="canonical" href="https://vibesbilliards.com/pages/__PATH__">
+<link rel="icon" href="/img/favicon-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=RocknRoll+One&family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+/* VIBES KIDS brain games: three small games on one felt table. Same paper, navy and mustard as the KIDS page; ball colours are the real ones. */
+:root{--paper:#FFF8EA;--cream:#F4EAD5;--navy:#1F2C38;--soft:#5A5148;--mustard:#F2B43A;--felt:#2F9E6B;--felt2:#1F7A50;--rail:#8A5A2B;--tomato:#D63B2A;--teal:#2F7D84;
+--pop:"RocknRoll One","Hiragino Maru Gothic ProN",sans-serif;--body:"BIZ UDPGothic","Hiragino Sans","Noto Sans JP",sans-serif;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--cream);color:var(--navy);font-family:var(--body);-webkit-user-select:none;user-select:none;touch-action:manipulation}
+[hidden]{display:none!important}
+.app{max-width:560px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;gap:12px;padding:calc(12px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+.top{display:flex;align-items:center;gap:10px}
+.back{flex:none;font:700 14px var(--body);color:var(--navy);text-decoration:none;background:var(--paper);border:2px solid var(--navy);border-radius:999px;padding:8px 14px}
+h1{margin:0;font:400 22px/1.25 var(--pop);flex:1;min-width:0}
+.lv{display:flex;gap:8px}
+.lv button{flex:1;font:400 15px var(--pop);color:var(--navy);background:var(--paper);border:2px solid var(--navy);border-radius:14px;padding:10px 4px;cursor:pointer}
+.lv button[aria-pressed="true"]{background:var(--navy);color:var(--paper)}
+.lv button small{display:block;font:700 11px var(--body);opacity:.85;margin-top:2px}
+.hud{display:flex;gap:8px}
+.hud div{flex:1;background:var(--paper);border-radius:14px;padding:8px 6px;text-align:center;font:700 12px var(--body);color:var(--soft)}
+.hud b{display:block;font:400 22px/1.15 var(--pop);color:var(--navy);font-variant-numeric:tabular-nums}
+.msg{min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;font:400 17px/1.5 var(--pop);background:var(--mustard);border-radius:14px;padding:8px 12px}
+.stage{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+button{font:inherit}
+button:focus-visible,a:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+/* balls */
+.ball{position:relative;display:block;border-radius:50%;aspect-ratio:1;background:var(--c);box-shadow:inset -8% -10% 0 rgba(0,0,0,.18),0 2px 4px rgba(0,0,0,.3);overflow:hidden}
+.ball.st{background:#FBFBF6}
+.ball.st::before{content:"";position:absolute;left:0;right:0;top:24%;bottom:24%;background:var(--c)}
+.ball i{position:absolute;left:50%;top:50%;width:46%;height:46%;transform:translate(-50%,-50%);border-radius:50%;background:#FBFBF6;display:flex;align-items:center;justify-content:center;font:400 normal 100%/1 var(--pop);color:#1F2C38;font-size:var(--fs,16px)}
+.ball.cue{background:#FBFBF6}
+/* 1: memory */
+.mem{width:100%;display:grid;gap:8px}
+.card{position:relative;aspect-ratio:3/4;border:0;padding:0;background:none;cursor:pointer;perspective:600px}
+.card>span{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .32s;display:flex;align-items:center;justify-content:center}
+.card .bk{background:var(--navy);border:3px solid var(--paper);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.card .bk::after{content:"";width:46%;aspect-ratio:1;border-radius:50%;border:4px solid var(--mustard)}
+.card .ft{background:var(--paper);border:3px solid var(--navy);transform:rotateY(180deg);padding:14%}
+.card .ft .ball{width:100%}
+.card.on>.bk{transform:rotateY(180deg)}.card.on>.ft{transform:rotateY(360deg)}
+.card.ok .ft{border-color:var(--felt);background:#E3F3E6}
+/* 2: which pocket */
+.tbl{height:100%;max-height:62vh;aspect-ratio:100/170;max-width:100%}
+.tbl svg{width:100%;height:100%;display:block;overflow:visible}
+.pk{cursor:pointer;outline:none}.pk:focus-visible circle.h{stroke:var(--mustard);stroke-width:2.4}
+.pk circle.h{fill:#12161C;stroke:var(--paper);stroke-width:1.2}
+.pk text{font:400 6px var(--pop);fill:var(--paper);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.pk.pick circle.h{stroke:var(--mustard);stroke-width:2.4}
+.pk.good circle.h{fill:var(--felt);stroke:var(--paper);stroke-width:2.4}
+.pk.bad circle.h{fill:var(--tomato)}
+/* 3: order tap */
+.felt{position:relative;width:100%;max-width:min(100%,46vh);aspect-ratio:3/4;background:radial-gradient(circle at 50% 40%,var(--felt),var(--felt2));border:10px solid var(--rail);border-radius:18px;box-shadow:inset 0 0 0 3px rgba(0,0,0,.25);overflow:hidden;touch-action:none}
+.felt .b{position:absolute;width:17%;border:0;padding:0;background:none;cursor:pointer;transform:translate(-50%,-50%);transition:opacity .25s,scale .25s}
+.felt .b .ball{width:100%}
+.felt .b.out{opacity:0;scale:.2;pointer-events:none}
+.felt .b.ng{animation:ng .3s}
+@keyframes ng{25%{translate:-6px 0}75%{translate:6px 0}}
+/* result */
+.res{position:fixed;inset:0;z-index:5;background:rgba(31,44,56,.86);display:flex;align-items:center;justify-content:center;padding:18px}
+.res>div{width:100%;max-width:420px;background:var(--paper);border-radius:22px;padding:22px 18px;text-align:center;display:flex;flex-direction:column;gap:12px}
+.res h2{margin:0;font:400 26px/1.3 var(--pop)}
+.stars{font-size:44px;line-height:1;letter-spacing:6px;color:#D8D2C2}
+.stars b{color:var(--mustard);font-weight:400}
+.res p{margin:0;font:700 15px/1.7 var(--body)}
+.res .tip{background:var(--cream);border-radius:14px;padding:10px 12px;font:700 14px/1.7 var(--body);text-align:left}
+.btn{display:block;width:100%;font:400 18px var(--pop);border:2px solid var(--navy);border-radius:999px;padding:13px 10px;cursor:pointer;text-decoration:none;color:var(--navy);background:var(--paper)}
+.btn.go{background:var(--mustard)}
+.btn.real{background:var(--felt);color:#fff;border-color:var(--felt2)}
+.how{font:700 13px/1.7 var(--body);color:var(--soft);text-align:center}
+@media (prefers-reduced-motion:reduce){.card span{transition:none}.felt .b{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><a class="back" href="/pages/kids#brain">← KIDS</a><h1 id="ttl"></h1></div>
+  <div class="lv" id="lv" role="group" aria-label="むずかしさ"></div>
+  <div class="hud" id="hud"></div>
+  <div class="msg" id="msg" aria-live="polite"></div>
+  <div class="stage" id="stage"></div>
+  <p class="how" id="how"></p>
+</div>
+<div class="res" id="res" hidden><div role="dialog" aria-label="けっか">
+  <h2 id="rsT"></h2><div class="stars" id="rsS" aria-hidden="true"></div><p id="rsP"></p><div class="tip" id="rsTip"></div>
+  <button type="button" class="btn go" id="rsAgain">もういちど</button>
+  <a class="btn real" href="/pages/near">おうちの人と ビリヤードじょうを さがす</a>
+  <a class="btn" href="/pages/kids#brain">ほかの ゲームを えらぶ</a>
+</div></div>
+<script>
+(function () {
+  'use strict';
+  var GAME = '__GAME__';
+  var $ = function (id) { return document.getElementById(id); };
+  var el = function (t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+  var COL = ['#FBFBF6', '#F7C531', '#2F6FD6', '#E5483F', '#7A4FB8', '#F28C28', '#2E9E5B', '#9B2F2F', '#2A2A2A'];
+  function ball(n, fs) { var b = el('span', 'ball' + (n === 0 ? ' cue' : n > 8 ? ' st' : '')); b.style.setProperty('--c', COL[n > 8 ? n - 8 : n]); if (fs) b.style.setProperty('--fs', fs); if (n) b.appendChild(el('i', '', n)); b.setAttribute('aria-label', n ? n + 'ばん' : 'しろい たま'); return b; }
+  var rnd = function (a, b) { return a + Math.random() * (b - a); }, pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+  /* sound: short tones, only after a touch */
+  var ac = null; function tone(f, d, type, v) { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === 'suspended') ac.resume(); var o = ac.createOscillator(), g = ac.createGain(); o.type = type || 'sine'; o.frequency.value = f; g.gain.setValueAtTime(v || .12, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + d); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + d); } catch (e) {} }
+  var sOk = function () { tone(660, .12); setTimeout(function () { tone(880, .16); }, 90); }, sNg = function () { tone(180, .2, 'square', .06); }, sTap = function () { tone(520, .06, 'triangle'); }, sWin = function () { [523, 659, 784, 1047].forEach(function (f, i) { setTimeout(function () { tone(f, .2); }, i * 120); }); };
+  var BK = 'vibes-kids-brain', best = {}; try { best = JSON.parse(localStorage.getItem(BK) || '{}') || {}; } catch (e) {}
+  var saveBest = function () { try { localStorage.setItem(BK, JSON.stringify(best)); } catch (e) {} };
+  var lvN = 0, G = null, timer = null, t0 = 0;
+  function hud(items) { var h = $('hud'); h.textContent = ''; items.forEach(function (x) { var d = el('div', '', x[0]); var b = el('b', '', x[1]); b.id = x[2] || ''; d.appendChild(b); h.appendChild(d); }); }
+  function clock(id) { clearInterval(timer); t0 = Date.now(); timer = setInterval(function () { var e = $(id); if (e) e.textContent = ((Date.now() - t0) / 1000).toFixed(1); }, 100); }
+  function result(title, stars, text, tip) { clearInterval(timer); $('rsT').textContent = title; var s = $('rsS'); s.textContent = ''; for (var i = 0; i < 3; i++) s.appendChild(el(i < stars ? 'b' : 'span', '', '★')); $('rsP').textContent = text; $('rsTip').textContent = tip; $('res').hidden = false; sWin(); }
+  $('rsAgain').onclick = function () { $('res').hidden = true; start(); };
+  function levels(list) { var L = $('lv'); L.textContent = ''; list.forEach(function (x, i) { var b = el('button', '', x[0]); b.type = 'button'; b.appendChild(el('small', '', x[1])); b.setAttribute('aria-pressed', i === lvN ? 'true' : 'false'); b.onclick = function () { lvN = i; levels(list); start(); }; L.appendChild(b); }); }
+
+  /* ===== 1: ball memory — find two of the same; on the hardest level a solid and a stripe of the same colour make a pair ===== */
+  var MEM = { title: 'ボールあわせ', lv: [['かんたん', '12まい'], ['ふつう', '16まい'], ['いろあわせ', '16まい']], how: 'カードを 2まい めくって、おなじ たまを さがそう。',
+    start: function () {
+      var cols = lvN === 0 ? 3 : 4, cards = [], open = [], lock = false, moves = 0, found = 0, pairs;
+      if (lvN === 0) { pairs = 6; [1, 2, 3, 4, 5, 6].forEach(function (n) { cards.push({ n: n, k: n }, { n: n, k: n }); }); }
+      else if (lvN === 1) { pairs = 8; [1, 2, 3, 4, 5, 6, 7, 8].forEach(function (n) { cards.push({ n: n, k: n }, { n: n, k: n }); }); }
+      else { pairs = 8; [1, 2, 3, 4, 5, 6, 7].forEach(function (n) { cards.push({ n: n, k: n }, { n: n + 8, k: n }); }); cards.push({ n: 8, k: 8 }, { n: 8, k: 8 }); }
+      shuffle(cards); hud([['めくった かず', '0', 'hMv'], ['みつけた', '0 / ' + pairs, 'hFd'], ['じかん', '0.0', 'hTm']]);
+      $('msg').textContent = lvN === 2 ? 'おなじ いろの たまが ペア！（1ばんと 9ばん など）' : 'おなじ ばんごうを 2まい さがそう';
+      var g = el('div', 'mem'); g.style.gridTemplateColumns = 'repeat(' + cols + ',minmax(0,1fr))'; g.style.maxWidth = cols === 3 ? 'min(100%,38vh)' : 'min(100%,50vh)';
+      cards.forEach(function (c) { var b = el('button', 'card'); b.type = 'button'; b.setAttribute('aria-label', 'カード'); b.appendChild(el('span', 'bk')); var f = el('span', 'ft'); f.appendChild(ball(c.n, 'clamp(11px,3.4vw,17px)')); b.appendChild(f);
+        b.onclick = function () { if (lock || b.classList.contains('on')) return; if (!moves && !open.length) clock('hTm'); sTap(); b.classList.add('on'); open.push({ b: b, c: c }); if (open.length < 2) return;
+          moves++; $('hMv').textContent = moves; var a = open[0], z = open[1]; open = [];
+          if (a.c.k === z.c.k) { found++; $('hFd').textContent = found + ' / ' + pairs; a.b.classList.add('ok'); z.b.classList.add('ok'); sOk(); $('msg').textContent = 'やったね！';
+            if (found === pairs) { var st = moves <= pairs * 1.6 ? 3 : moves <= pairs * 2.4 ? 2 : 1, k = 'm' + lvN; if (!best[k] || moves < best[k]) { best[k] = moves; saveBest(); } setTimeout(function () { result('ぜんぶ みつけた！', st, moves + 'かい めくって クリア。（じこベスト ' + best[k] + 'かい）', lvN === 2 ? 'ほんものの たまも、1ばんと 9ばん、2ばんと 10ばん…と、おなじ いろが 2こずつ あるよ。しまもようが 9ばんから 15ばん。' : 'ビリヤードの たまは、ばんごうごとに いろが きまっているよ。1ばんは きいろ、2ばんは あお、3ばんは あか。'); }, 600); } }
+          else { lock = true; sNg(); $('msg').textContent = 'ざんねん。ばしょを おぼえておこう'; setTimeout(function () { a.b.classList.remove('on'); z.b.classList.remove('on'); lock = false; }, 800); } };
+        g.appendChild(b); });
+      var S = $('stage'); S.textContent = ''; S.appendChild(g);
+    } };
+
+  /* ===== 2: which pocket — the ball rolls along the arrow and bounces off the cushions at the same angle; guess the pocket =====
+     the path is built backwards from a pocket, so there is always exactly one answer */
+  var W = 100, H = 170, PK = [[0, 0], [W, 0], [0, H / 2], [W, H / 2], [0, H], [W, H]];
+  function makeShot(bounces) {
+    for (var tries = 0; tries < 400; tries++) {
+      var pi = Math.floor(Math.random() * 6), p = PK[pi], a = Math.atan2(H / 2 - p[1] + rnd(-60, 60), W / 2 - p[0] + rnd(-35, 35)), x = p[0], y = p[1], dx = Math.cos(a), dy = Math.sin(a), pts = [[x, y]], ok = true;
+      if (Math.abs(dx) < .18 || Math.abs(dy) < .18) continue;
+      for (var b = 0; b <= bounces && ok; b++) {
+        var tx = dx > 0 ? (W - x) / dx : dx < 0 ? -x / dx : 1e9, ty = dy > 0 ? (H - y) / dy : dy < 0 ? -y / dy : 1e9, t = Math.min(tx, ty);
+        if (b === bounces) { var f = rnd(.3, .62); x += dx * t * f; y += dy * t * f; if (x < 12 || x > W - 12 || y < 12 || y > H - 12 || t * f < 30) ok = false; pts.push([x, y]); break; }
+        x += dx * t; y += dy * t; if (t < 28) ok = false;
+        PK.forEach(function (q) { if (Math.hypot(q[0] - x, q[1] - y) < 20) ok = false; });
+        if (tx < ty) dx = -dx; else dy = -dy; pts.push([x, y]);
+      }
+      if (ok) return { pocket: pi, path: pts.reverse() };
+    }
+    return { pocket: 0, path: [[50, 85], [0, 0]] };
+  }
+  var NS = 'http://www.w3.org/2000/svg', sv = function (t, a) { var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); return e; };
+  var POCKET = { title: 'どの ポケットに はいる？', lv: [['まっすぐ', 'クッション 0かい'], ['1クッション', '1かい はねかえる'], ['2クッション', '2かい はねかえる']], how: 'しろい たまが やじるしの ほうへ ころがるよ。はいる あなを おして こたえよう。',
+    start: function () {
+      var Q = 0, good = 0, N = 8, busy = false, shot = null, S = $('stage'); S.textContent = '';
+      hud([['もんだい', '1 / ' + N, 'hQ'], ['せいかい', '0', 'hG']]);
+      var box = el('div', 'tbl'), svg = sv('svg', { viewBox: '-14 -14 128 198', role: 'img', 'aria-label': 'ビリヤードの だい' }); box.appendChild(svg); S.appendChild(box);
+      svg.appendChild(sv('rect', { x: -9, y: -9, width: W + 18, height: H + 18, rx: 9, fill: '#8A5A2B' })); svg.appendChild(sv('rect', { x: 0, y: 0, width: W, height: H, rx: 2, fill: '#2F9E6B' }));
+      var defs = sv('defs', {}), mk = sv('marker', { id: 'ah', viewBox: '0 0 10 10', refX: 7, refY: 5, markerWidth: 5, markerHeight: 5, orient: 'auto-start-reverse' }); mk.appendChild(sv('path', { d: 'M0 0L10 5L0 10z', fill: '#FFF8EA' })); defs.appendChild(mk); svg.appendChild(defs);
+      var line = sv('polyline', { fill: 'none', stroke: '#FFF8EA', 'stroke-width': 1.3, 'stroke-dasharray': '3 3', opacity: 0 }), arrow = sv('line', { stroke: '#FFF8EA', 'stroke-width': 2.2, 'stroke-linecap': 'round', 'marker-end': 'url(#ah)' }), cue = sv('circle', { r: 5, fill: '#FBFBF6', stroke: '#1F2C38', 'stroke-width': .8 });
+      svg.appendChild(line); svg.appendChild(arrow);
+      var pks = PK.map(function (p, i) { var g = sv('g', { class: 'pk', tabindex: 0, role: 'button', 'aria-label': (i + 1) + 'ばんの あな' }); g.appendChild(sv('circle', { cx: p[0], cy: p[1], r: 13, fill: 'transparent' })); g.appendChild(sv('circle', { class: 'h', cx: p[0], cy: p[1], r: 8.5 })); var t = sv('text', { x: p[0], y: p[1] }); t.textContent = i + 1; g.appendChild(t);
+        var go = function () { answer(i); }; g.addEventListener('click', go); g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); svg.appendChild(g); return g; });
+      svg.appendChild(cue);
+      function ask() { busy = false; shot = makeShot(lvN); var s = shot.path[0], n = shot.path[1], d = Math.hypot(n[0] - s[0], n[1] - s[1]), L = Math.min(22, d * .45), ux = (n[0] - s[0]) / d, uy = (n[1] - s[1]) / d;
+        cue.setAttribute('cx', s[0]); cue.setAttribute('cy', s[1]); arrow.setAttribute('x1', s[0] + ux * 7); arrow.setAttribute('y1', s[1] + uy * 7); arrow.setAttribute('x2', s[0] + ux * (7 + L)); arrow.setAttribute('y2', s[1] + uy * (7 + L)); arrow.setAttribute('opacity', 1); line.setAttribute('opacity', 0);
+        pks.forEach(function (g) { g.setAttribute('class', 'pk'); }); $('hQ').textContent = (Q + 1) + ' / ' + N; $('msg').textContent = lvN ? 'クッションで ' + lvN + 'かい はねかえるよ。どの あなに はいる？' : 'まっすぐ ころがるよ。どの あなに はいる？'; }
+      function answer(i) { if (busy) return; busy = true; sTap(); pks[i].setAttribute('class', 'pk pick'); line.setAttribute('points', shot.path.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ')); line.setAttribute('opacity', .9); arrow.setAttribute('opacity', 0);
+        var P = shot.path, segs = [], tot = 0; for (var k = 1; k < P.length; k++) { var l = Math.hypot(P[k][0] - P[k - 1][0], P[k][1] - P[k - 1][1]); segs.push(l); tot += l; }
+        var dur = 500 + tot * 6, st = performance.now(), lastSeg = 0;
+        (function step(now) { var u = Math.min(1, (now - st) / dur), d = u * tot, k = 0; while (k < segs.length - 1 && d > segs[k]) { d -= segs[k]; k++; } if (k !== lastSeg) { lastSeg = k; tone(300, .05, 'triangle', .08); } var f = Math.min(1, d / segs[k]);
+          cue.setAttribute('cx', P[k][0] + (P[k + 1][0] - P[k][0]) * f); cue.setAttribute('cy', P[k][1] + (P[k + 1][1] - P[k][1]) * f);
+          if (u < 1) return requestAnimationFrame(step);
+          var ok = i === shot.pocket; pks[shot.pocket].setAttribute('class', 'pk good'); if (!ok) pks[i].setAttribute('class', 'pk bad'); if (ok) { good++; sOk(); } else sNg(); $('hG').textContent = good; $('msg').textContent = ok ? 'せいかい！' : 'おしい！ ' + (shot.pocket + 1) + 'ばんの あなに はいったよ';
+          setTimeout(function () { Q++; if (Q < N) return ask(); var k2 = 'p' + lvN; if (!best[k2] || good > best[k2]) { best[k2] = good; saveBest(); } result(N + 'もん おわり！', good >= N - 1 ? 3 : good >= N / 2 ? 2 : 1, N + 'もんちゅう ' + good + 'もん せいかい。（じこベスト ' + best[k2] + 'もん）', 'たまは クッションに あたると、はいってきた かくどと おなじ かくどで はねかえるよ。ほんものの ビリヤードでも、この きまりを つかって ねらうんだ。'); }, 1300);
+        })(st); }
+      ask();
+    } };
+
+  /* ===== 3: tap in order — nine-ball rule: always the lowest number first ===== */
+  var ORDER = { title: 'じゅんばん タッチ', lv: [['9ボール', '1〜9 とまっている'], ['うごく', '1〜9 ころがる'], ['15こ', '1〜15 とまっている']], how: 'いちばん ちいさい ばんごうから じゅんばんに タッチ！',
+    start: function () {
+      var n = lvN === 2 ? 15 : 9, next = 1, miss = 0, S = $('stage'), F = el('div', 'felt'), items = [], raf = 0, going = false; S.textContent = ''; S.appendChild(F);
+      hud([['つぎの たま', '1', 'hN'], ['じかん', '0.0', 'hTm'], ['おてつき', '0', 'hMs']]); $('msg').textContent = '1ばんから じゅんばんに おそう。さいしょの タッチで スタート！';
+      var sz = lvN === 2 ? 15 : 17, pos = [];
+      for (var i = 1; i <= n; i++) { var x, y, t = 0, bad; do { x = rnd(12, 88); y = rnd(10, 90); bad = pos.some(function (p) { return Math.hypot((p[0] - x) * .75, p[1] - y) < (lvN === 2 ? 15 : 17); }); } while (bad && ++t < 300); pos.push([x, y]);
+        (function (num, px, py) { var b = el('button', 'b'); b.type = 'button'; b.style.width = sz + '%'; b.style.left = px + '%'; b.style.top = py + '%'; b.appendChild(ball(num, 'clamp(12px,4vw,20px)')); var it = { b: b, x: px, y: py, vx: rnd(-1, 1) * 9, vy: rnd(-1, 1) * 9, out: false }; items.push(it);
+          b.addEventListener('pointerdown', function (e) { e.preventDefault(); if (it.out) return; if (!going) { going = true; clock('hTm'); }
+            if (num !== next) { miss++; $('hMs').textContent = miss; t0 -= 1000; sNg(); b.classList.remove('ng'); void b.offsetWidth; b.classList.add('ng'); $('msg').textContent = 'つぎは ' + next + 'ばん！（おてつきは 1びょう プラス）'; return; }
+            it.out = true; b.classList.add('out'); sOk(); next++;
+            if (next > n) { cancelAnimationFrame(raf); clearInterval(timer); var sec = (Date.now() - t0) / 1000, lim = [[12, 20], [15, 25], [24, 38]][lvN], k = 'o' + lvN; if (!best[k] || sec < best[k]) { best[k] = +sec.toFixed(1); saveBest(); } $('hTm').textContent = sec.toFixed(1);
+              return setTimeout(function () { result('ぜんぶ おとした！', sec <= lim[0] ? 3 : sec <= lim[1] ? 2 : 1, sec.toFixed(1) + 'びょうで クリア。（じこベスト ' + best[k] + 'びょう）', '9ボールは、だいの うえの いちばん ちいさい ばんごうの たまから ねらう ルール。さいごに 9ばんを いれた ひとの かちだよ。'); }, 400); }
+            $('hN').textContent = next; $('msg').textContent = 'つぎは ' + next + 'ばん！'; });
+          F.appendChild(b); })(i, x, y); }
+      if (lvN === 1 && !(window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches)) { var last = performance.now(); (function mv(now) { var dt = Math.min(.05, (now - last) / 1000); last = now; items.forEach(function (it) { if (it.out) return; it.x += it.vx * dt; it.y += it.vy * dt; if (it.x < 10 || it.x > 90) { it.vx = -it.vx; it.x = Math.max(10, Math.min(90, it.x)); } if (it.y < 8 || it.y > 92) { it.vy = -it.vy; it.y = Math.max(8, Math.min(92, it.y)); } it.b.style.left = it.x + '%'; it.b.style.top = it.y + '%'; }); if (F.isConnected) raf = requestAnimationFrame(mv); })(last); }
+    } };
+
+  G = GAME === 'pocket' ? POCKET : GAME === 'order' ? ORDER : MEM;
+  function start() { clearInterval(timer); G.start(); }
+  $('ttl').textContent = G.title; $('how').textContent = G.how; levels(G.lv); start();
+  window.__kb = { makeShot: makeShot, PK: PK };
+})();
+</script>
+</body>
+</html>
