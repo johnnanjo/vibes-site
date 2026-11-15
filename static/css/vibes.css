@@ -185,6 +185,8 @@ main{display:block;padding-bottom:110px}
 .disc .ja{font-size:12px;font-weight:700}
 .disc .ja small{display:block;font-weight:500;opacity:.8}
 @media(min-width:900px){.disc{gap:12px}.disc a{min-height:160px;padding:20px;border-radius:22px}.disc .en{font-size:32px}.disc .ja{font-size:13px}}
+.disc.c4{grid-template-columns:repeat(2,minmax(0,1fr))}@media(min-width:900px){.disc.c4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.bg-kids{background:#F2C200}.disc a.bg-kids{color:var(--night)}.disc .bg-kids .en{color:var(--night)}
 .bg-pocket{background:var(--felt-pocket)}.bg-carom{background:var(--felt-carom)}.bg-heyball{background:var(--felt-heyball)}
 
 /* news */

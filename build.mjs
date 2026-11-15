@@ -55,7 +55,7 @@ ${official.slice(1, 4).map((t) => `<div class="only-pc">${oRow(t, today, daysBet
 </div></div></div></div>
 
 <main class="wrap">
-<section class="sec" style="padding-top:20px;padding-bottom:0"><div class="sec-h"><h2>種目から探す</h2></div>${discTiles()}</section>
+<section class="sec" style="padding-top:20px;padding-bottom:0"><div class="sec-h"><h2>カテゴリーから探す</h2></div>${discTiles(true)}</section>
 <div class="sec" style="padding-top:18px">
 <form class="search-m" action="/pages/tournaments" role="search">${svg('search', 20, '#5B5F6B')}<input type="search" name="q" placeholder="大会・ビリヤード場を検索" aria-label="大会・ビリヤード場を検索"></form>
 <div class="quick">${[['/pages/tournaments', '大会', 'cal'], ['/blogs/results', '結果', 'trophy'], ['/blogs/live', '速報', 'camera'], ['/pages/players', '選手', 'user'], ['/pages/near', '近くの店', 'pin'], ['/pages/bowlard', 'ボーラード', 'count'], ['/blogs/news', 'NEWS', 'news'], ['/pages/shaft', 'SHOP', 'bag']].map(([h, l, i]) => `<a href="${h}"><i>${svg(i, 18, '#C0FC09', 2.2)}</i>${l}</a>`).join('')}</div>
