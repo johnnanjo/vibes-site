@@ -494,9 +494,9 @@ function contact() {
 function order() {
   const sel = (id, name, label, opts, def) => `<label id="${id}">${label}<span class="req">必須</span><select name="${name}" required>${opts.map((o) => `<option${o === def ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select></label>`;
   const body = `<div class="band"><div class="wrap band-in narrow"><p class="crumb"><a href="/">トップ</a> ／ <a href="/pages/shaft">Vibes Carbon Shaft</a></p>
-<div class="ph"><h1>Vibes Carbon Shaft をつくる</h1><p>仕様を選んで送信すると、ご注文を受け付けます。お支払いは銀行振込のみです（振込先はメールでご案内し、ご入金確認後に工場へ発注します）。カード決済は12月から対応予定です。</p></div>
+<div class="ph"><h1>Vibes Carbon Shaft をつくる</h1><p>仕様を選んで、公式LINEで送信してください。スタッフがLINEでご注文内容を確認し、お届け先と振込先をご案内します。お支払いは銀行振込のみです（ご入金確認後に工場へ発注します）。カード決済は12月から対応予定です。</p></div>
 <span class="disp" style="font-size:52px;color:var(--lime)" data-price>¥25,000</span><span class="hero-sub">税込・送料込・刻印込み・納期3〜4週間</span></div></div>
-<main class="wrap narrow"><form class="form" style="padding-top:20px" data-hook="${esc(config.orderHook || '')}" data-kind="order" novalidate>
+<main class="wrap narrow"><form class="form" style="padding-top:20px" id="vb-order" novalidate>
 <div class="card pad form">
 ${sel('vb-len', 'length', '01 長さ', ['27in（68.6cm）標準', '28in（71.1cm）', '29in（73.7cm）', '30in（76.2cm）', '31in（78.7cm）'])}
 ${sel('vb-taper', 'taper', '02 テーパー', ['MELLOW（ストレート・ポケット向き）', 'JAZZY（コニカル・スリークッション向き）'])}
@@ -505,22 +505,27 @@ ${sel('vb-joint', 'joint', '04 ジョイント', ['Radial', '3/8×10', '3/8×11'
 ${sel('vb-weight', 'weight', '05 ウェイト', ['110g', '112g', '114g', '115g', '116g', '118g', '120g', '122g', '125g', '110g未満（相談）'], '115g')}
 ${sel('vb-engrave', 'engrave', '06 刻印', ['① なし（Vibesの刻印のみ）', '② なし＋自分の名前', '③ あり（オリジナルロゴのみ）', '④ あり＋自分の名前'])}
 <label>刻印する名前（ローマ字）<input name="engrave_name" placeholder="例：TATSUYA ANDO" autocomplete="off"><span class="hint">②④を選んだ方のみ</span></label>
-<label id="vb-color">07 ロゴの色<span class="req">必須</span><select name="color" required data-color><option value="単色（標準）">単色（標準・追加料金なし）</option><option value="カラー（+2,500円）">カラー（+¥2,500）</option></select><span class="hint">③④のオリジナルロゴが対象。ロゴデータ（PNG・PDF）は受付メールへの返信か公式LINEでお送りください。</span></label>
+<label id="vb-color">07 ロゴの色<span class="req">必須</span><select name="color" required data-color><option value="単色（標準）">単色（標準・追加料金なし）</option><option value="カラー（+2,500円）">カラー（+¥2,500）</option></select><span class="hint">③④のオリジナルロゴが対象。ロゴデータ（PNG・PDF）は、ご注文のあと公式LINEでお送りください。</span></label>
 <label>お使いのキュー<input name="cue" placeholder="例：Predator / Longoni / Mezz など"></label>
 </div>
 <div class="card pad form">
-<label>お名前<span class="req">必須</span><input name="name" required autocomplete="name"></label>
-<label>メールアドレス<span class="req">必須</span><input type="email" name="email" required autocomplete="email"></label>
-<label>電話番号<span class="req">必須</span><input type="tel" name="tel" required autocomplete="tel"></label>
-<label>お届け先住所<span class="req">必須</span><textarea name="address" required autocomplete="street-address" style="min-height:80px"></textarea></label>
-<label>備考<textarea name="note" style="min-height:80px"></textarea></label>
+<label>ご質問・ご希望<textarea name="note" style="min-height:80px" placeholder="分からない項目や、ご希望があればお書きください"></textarea></label>
+<p class="hint" style="margin:0">お名前・お届け先は、ご注文のあとLINEでうかがいます。この画面では入力しません。</p>
 </div>
 <div class="card pad" style="font-size:13px;line-height:1.75">パターンオーダーのため、お客様都合による返品はお受けできません。初期不良（振れ、刻印ミス、仕様違い）は交換いたします。<a href="/pages/refund-policy">返品・交換ポリシー</a>／<a href="/pages/legal-notice">特定商取引法に基づく表記</a></div>
-<div class="hp"><input name="hp" tabindex="-1" autocomplete="off"></div>
-<button class="btn btn-lime" type="submit">この仕様で注文する（銀行振込）</button><div class="msg" hidden data-msg></div>
+<button class="btn btn-lime" type="submit">この仕様でLINEから注文する</button>
+<a class="btn btn-line btn-sm" id="vb-ask" href="https://line.me/R/oaMessage/%40361mehjz/?" target="_blank" rel="noopener">注文の前に、LINEで質問する</a>
+<div class="card pad" id="vb-fb" hidden style="font-size:13px;line-height:1.75"><b>LINEが開かないときは</b><br>下の文面をコピーして、公式LINE（@361mehjz）に送ってください。<textarea id="vb-txt" readonly style="width:100%;min-height:210px;margin-top:8px;font-size:13px"></textarea><button class="btn btn-sm" type="button" id="vb-cp" style="margin-top:8px">文面をコピー</button> <a class="btn btn-line btn-sm" href="${LINE_ADD}" target="_blank" rel="noopener" style="margin-top:8px">公式LINEを友だち追加</a></div>
 <p class="muted" style="font-size:12px">お問い合わせ・ご注文の確認、工場への発注のご連絡は平日のみ対応しています。</p>
 </form></main>`;
-  put('/products/vibes-carbon-shaft', page({ title: 'Vibes Carbon Shaft をつくる（ご注文）', desc: 'パターンオーダーのカーボンシャフト。¥25,000（税込・送料込）。仕様を選んでご注文ください。', path: '/products/vibes-carbon-shaft', body: body.replace(/<label([^>]*)>([^<]+)<span class="req">必須<\/span>/g, '<label$1><span>$2<span class="req">必須</span></span>'), scripts: `<script src="/js/forms.js?v=${VER}" defer></script>` }));
+  put('/products/vibes-carbon-shaft', page({ title: 'Vibes Carbon Shaft をつくる（ご注文）', desc: 'パターンオーダーのカーボンシャフト。¥25,000（税込・送料込）。仕様を選んでご注文ください。', path: '/products/vibes-carbon-shaft', body: body.replace(/<label([^>]*)>([^<]+)<span class="req">必須<\/span>/g, '<label$1><span>$2<span class="req">必須</span></span>'), scripts: `<script>(function(){var f=document.getElementById('vb-order');if(!f)return;var L='https://line.me/R/oaMessage/%40361mehjz/?';
+function v(n){var e=f.querySelector('[name="'+n+'"]');return e?String(e.value||'').trim():''}
+function text(){var c=/カラー/.test(v('color')),a=['【シャフト注文】','長さ：'+v('length'),'テーパー：'+v('taper'),'先端径：'+v('tip'),'ジョイント：'+v('joint'),'ウェイト：'+v('weight'),'刻印：'+v('engrave')];if(v('engrave_name'))a.push('刻印する名前：'+v('engrave_name'));a.push('ロゴの色：'+v('color'));if(v('cue'))a.push('お使いのキュー：'+v('cue'));if(v('note'))a.push('ご質問・ご希望：'+v('note'));a.push('合計：'+(c?'27,500':'25,000')+'円（税込・送料込）');return a.join('\\n')}
+var pr=document.querySelector('[data-price]'),cl=f.querySelector('[data-color]');if(pr&&cl)cl.addEventListener('change',function(){pr.textContent=/カラー/.test(cl.value)?'¥27,500':'¥25,000'});
+document.getElementById('vb-ask').href=L+encodeURIComponent('【シャフトの質問】\\n質問：');
+f.addEventListener('submit',function(e){e.preventDefault();var t=text();document.getElementById('vb-txt').value=t;document.getElementById('vb-fb').hidden=false;window.open(L+encodeURIComponent(t),'_blank','noopener');});
+document.getElementById('vb-cp').addEventListener('click',function(){var b=this,t=document.getElementById('vb-txt');function ok(){b.textContent='コピーしました'}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(ok,function(){t.select()})}else{t.select();try{document.execCommand('copy');ok()}catch(x){}}});
+})();</script>` }));
 }
 
 function guide() {
