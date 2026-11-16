@@ -230,6 +230,19 @@ main{display:block;padding-bottom:110px}
 .dc .tx{display:block;font-size:13px;font-weight:700;margin-top:6px}
 .go-c{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--lime)}
 
+/* VIBES 3C LAB banner */
+.lab-bn{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:20px 18px 20px;border-radius:26px;background:var(--felt-carom);color:#fff;text-decoration:none;box-shadow:0 10px 26px rgba(23,26,34,.18)}
+.lab-bn .k{font-size:12px;font-weight:900;line-height:1;padding:7px 11px;border-radius:999px;background:var(--chalk);color:var(--night)}
+.lab-bn .t{font-family:var(--disp);font-size:clamp(44px,12vw,72px);line-height:.92;letter-spacing:.01em;margin-top:2px}
+.lab-bn b{font-size:clamp(17px,4.6vw,22px);font-weight:900;line-height:1.5;max-width:15em;position:relative;z-index:1}
+.lab-bn small{font-size:13px;font-weight:700;line-height:1.65;opacity:.9;max-width:19em;position:relative;z-index:1}
+.lab-bn .btn{margin-top:6px;position:relative;z-index:1}
+.lab-bn .bl{position:absolute;right:-6px;bottom:-10px;width:150px;height:150px;pointer-events:none}
+.lab-bn .bl i{position:absolute;border-radius:50%;box-shadow:inset -7px -9px 0 rgba(0,0,0,.14)}
+.lab-bn .bl i:nth-child(1){width:74px;height:74px;right:14px;bottom:18px;background:radial-gradient(circle at 34% 30%,#fff 0 9%,#D7262E 30%)}
+.lab-bn .bl i:nth-child(2){width:50px;height:50px;right:84px;bottom:4px;background:radial-gradient(circle at 34% 30%,#fff 0 9%,#F2C200 30%)}
+.lab-bn .bl i:nth-child(3){width:40px;height:40px;right:6px;bottom:98px;background:radial-gradient(circle at 34% 30%,#fff 0 12%,#F3F4EF 34%)}
+@media(min-width:760px){.lab-bn{padding:30px}.lab-bn .bl{width:240px;height:200px;right:20px}}
 /* 3C NOTE banner (carom page) */
 .note-bn{display:grid;gap:16px;padding:20px 18px 18px;border-radius:26px;background:var(--night);color:var(--chalk);text-decoration:none;border:2px solid var(--lime);box-shadow:0 10px 26px rgba(23,26,34,.18)}
 .note-bn .tx{display:flex;flex-direction:column;gap:10px;align-items:flex-start;min-width:0}

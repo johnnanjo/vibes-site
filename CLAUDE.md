@@ -15,6 +15,7 @@
 - `data/inbox/{articles,tournaments,shops}/*.json` 自動化が書き込む追加分（1件または配列）。ファイル名順に読み、同じhandleは項目ごとに上書き
   - 記事：Make「VIBES Shopify記事 → 新サイト同期」が2時間ごとに `sync-*.json` を追加。掲載フォームは `ht-*`/`form-*` を直接追加
   - 大会・店：Shopifyに書き込む予約タスクが、最後に変更分を `sync-*.json` で追加。`status:"DRAFT"` は運営者が外した大会として非表示（終了14日以上後のDRAFTは結果の履歴として表示）
+- `data/3c-lab.json` VIBES 3C LAB（`/pages/3c-lab`）の取り口15分類と動画（`shots`：video_id・start_sec・end_sec・pattern_jp ほか。足すと取り口ごとの動画一覧に出る）
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック。`youtubeLive` に YouTube チャンネルのURLを入れると `/live`（VIBES LIVE の入口）のボタンが有効になる（空なら「準備中」）
 
 ## URL

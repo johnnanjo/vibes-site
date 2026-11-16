@@ -1,0 +1,111 @@
+<!-- VIBES 3C LAB：これからスリークッションを楽しみたい人向け。取り口15種類と、取り口ごとの動画（data/3c-lab.json の shots）。build.mjs がデータを差し込んで /pages/3c-lab に出す。 -->
+<style>
+.l3{--blue:#1E5AA8;--red:#D7262E;--yel:#F2C200}
+.l3 *{box-sizing:border-box}
+.l3-band{background:var(--blue);color:#fff;border-radius:0 0 32px 32px;padding:0 0 26px}
+.l3-band .wrap{display:flex;flex-direction:column;gap:8px}
+.l3-ttl{font-family:var(--disp);font-size:clamp(54px,14vw,120px);line-height:.9;letter-spacing:.01em;margin:6px 0 0}
+.l3-lead{margin:4px 0 0;font-size:clamp(19px,5vw,26px);font-weight:900;line-height:1.5}
+.l3-sub{margin:0;font-size:14.5px;font-weight:700;line-height:1.8;max-width:36em;opacity:.92}
+.l3-v{display:flex;flex-direction:column;gap:14px;padding:22px 0 8px}
+.l3-h{font-size:22px;font-weight:900;line-height:1.4;margin:0}
+.l3-p{font-size:14.5px;font-weight:700;line-height:1.8;color:var(--sub);margin:0}
+.l3-rule{display:grid;gap:10px}
+.l3-rule div{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:16px;display:flex;gap:14px;align-items:flex-start}
+.l3-rule i{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:400 20px/1 var(--disp);font-style:normal;background:radial-gradient(circle at 34% 30%,#fff 0 9%,var(--c) 30%);box-shadow:inset -4px -5px 0 rgba(0,0,0,.13);color:var(--night)}
+.l3-rule b{display:block;font-size:16.5px;font-weight:900;line-height:1.45}
+.l3-rule span{display:block;font-size:13.5px;font-weight:700;line-height:1.7;color:var(--sub);margin-top:2px}
+.l3-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.l3-c{appearance:none;text-align:left;font-family:var(--jp);cursor:pointer;background:#fff;color:var(--night);border:1.5px solid var(--line);border-radius:20px;padding:13px 13px 12px;display:flex;flex-direction:column;gap:4px;min-width:0;position:relative}
+.l3-c[aria-pressed=true]{background:var(--night);color:var(--chalk);border-color:var(--night)}
+.l3-c .n{font:400 15px/1 var(--disp);color:var(--sub)}
+.l3-c[aria-pressed=true] .n,.l3-c[aria-pressed=true] small,.l3-c[aria-pressed=true] p{color:var(--sub-d)}
+.l3-c b{font-size:21px;font-weight:900;line-height:1.3}
+.l3-c small{font-size:11.5px;font-weight:700;line-height:1.4;color:var(--sub)}
+.l3-c p{margin:4px 0 0;font-size:12.5px;font-weight:700;line-height:1.6;color:var(--sub)}
+.l3-c .ct{position:absolute;top:11px;right:11px;font-size:11px;font-weight:900;line-height:1;padding:5px 8px;border-radius:999px;background:var(--lime);color:var(--night)}
+.l3-c:focus-visible,.l3 a:focus-visible,.l3 button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.l3-dark{background:var(--night);color:var(--chalk);border-radius:26px;padding:20px 18px;display:flex;flex-direction:column;gap:12px}
+.l3-dark h3{margin:0;font-size:20px;font-weight:900;line-height:1.4}
+.l3-dark p{margin:0;font-size:14px;font-weight:700;line-height:1.75;color:var(--sub-d)}
+.l3-sh{display:grid;gap:12px}
+.l3-s{background:#fff;border:1.5px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+.l3-s .pl{appearance:none;border:0;cursor:pointer;display:block;width:100%;aspect-ratio:16/9;background:var(--blue);color:#fff;position:relative;padding:0}
+.l3-s .pl span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--lime);color:var(--night);font:900 15px/1 var(--jp);padding:14px 20px;border-radius:999px;white-space:nowrap}
+.l3-s iframe{display:block;width:100%;aspect-ratio:16/9;border:0}
+.l3-s .mt{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px}
+.l3-s .mt b{font-size:16px;font-weight:900;line-height:1.4}
+.l3-s .mt small{font-size:12.5px;font-weight:700;color:var(--sub);line-height:1.6}
+.l3-tags{display:flex;flex-wrap:wrap;gap:5px}
+.l3-tags span{font-size:11.5px;font-weight:900;line-height:1;padding:6px 9px;border-radius:999px;background:var(--line2);color:var(--night)}
+.l3-next{display:grid;gap:10px}
+.l3-next a{display:flex;flex-direction:column;gap:3px;background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:15px 16px;text-decoration:none;color:var(--night)}
+.l3-next a b{font-size:17px;font-weight:900;line-height:1.4}
+.l3-next a small{font-size:13px;font-weight:700;color:var(--sub);line-height:1.6}
+@media(min-width:760px){.l3-g{grid-template-columns:repeat(3,minmax(0,1fr))}.l3-rule,.l3-next{grid-template-columns:repeat(3,minmax(0,1fr))}.l3-sh{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<div class="l3">
+<div class="l3-band"><div class="wrap">
+<p class="crumb"><a href="/" style="color:#fff">トップ</a>　<a href="/pages/carom" style="color:#fff">キャロム</a></p>
+<h1 class="l3-ttl">VIBES 3C LAB</h1>
+<p class="l3-lead">スリークッションを、これから楽しみたい人へ。</p>
+<p class="l3-sub">ルールはシンプル、でも奥が深い。まずは「取り口」と呼ばれる15の形を知るところから始めましょう。形が分かると、試合を見るのも、自分で撞くのも、ぐっと面白くなります。</p>
+</div></div>
+<main class="wrap">
+
+<section class="l3-v">
+<h2 class="l3-h">スリークッションって、どんなゲーム？</h2>
+<div class="l3-rule">
+<div><i style="--c:#fff">1</i><p style="margin:0"><b>球は3つだけ</b><span>自分の球（手球）が1つ、的になる球（的球）が2つ。ポケット（穴）はありません。</span></p></div>
+<div><i style="--c:var(--yel)">2</i><p style="margin:0"><b>3回クッションに入れて当てる</b><span>手球を撞いて、2つ目の的球に当たるまでに、クッションに3回以上入れると1点です。</span></p></div>
+<div><i style="--c:var(--red)">3</i><p style="margin:0"><b>当たれば、続けて撞ける</b><span>外したら相手と交代。先に決めた点数に届いた人の勝ちです。</span></p></div>
+</div>
+</section>
+
+<section class="l3-v" id="l3-pat">
+<h2 class="l3-h">取り口 15の形</h2>
+<p class="l3-p">「取り口」は、点を取るための球の走らせ方のこと。名前をタップすると、その形の動画にしぼれます。</p>
+<div class="l3-g" id="l3-g"></div>
+</section>
+
+<section class="l3-v" id="l3-mv">
+<h2 class="l3-h" id="l3-mh">動画で見る</h2>
+<div id="l3-list"></div>
+</section>
+
+<section class="l3-v">
+<h2 class="l3-h">次の一歩</h2>
+<div class="l3-next">
+<a href="/pages/near"><b>近くのビリヤード場をさがす</b><small>スリークッションの台（キャロム台）があるお店へ。はじめてなら、お店の人に声をかけてみましょう。</small></a>
+<a href="/pages/3c-note"><b>3C NOTE で記録をつける</b><small>点数とイニングを入れるだけ。自分のアベレージの伸びが見えます。</small></a>
+<a href="/pages/tournaments?g=carom"><b>大会を見に行く・出てみる</b><small>公式戦やハウストーナメントの予定を、日付と地域からさがせます。</small></a>
+</div>
+</section>
+</main>
+</div>
+<script>
+(function () {
+  'use strict';
+  var D = __LAB__, P = D.patterns, S = D.shots || [], cur = '';
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var cnt = {}; S.forEach(function (s) { cnt[s.pattern_jp] = (cnt[s.pattern_jp] || 0) + 1; });
+  function grid() {
+    $('l3-g').innerHTML = P.map(function (p, i) { return '<button class="l3-c" type="button" data-p="' + esc(p.jp) + '" aria-pressed="' + (cur === p.jp) + '"><span class="n">' + ('0' + (i + 1)).slice(-2) + '</span>' + (cnt[p.jp] ? '<span class="ct">動画 ' + cnt[p.jp] + '</span>' : '') + '<b>' + esc(p.jp) + '</b><small lang="en">' + esc(p.en) + '</small><small lang="ko">' + esc(p.kr) + '</small><p>' + esc(p.desc) + '</p></button>'; }).join('');
+  }
+  function mmss(t) { t = Math.max(0, t | 0); return Math.floor(t / 60) + ':' + ('0' + t % 60).slice(-2); }
+  function list() {
+    var a = S.filter(function (s) { return !cur || s.pattern_jp === cur; });
+    $('l3-mh').textContent = cur ? '動画で見る：' + cur : '動画で見る';
+    if (!S.length) { $('l3-list').innerHTML = '<div class="l3-dark"><h3>動画は準備中です。</h3><p>実際の試合から、取り口ごとに得点シーンを集めて、ここに並べていきます。公開は NEWS と公式LINE でお知らせします。</p></div>'; return; }
+    if (!a.length) { $('l3-list').innerHTML = '<div class="l3-dark"><h3>「' + esc(cur) + '」の動画は、まだありません。</h3><p>ほかの形を選ぶか、もう一度タップして全部の動画に戻してください。</p></div>'; return; }
+    $('l3-list').innerHTML = '<div class="l3-sh">' + a.map(function (s) {
+      var star = Math.max(1, Math.min(5, s.difficulty | 0)), tags = (s.sub_tags || []).map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('');
+      return '<div class="l3-s"><button class="pl" type="button" data-v="' + esc(s.video_id) + '" data-a="' + (s.start_sec | 0) + '" data-b="' + (s.end_sec | 0) + '" aria-label="' + esc(s.pattern_jp) + ' の動画を再生"><span>再生する（' + ((s.end_sec | 0) - (s.start_sec | 0)) + '秒）</span></button><div class="mt"><b>' + esc(s.pattern_jp) + (s.cushion_order ? '　' + esc(s.cushion_order) : '') + '</b><small>' + (s.player_name && s.player_name !== 'Unknown' ? esc(s.player_name) + '　' : '') + 'むずかしさ ' + star + ' / 5　開始 ' + mmss(s.start_sec) + '</small>' + (tags ? '<div class="l3-tags">' + tags + '</div>' : '') + '</div></div>';
+    }).join('') + '</div>';
+  }
+  $('l3-g').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; cur = cur === b.dataset.p ? '' : b.dataset.p; grid(); list(); if (cur && S.length) $('l3-mv').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
+  $('l3-list').addEventListener('click', function (e) { var b = e.target.closest('button.pl'); if (!b || !/^[\w-]{6,20}$/.test(b.dataset.v)) return; var f = document.createElement('iframe'); f.src = 'https://www.youtube-nocookie.com/embed/' + b.dataset.v + '?start=' + b.dataset.a + '&end=' + b.dataset.b + '&autoplay=1&rel=0&playsinline=1'; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.title = 'YouTube'; b.replaceWith(f); });
+  grid(); list();
+})();
+</script>

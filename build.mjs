@@ -323,6 +323,8 @@ function playersPages() {
 }
 
 /* ================= DISCIPLINE PAGES ================= */
+/* banner that leads to VIBES 3C LAB (/pages/3c-lab) */
+const LAB_BANNER = `<section class="sec"><a class="lab-bn" href="/pages/3c-lab"><span class="k">はじめての人へ</span><span class="t">VIBES 3C LAB</span><b>スリークッションを、これから楽しみたい人へ。</b><small>ルールと「取り口」15の形を、やさしい言葉で。</small><span class="btn btn-lime">3C LAB をひらく</span><span class="bl" aria-hidden="true"><i></i><i></i><i></i></span></a></section>`;
 /* banner on the carom page that leads to 3C NOTE (/pages/3c-note) */
 const NOTE_BANNER = `<section class="sec"><a class="note-bn" href="/pages/3c-note"><span class="tx"><span class="k">3C NOTE　無料・登録なし</span><b>普段の練習ゲームから自分の記録をつけてみませんか？</b><small>点数とイニングを入れるだけ。アベレージの伸びがグラフで見えます。</small></span><span class="bt"><span class="btn btn-lime">記録をはじめる</span><svg viewBox="0 0 200 116" aria-hidden="true"><rect width="200" height="116" rx="12" fill="#262A35"/><rect x="10" y="10" width="180" height="96" rx="4" fill="#1E5AA8"/><circle cx="10.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="10.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="32.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="32.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="55.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="55.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="77.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="77.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="100.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="100.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="122.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="122.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="145.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="145.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="167.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="167.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="190.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="190.0" cy="111" r="1.4" fill="#F3F4EF"/><polyline points="26,86 52,78 78,82 104,62 130,66 156,44 176,30" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.5"/><circle cx="26" cy="86" r="4.2" fill="#fff"/><circle cx="52" cy="78" r="4.2" fill="#fff"/><circle cx="78" cy="82" r="4.2" fill="#fff"/><circle cx="104" cy="62" r="4.2" fill="#fff"/><circle cx="130" cy="66" r="4.2" fill="#fff"/><circle cx="156" cy="44" r="5.4" fill="#F2C200"/><circle cx="176" cy="30" r="6.4" fill="#D7262E"/></svg></span></a></section>`;
 function discPage(key, handle) {
@@ -335,7 +337,7 @@ function discPage(key, handle) {
   const body = `<div class="band" style="background:var(--felt-${key})"><div class="wrap band-in"><p class="crumb"><a href="/" style="color:#fff">トップ</a></p>
 <span class="disp" style="font-size:clamp(56px,10vw,120px);color:var(--lime)">${d.en}</span><div class="ph" style="padding-top:0"><h1>${esc(pg?.title || d.ja)}</h1><p style="color:#fff;opacity:.85">${esc(stripTxt(pg?.body))}</p></div>
 <a class="btn btn-lime" href="/pages/tournaments?g=${key}">${d.ja}の大会をさがす</a></div></div>
-<main class="wrap">${key === 'carom' ? NOTE_BANNER : ''}<section class="sec"><div class="sec-h"><h2>これからの大会</h2><a href="/pages/tournaments?g=${key}">すべて（${up.length}件）</a></div>${up.length ? `<div class="card list">${up.slice(0, 15).map((t) => tRow(t, { showDate: true })).join('')}</div>` : '<div class="empty"><b>開催予定の大会はまだありません。</b></div>'}</section>
+<main class="wrap">${key === 'carom' ? LAB_BANNER + NOTE_BANNER : ''}<section class="sec"><div class="sec-h"><h2>これからの大会</h2><a href="/pages/tournaments?g=${key}">すべて（${up.length}件）</a></div>${up.length ? `<div class="card list">${up.slice(0, 15).map((t) => tRow(t, { showDate: true })).join('')}</div>` : '<div class="empty"><b>開催予定の大会はまだありません。</b></div>'}</section>
 <section class="sec"><div class="cols"><div style="display:flex;flex-direction:column;gap:12px"><div class="sec-h"><h2>試合結果</h2><a href="/blogs/results">すべて</a></div>${res.length ? `<div class="card dark list">${res.map(rRow).join('')}</div>` : '<div class="empty"><b>まだ結果はありません。</b></div>'}</div>
 <div style="display:flex;flex-direction:column;gap:12px"><div class="sec-h"><h2>NEWS</h2><a href="/blogs/news">すべて</a></div>${news.length ? `<div class="card list">${news.map(nRow).join('')}</div>` : '<div class="empty"><b>関連するNEWSはまだありません。</b></div>'}</div></div></section>
 ${key === 'heyball' ? '<section class="sec"><a class="tile" href="/pages/heyball"><b>HEYBALL（ヘイボール）とは？</b><small>ルール・テーブル・はじめ方</small></a></section>' : ''}
@@ -408,6 +410,14 @@ function contentPages() {
 <main class="wrap"><section class="sec"><div class="card pad" style="display:flex;flex-direction:column;gap:10px"><b style="font-size:17px">${ok ? '配信の見かた' : '配信開始のお知らせを受け取る'}</b><span style="font-size:14px;line-height:1.8;color:var(--sub)">${ok ? '上のボタンから YouTube のチャンネルを開き、「チャンネル登録」をすると、配信が始まったときに通知が届きます。' : '配信の開始は、NEWS と公式LINE でお知らせします。'}</span><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-dark btn-sm" href="/blogs/news">NEWS を見る</a><a class="btn btn-sm" style="background:#06C755;color:#fff" href="${LINE_ADD}" target="_blank" rel="noopener">公式LINE を友だち追加</a></div></div></section></main>`;
     const lv = page({ title: 'VIBES LIVE｜ビリヤードの試合ライブ配信', desc: 'VIBES BILLIARDS のライブ配信。スリークッションやポケットの試合を、スコアつきの映像で YouTube から配信します。', path: '/live', body });
     put('/live', lv);
+  }
+  /* VIBES 3C LAB: beginners' page. data/3c-lab.json = pattern master (15) + shots (video clips by pattern) */
+  {
+    const lab = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/3c-lab.json'), 'utf8'));
+    const names = new Set(lab.patterns.map((x) => x.jp));
+    const shots = (lab.shots || []).filter((x) => x && names.has(x.pattern_jp) && /^[\w-]{6,20}$/.test(String(x.video_id || '')) && x.end_sec > x.start_sec);
+    const data = JSON.stringify({ patterns: lab.patterns, shots }).replace(/</g, '\\u003c');
+    put('/pages/3c-lab', page({ title: 'VIBES 3C LAB｜スリークッションのはじめ方・取り口15の形', desc: 'スリークッションをこれから楽しみたい人へ。ルールと、表回し・裏回し・ヒネリなど「取り口」15の形を、やさしい言葉で紹介します。', path: '/pages/3c-lab', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-lab.html'), 'utf8').replace('__LAB__', () => data) }));
   }
   put('/pages/3c-note', page({ title: '3C NOTE｜スリークッションの練習記録・アベレージ管理', desc: 'スリークッションの練習ゲームを1ゲームずつ記録。点数とイニングを入れるだけで、通算アベレージ・直近のアベレージ・ハイラン・ベストゲームがグラフで見えます。無料・登録なし。', path: '/pages/3c-note', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-note.html'), 'utf8') }));
   put('/pages/count-overlay', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-overlay.html'), 'utf8') });
