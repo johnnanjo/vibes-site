@@ -68,6 +68,8 @@ video{display:none}
   <section class="card" id="vStart" hidden>
     <h1>撮影カメラ</h1>
     <p>スマホを横向きにして、台全体が映る場所に固定します。「カメラを始める」を押すと、カメラとマイクの許可を聞かれるので「許可」を押してください。</p>
+    <p style="font-size:13px">パソコンにつないだカメラ（GoPro など）を使うときは、「カメラをさがす」を押して、一覧からえらんでください。</p>
+    <div class="opt"><span>カメラ</span><span style="display:flex;gap:8px;align-items:center;min-width:0"><select id="oC" style="max-width:52vw"><option value="">自動（スマホの背面カメラ）</option></select><button type="button" id="bFind" style="font:inherit;font-weight:700;font-size:14px;color:var(--chalk);background:var(--night);border:2px solid var(--line);border-radius:10px;padding:8px 10px;white-space:nowrap">カメラをさがす</button></span></div>
     <div class="opt"><span>画質</span><select id="oQ"><option value="720">標準（720p）</option><option value="1080">高画質（1080p・容量が大きい）</option><option value="480">軽い（480p）</option></select></div>
     <div class="opt"><span>音声</span><select id="oA"><option value="1">入れる</option><option value="0">入れない</option></select></div>
     <button class="go" type="button" id="bCam">カメラを始める</button>
@@ -152,14 +154,34 @@ video{display:none}
     try { cx.drawImage(vd, 0, 0, cv.width, cv.height); } catch (e) {}
     drawBar();
     if (rec) { var s = Math.floor((Date.now() - recAt) / 1000); $('bdgT').textContent = '録画中 ' + Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2) + '　' + (recBytes / 1048576).toFixed(0) + 'MB'; }
+    if (document.hidden) return;
     if (vd.requestVideoFrameCallback) vd.requestVideoFrameCallback(frame); else requestAnimationFrame(frame);
   }
+  var tick = null; try { tick = new Worker(URL.createObjectURL(new Blob(['var t=null;onmessage=function(e){clearInterval(t);if(e.data)t=setInterval(function(){postMessage(1)},33)}'], { type: 'text/javascript' }))); tick.onmessage = function () { if (document.hidden && stream) frame(); }; } catch (e) {}
+  document.addEventListener('visibilitychange', function () { if (tick) tick.postMessage(document.hidden ? 1 : 0); if (!document.hidden && stream) frame(); });
+
+  /* ---- camera list (a PC with a GoPro or other USB camera): names only show after the browser has been allowed to use a camera ---- */
+  function listCams() {
+    return navigator.mediaDevices.enumerateDevices().then(function (ds) {
+      var v = ds.filter(function (d) { return d.kind === 'videoinput'; }), keep = ''; try { keep = localStorage.getItem('vibes-cam-dev') || ''; } catch (e) {}
+      $('oC').innerHTML = '<option value="">自動（スマホの背面カメラ）</option>' + v.map(function (d, i) { return '<option value="' + d.deviceId + '"' + (d.deviceId && d.deviceId === keep ? ' selected' : '') + '>' + String(d.label || ('カメラ ' + (i + 1))).replace(/[<>&"]/g, '') + '</option>'; }).join('');
+      return v.length;
+    });
+  }
+  $('bFind').onclick = function () {
+    $('eCam').textContent = ''; if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { $('eCam').textContent = 'このブラウザーではカメラが使えません。'; return; }
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function (s) { s.getTracks().forEach(function (x) { x.stop(); }); return listCams(); })
+      .then(function (n) { $('eCam').textContent = n ? 'カメラが ' + n + '台 見つかりました。「カメラ」の一覧からえらんでください。' : 'カメラが見つかりませんでした。ケーブルと、カメラ側の設定を確かめてください。'; })
+      .catch(function () { $('eCam').textContent = 'カメラが許可されていないか、つながっていません。'; });
+  };
+  try { if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) listCams().catch(function () {}); } catch (e) {}
 
   /* ---- camera ---- */
   $('bCam').onclick = function () {
-    var q = +$('oQ').value, wantA = $('oA').value === '1'; $('eCam').textContent = '';
+    var q = +$('oQ').value, wantA = $('oA').value === '1', dev = $('oC').value; $('eCam').textContent = ''; try { localStorage.setItem('vibes-cam-dev', dev); } catch (e) {}
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { $('eCam').textContent = 'このブラウザーではカメラが使えません。Safari か Chrome で開いてください。'; return; }
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: q === 1080 ? 1920 : q === 480 ? 854 : 1280 }, height: { ideal: q }, frameRate: { ideal: 30 } }, audio: wantA })
+    var vc = { width: { ideal: q === 1080 ? 1920 : q === 480 ? 854 : 1280 }, height: { ideal: q }, frameRate: { ideal: 30 } }; if (dev) vc.deviceId = { exact: dev }; else vc.facingMode = { ideal: 'environment' };
+    navigator.mediaDevices.getUserMedia({ video: vc, audio: wantA })
       .then(function (s) { stream = s; vd.srcObject = s; return vd.play(); })
       .then(function () { var cs = cv.captureStream ? cv.captureStream(30) : null; if (!cs) { $('eCam').textContent = 'このブラウザーでは録画ができません。'; return; }
         out = new MediaStream(cs.getVideoTracks().concat(stream.getAudioTracks())); show('vCam'); frame(); wake(); send({ type: 'rtc', k: 'cam' }); onState(); })
