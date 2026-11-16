@@ -400,6 +400,15 @@ function contentPages() {
   put('/pages/count-pocket', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-pocket.html'), 'utf8') });
   put('/pages/count-remote', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-remote.html'), 'utf8') });
   put('/pages/count-tour', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-tour.html'), 'utf8') });
+  /* VIBES LIVE: the address told to people (/live). data/config.json "youtubeLive" = channel URL; empty = 準備中 */
+  {
+    let yt = ''; try { yt = String(JSON.parse(fs.readFileSync(path.join(ROOT, 'data/config.json'), 'utf8')).youtubeLive || ''); } catch {}
+    const ok = /^https:\/\/(www\.)?youtube\.com\//.test(yt);
+    const body = `<div class="band"><div class="wrap band-in"><p class="crumb"><a href="/" style="color:#fff">トップ</a></p><span class="disp" style="font-size:clamp(56px,13vw,120px);color:var(--chalk)">VIBES LIVE</span><div class="ph" style="padding-top:0"><h1>ビリヤードの試合を、ライブ配信で。</h1><p style="color:#fff;opacity:.85">スリークッションやポケットの試合を、スコアつきの映像で YouTube から配信します。</p></div>${ok ? `<a class="btn btn-lime" href="${esc(yt)}" target="_blank" rel="noopener">YouTube で見る</a>` : '<span class="btn" style="background:var(--night2);color:var(--chalk);cursor:default">配信は準備中です</span>'}</div></div>
+<main class="wrap"><section class="sec"><div class="card pad" style="display:flex;flex-direction:column;gap:10px"><b style="font-size:17px">${ok ? '配信の見かた' : '配信開始のお知らせを受け取る'}</b><span style="font-size:14px;line-height:1.8;color:var(--sub)">${ok ? '上のボタンから YouTube のチャンネルを開き、「チャンネル登録」をすると、配信が始まったときに通知が届きます。' : '配信の開始は、NEWS と公式LINE でお知らせします。'}</span><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-dark btn-sm" href="/blogs/news">NEWS を見る</a><a class="btn btn-sm" style="background:#06C755;color:#fff" href="${LINE_ADD}" target="_blank" rel="noopener">公式LINE を友だち追加</a></div></div></section></main>`;
+    const lv = page({ title: 'VIBES LIVE｜ビリヤードの試合ライブ配信', desc: 'VIBES BILLIARDS のライブ配信。スリークッションやポケットの試合を、スコアつきの映像で YouTube から配信します。', path: '/live', body });
+    put('/live', lv);
+  }
   put('/pages/3c-note', page({ title: '3C NOTE｜スリークッションの練習記録・アベレージ管理', desc: 'スリークッションの練習ゲームを1ゲームずつ記録。点数とイニングを入れるだけで、通算アベレージ・直近のアベレージ・ハイラン・ベストゲームがグラフで見えます。無料・登録なし。', path: '/pages/3c-note', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-note.html'), 'utf8') }));
   put('/pages/count-overlay', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-overlay.html'), 'utf8') });
   put('/pages/count-cam', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-cam.html'), 'utf8') });
