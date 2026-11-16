@@ -325,7 +325,7 @@ function playersPages() {
 
 /* ================= DISCIPLINE PAGES ================= */
 /* banner that leads to VIBES 3C LAB (/pages/3c-lab) */
-const LAB_BANNER = `<section class="sec"><a class="lab-bn" href="/pages/3c-lab"><span class="k">はじめての人へ</span><span class="t">VIBES 3C LAB</span><b>スリークッションを、これから楽しみたい人へ。</b><small>ルールと「取り口」15の形を、やさしい言葉で。</small><span class="btn btn-lime">3C LAB をひらく</span><span class="bl" aria-hidden="true"><i></i><i></i><i></i></span></a></section>`;
+const LAB_BANNER = `<section class="sec"><a class="lab-bn" href="/pages/3c-lab"><span class="k">はじめての人へ</span><span class="t">VIBES 3C LAB</span><b>スリークッションを、これから楽しみたい人へ。</b><small>ルールと「取り口」15の形が分かる、取り口辞典。</small><span class="btn btn-lime">3C LAB をひらく</span><span class="bl" aria-hidden="true"><i></i><i></i><i></i></span></a></section>`;
 /* banner on the carom page that leads to 3C NOTE (/pages/3c-note) */
 const NOTE_BANNER = `<section class="sec"><a class="note-bn" href="/pages/3c-note"><span class="tx"><span class="k">3C NOTE　無料・登録なし</span><b>普段の練習ゲームから自分の記録をつけてみませんか？</b><small>点数とイニングを入れるだけ。アベレージの伸びがグラフで見えます。</small></span><span class="bt"><span class="btn btn-lime">記録をはじめる</span><svg viewBox="0 0 200 116" aria-hidden="true"><rect width="200" height="116" rx="12" fill="#262A35"/><rect x="10" y="10" width="180" height="96" rx="4" fill="#1E5AA8"/><circle cx="10.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="10.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="32.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="32.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="55.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="55.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="77.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="77.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="100.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="100.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="122.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="122.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="145.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="145.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="167.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="167.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="190.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="190.0" cy="111" r="1.4" fill="#F3F4EF"/><polyline points="26,86 52,78 78,82 104,62 130,66 156,44 176,30" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.5"/><circle cx="26" cy="86" r="4.2" fill="#fff"/><circle cx="52" cy="78" r="4.2" fill="#fff"/><circle cx="78" cy="82" r="4.2" fill="#fff"/><circle cx="104" cy="62" r="4.2" fill="#fff"/><circle cx="130" cy="66" r="4.2" fill="#fff"/><circle cx="156" cy="44" r="5.4" fill="#F2C200"/><circle cx="176" cy="30" r="6.4" fill="#D7262E"/></svg></span></a></section>`;
 function discPage(key, handle) {
@@ -415,13 +415,17 @@ function contentPages() {
     const lv = page({ title: 'VIBES LIVE｜ビリヤードの試合ライブ配信', desc: 'VIBES BILLIARDS のライブ配信。スリークッションやポケットの試合を、スコアつきの映像で YouTube から配信します。', path: '/live', body });
     put('/live', lv);
   }
-  /* VIBES 3C LAB: beginners' page. data/3c-lab.json = pattern master (15) + shots (video clips by pattern) */
+  /* VIBES 3C LAB: beginners' page = a text dictionary of the 15 patterns (no video). data/3c-lab.json patterns; empty fields are left out */
   {
     const lab = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/3c-lab.json'), 'utf8'));
-    const names = new Set(lab.patterns.map((x) => x.jp));
-    const shots = (lab.shots || []).filter((x) => x && names.has(x.pattern_jp) && /^[\w-]{6,20}$/.test(String(x.video_id || '')) && x.end_sec > x.start_sec);
-    const data = JSON.stringify({ patterns: lab.patterns, shots }).replace(/</g, '\\u003c');
-    put('/pages/3c-lab', page({ title: 'VIBES 3C LAB｜スリークッションのはじめ方・取り口15の形', desc: 'スリークッションをこれから楽しみたい人へ。ルールと、表回し・裏回し・ヒネリなど「取り口」15の形を、やさしい言葉で紹介します。', path: '/pages/3c-lab', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-lab.html'), 'utf8').replace('__LAB__', () => data) }));
+    const nm = (v) => { const k = String(v || '').match(/^(.*?)（(.*)）$/); return k ? [k[1], k[2]] : [String(v || ''), '']; };
+    const P = lab.patterns.map((x, i) => ({ ...x, no: String(i + 1).padStart(2, '0'), nm: nm(x.pattern_jp) }));
+    const chips = P.map((x) => `<a href="#pat-${x.no}">${esc(x.nm[0])}</a>`).join('');
+    const row = (k, v, c) => (v ? `<div><dt>${k}</dt><dd${c ? ` class="${c}"` : ''}>${esc(v)}</dd></div>` : '');
+    const card = (x) => `<article class="l3-c" id="pat-${x.no}"><header><span class="n">${x.no} / ${P.length}</span><h3>${esc(x.nm[0])}${x.nm[1] ? `<small>${esc(x.nm[1])}</small>` : ''}</h3><p class="lg" style="margin:0">${x.pattern_en ? `<span lang="en">${esc(x.pattern_en)}</span>` : ''}${x.pattern_kr ? `<span lang="ko">${esc(x.pattern_kr)}</span>` : ''}</p></header><dl>${row('ひとこと定義', x.summary, 'sm')}${row('軌道（クッションの入り方）', x.cushion_route, 'rt')}${row('狙い方・実戦のポイント', x.key_point)}</dl></article>`;
+    const cats = [...new Set(P.map((x) => x.category))];
+    const cards = cats.map((c) => `<h3 class="l3-cat">${esc(c)}</h3><div class="l3-dic">${P.filter((x) => x.category === c).map(card).join('')}</div>`).join('');
+    put('/pages/3c-lab', page({ title: 'VIBES 3C LAB｜スリークッションのはじめ方・取り口辞典', desc: 'スリークッションをこれから楽しみたい人へ。表回し・裏回し・ヒネリなど「取り口」15の形を、ひとこと定義・軌道・狙い方で解説する辞典です。', path: '/pages/3c-lab', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-lab.html'), 'utf8').replace('__CHIPS__', () => chips).replace('__CARDS__', () => cards) }));
   }
   /* VIBES DIGITAL LAB: intro pages (screens only for now; the flow to start using it is published once decided) */
   {

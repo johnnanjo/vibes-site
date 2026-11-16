@@ -1,325 +1,156 @@
 {
- "_readme": "VIBES 3C LAB（/pages/3c-lab）。patterns＝取り口の分類マスター（15種。順番・名前・説明文は運営者指定。説明は2026-11-16に運営者の文面へ差し替え）。shots＝動画の解析結果（shot_id, video_id, start_sec, end_sec, pattern_jp, cushion_order, sub_tags, player_name, difficulty, is_vibes_original）。is_vibes_original:true は「VIBES LIVE 公式映像」バッジつきで上に並ぶ。pattern_jp は patterns の jp と同じ表記にする。",
+ "_readme": "VIBES 3C LAB（/pages/3c-lab）＝動画なしの「取り口」テキスト辞典（2026-11-16 に仕様変更。動画の紐付けは誤判定があるため廃止）。patterns＝15分類の解説（運営者指定の文面をそのまま。id / category / pattern_jp / pattern_en / pattern_kr / summary＝ひとこと定義 / cushion_route＝軌道 / key_point＝狙い方・実戦のポイント）。空の項目はページに出さない。PAT-15 は軌道とポイントが未着。PAT-09 の韓国語名は保留（pattern_kr_hold）。",
  "patterns": [
   {
-   "jp": "表回し",
-   "en": "Inside",
-   "kr": "앞돌리기",
-   "desc": "第1的球の「内側（短クッション側）」に当て、手球を大きく回して3クッション以上させる基本の取り口。",
-   "sub": "おもてまわし"
+   "id": "PAT-01",
+   "category": "基本の取り口",
+   "pattern_jp": "表回し（おもてまわし）",
+   "pattern_en": "Inside",
+   "pattern_kr": "앞돌리기（アプトリギ）",
+   "summary": "第1的球の内側（短クッション側）に当て、手球を大きく回して3クッション以上させる基本の取り口。",
+   "cushion_route": "短クッション → 長クッション → 長クッション（または長→短→長）",
+   "key_point": "第1的球の厚みを正確に捉え、順ヒネリを効かせて手球の伸びを出すのが基本。厚く当てすぎると長クッションに入りすぎて短くなるため、厚みと撞点のバランスが重要です。"
   },
   {
-   "jp": "裏回し",
-   "en": "Outside",
-   "kr": "뒤돌리기",
-   "desc": "第1的球の「外側（長クッション側）」に当て、表回しとは逆方向へ大きく回して3クッションさせる基本の取り口。",
-   "sub": "うらまわし"
+   "id": "PAT-02",
+   "category": "基本の取り口",
+   "pattern_jp": "裏回し（うらまわし）",
+   "pattern_en": "Outside / Reverse",
+   "pattern_kr": "뒤돌리기（ティトリギ）",
+   "summary": "第1的球の外側（長クッション側）に当て、表回しとは逆方向へ大きく回して3クッションさせる基本の取り口。",
+   "cushion_route": "長クッション → 短クッション → 長クッション",
+   "key_point": "ファイブ＆ハーフなどのシステム計算が最も使いやすい取り口。第1的球の後ろを通過する際のキッス（二度当たり）を厚みとスピードで回避するのが実戦の鍵です。"
   },
   {
-   "jp": "ヒネリ",
-   "en": "Cross table",
-   "kr": "횡단샷",
-   "desc": "横回転（ヒネリ）を効かせ、長クッション同士をジグザグに往復させて第2的球に合わせる取り口。",
-   "sub": "切り返し"
+   "id": "PAT-03",
+   "category": "基本の取り口",
+   "pattern_jp": "ヒネリ（切り返し）",
+   "pattern_en": "Cross table / Zig-zag",
+   "pattern_kr": "횡단샷（フェンダンショット）",
+   "summary": "横回転（順ヒネリ・逆ヒネリ）を効かせ、長クッション同士をジグザグに往復させて第2的球に合わせる取り口。",
+   "cushion_route": "長クッション → 反対側の長クッション → 長クッション",
+   "key_point": "逆ヒネリを使って3クッション目の反射角を殺す（立てる）技術や、順ヒネリで角度を広げるコントロールが求められます。配置が狭い場面で非常に有効です。"
   },
   {
-   "jp": "ダブル",
-   "en": "Double rail",
-   "kr": "더블레일",
-   "desc": "第1的球に当てた後、同じコーナー付近の2つのクッション（長→短、または短→長）に連続で入れてから対角線へ飛ばす取り口。",
-   "sub": ""
+   "id": "PAT-04",
+   "category": "基本の取り口",
+   "pattern_jp": "ダブル（ダブルクッション）",
+   "pattern_en": "Double rail / Two-rail",
+   "pattern_kr": "더블레일（ダブルレイル）",
+   "summary": "第1的球に当てた後、同じコーナー付近の2つのクッションに連続で入れてから対角線へ飛ばす取り口。",
+   "cushion_route": "長クッション → 隣接する短クッション → 対角線の長（または短）クッション",
+   "key_point": "1クッション目と2クッション目の入射角によって、3クッション目へ飛ぶラインが大きく変わります。やや強めのストロークと適切なヒネリでコーナーへ押し込むのがコツです。"
   },
   {
-   "jp": "たて",
-   "en": "Long-Short-Long",
-   "kr": "세워치기",
-   "desc": "台の縦方向（長クッションから反対側の長クッション、または短クッション）へ鋭角に飛ばす取り口。押し・引きの加減が鍵になります。",
-   "sub": "縦取り"
+   "id": "PAT-05",
+   "category": "基本の取り口",
+   "pattern_jp": "たて（縦取り）",
+   "pattern_en": "Long-Short-Long / Vertical",
+   "pattern_kr": "세워치기（セウォチギ）",
+   "summary": "台の縦方向（長クッションから反対側の長クッション、または短クッション）へ鋭角に飛ばす取り口。",
+   "cushion_route": "長クッション → 短クッション → 長クッション（縦の鋭角軌道）",
+   "key_point": "押し玉・引き玉の上下撞点の加減がシビアです。手球が長クッションから離れる角度（分離角）を正確にイメージし、キッスを避けるスピード調整が必要になります。"
   },
   {
-   "jp": "箱",
-   "en": "Box shot",
-   "kr": "제각돌리기",
-   "desc": "コーナー付近の3つのクッション（短→長→短、または長→短→長）を使い、四角い「箱」を描くようにコンパクトに回す取り口。",
-   "sub": "はこ"
+   "id": "PAT-06",
+   "category": "基本の取り口",
+   "pattern_jp": "箱（はこ）",
+   "pattern_en": "Box shot",
+   "pattern_kr": "제각돌리기（チェガクトリギ / ハコ）",
+   "summary": "コーナー付近の3つのクッションを使い、四角い「箱」を描くようにコンパクトに回す取り口。",
+   "cushion_route": "短クッション → 長クッション → 短クッション（または長→短→長）",
+   "key_point": "手球の勢いを殺しすぎず、かつ暴れさせないタッチの繊細さが求められます。第1的球に厚く当てて手球のスピードをコントロールする「殺し玉」の技術と相性が抜群です。"
   },
   {
-   "jp": "空クッション",
-   "en": "Kick shot",
-   "kr": "빈쿠션",
-   "desc": "第1的球に直接当てず、先に1〜3つのクッションに入れてから第1的球→第2的球と当てる取り口。",
-   "sub": "からクッション"
+   "id": "PAT-07",
+   "category": "クッション先行系",
+   "pattern_jp": "空クッション（からクッション）",
+   "pattern_en": "Kick shot",
+   "pattern_kr": "빈쿠션（ビンクッション）",
+   "summary": "第1的球に直接当てず、先に1〜3つのクッションに入れてから第1的球→第2的球と当てる取り口。",
+   "cushion_route": "1〜3クッション先行 → 第1的球 → 第2的球",
+   "key_point": "セーフティ（隠された配置）からの脱出や、ダイレクトに狙えない時の必須技術。ファイブ＆ハーフやプラスシステムなどの数値計算が直接活きる場面です。"
   },
   {
-   "jp": "バンク",
-   "en": "Bank shot",
-   "kr": "뱅크샷",
-   "desc": "第1的球に当てた後、クッションを3つ以上入れてから第2的球に当てる取り口（※プロツアーPBAルールでは空クッション3クッション以上からの得点を指します）。",
-   "sub": "バンクショット"
+   "id": "PAT-08",
+   "category": "クッション先行系",
+   "pattern_jp": "バンク（バンクショット）",
+   "pattern_en": "Bank shot",
+   "pattern_kr": "뱅크샷（バンクショット）",
+   "summary": "第1的球に当てた後、クッションを3つ以上入れてから第2的球に当てる取り口（PBAでは空クッション3クッション以上からの得点を指す）。",
+   "cushion_route": "第1的球 → クッション3つ以上 → 第2的球（または空3クッション→第1→第2）",
+   "key_point": "クッションの反発係数（台のコンディションやラシャの滑り具合）を読む力が問われます。プロツアーPBAでは2点加算となるため、現代スリークッションでは攻撃的な選択肢として多用されます。"
   },
   {
-   "jp": "テキ",
-   "en": "Ticky",
-   "kr": "짱꼴라",
-   "desc": "クッション際にある第1的球に当て、すぐ近くのクッションに1回入れてから再び的球付近を通過させて残りのクッションに入れる変則的な取り口。",
-   "sub": ""
+   "id": "PAT-09",
+   "category": "特殊・応用取り口",
+   "pattern_jp": "テキ（ティッキー）",
+   "pattern_en": "Ticky",
+   "pattern_kr": "",
+   "summary": "クッション際にある第1的球に当て、すぐ近くのクッションに1回入れてから再び的球付近を通過させて残りのクッションに入れる変則的な取り口。",
+   "cushion_route": "第1的球 → 近接クッション → 残り2クッション以上 → 第2的球",
+   "key_point": "クッションと第1的球のわずかな隙間（またはクッション際）に手球を割り込ませる特殊な軌道。厚みとヒネリが噛み合うと、通常のラインでは届かない配置を拾えます。",
+   "pattern_kr_hold": "짱꼴라（チャンコラ）"
   },
   {
-   "jp": "ナメ",
-   "en": "Thin cut",
-   "kr": "얇게치기",
-   "desc": "第1的球の極限まで薄い部分をかすめるように当て、手球の進行方向をほとんど変えずに3クッションさせる取り口。",
-   "sub": "薄切り"
+   "id": "PAT-10",
+   "category": "特殊・応用取り口",
+   "pattern_jp": "ナメ（薄切り）",
+   "pattern_en": "Thin cut / Feather shot",
+   "pattern_kr": "얇게치기（ヤルケチギ）",
+   "summary": "第1的球の極限まで薄い部分（1/8以下）をかすめるように当て、手球の進行方向をほとんど変えずに3クッションさせる取り口。",
+   "cushion_route": "第1的球（極薄） → 3クッション以上 → 第2的球",
+   "key_point": "キュー切れ（直進性）と正確なエイミングがすべて。厚く当たると即座にコースが外れるため、撞点をブレさせず真っ直ぐ振り抜く技術が不可欠です。"
   },
   {
-   "jp": "押し回し",
-   "en": "Follow shot",
-   "kr": "밀어치기",
-   "desc": "第1的球に厚く当て、強い上回転（押し）をかけて手球を前に押し出しながら3クッションさせる取り口。",
-   "sub": ""
+   "id": "PAT-11",
+   "category": "特殊・応用取り口",
+   "pattern_jp": "押し回し（フォロー）",
+   "pattern_en": "Follow shot",
+   "pattern_kr": "밀어치기（ミロチギ）",
+   "summary": "第1的球に厚く当て、強い上回転（押し）をかけて手球を前に押し出しながら3クッションさせる取り口。",
+   "cushion_route": "第1的球（厚め） → 前方へカーブしながら3クッション → 第2的球",
+   "key_point": "撞点の上部をしっかり捉え、フォロー回転が効き始めるタイミングを計算して狙います。通常の分離角よりも深く（奥へ）手球を送り込めるのが強みです。"
   },
   {
-   "jp": "引き回し",
-   "en": "Draw shot",
-   "kr": "끌어치기",
-   "desc": "第1的球に厚く当て、強い下回転（引き）をかけて手球を手前に戻してから3クッションさせる取り口。",
-   "sub": ""
+   "id": "PAT-12",
+   "category": "特殊・応用取り口",
+   "pattern_jp": "引き回し（ドロー）",
+   "pattern_en": "Draw shot",
+   "pattern_kr": "끌어치기（ックロチギ）",
+   "summary": "第1的球に厚く当て、強い下回転（引き）をかけて手球を手前に戻してから3クッションさせる取り口。",
+   "cushion_route": "第1的球（厚め） → 手前方向へ引き戻して3クッション → 第2的球",
+   "key_point": "撞点の下部を鋭く撞き抜き、手球に強烈なバックスピンを与えます。キューのレベル（水平度）を保ち、こじらずに撞き切ることが引きを効かせるポイントです。"
   },
   {
-   "jp": "カサ",
-   "en": "Umbrella shot",
-   "kr": "우산치기",
-   "desc": "頂点（クッションの特定のポイント）に向かって打ち出し、傘が開くようなV字に近い放物線を描いて戻ってくる取り口。",
-   "sub": "傘"
+   "id": "PAT-13",
+   "category": "特殊・応用取り口",
+   "pattern_jp": "カサ（傘）",
+   "pattern_en": "Umbrella shot",
+   "pattern_kr": "우산치기（ウサンチギ）",
+   "summary": "クッションの頂点付近に向かって打ち出し、傘が開くようなV字に近い放物線を描いて戻ってくる取り口。",
+   "cushion_route": "長クッション → 短クッション → 長クッション（V字軌道）",
+   "key_point": "順ヒネリと押し（または引き）の組み合わせにより、クッションに当たった後の急激な角度変化（折れ曲がり）を作り出します。"
   },
   {
-   "jp": "キスバック",
-   "en": "Kiss shot",
-   "kr": "키스샷",
-   "desc": "第1的球に当てた後、動いた第1的球と手球がもう一度ぶつかる（キッスする）反動を利用して軌道を変え、3クッションさせる高度な取り口。",
-   "sub": ""
+   "id": "PAT-14",
+   "category": "特殊・応用取り口",
+   "pattern_jp": "キスバック",
+   "pattern_en": "Kiss shot",
+   "pattern_kr": "키스샷（キスショット）",
+   "summary": "第1的球に当てた後、動いた第1的球と手球がもう一度ぶつかる（キッスする）反動を利用して軌道を変え、3クッションさせる高度な取り口。",
+   "cushion_route": "第1的球 → 再衝突（キッス） → 3クッション → 第2的球",
+   "key_point": "通常ならキッスして失敗する配置を、あえてキッスさせることで正解ルートへ軌道修正する高等戦術。第1的球の跳ね返り速度と位置の予測が求められます。"
   },
   {
-   "jp": "マッセ",
-   "en": "Massé",
-   "kr": "맛세이",
-   "desc": "キューを垂直近くまで立てて撞き、強烈なカーブをかけて障害物を避けながら3クッションさせる大技。",
-   "sub": ""
-  }
- ],
- "shots": [
-  {
-   "shot_id": "SHOT-0001",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 15,
-   "end_sec": 25,
-   "pattern_jp": "表回し",
-   "cushion_order": "短-長-短-長",
-   "sub_tags": [
-    "Frederic Caudron",
-    "4クッション",
-    "連続得点"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 3
-  },
-  {
-   "shot_id": "SHOT-0002",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 46,
-   "end_sec": 63,
-   "pattern_jp": "裏回し",
-   "cushion_order": "長-短-長",
-   "sub_tags": [
-    "Frederic Caudron",
-    "基本軌道"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 2
-  },
-  {
-   "shot_id": "SHOT-0003",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 77,
-   "end_sec": 89,
-   "pattern_jp": "箱",
-   "cushion_order": "短-長-短",
-   "sub_tags": [
-    "Frederic Caudron",
-    "コーナー処理"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 2
-  },
-  {
-   "shot_id": "SHOT-0004",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 111,
-   "end_sec": 125,
-   "pattern_jp": "裏回し",
-   "cushion_order": "長-短-長",
-   "sub_tags": [
-    "Frederic Caudron",
-    "押し回転"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 3
-  },
-  {
-   "shot_id": "SHOT-0005",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 140,
-   "end_sec": 150,
-   "pattern_jp": "箱",
-   "cushion_order": "短-長-短",
-   "sub_tags": [
-    "Frederic Caudron",
-    "コンパクト軌道"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 2
-  },
-  {
-   "shot_id": "SHOT-0006",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 359,
-   "end_sec": 370,
-   "pattern_jp": "ヒネリ",
-   "cushion_order": "長-長-長-短",
-   "sub_tags": [
-    "Frederic Caudron",
-    "切り返し",
-    "ジグザグ"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 4
-  },
-  {
-   "shot_id": "SHOT-0007",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 418,
-   "end_sec": 435,
-   "pattern_jp": "表回し",
-   "cushion_order": "長-短-長-短",
-   "sub_tags": [
-    "Frederic Caudron",
-    "4クッション"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 3
-  },
-  {
-   "shot_id": "SHOT-0008",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 491,
-   "end_sec": 507,
-   "pattern_jp": "裏回し",
-   "cushion_order": "長-短-長-短-長",
-   "sub_tags": [
-    "Frederic Caudron",
-    "5クッション",
-    "ロングラン"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 4
-  },
-  {
-   "shot_id": "SHOT-0009",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 639,
-   "end_sec": 652,
-   "pattern_jp": "裏回し",
-   "cushion_order": "長-短-長-短-長",
-   "sub_tags": [
-    "Frederic Caudron",
-    "5クッション"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 4
-  },
-  {
-   "shot_id": "SHOT-0010",
-   "video_id": "rhmeFnGZVZU",
-   "start_sec": 739,
-   "end_sec": 753,
-   "pattern_jp": "表回し",
-   "cushion_order": "長-短-長-短",
-   "sub_tags": [
-    "Frederic Caudron",
-    "連続25点ラン"
-   ],
-   "player_name": "Frederic Caudron",
-   "difficulty": 3
-  },
-  {
-   "shot_id": "SHOT-0011",
-   "video_id": "dERfFVzhuzk",
-   "start_sec": 30,
-   "end_sec": 40,
-   "pattern_jp": "表回し",
-   "cushion_order": "短-長-短",
-   "sub_tags": [
-    "Torbjorn Blomdahl",
-    "薄切り"
-   ],
-   "player_name": "Torbjorn Blomdahl",
-   "difficulty": 3
-  },
-  {
-   "shot_id": "SHOT-0012",
-   "video_id": "dERfFVzhuzk",
-   "start_sec": 57,
-   "end_sec": 69,
-   "pattern_jp": "裏回し",
-   "cushion_order": "長-短-長",
-   "sub_tags": [
-    "Torbjorn Blomdahl",
-    "順ヒネリ"
-   ],
-   "player_name": "Torbjorn Blomdahl",
-   "difficulty": 3
-  },
-  {
-   "shot_id": "SHOT-0013",
-   "video_id": "dERfFVzhuzk",
-   "start_sec": 190,
-   "end_sec": 199,
-   "pattern_jp": "箱",
-   "cushion_order": "短-長-短",
-   "sub_tags": [
-    "Torbjorn Blomdahl",
-    "精度重視"
-   ],
-   "player_name": "Torbjorn Blomdahl",
-   "difficulty": 3
-  },
-  {
-   "shot_id": "SHOT-0014",
-   "video_id": "dERfFVzhuzk",
-   "start_sec": 239,
-   "end_sec": 249,
-   "pattern_jp": "空クッション",
-   "cushion_order": "短-長-短",
-   "sub_tags": [
-    "Torbjorn Blomdahl",
-    "3クッション空クッション"
-   ],
-   "player_name": "Torbjorn Blomdahl",
-   "difficulty": 4
-  },
-  {
-   "shot_id": "SHOT-0015",
-   "video_id": "dERfFVzhuzk",
-   "start_sec": 262,
-   "end_sec": 272,
-   "pattern_jp": "表回し",
-   "cushion_order": "長-短-長-短",
-   "sub_tags": [
-    "Torbjorn Blomdahl",
-    "4クッション"
-   ],
-   "player_name": "Torbjorn Blomdahl",
-   "difficulty": 3
+   "id": "PAT-15",
+   "category": "特殊・応用取り口",
+   "pattern_jp": "マッセ",
+   "pattern_en": "Massé",
+   "pattern_kr": "맛세이",
+   "summary": "キューを垂直近くまで立てて撞き、強烈なカーブをかけて障害物を避けながら3クッションさせる大技。",
+   "cushion_route": "",
+   "key_point": ""
   }
  ]
 }
