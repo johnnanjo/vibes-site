@@ -349,7 +349,15 @@ ${key === 'heyball' ? '<section class="sec"><a class="tile" href="/pages/heyball
 const stripTxt = (h) => String(h || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim();
 
 /* ================= PORTED CONTENT PAGES ================= */
-function port(file, { upcomingHtml = '', snippets = {}, orange } = {}) {
+/* shaft page (ported from the old theme): the site's own .hero/.card/.badge rules must not reach inside it, and the old orange accent becomes lime (as a background, with night-colour text) */
+const SHAFT_FIX = `.sx .hero{display:block;gap:0}.sx .card{box-shadow:none}.sx .card.paper{box-shadow:inset 0 0 0 1px var(--line)}.sx .badge{font-size:inherit;white-space:normal}
+.sx .card.acc,.sx .pill.acc,.sx .btn.acc,.sx .badge,.sx details[open] summary::after,.sx .mtl .pr.ask,.sx .opts a:hover .arr{color:#171A22}
+.sx .card.acc .sm,.sx .card.acc .micro,.sx .card.acc .idx{color:#171A22}
+.sx .ast,.sx .ast.on-dark{color:#fff}.sx .flow .s{color:inherit}
+.sx .cmp td.me::before{background:#171A22}.sx .cmpfig .lg .b::before{background:#1E5AA8}
+.sx .cmpfig svg [stroke="#C0FC09"]{stroke:#1E5AA8}.sx .cmpfig svg [fill="#C0FC09"]{fill:#1E5AA8}
+.sx img,.sx svg{max-width:100%}.sx .w>*,.sx section>*{min-width:0}`;
+function port(file, { upcomingHtml = '', snippets = {}, orange, css = '' } = {}) {
   let h = fs.readFileSync(path.join(THEME, file), 'utf8');
   if (orange) h = h.replace(/#FA4E02/gi, orange);
   h = h.replace(/\{%-?\s*schema\s*-?%\}[\s\S]*?\{%-?\s*endschema\s*-?%\}/g, '')
@@ -364,7 +372,7 @@ function port(file, { upcomingHtml = '', snippets = {}, orange } = {}) {
   h = fixHtml(h).replace(/Shopifyのカートは使いません。/g, '').replace(/#C6FF1F/gi, '#C0FC09').replace(/#0A0A09/gi, '#171A22');
   const left = h.match(/\{[{%][^}]*[}%]\}/g);
   if (left) console.warn('Liquid left in', file, left.slice(0, 3));
-  return h;
+  return h + (css ? `<style>${css}</style>` : '');
 }
 function contentPages() {
   const hbUp = upcoming.filter((t) => t.disc === 'heyball' && t.d >= today);
@@ -375,7 +383,7 @@ function contentPages() {
   legacyPage('/pages/jpa', 'sections/vibes-jpa.liquid', 'JPA（プールリーグ）とは？', stripTxt(pages.jpa?.body).slice(0, 150), '', { upcomingHtml: list(jpaUp) });
   legacyPage('/pages/app', 'sections/vibes-app.liquid', 'VIBESアプリ', 'VIBESはスマホのホーム画面に置いて使える無料アプリです。', '');
   legacyPage('/pages/wear', 'sections/vibes-wear-page.liquid', 'Wear Vibes（オフィシャルTシャツ）', stripTxt(pages.wear?.body).slice(0, 150), '', { snippets: { 'vibes-wear': fs.readFileSync(path.join(THEME, 'snippets/vibes-wear.liquid'), 'utf8') } });
-  legacyPage('/pages/shaft', 'sections/vibes-shaft-page.liquid', 'Vibes Carbon Shaft｜パターンオーダーのカーボンシャフト', stripTxt(pages.shaft?.body).slice(0, 150), '', { snippets: { 'vibes-gallery': '' }, orange: '#171A22' });
+  legacyPage('/pages/shaft', 'sections/vibes-shaft-page.liquid', 'Vibes Carbon Shaft｜パターンオーダーのカーボンシャフト', stripTxt(pages.shaft?.body).slice(0, 150), '', { snippets: { 'vibes-gallery': '' }, orange: '#C0FC09', css: SHAFT_FIX });
 
   // standalone apps (own full-screen layout)
   const lt = fs.readFileSync(path.join(THEME, 'templates/page.live-table.liquid'), 'utf8')
