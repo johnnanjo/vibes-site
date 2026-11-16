@@ -2,13 +2,6 @@
  "_readme": "DIGITAL LAB の利用コード。h＝コードの PBKDF2-SHA256（salt vibes-digital-lab-v1・150000回）。コードそのものは置かない。発行は node scripts/lab-code.mjs。止めるときは on を false に。",
  "codes": [
   {
-   "h": "af0e04c4034854e282e3de09de78553abd72091daf92d61693e833be51871eee",
-   "shop": "ビリヤード・WIND",
-   "ed": "carom",
-   "on": true,
-   "issued": "2026-11-16"
-  },
-  {
    "h": "1b50e42b04e15bacec571a1bfaaeed91f2594313a89229fb5beed6698581941f",
    "shop": "VIBES 運営用",
    "ed": "all",

@@ -1,12 +1,16 @@
 /* DIGITAL LAB 利用コード（build.mjs が count-home / count-3c / count-pocket / count-tour の <head> に差し込む）。
    公式LINEで申し込んだお店に12けたのコードを発行し、最初の1回だけ入力してもらう。照合は /data/lab-codes.json（コードそのものは置かず、PBKDF2 の値だけ）。
-   この仕組みを入れる前から使っていた端末（WIND など）は、初回にそのまま利用可にする。発行は scripts/lab-code.mjs。 */
+   この仕組みを入れる前から使っていた端末は、初回にそのまま利用可にする。モニター店（WIND）はコード不要：?monitor=wind で開いた端末は以後ずっと利用可。発行は scripts/lab-code.mjs。 */
 (function () {
   'use strict';
   var K = 'vibes-lab-lic', G = 'vibes-lab-gate', SALT = 'vibes-digital-lab-v1', IT = 150000, N = 12;
+  var MONITOR = ['wind'];
   function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   var lic = null; try { lic = JSON.parse(get(K) || 'null'); } catch (e) {}
+  /* monitor shops (WIND) need no code: opening the scoreboard once with ?monitor=wind marks the device for good */
+  var mon = (/[?&]monitor=([a-z0-9-]+)/.exec(location.search) || [])[1];
+  if (!lic && mon && MONITOR.indexOf(mon) >= 0) { lic = { monitor: mon, at: Date.now() }; set(K, JSON.stringify(lic)); set(G, '1'); }
   if (!lic && !get(G)) {
     if (['vibes-count-prefs', 'vibes-count-3c-v1', 'vibes-count-3c-players-v2', 'vibes-count-last', 'vibes-lab-ed'].some(function (k) { return get(k) != null; })) { lic = { legacy: 1, at: Date.now() }; set(K, JSON.stringify(lic)); }
     set(G, '1');
