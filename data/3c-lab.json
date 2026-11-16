@@ -107,5 +107,219 @@
    "sub": ""
   }
  ],
- "shots": []
+ "shots": [
+  {
+   "shot_id": "SHOT-0001",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 15,
+   "end_sec": 25,
+   "pattern_jp": "表回し",
+   "cushion_order": "短-長-短-長",
+   "sub_tags": [
+    "Frederic Caudron",
+    "4クッション",
+    "連続得点"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 3
+  },
+  {
+   "shot_id": "SHOT-0002",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 46,
+   "end_sec": 63,
+   "pattern_jp": "裏回し",
+   "cushion_order": "長-短-長",
+   "sub_tags": [
+    "Frederic Caudron",
+    "基本軌道"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 2
+  },
+  {
+   "shot_id": "SHOT-0003",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 77,
+   "end_sec": 89,
+   "pattern_jp": "箱",
+   "cushion_order": "短-長-短",
+   "sub_tags": [
+    "Frederic Caudron",
+    "コーナー処理"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 2
+  },
+  {
+   "shot_id": "SHOT-0004",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 111,
+   "end_sec": 125,
+   "pattern_jp": "裏回し",
+   "cushion_order": "長-短-長",
+   "sub_tags": [
+    "Frederic Caudron",
+    "押し回転"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 3
+  },
+  {
+   "shot_id": "SHOT-0005",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 140,
+   "end_sec": 150,
+   "pattern_jp": "箱",
+   "cushion_order": "短-長-短",
+   "sub_tags": [
+    "Frederic Caudron",
+    "コンパクト軌道"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 2
+  },
+  {
+   "shot_id": "SHOT-0006",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 359,
+   "end_sec": 370,
+   "pattern_jp": "ヒネリ",
+   "cushion_order": "長-長-長-短",
+   "sub_tags": [
+    "Frederic Caudron",
+    "切り返し",
+    "ジグザグ"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 4
+  },
+  {
+   "shot_id": "SHOT-0007",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 418,
+   "end_sec": 435,
+   "pattern_jp": "表回し",
+   "cushion_order": "長-短-長-短",
+   "sub_tags": [
+    "Frederic Caudron",
+    "4クッション"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 3
+  },
+  {
+   "shot_id": "SHOT-0008",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 491,
+   "end_sec": 507,
+   "pattern_jp": "裏回し",
+   "cushion_order": "長-短-長-短-長",
+   "sub_tags": [
+    "Frederic Caudron",
+    "5クッション",
+    "ロングラン"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 4
+  },
+  {
+   "shot_id": "SHOT-0009",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 639,
+   "end_sec": 652,
+   "pattern_jp": "裏回し",
+   "cushion_order": "長-短-長-短-長",
+   "sub_tags": [
+    "Frederic Caudron",
+    "5クッション"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 4
+  },
+  {
+   "shot_id": "SHOT-0010",
+   "video_id": "rhmeFnGZVZU",
+   "start_sec": 739,
+   "end_sec": 753,
+   "pattern_jp": "表回し",
+   "cushion_order": "長-短-長-短",
+   "sub_tags": [
+    "Frederic Caudron",
+    "連続25点ラン"
+   ],
+   "player_name": "Frederic Caudron",
+   "difficulty": 3
+  },
+  {
+   "shot_id": "SHOT-0011",
+   "video_id": "dERfFVzhuzk",
+   "start_sec": 30,
+   "end_sec": 40,
+   "pattern_jp": "表回し",
+   "cushion_order": "短-長-短",
+   "sub_tags": [
+    "Torbjorn Blomdahl",
+    "薄切り"
+   ],
+   "player_name": "Torbjorn Blomdahl",
+   "difficulty": 3
+  },
+  {
+   "shot_id": "SHOT-0012",
+   "video_id": "dERfFVzhuzk",
+   "start_sec": 57,
+   "end_sec": 69,
+   "pattern_jp": "裏回し",
+   "cushion_order": "長-短-長",
+   "sub_tags": [
+    "Torbjorn Blomdahl",
+    "順ヒネリ"
+   ],
+   "player_name": "Torbjorn Blomdahl",
+   "difficulty": 3
+  },
+  {
+   "shot_id": "SHOT-0013",
+   "video_id": "dERfFVzhuzk",
+   "start_sec": 190,
+   "end_sec": 199,
+   "pattern_jp": "箱",
+   "cushion_order": "短-長-短",
+   "sub_tags": [
+    "Torbjorn Blomdahl",
+    "精度重視"
+   ],
+   "player_name": "Torbjorn Blomdahl",
+   "difficulty": 3
+  },
+  {
+   "shot_id": "SHOT-0014",
+   "video_id": "dERfFVzhuzk",
+   "start_sec": 239,
+   "end_sec": 249,
+   "pattern_jp": "空クッション",
+   "cushion_order": "短-長-短",
+   "sub_tags": [
+    "Torbjorn Blomdahl",
+    "3クッション空クッション"
+   ],
+   "player_name": "Torbjorn Blomdahl",
+   "difficulty": 4
+  },
+  {
+   "shot_id": "SHOT-0015",
+   "video_id": "dERfFVzhuzk",
+   "start_sec": 262,
+   "end_sec": 272,
+   "pattern_jp": "表回し",
+   "cushion_order": "長-短-長-短",
+   "sub_tags": [
+    "Torbjorn Blomdahl",
+    "4クッション"
+   ],
+   "player_name": "Torbjorn Blomdahl",
+   "difficulty": 3
+  }
+ ]
 }
