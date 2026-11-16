@@ -431,7 +431,8 @@ function contentPages() {
     const P = lab.patterns.map((x, i) => ({ ...x, no: String(i + 1).padStart(2, '0'), nm: nm(x.pattern_jp) }));
     const chips = P.map((x) => `<a href="#pat-${x.no}">${esc(x.nm[0])}</a>`).join('');
     const row = (k, v, c) => (v ? `<div><dt>${k}</dt><dd${c ? ` class="${c}"` : ''}>${esc(v)}</dd></div>` : '');
-    const card = (x) => `<article class="l3-c" id="pat-${x.no}"><header><span class="n">${x.no} / ${P.length}</span><h3>${esc(x.nm[0])}${x.nm[1] ? `<small>${esc(x.nm[1])}</small>` : ''}</h3><p class="lg" style="margin:0">${x.pattern_en ? `<span lang="en">${esc(x.pattern_en)}</span>` : ''}${x.pattern_kr ? `<span lang="ko">${esc(x.pattern_kr)}</span>` : ''}</p></header><dl>${row('ひとこと定義', x.summary, 'sm')}${fig(x)}${row('軌道（クッションの入り方）', x.cushion_route, 'rt')}${row('狙い方・実戦のポイント', x.key_point)}</dl></article>`;
+    const card = (x) => `<article class="l3-c" id="pat-${x.no}"><header><span class="n">${x.no} / ${P.length}</span><h3>${esc(x.nm[0])}${x.nm[1] ? `<small>${esc(x.nm[1])}</small>` : ''}</h3><p class="lg" style="margin:0">${x.pattern_en ? `<span lang="en">${esc(x.pattern_en)}</span>` : ''}${x.pattern_kr ? `<span lang="ko">${esc(x.pattern_kr)}</span>` : ''}</p></header><dl>${row('ひとこと定義', x.summary, 'sm')}${LAB_FIG ? fig(x) : ''}${row('軌道（クッションの入り方）', x.cushion_route, 'rt')}${row('狙い方・実戦のポイント', x.key_point)}</dl></article>`;
+    const LAB_FIG = false; /* 軌道図は運営者の指示で取り下げ中（2026-11-16「取り口と図が違う」）。正しい図ができたら true に */
     const fig = (x) => { const g = labSvg(x.id, esc(x.nm[0] + 'の軌道図。' + (x.cushion_route || ''))); return g ? `<div class="fg">${g}</div>` : ''; };
     const cats = [...new Set(P.map((x) => x.category))];
     const cards = cats.map((c) => `<h3 class="l3-cat">${esc(c)}</h3><div class="l3-dic">${P.filter((x) => x.category === c).map(card).join('')}</div>`).join('');
