@@ -265,6 +265,13 @@ main{display:block;padding-bottom:110px}
 .dl-two b{font-size:19px;font-weight:900;line-height:1.45}
 .dl-two small{font-size:13.5px;font-weight:700;color:var(--sub);line-height:1.8}
 @media(min-width:900px){.dl-two{grid-template-columns:1fr 1fr}}
+.dl-flow{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.dl-flow li{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:15px 16px}
+.dl-flow i{flex:none;width:40px;height:40px;border-radius:50%;background:var(--night);color:var(--chalk);font:400 20px/1 var(--disp);font-style:normal;display:grid;place-items:center}
+.dl-flow span{display:flex;flex-direction:column;gap:3px;min-width:0}
+.dl-flow b{font-size:16.5px;font-weight:900;line-height:1.45}
+.dl-flow small{font-size:13.5px;font-weight:700;line-height:1.75;color:var(--sub)}
+@media(min-width:900px){.dl-flow{grid-template-columns:1fr 1fr}}
 /* VIBES 3C LAB banner */
 .lab-bn{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:20px 18px 20px;border-radius:26px;background:var(--felt-carom);color:#fff;text-decoration:none;box-shadow:0 10px 26px rgba(23,26,34,.18)}
 .lab-bn .k{font-size:12px;font-weight:900;line-height:1;padding:7px 11px;border-radius:999px;background:var(--chalk);color:var(--night)}

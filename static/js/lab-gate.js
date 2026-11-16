@@ -7,6 +7,8 @@
   var MONITOR = ['wind'];
   function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  /* on vibesdigilabo.com the server already checks the shop's login and sets window.LABO; no code there */
+  if (window.LABO && window.LABO.id) return;
   var lic = null; try { lic = JSON.parse(get(K) || 'null'); } catch (e) {}
   /* monitor shops (WIND) need no code: opening the scoreboard once with ?monitor=wind marks the device for good */
   var mon = (/[?&]monitor=([a-z0-9-]+)/.exec(location.search) || [])[1];
