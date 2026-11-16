@@ -16,6 +16,7 @@
   - 記事：Make「VIBES Shopify記事 → 新サイト同期」が2時間ごとに `sync-*.json` を追加。掲載フォームは `ht-*`/`form-*` を直接追加
   - 大会・店：Shopifyに書き込む予約タスクが、最後に変更分を `sync-*.json` で追加。`status:"DRAFT"` は運営者が外した大会として非表示（終了14日以上後のDRAFTは結果の履歴として表示）
 - `data/3c-lab.json` VIBES 3C LAB（`/pages/3c-lab`）の取り口15分類と動画（`shots`：video_id・start_sec・end_sec・pattern_jp ほか。足すと取り口ごとの動画一覧に出る）
+- `data/lab-codes.json` DIGITAL LAB の利用コード（お店ごと・12けた）。コードそのものは置かず PBKDF2 の値だけ。発行は `node scripts/lab-code.mjs "店名"`（出たコードは公式LINEでお店へ。リポジトリに書かない）、停止は `on:false`。入力画面は `static/js/lab-gate.js`（ビルド時に count-home / count-3c / count-pocket / count-tour の head へ差し込み。導入前から使っていた端末は初回に自動で利用可）
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック。`youtubeLive` に YouTube チャンネルのURLを入れると `/live`（VIBES LIVE の入口）のボタンが有効になる（空なら「準備中」）。`homeWinners` が true のときだけ、トップに「◯月の優勝者」を出す（2026-11-16 から一時的に閉鎖中＝false）
 
 ## URL

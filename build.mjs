@@ -397,12 +397,15 @@ function contentPages() {
   KB.forEach(([p, g, t, d]) => put('/pages/' + p, { raw: kbSrc.replace('__GAME__', g).replace('__TITLE__', t).replace('__DESC__', d).replace('__PATH__', p) }));
   const kbCards = `<section id="brain" style="margin-top:22px;padding:46px clamp(16px,4vw,40px) 42px;background:#1F2C38;color:#FFF8EA"><div style="max-width:1000px;margin:0 auto"><h2 class="st" style="--hd:#FFF8EA;--hs:#F2B43A">Brain</h2><p style="margin:0 0 20px;text-align:center;font:700 15px/1.8 var(--body)">のうトレ ゲーム ─ あたまを つかって あそぼう。あそんだら、おうちの人と ほんものの ビリヤードへ！</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">${KB.map(([p, g, t, d, k, j]) => `<a href="/pages/${p}" style="display:block;background:#FFF8EA;color:#1F2C38;border-radius:18px;padding:16px 16px 14px;text-decoration:none;border:3px solid #F2B43A"><span style="display:inline-block;font:700 12px var(--body);background:#F2B43A;border-radius:999px;padding:3px 10px">${k}</span><b style="display:block;font:400 22px/1.35 var(--pop);margin:8px 0 4px">${t}</b><span style="display:block;font:700 13px/1.6 var(--body)">${j}</span></a>`).join('')}</div></div></section>`;
   put('/pages/kids', { raw: fixHtml(kids).replace('</body>', `<script>(function(){var h=${JSON.stringify(kbCards)},n=0,t=setInterval(function(){var g=document.getElementById('game');if(g||++n>40){clearInterval(t);if(document.getElementById('brain'))return;if(g)g.insertAdjacentHTML('beforebegin',h);else document.getElementById('kids-root').insertAdjacentHTML('beforeend',h);if(location.hash==='#brain'){var b=document.getElementById('brain');if(b)b.scrollIntoView();}}},100);})();</script></body>`) });
-  put('/pages/count-3c', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-3c.html'), 'utf8') });
+  /* DIGITAL LAB 利用コード: the gate script goes into the <head> of the scoreboard pages (not the phone remote) */
+  const gateSrc = fs.readFileSync(path.join(ROOT, 'static/js/lab-gate.js'), 'utf8');
+  const gated = (f) => { const h = fs.readFileSync(path.join(ROOT, 'static/apps/' + f), 'utf8'); if (!h.includes('<head>')) throw new Error('no <head> in ' + f); return h.replace('<head>', () => '<head><script>' + gateSrc + '</script>'); };
+  put('/pages/count-3c', { raw: gated('count-3c.html') });
   /* guide page is unpublished for now (static/apps/count-3c-guide.html). Re-add put('/pages/count-3c-guide', …) to publish. */
-  put('/pages/count', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-home.html'), 'utf8') });
-  put('/pages/count-pocket', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-pocket.html'), 'utf8') });
+  put('/pages/count', { raw: gated('count-home.html') });
+  put('/pages/count-pocket', { raw: gated('count-pocket.html') });
   put('/pages/count-remote', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-remote.html'), 'utf8') });
-  put('/pages/count-tour', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-tour.html'), 'utf8') });
+  put('/pages/count-tour', { raw: gated('count-tour.html') });
   /* VIBES LIVE: the address told to people (/live). data/config.json "youtubeLive" = channel URL; empty = 準備中 */
   {
     let yt = ''; try { yt = String(JSON.parse(fs.readFileSync(path.join(ROOT, 'data/config.json'), 'utf8')).youtubeLive || ''); } catch {}
@@ -524,6 +527,8 @@ function feeds() {
   const tf = upcoming.map((t) => ({ d: t.d, e: t.end, p: t.pref, c: t.cat, g: t.games, h: t.handle }));
   fs.mkdirSync(path.join(DIST, 'data'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'data/tfeed.json'), JSON.stringify(tf));
+  /* usage codes for DIGITAL LAB: only the derived values go out, never names */
+  fs.writeFileSync(path.join(DIST, 'data/lab-codes.json'), JSON.stringify({ codes: (JSON.parse(fs.readFileSync(path.join(ROOT, 'data/lab-codes.json'), 'utf8')).codes || []).map((c) => ({ h: c.h, on: c.on !== false })) }));
   const nearItems = shops.map((s) => ({ h: s.handle, n: s.name, a: s.address || (s.prefecture || '') + (s.city || ''), p: s.prefecture || '', c: s.city || '', st: s.station || '', tel: s.phone || '', hr: s.hours || '', tb: s.tables.join('・'), u: s.url, lat: s.lat || '', lng: s.lng || '', exact: !!s.address }));
   fs.writeFileSync(path.join(DIST, 'data/near.json'), JSON.stringify({ next: false, nu: null, items: nearItems }));
   fs.writeFileSync(path.join(DIST, 'manifest.webmanifest'), JSON.stringify({ name: 'VIBES BILLIARDS', short_name: 'VIBES', start_url: '/?source=app', display: 'standalone', background_color: '#171A22', theme_color: '#171A22', icons: [{ src: '/img/icon-180.png', sizes: '180x180', type: 'image/png' }, { src: '/img/icon-512.png', sizes: '512x512', type: 'image/png' }, { src: '/img/icon-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }] }));
