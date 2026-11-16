@@ -15,22 +15,39 @@
 .l3-rule i{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:400 20px/1 var(--disp);font-style:normal;background:radial-gradient(circle at 34% 30%,#fff 0 9%,var(--c) 30%);box-shadow:inset -4px -5px 0 rgba(0,0,0,.13);color:var(--night)}
 .l3-rule b{display:block;font-size:16.5px;font-weight:900;line-height:1.45}
 .l3-rule span{display:block;font-size:13.5px;font-weight:700;line-height:1.7;color:var(--sub);margin-top:2px}
-.l3-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.l3-c{appearance:none;text-align:left;font-family:var(--jp);cursor:pointer;background:#fff;color:var(--night);border:1.5px solid var(--line);border-radius:20px;padding:13px 13px 12px;display:flex;flex-direction:column;gap:4px;min-width:0;position:relative}
-.l3-c[aria-pressed=true]{background:var(--night);color:var(--chalk);border-color:var(--night)}
-.l3-c .n{font:400 15px/1 var(--disp);color:var(--sub)}
-.l3-c[aria-pressed=true] .n,.l3-c[aria-pressed=true] small,.l3-c[aria-pressed=true] p{color:var(--sub-d)}
-.l3-c b{font-size:21px;font-weight:900;line-height:1.3}
-.l3-c small{font-size:11.5px;font-weight:700;line-height:1.4;color:var(--sub)}
-.l3-c p{margin:4px 0 0;font-size:12.5px;font-weight:700;line-height:1.6;color:var(--sub)}
-.l3-c .ct{position:absolute;top:11px;right:11px;font-size:11px;font-weight:900;line-height:1;padding:5px 8px;border-radius:999px;background:var(--lime);color:var(--night)}
-.l3-c:focus-visible,.l3 a:focus-visible,.l3 button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.l3-stick{position:sticky;top:0;z-index:16;background:var(--chalk);margin:0 -16px;padding:8px 0 8px}
+.l3-chips{display:flex;gap:7px;overflow-x:auto;padding:2px 16px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.l3-chips::-webkit-scrollbar{display:none}
+.l3-chips button{flex:none;appearance:none;border:1.5px solid var(--night);background:#fff;color:var(--night);font:900 14.5px/1 var(--jp);padding:12px 15px;border-radius:999px;cursor:pointer;white-space:nowrap;min-height:44px}
+.l3-chips button[aria-pressed=true]{background:var(--night);color:var(--chalk)}
+.l3-chips button small{font:900 11px/1 var(--jp);margin-left:6px;padding:3px 6px;border-radius:999px;background:var(--lime);color:var(--night)}
+.l3-chips button:focus-visible,.l3 a:focus-visible,.l3 button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.l3-pl{margin:0 16px 8px;background:var(--night);border-radius:16px;overflow:hidden}
+.l3-pl .fr{aspect-ratio:16/9;background:#000;max-height:46vh;width:100%}
+.l3-pl .fr iframe,.l3-pl .fr>div{display:block;width:100%;height:100%;border:0}
+.l3-pl .fb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;height:100%;padding:14px;text-align:center;color:var(--chalk);font-size:14px;font-weight:700;line-height:1.7}
+.l3-pl .fb a{background:var(--chalk);color:var(--night);font-weight:900;text-decoration:none;padding:11px 16px;border-radius:999px}
+.l3-pl .pb{display:flex;align-items:center;gap:8px;padding:8px 10px 9px 14px;color:var(--chalk)}
+.l3-pl .pb b{flex:1;min-width:0;font-size:13.5px;font-weight:900;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.l3-pl .pb button{flex:none;appearance:none;border:0;background:var(--night2);color:var(--chalk);font:900 12.5px/1 var(--jp);padding:10px 12px;border-radius:999px;cursor:pointer;min-height:40px}
+.l3-pl .pb #l3-nx{background:var(--lime);color:var(--night)}
+.l3-in{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:5px}
+.l3-in .n{font:400 15px/1 var(--disp);color:var(--sub)}
+.l3-in b{font-size:26px;font-weight:900;line-height:1.3}
+.l3-in b small{font-size:13px;font-weight:700;color:var(--sub);margin-left:8px}
+.l3-in .lg{font-size:12.5px;font-weight:700;color:var(--sub);line-height:1.5}
+.l3-in p{margin:4px 0 0;font-size:14.5px;font-weight:700;line-height:1.85}
+.l3-all{display:grid;gap:8px}
+.l3-all button{appearance:none;text-align:left;font-family:var(--jp);cursor:pointer;background:#fff;color:var(--night);border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center}
+.l3-all button .n{font:400 15px/1 var(--disp);color:var(--sub)}
+.l3-all button b{font-size:16.5px;font-weight:900;line-height:1.3}
+.l3-all button small{font-size:11.5px;font-weight:700;color:var(--sub)}
 .l3-dark{background:var(--night);color:var(--chalk);border-radius:26px;padding:20px 18px;display:flex;flex-direction:column;gap:12px}
 .l3-dark h3{margin:0;font-size:20px;font-weight:900;line-height:1.4}
 .l3-dark p{margin:0;font-size:14px;font-weight:700;line-height:1.75;color:var(--sub-d)}
 .l3-sh{display:grid;gap:12px}
 .l3-s{background:#fff;border:1.5px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
-.l3-s .pl{appearance:none;border:0;cursor:pointer;display:block;width:100%;aspect-ratio:16/9;background:var(--blue);color:#fff;position:relative;padding:0}
+.l3-s{position:relative}.l3-s.cur{border-color:var(--night);box-shadow:0 0 0 2px var(--night)}.l3-s .pl{appearance:none;border:0;cursor:pointer;display:block;width:100%;aspect-ratio:16/5;background:var(--blue);color:#fff;position:relative;padding:0}.l3-s .of{position:absolute;left:10px;top:10px;z-index:1;font-size:11px;font-weight:900;line-height:1;padding:6px 9px;border-radius:999px;background:var(--lime);color:var(--night)}
 .l3-s .pl span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--lime);color:var(--night);font:900 15px/1 var(--jp);padding:14px 20px;border-radius:999px;white-space:nowrap}
 .l3-s iframe{display:block;width:100%;aspect-ratio:16/9;border:0}
 .l3-s .mt{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px}
@@ -42,7 +59,7 @@
 .l3-next a{display:flex;flex-direction:column;gap:3px;background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:15px 16px;text-decoration:none;color:var(--night)}
 .l3-next a b{font-size:17px;font-weight:900;line-height:1.4}
 .l3-next a small{font-size:13px;font-weight:700;color:var(--sub);line-height:1.6}
-@media(min-width:760px){.l3-g{grid-template-columns:repeat(3,minmax(0,1fr))}.l3-rule,.l3-next{grid-template-columns:repeat(3,minmax(0,1fr))}.l3-sh{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:760px){.l3-rule,.l3-next{grid-template-columns:repeat(3,minmax(0,1fr))}.l3-sh{grid-template-columns:repeat(2,minmax(0,1fr))}.l3-all{grid-template-columns:repeat(2,minmax(0,1fr))}.l3-pl{max-width:640px;margin-left:auto;margin-right:auto}.l3-stick{margin:0}.l3-chips{padding-left:0;padding-right:0;flex-wrap:wrap}}
 </style>
 <div class="l3">
 <div class="l3-band"><div class="wrap">
@@ -64,11 +81,14 @@
 
 <section class="l3-v" id="l3-pat">
 <h2 class="l3-h">取り口 15の形</h2>
-<p class="l3-p">「取り口」は、点を取るための球の走らせ方のこと。名前をタップすると、その形の動画にしぼれます。</p>
-<div class="l3-g" id="l3-g"></div>
+<p class="l3-p">「取り口」は、点を取るための球の走らせ方のこと。名前をえらぶと、説明と、その形の動画が出ます。</p>
 </section>
-
-<section class="l3-v" id="l3-mv">
+<div class="l3-stick" id="l3-stick">
+<div class="l3-pl" id="l3-pl" hidden><div class="fr" id="l3-fr"></div><div class="pb"><b id="l3-pt"></b><button type="button" id="l3-nx">次の動画</button><button type="button" id="l3-cl" aria-label="動画をとじる">とじる</button></div></div>
+<div class="l3-chips" id="l3-g" role="group" aria-label="取り口でしぼる"></div>
+</div>
+<section class="l3-v" id="l3-mv" style="padding-top:12px">
+<div id="l3-info"></div>
 <h2 class="l3-h" id="l3-mh">動画で見る</h2>
 <div id="l3-list"></div>
 </section>
@@ -86,26 +106,65 @@
 <script>
 (function () {
   'use strict';
-  var D = __LAB__, P = D.patterns, S = D.shots || [], cur = '';
+  var D = __LAB__, P = D.patterns, cur = '', now = -1, yt = null, ytWait = null;
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  /* VIBES LIVE の公式映像を先に並べる（そのあとは元の順） */
+  var S = (D.shots || []).map(function (s, i) { s._i = i; return s; }).sort(function (a, b) { return (b.is_vibes_original === true) - (a.is_vibes_original === true) || a._i - b._i; });
   var cnt = {}; S.forEach(function (s) { cnt[s.pattern_jp] = (cnt[s.pattern_jp] || 0) + 1; });
-  function grid() {
-    $('l3-g').innerHTML = P.map(function (p, i) { return '<button class="l3-c" type="button" data-p="' + esc(p.jp) + '" aria-pressed="' + (cur === p.jp) + '"><span class="n">' + ('0' + (i + 1)).slice(-2) + '</span>' + (cnt[p.jp] ? '<span class="ct">動画 ' + cnt[p.jp] + '</span>' : '') + '<b>' + esc(p.jp) + '</b><small lang="en">' + esc(p.en) + '</small><small lang="ko">' + esc(p.kr) + '</small><p>' + esc(p.desc) + '</p></button>'; }).join('');
+  function shown() { return S.filter(function (s) { return !cur || s.pattern_jp === cur; }); }
+  function chips() {
+    $('l3-g').innerHTML = '<button type="button" data-p="" aria-pressed="' + (cur === '') + '">すべて</button>' + P.map(function (p) { return '<button type="button" data-p="' + esc(p.jp) + '" aria-pressed="' + (cur === p.jp) + '">' + esc(p.jp) + (cnt[p.jp] ? '<small>' + cnt[p.jp] + '</small>' : '') + '</button>'; }).join('');
+    var on = $('l3-g').querySelector('[aria-pressed=true]'); if (on && on.scrollIntoView) { var g = $('l3-g'); g.scrollLeft = Math.max(0, on.offsetLeft - (g.clientWidth - on.offsetWidth) / 2); }
+  }
+  function info() {
+    if (!cur) { $('l3-info').innerHTML = '<div class="l3-all">' + P.map(function (p, i) { return '<button type="button" data-p="' + esc(p.jp) + '"><span class="n">' + ('0' + (i + 1)).slice(-2) + '</span><span><b>' + esc(p.jp) + '</b>' + (p.sub ? ' <small>' + esc(p.sub) + '</small>' : '') + '</span><small lang="en">' + esc(p.en) + '</small></button>'; }).join('') + '</div>'; return; }
+    var i = P.map(function (p) { return p.jp; }).indexOf(cur), p = P[i];
+    $('l3-info').innerHTML = '<div class="l3-in"><span class="n">' + ('0' + (i + 1)).slice(-2) + ' / ' + P.length + '</span><b>' + esc(p.jp) + (p.sub ? '<small>' + esc(p.sub) + '</small>' : '') + '</b><span class="lg"><span lang="en">' + esc(p.en) + '</span>　<span lang="ko">' + esc(p.kr) + '</span></span><p>' + esc(p.desc) + '</p></div>';
   }
   function mmss(t) { t = Math.max(0, t | 0); return Math.floor(t / 60) + ':' + ('0' + t % 60).slice(-2); }
   function list() {
-    var a = S.filter(function (s) { return !cur || s.pattern_jp === cur; });
-    $('l3-mh').textContent = cur ? '動画で見る：' + cur : '動画で見る';
+    var a = shown();
+    $('l3-mh').textContent = cur ? '「' + cur + '」の動画' : '動画で見る';
     if (!S.length) { $('l3-list').innerHTML = '<div class="l3-dark"><h3>動画は準備中です。</h3><p>実際の試合から、取り口ごとに得点シーンを集めて、ここに並べていきます。公開は NEWS と公式LINE でお知らせします。</p></div>'; return; }
-    if (!a.length) { $('l3-list').innerHTML = '<div class="l3-dark"><h3>「' + esc(cur) + '」の動画は、まだありません。</h3><p>ほかの形を選ぶか、もう一度タップして全部の動画に戻してください。</p></div>'; return; }
+    if (!a.length) { $('l3-list').innerHTML = '<div class="l3-dark"><h3>「' + esc(cur) + '」の動画は、まだありません。</h3><p>ほかの形をえらぶか、「すべて」に戻してください。</p></div>'; return; }
     $('l3-list').innerHTML = '<div class="l3-sh">' + a.map(function (s) {
       var star = Math.max(1, Math.min(5, s.difficulty | 0)), tags = (s.sub_tags || []).map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('');
-      return '<div class="l3-s"><button class="pl" type="button" data-v="' + esc(s.video_id) + '" data-a="' + (s.start_sec | 0) + '" data-b="' + (s.end_sec | 0) + '" aria-label="' + esc(s.pattern_jp) + ' の動画を再生"><span>再生する（' + ((s.end_sec | 0) - (s.start_sec | 0)) + '秒）</span></button><div class="mt"><b>' + esc(s.pattern_jp) + (s.cushion_order ? '　' + esc(s.cushion_order) : '') + '</b><small>' + (s.player_name && s.player_name !== 'Unknown' ? esc(s.player_name) + '　' : '') + 'むずかしさ ' + star + ' / 5　開始 ' + mmss(s.start_sec) + '</small>' + (tags ? '<div class="l3-tags">' + tags + '</div>' : '') + '</div></div>';
+      return '<div class="l3-s' + (s._i === now ? ' cur' : '') + '">' + (s.is_vibes_original === true ? '<span class="of">VIBES LIVE 公式映像</span>' : '') + '<button class="pl" type="button" data-i="' + s._i + '" aria-label="' + esc(s.pattern_jp) + ' の動画を再生"><span>' + (s._i === now ? '再生中' : '再生する（' + ((s.end_sec | 0) - (s.start_sec | 0)) + '秒）') + '</span></button><div class="mt"><b>' + esc(s.pattern_jp) + (s.cushion_order ? '　' + esc(s.cushion_order) : '') + '</b><small>' + (s.player_name && s.player_name !== 'Unknown' ? esc(s.player_name) + '　' : '') + 'むずかしさ ' + star + ' / 5　開始 ' + mmss(s.start_sec) + '</small>' + (tags ? '<div class="l3-tags">' + tags + '</div>' : '') + '</div></div>';
     }).join('') + '</div>';
   }
-  $('l3-g').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; cur = cur === b.dataset.p ? '' : b.dataset.p; grid(); list(); if (cur && S.length) $('l3-mv').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
-  $('l3-list').addEventListener('click', function (e) { var b = e.target.closest('button.pl'); if (!b || !/^[\w-]{6,20}$/.test(b.dataset.v)) return; var f = document.createElement('iframe'); f.src = 'https://www.youtube-nocookie.com/embed/' + b.dataset.v + '?start=' + b.dataset.a + '&end=' + b.dataset.b + '&autoplay=1&rel=0&playsinline=1'; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.title = 'YouTube'; b.replaceWith(f); });
-  grid(); list();
+  function pick(p) { cur = p; chips(); info(); list(); }
+  /* ---- the player stays at the top while the list below is used to choose the next shot ---- */
+  function byI(i) { return S.filter(function (s) { return s._i === i; })[0]; }
+  function fail(s) { $('l3-fr').innerHTML = '<div class="fb"><span>この動画は、ここでは再生できません。</span><a href="https://youtu.be/' + esc(s.video_id) + '?t=' + (s.start_sec | 0) + '" target="_blank" rel="noopener">YouTube でひらく</a></div>'; }
+  function frame(s) { var f = document.createElement('iframe'); f.src = 'https://www.youtube-nocookie.com/embed/' + s.video_id + '?start=' + (s.start_sec | 0) + '&end=' + (s.end_sec | 0) + '&autoplay=1&rel=0&playsinline=1'; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.title = 'YouTube'; $('l3-fr').innerHTML = ''; $('l3-fr').appendChild(f); }
+  function api(cb) {
+    if (window.YT && YT.Player) return cb(true);
+    if (ytWait) return ytWait.push(cb);
+    ytWait = [cb]; var done = function (ok) { var w = ytWait || []; ytWait = ok ? null : []; w.forEach(function (f) { f(ok); }); };
+    var prev = window.onYouTubeIframeAPIReady; window.onYouTubeIframeAPIReady = function () { if (prev) prev(); done(true); };
+    var t = document.createElement('script'); t.src = 'https://www.youtube.com/iframe_api'; t.onerror = function () { done(false); }; document.head.appendChild(t);
+    setTimeout(function () { if (!(window.YT && YT.Player)) done(false); }, 4000);
+  }
+  function play(i) {
+    var s = byI(i); if (!s || !/^[\w-]{6,20}$/.test(s.video_id)) return;
+    now = i; $('l3-pl').hidden = false; $('l3-pt').textContent = s.pattern_jp + (s.cushion_order ? '　' + s.cushion_order : '') + (s.player_name && s.player_name !== 'Unknown' ? '　' + s.player_name : '');
+    list();
+    api(function (ok) {
+      if (now !== i) return;
+      if (!ok) return frame(s);
+      try { if (yt && yt.destroy) yt.destroy(); } catch (e) {} yt = null;
+      $('l3-fr').innerHTML = '<div id="l3-yt"></div>';
+      /* onError 100/101/150 = removed or the owner does not allow playing on other sites: show a way out instead of a broken player */
+      yt = new YT.Player('l3-yt', { host: 'https://www.youtube-nocookie.com', videoId: s.video_id, playerVars: { start: s.start_sec | 0, end: s.end_sec | 0, autoplay: 1, rel: 0, playsinline: 1 }, events: { onError: function () { if (now === i) { try { yt.destroy(); } catch (e) {} yt = null; fail(s); } } } });
+    });
+  }
+  function next() { var a = shown(), k = a.map(function (s) { return s._i; }).indexOf(now); if (a.length) play(a[(k + 1) % a.length]._i); }
+  function close() { try { if (yt && yt.destroy) yt.destroy(); } catch (e) {} yt = null; now = -1; $('l3-fr').innerHTML = ''; $('l3-pl').hidden = true; list(); }
+  $('l3-g').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) pick(b.dataset.p); });
+  $('l3-info').addEventListener('click', function (e) { var b = e.target.closest('button[data-p]'); if (!b) return; pick(b.dataset.p); $('l3-stick').scrollIntoView(); });
+  $('l3-list').addEventListener('click', function (e) { var b = e.target.closest('button.pl'); if (b) play(+b.dataset.i); });
+  $('l3-nx').addEventListener('click', next); $('l3-cl').addEventListener('click', close);
+  pick('');
 })();
 </script>
