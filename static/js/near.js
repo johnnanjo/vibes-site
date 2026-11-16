@@ -29,12 +29,15 @@
     });
     return list.filter(function(s){return !s.x});
   }
+  /* ?t=carom：キャロム台（スリークッション・四つ球）のあるお店だけにしぼる（VIBES 3C LAB から来た人向け） */
+  var CAROM=/[?&]t=carom(&|$)/.test(location.search);
+  if(CAROM){var nt=document.createElement('p');nt.className='nr-only';nt.innerHTML='<b>キャロム台のあるお店だけを表示しています。</b><span>スリークッション・四つ球の台があるお店です。</span><a href="/pages/near">すべてのお店を見る</a>';msg.parentNode.insertBefore(nt,document.getElementById('nr-q'));}
   var shops=null;
   function load(){
     if(shops)return Promise.resolve(shops);
     var all=[];
     function page(u,n){return fetch(u,{credentials:'same-origin'}).then(function(r){return r.text()}).then(function(t){var j={};try{j=JSON.parse(t)}catch(e){j={items:[]}}all=all.concat(j.items||[]);return (j.nu&&n<20)?page(j.nu,n+1):all;}).catch(function(){return all});}
-    return Promise.all([page('/data/near.json',1),reports()]).then(function(v){var seen={};var a=applyReports(v[0].filter(function(s){if(seen[s.h])return false;seen[s.h]=1;return true}),v[1]);a.forEach(function(s){s.ev=evOf(s.h)});shops=a;return a;});
+    return Promise.all([page('/data/near.json',1),reports()]).then(function(v){var seen={};var a=applyReports(v[0].filter(function(s){if(seen[s.h])return false;seen[s.h]=1;return true}),v[1]);a.forEach(function(s){s.ev=evOf(s.h)});if(CAROM)a=a.filter(function(s){return /キャロム|スリー|3C|３Ｃ|四つ球|四ツ球|4つ球|バンド|carom/i.test(s.tb||'')});shops=a;return a;});
   }
   /* 国土地理院の住所検索。ビル名・階数を落として番地までで調べ、返ってきた場所が同じ市区町村かを確認する（別の土地に飛ばないように） */
   function gsi(q){return fetch('https://msearch.gsi.go.jp/address-search/AddressSearch?q='+encodeURIComponent(q)).then(function(r){return r.json()}).then(function(j){return (j&&j.length)?j:[]}).catch(function(){return []});}
@@ -140,10 +143,11 @@
       });
     });
   }
-  document.getElementById('nr-q').addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('nr-qi').value.trim();if(!v)return;try{history.replaceState(null,'','?q='+encodeURIComponent(v))}catch(x){}search(v);});
+  document.getElementById('nr-q').addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('nr-qi').value.trim();if(!v)return;try{history.replaceState(null,'','?q='+encodeURIComponent(v)+(CAROM?'&t=carom':''))}catch(x){}search(v);});
   go.addEventListener('click',locate);
   var qs=new URLSearchParams(location.search);
   if(qs.get('auto')==='1')locate();
   else if(qs.get('pref'))prefMode(qs.get('pref'));
   else if(qs.get('q'))search(qs.get('q'));
+  else if(CAROM)prefMode('');
 })();
