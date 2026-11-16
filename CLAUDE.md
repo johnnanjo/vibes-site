@@ -16,6 +16,7 @@
   - 記事：Make「VIBES Shopify記事 → 新サイト同期」が2時間ごとに `sync-*.json` を追加。掲載フォームは `ht-*`/`form-*` を直接追加
   - 大会・店：Shopifyに書き込む予約タスクが、最後に変更分を `sync-*.json` で追加。`status:"DRAFT"` は運営者が外した大会として非表示（終了14日以上後のDRAFTは結果の履歴として表示）
 - `data/3c-lab.json` VIBES 3C LAB（`/pages/3c-lab`）＝動画なしの「取り口」テキスト辞典（2026-11-16 に仕様変更。AIによる動画の紐付けは誤判定があるため廃止。動画・YouTube のコードは入れない）。`patterns` 8分類（2026-11-16 に15→8へ整理。名前は運営者指定：表回し・裏回し・切り返し・ダブルレール・箱球・空クッション・てけてけ・押し抜き）：pattern_jp / pattern_en / pattern_kr / summary（ひとこと定義）/ cushion_route（軌道）/ key_point（狙い方）。文面は運営者指定のまま。空の項目は出さない。軌道図は `lib/lab-svg.mjs`（id ごとの座標から SVG をビルド時に描く模式図。色は運営者指定：盤面 #111827・枠 #334155・手球 白・第1的球 #FACC15・第2的球 #F43F5E・軌道 #38BDF8）
+  - 「システム計算・早見表」タブ（`/pages/3c-lab#system`）：`static/apps/3c-lab.html` に直書き。ファイブ＆ハーフ（計算式・数値マップ・自動計算・補正ポイント）のみ公開。プラスシステムと3つ目は運営者の指示書が途中で切れていたため未実装
 - `data/lab-codes.json` DIGITAL LAB の利用コード（お店ごと・12けた）。コードそのものは置かず PBKDF2 の値だけ。発行は `node scripts/lab-code.mjs "店名"`（出たコードは公式LINEでお店へ。リポジトリに書かない）、停止は `on:false`。入力画面は `static/js/lab-gate.js`（ビルド時に count-home / count-3c / count-pocket / count-tour の head へ差し込み。導入前から使っていた端末は初回に自動で利用可。モニター店の WIND はコード不要＝`/pages/count/?monitor=wind` で開いた端末は以後ずっと利用可）
 - DIGITAL LAB の方針（2026-11-16）：提供開始は2026-12-01。お店の利用管理は「利用コード」だけで行う。`vibesdigilabo.com`（worker.mjs の LABO ログイン方式・`static/labo/`）は扱わない＝使わない（コードは残してあるが、案内も設定もしない）。毎月の費用と利用の約束ごとは未決定
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック。`youtubeLive` に YouTube チャンネルのURLを入れると `/live`（VIBES LIVE の入口）のボタンが有効になる（空なら「準備中」）。`homeWinners` が true のときだけ、トップに「◯月の優勝者」を出す（2026-11-16 から一時的に閉鎖中＝false）

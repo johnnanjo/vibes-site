@@ -54,6 +54,26 @@
 .l3-cta b{font-size:clamp(20px,5.4vw,26px);font-weight:900;line-height:1.45}
 .l3-cta small{font-size:14px;font-weight:700;line-height:1.7}
 .l3-cta span{margin-top:4px;background:var(--night);color:var(--chalk);font-size:16px;font-weight:900;line-height:1;padding:16px 22px;border-radius:999px}
+.l3-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--night);border-radius:20px;padding:6px;margin-top:22px}
+.l3-tabs button{appearance:none;border:0;cursor:pointer;min-height:52px;border-radius:15px;background:transparent;color:var(--chalk);font:900 15px/1.3 var(--jp);padding:6px 8px}
+.l3-tabs button[aria-selected=true]{background:var(--lime);color:var(--night)}
+.l3-tabs button:focus-visible,.l3-sys select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.l3-sys{gap:12px}.l3-sys header{display:flex;flex-direction:column;gap:4px}.l3-sys header .n{font:400 15px/1 var(--disp);color:var(--sub)}
+.l3-sys h3{margin:0;font-size:28px;font-weight:900;line-height:1.3}.l3-sys h3 small{display:block;font-size:13px;font-weight:700;color:var(--sub)}
+.l3-sys header p{margin:0;font-size:14.5px;font-weight:700;line-height:1.8}
+.l3-sys .blk{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.l3-sys .tg{align-self:flex-start;font-size:12.5px;font-weight:900;line-height:1;padding:6px 10px;border-radius:999px;background:var(--line2);color:var(--night)}
+.l3-sys .fm{margin:0;font-size:17px;font-weight:900;line-height:1.7;background:#111827;color:#F3F4EF;border-radius:14px;padding:14px}
+.l3-sys ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;font-size:14.5px;font-weight:700;line-height:1.85}
+.l3-sys #fh-map svg{display:block;width:100%;height:auto;border-radius:12px}
+.l3-sys .calc{background:#111827;border-color:#111827;color:#F3F4EF}.l3-sys .calc .tg{background:#334155;color:#F3F4EF}
+.l3-sys .calc label{display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:900}
+.l3-sys select{appearance:none;width:100%;min-height:54px;border-radius:14px;border:2px solid #334155;background:#0B1220;color:#F3F4EF;font:900 20px/1 var(--jp);padding:0 16px}
+.l3-sys .res{border-radius:16px;background:var(--lime);color:var(--night);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.l3-sys .res small{font-size:13px;font-weight:900}.l3-sys .res b{font:400 54px/1.05 var(--disp)}.l3-sys .res span{font-size:14px;font-weight:900;line-height:1.6}
+.l3-sys .res.ng{background:#334155;color:#F3F4EF}.l3-sys .res.ng b{font:900 18px/1.5 var(--jp)}
+.l3-soon{background:var(--line2);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:2px;font-size:13.5px;font-weight:700;line-height:1.7}.l3-soon b{font-size:15.5px;font-weight:900}
+@media(min-width:760px){.l3-tabs{max-width:560px}.l3-sys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.l3-sys header{grid-column:1/-1}}
 .l3-c dd.sm{font-size:16px;font-weight:900;line-height:1.75}
 @media(min-width:760px){.l3-rule,.l3-next{grid-template-columns:repeat(3,minmax(0,1fr))}.l3-dic{grid-template-columns:repeat(2,minmax(0,1fr))}.l3-stick{margin:0}.l3-chips{padding-left:0;padding-right:0;flex-wrap:wrap}}
 </style>
@@ -75,6 +95,8 @@
 </div>
 </section>
 
+<div class="l3-tabs" role="tablist" aria-label="3C LAB の内容"><button type="button" role="tab" id="l3-t1" aria-controls="l3-p1" aria-selected="true">取り口辞典</button><button type="button" role="tab" id="l3-t2" aria-controls="l3-p2" aria-selected="false">システム計算・早見表</button></div>
+<div id="l3-p1" role="tabpanel" aria-labelledby="l3-t1">
 <section class="l3-v" id="l3-pat">
 <h2 class="l3-h">取り口辞典　8の形</h2>
 <p class="l3-p">「取り口」は、点を取るための球の走らせ方のこと。ひとこと定義・軌道・狙い方を、形ごとにまとめました。名前をえらぶと、その形へ移動します。</p>
@@ -84,6 +106,29 @@
 <section class="l3-v" style="padding-top:6px">
 __CARDS__
 </section>
+</div>
+<div id="l3-p2" role="tabpanel" aria-labelledby="l3-t2" hidden>
+<section class="l3-v">
+<h2 class="l3-h">システム計算・早見表</h2>
+<p class="l3-p">クッションのポイント（ダイヤモンド）に数字をふって、狙う場所を計算で出す方法です。数字は目安で、台の状態や撞き方で変わります。</p>
+</section>
+<section class="l3-v l3-sys" id="sys-fh" style="padding-top:6px">
+<header><span class="n">SYSTEM 01</span><h3>ファイブ＆ハーフ<small>Five &amp; Half System</small></h3><p>裏回し・空クッションの基本となる、最重要のシステムです。</p></header>
+<div class="blk"><span class="tg">計算式</span><p class="fm">1クッション目の狙い目 ＝ 手球の出発値 − 3クッション目の到達値</p></div>
+<div class="blk"><span class="tg">数値マップ</span><div id="fh-map"></div>
+<p class="l3-lg" style="margin-top:8px"><span><i style="background:#FACC15"></i>手球の出発値</span><span><i style="background:#38BDF8"></i>1クッション目</span><span><i style="background:#F43F5E"></i>3クッション目</span></p></div>
+<div class="blk calc"><span class="tg">自動計算</span>
+<label>手球の出発値<select id="fh-o"></select></label>
+<label>3クッション目の目標<select id="fh-t"></select></label>
+<div class="res" id="fh-r" aria-live="polite"></div></div>
+<div class="blk"><span class="tg">実戦の補正ポイント</span><ul>
+<li>標準の撞点は「順ヒネリ（2〜3チップ）」。</li>
+<li>手球の数値が 5（50）を超える深い角度（6〜8）になる場合は、クッションの食い込みにより短く（手前に）出やすいため、狙い目から 0.3〜0.5 ほど引く（厚く／深く入れる）補正が必要。</li>
+<li>ラシャが新品で滑る台では伸びやすく、湿気や古いラシャでは短くなるため、1クッション目で基準の補正値を測ること。</li>
+</ul></div>
+</section>
+<section class="l3-v"><div class="l3-soon"><b>プラスシステムほか、2つのシステムは準備中です。</b><span>内容がそろい次第、ここに追加します。</span></div></section>
+</div>
 
 <section class="l3-v">
 <a class="l3-cta" href="/pages/near?t=carom"><b>もっと知りたい方は、お近くのお店でレッスンしましょう！</b><small>スリークッションの台（キャロム台）があるお店だけを、今いる場所や都道府県からさがせます。</small><span>キャロム台のあるお店をさがす</span></a>
@@ -111,5 +156,45 @@ __CARDS__
     });
   }, { rootMargin: '-80px 0px -70% 0px' });
   [].forEach.call(document.querySelectorAll('.l3-c'), function (c) { io.observe(c); });
+})();
+</script>
+<script>
+(function () {
+  'use strict';
+  /* tabs: dictionary / system guide (#system opens the second one) */
+  var t1 = document.getElementById('l3-t1'), t2 = document.getElementById('l3-t2'), p1 = document.getElementById('l3-p1'), p2 = document.getElementById('l3-p2');
+  function tab(n, keep) { t1.setAttribute('aria-selected', n === 1); t2.setAttribute('aria-selected', n === 2); p1.hidden = n !== 1; p2.hidden = n !== 2; if (!keep) { try { history.replaceState(null, '', n === 2 ? '#system' : location.pathname + location.search); } catch (e) {} } }
+  t1.addEventListener('click', function () { tab(1); }); t2.addEventListener('click', function () { tab(2); });
+  if (location.hash === '#system' || location.hash === '#sys-fh') tab(2, true);
+  /* Five & Half: number map + calculator. Long rail = 8 sections (7 points), short rail = 4 sections (3 points). */
+  var X = function (i) { return 50 + 45 * i; }, Y = function (j) { return 45 + 45 * j; };
+  var O = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8], T = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+  var so = document.getElementById('fh-o'), st = document.getElementById('fh-t'), fx = function (v) { return v % 1 ? v.toFixed(1) : String(v); };
+  so.innerHTML = O.map(function (v) { return '<option value="' + v + '"' + (v === 4.5 ? ' selected' : '') + '>' + fx(v) + '（' + v * 10 + '）</option>'; }).join('');
+  st.innerHTML = T.map(function (v) { return '<option value="' + v + '"' + (v === 2 ? ' selected' : '') + '>' + fx(v) + '（' + v * 10 + '）</option>'; }).join('');
+  function lab(x, y, s, c) { return '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="11.5" font-weight="900" font-family="sans-serif" fill="' + c + '">' + s + '</text>'; }
+  function draw(o, t, f) {
+    var s = '<svg viewBox="0 0 460 272" role="img" aria-label="ファイブ＆ハーフの数値マップ"><rect width="460" height="272" rx="12" fill="#0B1220"/><rect x="38" y="33" width="384" height="204" rx="8" fill="#334155"/><rect x="50" y="45" width="360" height="180" fill="#111827"/><g fill="#CBD5E1">', i;
+    for (i = 1; i < 8; i++) s += '<circle cx="' + X(i) + '" cy="39" r="2.2"/><circle cx="' + X(i) + '" cy="231" r="2.2"/>';
+    for (i = 1; i < 4; i++) s += '<circle cx="44" cy="' + Y(i) + '" r="2.2"/><circle cx="416" cy="' + Y(i) + '" r="2.2"/>';
+    s += '</g>';
+    for (i = 0; i <= 8; i++) s += lab(X(i), 24, fx(1 + i / 2), '#FACC15');
+    for (i = 1; i <= 3; i++) s += lab(441, Y(i) + 4, 5 + i, '#FACC15');
+    for (i = 0; i <= 5; i++) s += lab(X(i) + (i === 0 ? 8 : 0), 62, i, '#F43F5E');
+    for (i = 1; i <= 8; i++) s += lab(X(i) - (i === 8 ? 6 : 0), 256, i, '#38BDF8');
+    if (f != null) {
+      var a = o <= 5 ? [X((o - 1) * 2), 45] : [410, Y(o - 5)], b = [X(f), 225], d = [X(t), 45], c = [50, 45 + 180 * (45 * t) / (45 * f + 45 * t || 1)];
+      s += '<path d="M' + a + ' L' + b + ' L' + c + ' L' + d + '" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-dasharray="6 5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="' + a[0] + '" cy="' + a[1] + '" r="6" fill="#FACC15"/><circle cx="' + b[0] + '" cy="' + b[1] + '" r="6" fill="#38BDF8"/><circle cx="' + d[0] + '" cy="' + d[1] + '" r="6" fill="#F43F5E"/>';
+    }
+    document.getElementById('fh-map').innerHTML = s + '</svg>';
+  }
+  function calc() {
+    var o = +so.value, t = +st.value, f = Math.round((o - t) * 10) / 10, r = document.getElementById('fh-r');
+    if (f <= 0 || f > 8) { r.className = 'res ng'; r.innerHTML = '<b>この組み合わせは計算できません。</b><span>手球の出発値を、3クッション目の目標より大きくしてください。</span>'; draw(o, t, null); return; }
+    var deep = o > 5, lo = Math.round((f - 0.5) * 10) / 10, hi = Math.round((f - 0.3) * 10) / 10;
+    r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f.toFixed(1) + '</b><span>順ヒネリ 2〜3チップ　（' + fx(o) + ' − ' + fx(t) + ' ＝ ' + f.toFixed(1) + '）</span>' + (deep ? '<span>深い角度のため、0.3〜0.5 引いて ' + lo.toFixed(1) + '〜' + hi.toFixed(1) + ' が目安です。</span>' : '');
+    draw(o, t, f);
+  }
+  so.addEventListener('change', calc); st.addEventListener('change', calc); calc();
 })();
 </script>
