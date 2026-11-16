@@ -323,6 +323,8 @@ function playersPages() {
 }
 
 /* ================= DISCIPLINE PAGES ================= */
+/* banner on the carom page that leads to 3C NOTE (/pages/3c-note) */
+const NOTE_BANNER = `<section class="sec"><a class="note-bn" href="/pages/3c-note"><span class="tx"><span class="k">3C NOTE　無料・登録なし</span><b>普段の練習ゲームから自分の記録をつけてみませんか？</b><small>点数とイニングを入れるだけ。アベレージの伸びがグラフで見えます。</small></span><span class="bt"><span class="btn btn-lime">記録をはじめる</span><svg viewBox="0 0 200 116" aria-hidden="true"><rect width="200" height="116" rx="12" fill="#262A35"/><rect x="10" y="10" width="180" height="96" rx="4" fill="#1E5AA8"/><circle cx="10.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="10.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="32.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="32.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="55.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="55.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="77.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="77.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="100.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="100.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="122.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="122.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="145.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="145.0" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="167.5" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="167.5" cy="111" r="1.4" fill="#F3F4EF"/><circle cx="190.0" cy="5" r="1.4" fill="#F3F4EF"/><circle cx="190.0" cy="111" r="1.4" fill="#F3F4EF"/><polyline points="26,86 52,78 78,82 104,62 130,66 156,44 176,30" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.5"/><circle cx="26" cy="86" r="4.2" fill="#fff"/><circle cx="52" cy="78" r="4.2" fill="#fff"/><circle cx="78" cy="82" r="4.2" fill="#fff"/><circle cx="104" cy="62" r="4.2" fill="#fff"/><circle cx="130" cy="66" r="4.2" fill="#fff"/><circle cx="156" cy="44" r="5.4" fill="#F2C200"/><circle cx="176" cy="30" r="6.4" fill="#D7262E"/></svg></span></a></section>`;
 function discPage(key, handle) {
   const d = DISC[key];
   const pg = pages[handle];
@@ -333,7 +335,7 @@ function discPage(key, handle) {
   const body = `<div class="band" style="background:var(--felt-${key})"><div class="wrap band-in"><p class="crumb"><a href="/" style="color:#fff">トップ</a></p>
 <span class="disp" style="font-size:clamp(56px,10vw,120px);color:var(--lime)">${d.en}</span><div class="ph" style="padding-top:0"><h1>${esc(pg?.title || d.ja)}</h1><p style="color:#fff;opacity:.85">${esc(stripTxt(pg?.body))}</p></div>
 <a class="btn btn-lime" href="/pages/tournaments?g=${key}">${d.ja}の大会をさがす</a></div></div>
-<main class="wrap"><section class="sec"><div class="sec-h"><h2>これからの大会</h2><a href="/pages/tournaments?g=${key}">すべて（${up.length}件）</a></div>${up.length ? `<div class="card list">${up.slice(0, 15).map((t) => tRow(t, { showDate: true })).join('')}</div>` : '<div class="empty"><b>開催予定の大会はまだありません。</b></div>'}</section>
+<main class="wrap">${key === 'carom' ? NOTE_BANNER : ''}<section class="sec"><div class="sec-h"><h2>これからの大会</h2><a href="/pages/tournaments?g=${key}">すべて（${up.length}件）</a></div>${up.length ? `<div class="card list">${up.slice(0, 15).map((t) => tRow(t, { showDate: true })).join('')}</div>` : '<div class="empty"><b>開催予定の大会はまだありません。</b></div>'}</section>
 <section class="sec"><div class="cols"><div style="display:flex;flex-direction:column;gap:12px"><div class="sec-h"><h2>試合結果</h2><a href="/blogs/results">すべて</a></div>${res.length ? `<div class="card dark list">${res.map(rRow).join('')}</div>` : '<div class="empty"><b>まだ結果はありません。</b></div>'}</div>
 <div style="display:flex;flex-direction:column;gap:12px"><div class="sec-h"><h2>NEWS</h2><a href="/blogs/news">すべて</a></div>${news.length ? `<div class="card list">${news.map(nRow).join('')}</div>` : '<div class="empty"><b>関連するNEWSはまだありません。</b></div>'}</div></div></section>
 ${key === 'heyball' ? '<section class="sec"><a class="tile" href="/pages/heyball"><b>HEYBALL（ヘイボール）とは？</b><small>ルール・テーブル・はじめ方</small></a></section>' : ''}
@@ -398,6 +400,7 @@ function contentPages() {
   put('/pages/count-pocket', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-pocket.html'), 'utf8') });
   put('/pages/count-remote', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-remote.html'), 'utf8') });
   put('/pages/count-tour', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-tour.html'), 'utf8') });
+  put('/pages/3c-note', page({ title: '3C NOTE｜スリークッションの練習記録・アベレージ管理', desc: 'スリークッションの練習ゲームを1ゲームずつ記録。点数とイニングを入れるだけで、通算アベレージ・直近のアベレージ・ハイラン・ベストゲームがグラフで見えます。無料・登録なし。', path: '/pages/3c-note', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-note.html'), 'utf8') }));
   put('/pages/count-overlay', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-overlay.html'), 'utf8') });
   put('/pages/count-cam', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-cam.html'), 'utf8') });
   put('/pages/count-live', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-live.html'), 'utf8') });

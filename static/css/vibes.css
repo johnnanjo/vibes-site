@@ -230,6 +230,16 @@ main{display:block;padding-bottom:110px}
 .dc .tx{display:block;font-size:13px;font-weight:700;margin-top:6px}
 .go-c{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--lime)}
 
+/* 3C NOTE banner (carom page) */
+.note-bn{display:grid;gap:16px;padding:20px 18px 18px;border-radius:26px;background:var(--night);color:var(--chalk);text-decoration:none;border:2px solid var(--lime);box-shadow:0 10px 26px rgba(23,26,34,.18)}
+.note-bn .tx{display:flex;flex-direction:column;gap:10px;align-items:flex-start;min-width:0}
+.note-bn .k{font-size:12px;font-weight:900;line-height:1;padding:7px 11px;border-radius:999px;background:var(--lime);color:var(--night)}
+.note-bn b{font-size:clamp(21px,5.6vw,30px);font-weight:900;line-height:1.4}
+.note-bn small{font-size:13.5px;font-weight:700;line-height:1.65;color:var(--sub-d)}
+.note-bn .bt{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:14px;align-items:end}
+.note-bn .bt .btn{justify-self:start;white-space:nowrap}
+.note-bn svg{display:block;width:100%;height:auto;border-radius:10px}
+@media(min-width:760px){.note-bn{padding:30px}.note-bn .bt{grid-template-columns:auto 260px;justify-content:space-between}}
 /* shop band */
 .band-lime{display:grid;gap:14px;padding:22px;border-radius:24px;background:var(--lime)}
 .band-lime .k{font-size:12px;font-weight:900}
