@@ -1,4 +1,5 @@
 // VIBES BILLIARDS static site builder. `node build.mjs` → dist/
+import { labSvg } from './lib/lab-svg.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { esc, write, copyDir, md, mdJa, ymdJa, wdEn, wdOf, wdJa, addDays, daysBetween, hm, svg, ball, trunc, SITE, LINE_ADD, LINE_ID, EMAIL } from './lib/util.mjs';
@@ -422,7 +423,8 @@ function contentPages() {
     const P = lab.patterns.map((x, i) => ({ ...x, no: String(i + 1).padStart(2, '0'), nm: nm(x.pattern_jp) }));
     const chips = P.map((x) => `<a href="#pat-${x.no}">${esc(x.nm[0])}</a>`).join('');
     const row = (k, v, c) => (v ? `<div><dt>${k}</dt><dd${c ? ` class="${c}"` : ''}>${esc(v)}</dd></div>` : '');
-    const card = (x) => `<article class="l3-c" id="pat-${x.no}"><header><span class="n">${x.no} / ${P.length}</span><h3>${esc(x.nm[0])}${x.nm[1] ? `<small>${esc(x.nm[1])}</small>` : ''}</h3><p class="lg" style="margin:0">${x.pattern_en ? `<span lang="en">${esc(x.pattern_en)}</span>` : ''}${x.pattern_kr ? `<span lang="ko">${esc(x.pattern_kr)}</span>` : ''}</p></header><dl>${row('ひとこと定義', x.summary, 'sm')}${row('軌道（クッションの入り方）', x.cushion_route, 'rt')}${row('狙い方・実戦のポイント', x.key_point)}</dl></article>`;
+    const card = (x) => `<article class="l3-c" id="pat-${x.no}"><header><span class="n">${x.no} / ${P.length}</span><h3>${esc(x.nm[0])}${x.nm[1] ? `<small>${esc(x.nm[1])}</small>` : ''}</h3><p class="lg" style="margin:0">${x.pattern_en ? `<span lang="en">${esc(x.pattern_en)}</span>` : ''}${x.pattern_kr ? `<span lang="ko">${esc(x.pattern_kr)}</span>` : ''}</p></header><dl>${row('ひとこと定義', x.summary, 'sm')}${fig(x)}${row('軌道（クッションの入り方）', x.cushion_route, 'rt')}${row('狙い方・実戦のポイント', x.key_point)}</dl></article>`;
+    const fig = (x) => { const g = labSvg(x.id, esc(x.nm[0] + 'の軌道図。' + (x.cushion_route || ''))); return g ? `<div class="fg">${g}</div>` : ''; };
     const cats = [...new Set(P.map((x) => x.category))];
     const cards = cats.map((c) => `<h3 class="l3-cat">${esc(c)}</h3><div class="l3-dic">${P.filter((x) => x.category === c).map(card).join('')}</div>`).join('');
     put('/pages/3c-lab', page({ title: 'VIBES 3C LAB｜スリークッションのはじめ方・取り口辞典', desc: 'スリークッションをこれから楽しみたい人へ。表回し・裏回し・切り返しなど「取り口」8の形を、ひとこと定義・軌道・狙い方で解説する辞典です。', path: '/pages/3c-lab', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-lab.html'), 'utf8').replace('__CHIPS__', () => chips).replace('__CARDS__', () => cards) }));
