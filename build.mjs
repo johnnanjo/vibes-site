@@ -76,7 +76,7 @@ ${days.map(([d, l]) => `<div data-daypanel="${d}"${d === firstWeekend ? '' : ' h
 <div style="display:flex;flex-direction:column;gap:12px"><div class="sec-h"><h2>NEWS</h2><a href="/blogs/news">すべて</a></div><div class="card list">${news.map(nRow).join('')}</div></div>
 </div></section>
 
-${ps.length ? `<section class="sec"><div class="sec-h"><h2>${psLabel}</h2><a href="/pages/players">選手一覧</a></div><div class="hscroll">${ps.map(pCard).join('')}</div></section>` : ''}
+${config.homeWinners && ps.length ? `<section class="sec"><div class="sec-h"><h2>${psLabel}</h2><a href="/pages/players">選手一覧</a></div><div class="hscroll">${ps.map(pCard).join('')}</div></section>` : ''}
 
 
 <section class="sec"><div class="sec-h"><h2>ビリヤード場</h2><a href="/pages/near">地図でさがす</a></div>
