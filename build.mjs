@@ -516,7 +516,7 @@ ${sel('vb-engrave', 'engrave', '06 刻印', ['① なし（Vibesの刻印のみ�
 <button class="btn btn-lime" type="submit">この仕様でLINEから注文する</button>
 <a class="btn btn-line btn-sm" id="vb-ask" href="https://line.me/R/oaMessage/%40361mehjz/?" target="_blank" rel="noopener">注文の前に、LINEで質問する</a>
 <div class="card pad" id="vb-fb" hidden style="font-size:13px;line-height:1.75"><b>LINEが開かないときは</b><br>下の文面をコピーして、公式LINE（@361mehjz）に送ってください。<textarea id="vb-txt" readonly style="width:100%;min-height:210px;margin-top:8px;font-size:13px"></textarea><button class="btn btn-sm" type="button" id="vb-cp" style="margin-top:8px">文面をコピー</button> <a class="btn btn-line btn-sm" href="${LINE_ADD}" target="_blank" rel="noopener" style="margin-top:8px">公式LINEを友だち追加</a></div>
-<p class="muted" style="font-size:12px">お問い合わせ・ご注文の確認、工場への発注のご連絡は平日のみ対応しています。</p>
+<p class="muted" style="font-size:12px">ご注文・ご質問へのお返事は、平日も土日祝日も公式LINEで対応しています。</p>
 </form></main>`;
   put('/products/vibes-carbon-shaft', page({ title: 'Vibes Carbon Shaft をつくる（ご注文）', desc: 'パターンオーダーのカーボンシャフト。¥25,000（税込・送料込）。仕様を選んでご注文ください。', path: '/products/vibes-carbon-shaft', body: body.replace(/<label([^>]*)>([^<]+)<span class="req">必須<\/span>/g, '<label$1><span>$2<span class="req">必須</span></span>'), scripts: `<script>(function(){var f=document.getElementById('vb-order');if(!f)return;var L='https://line.me/R/oaMessage/%40361mehjz/?';
 function v(n){var e=f.querySelector('[name="'+n+'"]');return e?String(e.value||'').trim():''}
