@@ -1,0 +1,83 @@
+[
+ {
+  "handle": "official-japa-20261115-east-chiba-9ball",
+  "results": "🥇 小宮 裕樹（KPBA）／🥈 森安 利男（バンバン鎌ヶ谷）／🥉 安部 隼史（KPBA）・中野 雅之（TPA）",
+  "winner": "小宮 裕樹",
+  "results_url": "https://japa.ne.jp/?p=27824",
+  "entry_status": "closed"
+ },
+ {
+  "handle": "official-jpbf-20261108-mj-open-32-nagoya",
+  "title": "第32回 3C MJ OPEN 名古屋開催",
+  "starts_at": "2026-11-08T10:00:00+09:00",
+  "ends_at": null,
+  "date_label": "11/8（日）",
+  "category": "official",
+  "organizer": "JPBF",
+  "shop": null,
+  "venue_name": "ドクターキャロム",
+  "prefecture": "愛知県",
+  "city": null,
+  "region": "chubu",
+  "games": "[\"3cushion\"]",
+  "classes": null,
+  "women_only": null,
+  "features": null,
+  "rank": "other",
+  "entry_status": "closed",
+  "notes": "JPBFの発表をもとに掲載しています。",
+  "summary": "11/8（日）第32回 3C MJ OPEN 名古屋開催　優勝：奥村 弘祐",
+  "source_url": "https://jpbf.net/news/2026_mj_result/",
+  "source_name": "JPBF",
+  "results": "🥇 奥村 弘祐（中部アマ）／🥈 水谷 幸治／ベスト4 葉山 祥吾・原田 哲一",
+  "winner": "奥村 弘祐",
+  "results_url": "https://jpbf.net/news/2026_mj_result/",
+  "source_id": "official-jpbf-20261108-mj-open-32-nagoya"
+ },
+ {
+  "handle": "official-japa-20261206-east-saitama",
+  "status": "ACTIVE",
+  "title": "第23回 東日本埼玉選手権",
+  "starts_at": "2026-12-06T09:00:00+09:00",
+  "date_label": "12/6（日）9:00開始",
+  "venue_name": "セスパ東大宮店・セスパ上尾店",
+  "prefecture": "埼玉県",
+  "region": "kanto",
+  "source_url": "https://japa.ne.jp/?p=27792",
+  "source_name": "JAPA",
+  "summary": "12/6（日）第23回 東日本埼玉選手権［JAPA］セスパ東大宮店・セスパ上尾店",
+  "notes": "参加資格・参加費・申込方法は、JAPAの要項をご確認ください。"
+ },
+ {
+  "handle": "official-japa-20261213-kansai-14-1",
+  "status": "ACTIVE",
+  "title": "第10回 KANSAI 14-1",
+  "starts_at": "2026-12-13T09:30:00+09:00",
+  "date_label": "12/13（日）9:30開始",
+  "venue_name": "マグスミノエ・Break・フタバボウル泉大津店",
+  "prefecture": "大阪府",
+  "region": "kinki",
+  "games": "[\"14-1\"]",
+  "source_url": "https://japa.ne.jp/?p=27849",
+  "source_name": "JAPA",
+  "summary": "12/13（日）第10回 KANSAI 14-1［JAPA］マグスミノエ・Break・フタバボウル泉大津店",
+  "notes": "参加資格・参加費・申込方法は、JAPAの要項をご確認ください。"
+ },
+ {
+  "handle": "official-jpbf-20261126-adam-japan-qualifier-2",
+  "status": "ACTIVE",
+  "starts_at": "2026-11-26T11:00:00+09:00",
+  "date_label": "11/26（木）11:00開始",
+  "venue_name": "ARENA／ヤマニ",
+  "source_url": "https://jpbf.net/news/2026_adam_pq/"
+ },
+ {
+  "handle": "official-jpba-20261107-all-japan-womens-amateur-qualifier",
+  "results": "本戦出場権を獲得：稲見 木綿子・土井 佐希子・西野 早苗・森光 奈穂 ほか（計13名）",
+  "results_url": "https://jpba.ne.jp/wp/info/info-25675/"
+ },
+ {
+  "handle": "official-jpba-20261107-gp-east-6",
+  "results": "🥇 杉山 功起／🥈 羅 立文／🥉 神箸 渓心・持永 隼史（ベストアマ：持永 隼史／年間MVPは羅 立文）"
+ }
+]
