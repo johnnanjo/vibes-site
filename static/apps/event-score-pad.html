@@ -33,6 +33,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
 .pl .sc b{font:400 34vh/.9 VLNum,system-ui,sans-serif;color:#fff;letter-spacing:-.02em}
 .pl.b .sc b{color:#FFD700}
 .pl .sc span{font-weight:800;font-size:2.2vh;color:#B9C4D6;min-height:2.8vh}
+.pl .sc .stt{display:flex;gap:1.6vw;font-weight:800;font-size:2.3vh;color:#B9C4D6;min-height:0}.pl .sc .stt em{font:400 3.2vh/1 VLNum,system-ui,sans-serif;font-style:normal;color:#fff;margin-left:.5vw}
+.pl .sc b{font-size:30vh}
 .pl .sc span.fin{color:#0B192C;background:#FFD700;border-radius:999px;padding:.3vh 1.4vw}
 .pl .bt{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.4fr);gap:1vw}
 .pl .bt button{appearance:none;border:0;cursor:pointer;border-radius:2.2vh;min-height:15vh;font:400 8vh/1 VLNum,system-ui,sans-serif}
@@ -71,7 +73,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
   </div>
   <div class="main">
     <section class="pl a" id="pA"><div class="hd"><span class="ball" style="--b:#E9EEF5"></span><input class="nm" id="nA" maxlength="16" autocomplete="off" aria-label="選手A（白球）の名前"><label class="hc">持ち点<input id="hA" inputmode="numeric" maxlength="3" aria-label="選手Aの持ち点"></label></div>
-      <div class="sc"><b id="sA">0</b><span id="rA"></span><button class="tn" type="button" data-turn="0">この選手の番にする</button></div>
+      <div class="sc"><b id="sA">0</b><span id="rA"></span><div class="stt"><span>ハイラン<em id="xA">0</em></span><span>アベレージ<em id="vA">-</em></span></div><button class="tn" type="button" data-turn="0">この選手の番にする</button></div>
       <div class="bt"><button class="mn" type="button" data-add="0,-1" aria-label="選手Aの得点を1点へらす">−1</button><button class="pp" type="button" data-add="0,1" aria-label="選手Aに1点入れる">+1</button></div></section>
     <div class="mid">
       <div class="inn"><small>イニング</small><b id="inn">1</b><div><button type="button" data-inn="-1" aria-label="イニングを1つ戻す">−1</button><button type="button" data-inn="1" aria-label="イニングを1つ進める">+1</button></div></div>
@@ -79,7 +81,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
       <p class="hint">点が入るたびに「+1」。<br>撞き終わったら「交代」。</p>
     </div>
     <section class="pl b" id="pB"><div class="hd"><span class="ball" style="--b:#FFD700"></span><input class="nm" id="nB" maxlength="16" autocomplete="off" aria-label="選手B（黄球）の名前"><label class="hc">持ち点<input id="hB" inputmode="numeric" maxlength="3" aria-label="選手Bの持ち点"></label></div>
-      <div class="sc"><b id="sB">0</b><span id="rB"></span><button class="tn" type="button" data-turn="1">この選手の番にする</button></div>
+      <div class="sc"><b id="sB">0</b><span id="rB"></span><div class="stt"><span>ハイラン<em id="xB">0</em></span><span>アベレージ<em id="vB">-</em></span></div><button class="tn" type="button" data-turn="1">この選手の番にする</button></div>
       <div class="bt"><button class="mn" type="button" data-add="1,-1" aria-label="選手Bの得点を1点へらす">−1</button><button class="pp" type="button" data-add="1,1" aria-label="選手Bに1点入れる">+1</button></div></section>
   </div>
 </div>
@@ -95,20 +97,25 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
   function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
   var match = clean((/[?&]match=([^&#]+)/.exec(location.search) || [])[1] ? decodeURIComponent((/[?&]match=([^&#]+)/.exec(location.search))[1]) : '') || 'test';
   var KEY = 'vibes-event-score:' + match, S = null, ws = null, tries = 0, timer = null, gotRemote = false;
-  function blank() { return { type: 'state', v: 1, m: match, title: '3-CUSHION', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0 }, { n: 'PLAYER B', h: 0, s: 0 }], t: 0 }; }
+  function blank() { return { type: 'state', v: 1, m: match, title: '3-CUSHION', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0 }], t: 0 }; }
+  /* innings a player has had so far (the second player has not yet played in the current inning while the first is at the table) */
+  function inns(i) { return i === 0 ? S.inn : (S.turn === 1 ? S.inn : S.inn - 1); }
+  function avg(i) { var n = inns(i); return n > 0 ? (S.p[i].s / n).toFixed(3) : '-'; }
+  function endRun() { S.p.forEach(function (p) { p.run = 0; p.hb = p.hr | 0; }); }
+  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); return o; }
   function valid(o) { return o && o.type === 'state' && o.p && o.p.length === 2 && typeof o.inn === 'number'; }
-  try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (valid(j)) S = j; } catch (e) {}
+  try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (valid(j)) S = fix(j); } catch (e) {}
   var fresh = !S; if (!S) S = blank();
   function draw() {
     $('iMatch').value = match; if (document.activeElement !== $('iTitle')) $('iTitle').value = S.title;
     [['A', 0], ['B', 1]].forEach(function (x) {
       var p = S.p[x[1]]; if (document.activeElement !== $('n' + x[0])) $('n' + x[0]).value = p.n; if (document.activeElement !== $('h' + x[0])) $('h' + x[0]).value = p.h || '';
-      $('s' + x[0]).textContent = p.s; var r = $('r' + x[0]); if (p.h > 0 && p.s >= p.h) { r.textContent = 'あがり'; r.className = 'fin'; } else { r.textContent = p.h > 0 ? 'あと ' + (p.h - p.s) + ' 点' : ''; r.className = ''; }
+      $('s' + x[0]).textContent = p.s; $('x' + x[0]).textContent = p.hr; $('v' + x[0]).textContent = avg(x[1]); var r = $('r' + x[0]); if (p.h > 0 && p.s >= p.h) { r.textContent = 'あがり'; r.className = 'fin'; } else { r.textContent = p.h > 0 ? 'あと ' + (p.h - p.s) + ' 点' : ''; r.className = ''; }
       $('p' + x[0]).classList.toggle('on', S.turn === x[1]);
     });
     $('inn').textContent = S.inn; $('nxT').textContent = '次は ' + S.p[S.turn ? 0 : 1].n;
   }
-  function push() { if (ws && ws.readyState === 1) { try { ws.send(JSON.stringify(S)); } catch (e) {} } }
+  function push() { if (ws && ws.readyState === 1) { S.p[0].avg = avg(0); S.p[1].avg = avg(1); try { ws.send(JSON.stringify(S)); } catch (e) {} } }
   function save() { S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} draw(); push(); }
   /* ---- connection: this page is the "display" side of the relay (the side whose state is kept and handed to late joiners) ---- */
   function status(on) { $('st').className = 'st' + (on ? ' on' : ''); $('stT').textContent = on ? '配信の画面とつながっています' : 'つなぎ直しています'; }
@@ -124,19 +131,19 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
     if (!fresh) return connect();
     var w, done = false, go = function () { if (done) return; done = true; try { w.close(); } catch (e) {} draw(); connect(); };
     try { w = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=remote'); } catch (e) { return go(); }
-    w.onmessage = function (ev) { var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (valid(m) && m.m === match) { S = m; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} go(); } };
+    w.onmessage = function (ev) { var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (valid(m) && m.m === match) { S = fix(m); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} go(); } };
     w.onerror = go; w.onclose = go; setTimeout(go, 1500);
   }
   /* ---- actions ---- */
   document.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.add) { var a = b.dataset.add.split(','), p = S.p[+a[0]]; p.s = Math.max(0, Math.min(999, p.s + (+a[1]))); save(); }
+    if (b.dataset.add) { var a = b.dataset.add.split(','), p = S.p[+a[0]]; var d = +a[1], was = p.s; p.s = Math.max(0, Math.min(999, p.s + d)); if (p.s !== was) { p.run = Math.max(0, p.run + d); p.hr = Math.max(p.hb | 0, p.run); } save(); } /* hb = high run before this visit, so a mistaken +1 taken back with −1 does not leave a wrong high run */
     else if (b.dataset.inn) { S.inn = Math.max(1, Math.min(999, S.inn + (+b.dataset.inn))); save(); }
-    else if (b.dataset.turn) { S.turn = +b.dataset.turn; save(); }
-    else if (b.id === 'bNext') { if (S.turn === 0) S.turn = 1; else { S.turn = 0; S.inn = Math.min(999, S.inn + 1); } save(); }
+    else if (b.dataset.turn) { if (S.turn !== +b.dataset.turn) endRun(); S.turn = +b.dataset.turn; save(); }
+    else if (b.id === 'bNext') { endRun(); if (S.turn === 0) S.turn = 1; else { S.turn = 0; S.inn = Math.min(999, S.inn + 1); } save(); }
     else if (b.id === 'bReset') $('dlg').hidden = false;
     else if (b.id === 'dNo') $('dlg').hidden = true;
-    else if (b.id === 'dOk') { S.p[0].s = 0; S.p[1].s = 0; S.inn = 1; S.turn = 0; $('dlg').hidden = true; save(); }
+    else if (b.id === 'dOk') { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; }); S.inn = 1; S.turn = 0; $('dlg').hidden = true; save(); }
   });
   function bind(id, fn) { var el = $(id); el.addEventListener('input', function () { fn(el.value); S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} push(); if (/^h/.test(id)) draw(); $('nxT').textContent = '次は ' + S.p[S.turn ? 0 : 1].n; }); el.addEventListener('blur', draw); el.addEventListener('keydown', function (e) { if (e.key === 'Enter') el.blur(); }); }
   bind('nA', function (v) { S.p[0].n = v.slice(0, 16) || 'PLAYER A'; }); bind('nB', function (v) { S.p[1].n = v.slice(0, 16) || 'PLAYER B'; });

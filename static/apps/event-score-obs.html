@@ -13,16 +13,17 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:transparent;overflow:hidden;font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif}
 body.bg{background:#22303F}
-#card{position:fixed;left:40px;top:40px;transform-origin:0 0;width:520px;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);display:grid;grid-template-columns:118px minmax(0,1fr);grid-template-rows:auto auto auto}
+#card{position:fixed;left:40px;top:40px;transform-origin:0 0;width:620px;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);display:grid;grid-template-columns:118px minmax(0,1fr);grid-template-rows:auto auto auto}
 #card[hidden]{display:none}
 .hd{grid-column:1/-1;background:#0B192C;color:#fff;font-weight:900;font-size:22px;letter-spacing:.12em;padding:9px 18px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .in{grid-row:2/4;background:#0B192C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-top:2px solid #1D3557}
 .in small{font-weight:900;font-size:19px;letter-spacing:.14em}.in b{font:400 54px/1 VLNum,system-ui,sans-serif}
-.rw{display:grid;grid-template-columns:14px minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:0 18px 0 0;min-height:66px;color:#000}
+.rw{display:grid;grid-template-columns:14px minmax(0,1fr) auto auto auto;align-items:center;gap:10px;padding:0 18px 0 0;min-height:66px;color:#000}
 .rw.a{background:#fff}.rw.b{background:#FFD700}
 .rw i{align-self:stretch;background:transparent}.rw.on i{background:#E11D48}
 .rw .n{font-weight:900;font-size:27px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rw .h{font-weight:800;font-size:17px;opacity:.6;white-space:nowrap}
+.rw .x{font-weight:900;font-size:15px;letter-spacing:.06em;white-space:nowrap;background:rgba(0,0,0,.1);border-radius:8px;padding:5px 9px;line-height:1}.rw .x b{font:400 22px/1 VLNum,system-ui,sans-serif;margin-left:6px}
 .rw .s{font:400 50px/1 VLNum,system-ui,sans-serif;min-width:64px;text-align:right}
 .rw .d{display:inline-block;width:12px;height:12px;border-radius:50%;background:#E11D48;margin-right:8px;vertical-align:3px;visibility:hidden}.rw.on .d{visibility:visible}
 #msg{position:fixed;left:40px;top:40px;background:#0B192C;color:#fff;font-weight:800;font-size:22px;line-height:1.7;padding:16px 20px;border-radius:14px;max-width:900px}
@@ -33,8 +34,8 @@ body.bg{background:#22303F}
 <div id="card" hidden>
   <div class="hd" id="tt">3-CUSHION</div>
   <div class="in"><small>INN</small><b id="inn">1</b></div>
-  <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="s" id="sA">0</span></div>
-  <div class="rw b" id="rB"><i></i><span class="n"><span class="d"></span><span id="nB">PLAYER B</span></span><span class="h" id="hB"></span><span class="s" id="sB">0</span></div>
+  <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="x">HR<b id="xA">0</b></span><span class="s" id="sA">0</span></div>
+  <div class="rw b" id="rB"><i></i><span class="n"><span class="d"></span><span id="nB">PLAYER B</span></span><span class="h" id="hB"></span><span class="x">HR<b id="xB">0</b></span><span class="s" id="sB">0</span></div>
 </div>
 <div id="msg" hidden></div>
 <script>
@@ -54,7 +55,7 @@ body.bg{background:#22303F}
   function draw(m) {
     if (!m || m.type !== 'state' || !m.p || m.p.length !== 2 || (m.m && m.m !== match)) return;
     $('tt').textContent = m.title || '3-CUSHION'; $('inn').textContent = m.inn;
-    [['A', 0], ['B', 1]].forEach(function (x) { var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('r' + x[0]).classList.toggle('on', m.turn === x[1]); });
+    [['A', 0], ['B', 1]].forEach(function (x) { var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('x' + x[0]).textContent = p.hr | 0; $('r' + x[0]).classList.toggle('on', m.turn === x[1]); });
     c.hidden = false; $('msg').hidden = true; try { localStorage.setItem(KEY, JSON.stringify(m)); } catch (e) {}
   }
   function connect() {
