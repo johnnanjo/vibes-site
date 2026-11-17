@@ -21,6 +21,7 @@
 - `data/lab-codes.json` DIGITAL LAB の利用コード（お店ごと・12けた）。コードそのものは置かず PBKDF2 の値だけ。発行は `node scripts/lab-code.mjs "店名"`（出たコードは公式LINEでお店へ。リポジトリに書かない）、停止は `on:false`。入力画面は `static/js/lab-gate.js`（ビルド時に count-home / count-3c / count-pocket / count-tour の head へ差し込み。導入前から使っていた端末は初回に自動で利用可。モニター店の WIND はコード不要＝`/pages/count/?monitor=wind` で開いた端末は以後ずっと利用可）
 - DIGITAL LAB の方針（2026-11-16）：提供開始は2026-12-01。お店の利用管理は「利用コード」だけで行う。`vibesdigilabo.com`（worker.mjs の LABO ログイン方式・`static/labo/`）は扱わない＝使わない（コードは残してあるが、案内も設定もしない）。毎月の費用と利用の約束ごとは未決定
 - 旧キャロム版カウント（VIBES LIVE TABLE）は閉鎖（2026-11-17 運営者決定）：`/pages/bowlard/?mode=carom` と `/pages/live-table` は `/pages/digital-lab` へ移動させる（`?mode=pocket` はボーラードへ）。スリークッションのカウントは DIGITAL LAB（利用コード）だけ。古いプログラムは残してある
+- イベント用スコアボード（隠しページ。メニューにもサイトマップにも出さない）：`/event-score-pad?match=<試合ID>`（タブレット横向きの入力。`static/apps/event-score-pad.html`）と `/event-score-obs?match=<試合ID>`（OBSのブラウザソース用・背景透過。`static/apps/event-score-obs.html`。`&scale=1.5` `&pos=tr|bl|br` `&bg=1`）。同期は既存のスコアボード中継（worker.mjs の `/api/count/<6けた>`。試合IDを6けたの番号に変換して部屋にする。入力側＝display、配信側＝remote）。Firebase などの外部DBは使っていない。2026-12-05 の女王杯の配信で使う予定
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック。`youtubeLive` に YouTube チャンネルのURLを入れると `/live`（VIBES LIVE の入口）のボタンが有効になる（空なら「準備中」）。`homeWinners` が true のときだけ、トップに「◯月の優勝者」を出す（2026-11-16 から一時的に閉鎖中＝false）
 
 ## URL

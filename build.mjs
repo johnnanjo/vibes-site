@@ -460,6 +460,9 @@ function contentPages() {
     put('/pages/digital-lab-pocket', page({ title: 'VIBES BILLIARDS DIGITAL LAB FOR POCKET｜ポケットのデジタルスコアボード', desc: 'ポケットビリヤード用のデジタルスコアボード「VIBES BILLIARDS DIGITAL LAB FOR POCKET」。9ボール・10ボール・ボーラードの画面を紹介します。', path: '/pages/digital-lab-pocket', cur: 'pk', body: dl({ h1: 'VIBES BILLIARDS DIGITAL LAB　FOR POCKET', lead: 'ポケットビリヤードのスコアを、お店のモニターに大きく映すデジタルスコアボード。お店の要望に合わせてカスタマイズします。初期導入費は0円です。', badge: '準備中（2026年12月1日 提供開始）・いまは画面の紹介のみです', h2: 'FOR POCKET の画面（紹介）', figs: [['pocket-1-title', '最初の画面', '電源を入れると出る画面。公式LINE とサイトのQRコードが入ります。'], ['pocket-2-menu', 'メニュー', 'ニューゲーム、同じ人とゲーム、選手登録、各種設定。お店の名前が上に出ます。'], ['pocket-3-games', 'ゲームをえらぶ', 'ボーラード、9ボール、10ボールから選びます。'], ['pocket-4-nine', '9ボール', 'セットマッチと 5-9 に対応しています。'], ['pocket-5-score', 'スコア画面（ボーラードの例）', 'フレームごとの点数を、ボウリングと同じ形で表示します。']], can: ['9ボール（セットマッチ・5-9）、10ボール、ボーラードに対応しています', 'テンキーだけで操作できます（スマホやタブレットをリモコンにすることもできます）', '1人〜4人で使えます'], other: ['/pages/digital-lab', 'DIGITAL LAB FOR CAROM を見る', 'スリークッションの画面（ビリヤード・WIND で使用中）'] }) }));
   }
   put('/pages/3c-note', page({ title: '3C NOTE｜スリークッションの練習記録・アベレージ管理', desc: 'スリークッションの練習ゲームを1ゲームずつ記録。点数とイニングを入れるだけで、通算アベレージ・直近のアベレージ・ハイラン・ベストゲームがグラフで見えます。無料・登録なし。', path: '/pages/3c-note', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-note.html'), 'utf8') }));
+  /* event scoreboard (hidden pages, opened only by address): tablet input + OBS overlay, kept apart by ?match=<id>; realtime through the scoreboard relay */
+  put('/event-score-pad', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-score-pad.html'), 'utf8') });
+  put('/event-score-obs', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-score-obs.html'), 'utf8') });
   put('/pages/count-overlay', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-overlay.html'), 'utf8') });
   put('/pages/count-cam', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-cam.html'), 'utf8') });
   put('/pages/count-live', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-live.html'), 'utf8') });
@@ -584,7 +587,7 @@ const urls = [];
 for (const [url, v] of out) {
   const html = v.raw ?? v.html;
   write(DIST, url, html); n++;
-  if (url !== '/404.html' && !/^\/pages\/count(-3c|-remote|-pocket|-cam|-live|-tour|-overlay)?$/.test(url)) urls.push(url); /* count-3c: in private testing, not listed */
+  if (url !== '/404.html' && !/^\/pages\/count(-3c|-remote|-pocket|-cam|-live|-tour|-overlay)?$/.test(url) && !/^\/event-score-/.test(url)) urls.push(url); /* count-3c: in private testing, not listed */
   for (const [code, , prefix] of LANGS.slice(1)) { write(DIST, prefix + (url === '/' ? '/' : url), localize(html, code, prefix)); n++; }
 }
 const sm = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${SITE}${encodeURI(decodeURI(u))}</loc></url>`).join('\n')}\n</urlset>`;

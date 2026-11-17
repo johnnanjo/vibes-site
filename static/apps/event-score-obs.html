@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>イベント用 配信スコア表示｜VIBES BILLIARDS</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/img/favicon-64.png">
+<style>
+/* Event scoreboard, stream side: a small score card for the top-left of the picture in OBS (browser source 1920x1080, transparent ground, no controls).
+   ?match=<id> the same id as /event-score-pad   ?scale=1.5 bigger or smaller   ?pos=tr|bl|br other corners   ?bg=1 dark ground for checking */
+@font-face{font-family:VLNum;src:url(/fonts/vibes-num.woff2) format("woff2");font-display:swap}
+*{box-sizing:border-box}
+html,body{margin:0;background:transparent;overflow:hidden;font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif}
+body.bg{background:#22303F}
+#card{position:fixed;left:40px;top:40px;transform-origin:0 0;width:520px;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);display:grid;grid-template-columns:118px minmax(0,1fr);grid-template-rows:auto auto auto}
+#card[hidden]{display:none}
+.hd{grid-column:1/-1;background:#0B192C;color:#fff;font-weight:900;font-size:22px;letter-spacing:.12em;padding:9px 18px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.in{grid-row:2/4;background:#0B192C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-top:2px solid #1D3557}
+.in small{font-weight:900;font-size:19px;letter-spacing:.14em}.in b{font:400 54px/1 VLNum,system-ui,sans-serif}
+.rw{display:grid;grid-template-columns:14px minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:0 18px 0 0;min-height:66px;color:#000}
+.rw.a{background:#fff}.rw.b{background:#FFD700}
+.rw i{align-self:stretch;background:transparent}.rw.on i{background:#E11D48}
+.rw .n{font-weight:900;font-size:27px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rw .h{font-weight:800;font-size:17px;opacity:.6;white-space:nowrap}
+.rw .s{font:400 50px/1 VLNum,system-ui,sans-serif;min-width:64px;text-align:right}
+.rw .d{display:inline-block;width:12px;height:12px;border-radius:50%;background:#E11D48;margin-right:8px;vertical-align:3px;visibility:hidden}.rw.on .d{visibility:visible}
+#msg{position:fixed;left:40px;top:40px;background:#0B192C;color:#fff;font-weight:800;font-size:22px;line-height:1.7;padding:16px 20px;border-radius:14px;max-width:900px}
+#msg[hidden]{display:none}
+</style>
+</head>
+<body>
+<div id="card" hidden>
+  <div class="hd" id="tt">3-CUSHION</div>
+  <div class="in"><small>INN</small><b id="inn">1</b></div>
+  <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="s" id="sA">0</span></div>
+  <div class="rw b" id="rB"><i></i><span class="n"><span class="d"></span><span id="nB">PLAYER B</span></span><span class="h" id="hB"></span><span class="s" id="sB">0</span></div>
+</div>
+<div id="msg" hidden></div>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); }, q = location.search;
+  var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+  function clean(m) { return String(m || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40); }
+  function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
+  var mm = /[?&]match=([^&#]+)/.exec(q), match = clean(mm ? decodeURIComponent(mm[1]) : '');
+  var sc = Math.max(0.5, Math.min(3, parseFloat((/[?&]scale=([0-9.]+)/.exec(q) || [])[1]) || 1)), pos = (/[?&]pos=(tr|bl|br)/.exec(q) || [])[1] || 'tl', c = $('card');
+  if (/[?&]bg=1/.test(q)) document.body.classList.add('bg');
+  c.style.transform = 'scale(' + sc + ')';
+  if (pos === 'tr' || pos === 'br') { c.style.left = 'auto'; c.style.right = '40px'; c.style.transformOrigin = '100% ' + (pos === 'br' ? '100%' : '0'); }
+  if (pos === 'bl' || pos === 'br') { c.style.top = 'auto'; c.style.bottom = '40px'; if (pos === 'bl') c.style.transformOrigin = '0 100%'; }
+  var KEY = 'vibes-event-obs:' + match, ws = null, tries = 0, timer = null, last = 0;
+  function draw(m) {
+    if (!m || m.type !== 'state' || !m.p || m.p.length !== 2 || (m.m && m.m !== match)) return;
+    $('tt').textContent = m.title || '3-CUSHION'; $('inn').textContent = m.inn;
+    [['A', 0], ['B', 1]].forEach(function (x) { var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('r' + x[0]).classList.toggle('on', m.turn === x[1]); });
+    c.hidden = false; $('msg').hidden = true; try { localStorage.setItem(KEY, JSON.stringify(m)); } catch (e) {}
+  }
+  function connect() {
+    try { ws = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=remote'); } catch (e) { return; }
+    var ping; ws.onopen = function () { tries = 0; last = Date.now(); ping = setInterval(function () { if (ws.readyState === 1) ws.send('ping'); if (Date.now() - last > 70000) { try { ws.close(); } catch (e) {} } }, 25000); };
+    ws.onmessage = function (ev) { last = Date.now(); if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } draw(m); };
+    ws.onclose = function () { clearInterval(ping); clearTimeout(timer); timer = setTimeout(connect, Math.min(8000, 500 * Math.pow(2, tries++))); };
+    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+  }
+  if (!match) { $('msg').hidden = false; $('msg').textContent = 'アドレスの最後に、試合IDを付けて開いてください。例：/event-score-obs?match=w3c-1205'; return; }
+  /* the last score seen stays on screen through a reload or a short loss of connection */
+  try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (j) draw(j); } catch (e) {}
+  connect(); window.addEventListener('online', function () { if (!ws || ws.readyState > 1) { clearTimeout(timer); connect(); } });
+})();
+</script>
+</body>
+</html>
