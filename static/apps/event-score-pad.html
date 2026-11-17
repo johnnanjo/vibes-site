@@ -97,12 +97,12 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
   function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
   var match = clean((/[?&]match=([^&#]+)/.exec(location.search) || [])[1] ? decodeURIComponent((/[?&]match=([^&#]+)/.exec(location.search))[1]) : '') || 'test';
   var KEY = 'vibes-event-score:' + match, S = null, ws = null, tries = 0, timer = null, gotRemote = false;
-  function blank() { return { type: 'state', v: 1, m: match, title: '3-CUSHION', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0 }], t: 0 }; }
+  function blank() { return { type: 'state', v: 1, m: match, title: 'Queen Cup 2026-2027', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0 }], t: 0 }; }
   /* innings a player has had so far (the second player has not yet played in the current inning while the first is at the table) */
   function inns(i) { return i === 0 ? S.inn : (S.turn === 1 ? S.inn : S.inn - 1); }
   function avg(i) { var n = inns(i); return n > 0 ? (S.p[i].s / n).toFixed(3) : '-'; }
   function endRun() { S.p.forEach(function (p) { p.run = 0; p.hb = p.hr | 0; }); }
-  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); return o; }
+  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); if (!o.title || o.title === '3-' + 'CUSHION') o.title = 'Queen Cup 2026-2027'; return o; }
   function valid(o) { return o && o.type === 'state' && o.p && o.p.length === 2 && typeof o.inn === 'number'; }
   try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (valid(j)) S = fix(j); } catch (e) {}
   var fresh = !S; if (!S) S = blank();
@@ -148,7 +148,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
   function bind(id, fn) { var el = $(id); el.addEventListener('input', function () { fn(el.value); S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} push(); if (/^h/.test(id)) draw(); $('nxT').textContent = '次は ' + S.p[S.turn ? 0 : 1].n; }); el.addEventListener('blur', draw); el.addEventListener('keydown', function (e) { if (e.key === 'Enter') el.blur(); }); }
   bind('nA', function (v) { S.p[0].n = v.slice(0, 16) || 'PLAYER A'; }); bind('nB', function (v) { S.p[1].n = v.slice(0, 16) || 'PLAYER B'; });
   bind('hA', function (v) { S.p[0].h = Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0); }); bind('hB', function (v) { S.p[1].h = Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0); });
-  bind('iTitle', function (v) { S.title = v.slice(0, 24) || '3-CUSHION'; });
+  bind('iTitle', function (v) { S.title = v.slice(0, 24) || 'Queen Cup 2026-2027'; });
   $('iMatch').addEventListener('change', function () { var m = clean($('iMatch').value); if (m && m !== match) location.search = '?match=' + encodeURIComponent(m); else $('iMatch').value = match; });
   $('iMatch').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('iMatch').blur(); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { wake(); if (!ws || ws.readyState > 1) { clearTimeout(timer); connect(); } } });

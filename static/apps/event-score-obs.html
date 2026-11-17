@@ -15,7 +15,7 @@ html,body{margin:0;background:transparent;overflow:hidden;font-family:"Hiragino 
 body.bg{background:#22303F}
 #card{position:fixed;left:40px;top:40px;transform-origin:0 0;width:620px;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);display:grid;grid-template-columns:118px minmax(0,1fr);grid-template-rows:auto auto auto}
 #card[hidden]{display:none}
-.hd{grid-column:1/-1;background:#0B192C;color:#fff;font-weight:900;font-size:22px;letter-spacing:.12em;padding:9px 18px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd{grid-column:1/-1;background:#0B192C;color:#fff;font-weight:900;font-size:22px;letter-spacing:.06em;padding:9px 18px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .in{grid-row:2/4;background:#0B192C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-top:2px solid #1D3557}
 .in small{font-weight:900;font-size:19px;letter-spacing:.14em}.in b{font:400 54px/1 VLNum,system-ui,sans-serif}
 .rw{display:grid;grid-template-columns:14px minmax(0,1fr) auto auto auto;align-items:center;gap:10px;padding:0 18px 0 0;min-height:66px;color:#000}
@@ -32,7 +32,7 @@ body.bg{background:#22303F}
 </head>
 <body>
 <div id="card" hidden>
-  <div class="hd" id="tt">3-CUSHION</div>
+  <div class="hd" id="tt">Queen Cup 2026-2027</div>
   <div class="in"><small>INN</small><b id="inn">1</b></div>
   <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="x">HR<b id="xA">0</b></span><span class="s" id="sA">0</span></div>
   <div class="rw b" id="rB"><i></i><span class="n"><span class="d"></span><span id="nB">PLAYER B</span></span><span class="h" id="hB"></span><span class="x">HR<b id="xB">0</b></span><span class="s" id="sB">0</span></div>
@@ -54,7 +54,7 @@ body.bg{background:#22303F}
   var KEY = 'vibes-event-obs:' + match, ws = null, tries = 0, timer = null, last = 0;
   function draw(m) {
     if (!m || m.type !== 'state' || !m.p || m.p.length !== 2 || (m.m && m.m !== match)) return;
-    $('tt').textContent = m.title || '3-CUSHION'; $('inn').textContent = m.inn;
+    $('tt').textContent = m.title || 'Queen Cup 2026-2027'; $('inn').textContent = m.inn;
     [['A', 0], ['B', 1]].forEach(function (x) { var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('x' + x[0]).textContent = p.hr | 0; $('r' + x[0]).classList.toggle('on', m.turn === x[1]); });
     c.hidden = false; $('msg').hidden = true; try { localStorage.setItem(KEY, JSON.stringify(m)); } catch (e) {}
   }
