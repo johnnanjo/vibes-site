@@ -1,4 +1,4 @@
-<!-- VIBES 3C LAB：これからスリークッションを楽しみたい人向け。3つのタブ＝取り口辞典（data/3c-lab.json の patterns を build.mjs が差し込む）／基礎理論（初球・厚み・撞点・クッション・鏡）／システム計算（ファイブ＆ハーフ、プラス、短・長・短）。図はすべてこのファイルの中で描く。動画や外部の画像は使わない。 -->
+<!-- VIBES 3C LAB：これからスリークッションを楽しみたい人向け。3つのタブ＝取り口辞典（配置カード＝scripts/lab-positions.mjs が data/3c-lab-shots.json から軌道を計算、build.mjs がページへ埋め込む／ことばの8の形＝data/3c-lab.json の patterns）／基礎理論（初球・厚み・撞点・クッション・鏡）／システム計算（ファイブ＆ハーフ、プラス、短・長・短）。図はすべてこのファイルの中で描く。動画や外部の画像は使わない。 -->
 <style>
 .l3{--blue:#1E5AA8;--red:#D7262E;--yel:#F2C200}
 .l3 *{box-sizing:border-box}
@@ -54,6 +54,41 @@
 .l3-cta b{font-size:clamp(20px,5.4vw,26px);font-weight:900;line-height:1.45}
 .l3-cta small{font-size:14px;font-weight:700;line-height:1.7}
 .l3-cta span{margin-top:4px;background:var(--night);color:var(--chalk);font-size:16px;font-weight:900;line-height:1;padding:16px 22px;border-radius:999px}
+.l3-pf{display:flex;flex-direction:column;gap:10px}
+.l3-pf .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.l3-pf label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:900}
+.l3-pf select{appearance:none;width:100%;min-height:48px;border-radius:14px;border:2px solid var(--night);background:#fff;color:var(--night);font:900 15px/1 var(--jp);padding:0 14px}
+.l3-fav{appearance:none;cursor:pointer;min-height:48px;border-radius:14px;border:2px solid var(--night);background:#fff;color:var(--night);font:900 15px/1.2 var(--jp);padding:6px 14px;text-align:left}
+.l3-fav[aria-pressed=true]{background:var(--night);color:var(--chalk)}
+.l3-pg{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.l3-pc{position:relative;background:#fff;border:1.5px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.l3-pc .op{appearance:none;border:0;background:none;padding:0;cursor:pointer;text-align:left;color:var(--night);font:inherit;display:flex;flex-direction:column;min-width:0}
+.l3-pc svg{display:block;width:100%;height:auto}
+.l3-pc .bd{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px}
+.l3-pc b{font-size:14.5px;font-weight:900;line-height:1.4}
+.l3-tags{display:flex;flex-wrap:wrap;gap:5px}
+.l3-tags span{font-size:11px;font-weight:900;line-height:1;padding:5px 8px;border-radius:999px;background:var(--line2);color:var(--night);white-space:nowrap}
+.l3-tags .lv1{background:var(--blue);color:#fff}.l3-tags .lv2{background:var(--night);color:var(--chalk)}.l3-tags .lv3{background:var(--red);color:#fff}
+.l3-st{position:absolute;right:6px;top:6px;appearance:none;cursor:pointer;width:44px;height:44px;border-radius:50%;border:0;background:rgba(11,18,32,.72);color:#CBD5E1;font:900 22px/1 sans-serif;display:grid;place-items:center}
+.l3-st[aria-pressed=true]{background:var(--lime);color:var(--night)}
+.l3-none{background:var(--line2);border-radius:18px;padding:16px;font-size:14px;font-weight:700;line-height:1.7;grid-column:1/-1}
+.l3-dlg{border:0;padding:0;margin:0;width:100%;max-width:100%;height:100%;max-height:100%;background:var(--chalk);color:var(--night)}
+.l3-dlg::backdrop{background:rgba(11,18,32,.7)}
+.l3-dlg .hd{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;background:var(--night);color:var(--chalk);padding:10px 12px}
+.l3-dlg .hd b{flex:1;min-width:0;font-size:16px;font-weight:900;line-height:1.4}
+.l3-dlg .hd button{flex:none;appearance:none;cursor:pointer;border:0;min-height:44px;border-radius:999px;background:var(--night2);color:var(--chalk);font:900 14px/1 var(--jp);padding:0 14px}
+.l3-dlg .hd button[aria-pressed=true]{background:var(--lime);color:var(--night)}
+.l3-dlg .in{padding:14px 16px 28px;display:flex;flex-direction:column;gap:12px;max-width:760px;margin:0 auto}
+.l3-dlg .in svg{display:block;width:100%;height:auto;border-radius:14px}
+.l3-dlg .ld{margin:0;font-size:15px;font-weight:700;line-height:1.85}
+.l3-dlg .rt{margin:0;font-weight:900;font-size:15px;line-height:1.7;background:var(--blue);color:#fff;border-radius:14px;padding:11px 13px}
+.l3-pm{display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;align-items:center;background:#111827;color:#F3F4EF;border-radius:18px;padding:14px}
+.l3-pm dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px 10px;font-size:14px;line-height:1.5}
+.l3-pm dt{font-weight:700;color:#94A3B8;white-space:nowrap}.l3-pm dd{margin:0;font-weight:900}
+.l3-dlg h4{margin:4px 0 0;font-size:13px;font-weight:900;line-height:1;align-self:flex-start;padding:6px 10px;border-radius:999px;background:var(--line2)}
+.l3-dlg ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;font-size:14.5px;font-weight:700;line-height:1.85}
+.l3-dlg .cv{margin:0;font-size:12.5px;font-weight:700;line-height:1.7;color:var(--sub)}
+@media(min-width:760px){.l3-pg{grid-template-columns:repeat(4,minmax(0,1fr))}.l3-pf{flex-direction:row;align-items:flex-end}.l3-pf .row{flex:1}.l3-dlg{width:min(820px,94vw);height:auto;max-height:92vh;border-radius:22px;margin:auto}}
 .l3-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--night);border-radius:20px;padding:6px;margin-top:22px}
 .l3-tabs button{appearance:none;border:0;cursor:pointer;min-height:52px;border-radius:15px;background:transparent;color:var(--chalk);font:900 14.5px/1.3 var(--jp);padding:6px 4px}
 .l3-tabs button[aria-selected=true]{background:var(--lime);color:var(--night)}
@@ -97,7 +132,7 @@
 <p class="crumb"><a href="/" style="color:#fff">トップ</a>　<a href="/pages/carom" style="color:#fff">キャロム</a></p>
 <h1 class="l3-ttl">VIBES 3C LAB</h1>
 <p class="l3-lead">スリークッションを、これから楽しみたい人へ。</p>
-<p class="l3-sub">ルールはシンプル、でも奥が深い。まずは「取り口」と呼ばれる8の形を、辞典で知るところから。慣れてきたら、厚みや回転の基礎理論、狙う場所を数字で出すシステム計算へ進みましょう。</p>
+<p class="l3-sub">ルールはシンプル、でも奥が深い。まずは「取り口」と呼ばれる形を、配置カードと辞典で知るところから。慣れてきたら、厚みや回転の基礎理論、狙う場所を数字で出すシステム計算へ進みましょう。</p>
 </div></div>
 <main class="wrap">
 
@@ -112,8 +147,20 @@
 
 <div class="l3-tabs" role="tablist" aria-label="3C LAB の内容"><button type="button" role="tab" id="l3-t1" aria-controls="l3-p1" aria-selected="true">取り口辞典</button><button type="button" role="tab" id="l3-t3" aria-controls="l3-p3" aria-selected="false">基礎理論</button><button type="button" role="tab" id="l3-t2" aria-controls="l3-p2" aria-selected="false">システム計算</button></div>
 <div id="l3-p1" role="tabpanel" aria-labelledby="l3-t1">
+<section class="l3-v" id="l3-pos">
+<h2 class="l3-h">配置カード　__POSN__の配置</h2>
+<p class="l3-p">実戦でよく出る配置を、カードにまとめました。カードをえらぶと、軌道の図・撞点・厚み・ヒネリ・強さと、実戦の注意点が出ます。★を付けた配置は「マイ帳面」に残り、あとでまとめて見られます。</p>
+<div class="l3-chips" id="pc-cat" role="group" aria-label="種類でしぼる" style="padding-left:0;padding-right:0;flex-wrap:wrap"></div>
+<div class="l3-pf"><div class="row"><label>難易度<select id="pc-lv"></select></label><label>並べ方<select id="pc-so"><option value="0">おすすめ順</option><option value="1">やさしい順</option><option value="2">むずかしい順</option></select></label></div>
+<button type="button" class="l3-fav" id="pc-fav" aria-pressed="false">★ マイ帳面だけ表示</button></div>
+<p class="l3-p" id="pc-n" aria-live="polite" style="font-size:13px"></p>
+<div class="l3-pg" id="pc-g"></div>
+<p class="l3-p" style="font-size:12.5px">図は、厚み・撞点・ヒネリから球の動きを計算して描いた模式図です。実際の台では、ラシャやクッションの状態、撞く強さで軌道が変わります。数字は目安としてお使いください。</p>
+</section>
+<dialog class="l3-dlg" id="pc-d" aria-labelledby="pc-dt"><div class="hd"><b id="pc-dt"></b><button type="button" id="pc-ds" aria-pressed="false">★ マイ帳面</button><button type="button" id="pc-dx">とじる</button></div><div class="in" id="pc-db"></div></dialog>
+<script type="application/json" id="pc-data">__POS__</script>
 <section class="l3-v" id="l3-pat">
-<h2 class="l3-h">取り口辞典　8の形</h2>
+<h2 class="l3-h">取り口のことば　8の形</h2>
 <p class="l3-p">「取り口」は、点を取るための球の走らせ方のこと。ひとこと定義・軌道・狙い方を、形ごとにまとめました。名前をえらぶと、その形へ移動します。</p>
 </section>
 <div class="l3-stick"><nav class="l3-chips" id="l3-g" aria-label="取り口をえらぶ">__CHIPS__</nav></div>
@@ -288,6 +335,63 @@ __CARDS__
 </section>
 </main>
 </div>
+<script>
+(function () {
+  'use strict';
+  /* position cards of the dictionary tab: filter, sort, favourites (kept in this browser only), detail dialog with the table figure */
+  var $ = function (id) { return document.getElementById(id); }, D; try { D = JSON.parse($('pc-data').textContent); } catch (e) { return; }
+  var KEY = 'vibes-3c-fav', fav = {}; try { (JSON.parse(localStorage.getItem(KEY) || '[]') || []).forEach(function (k) { fav[k] = 1; }); } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(Object.keys(fav))); } catch (e) {} }
+  var st = { cat: '', lv: '', so: 0, fav: false }, LV = D.levels, cur = null, esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  /* table figure of one position card (geometry worked out by scripts/lab-positions.mjs; units = diamonds, 8 x 4) */
+  function posSvg(c, small) {
+    var u = 48, ox = 38, oy = 34, W = 8 * u + ox * 2, H = 4 * u + oy * 2, g = c.geo, P = function (q) { return (ox + q[0] * u).toFixed(1) + ',' + (oy + q[1] * u).toFixed(1); }, r = 0.0866 * u * (small ? 1.9 : 1.35), i;
+    var line = function (pts, col, w, dash) { return '<polyline points="' + pts.map(P).join(' ') + '" fill="none" stroke="' + col + '" stroke-width="' + w + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + ' stroke-linejoin="round" stroke-linecap="round"/>'; };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + c.name + 'の図。' + c.route + '"><rect width="' + W + '" height="' + H + '" rx="14" fill="#0B1220"/><rect x="' + (ox - 14) + '" y="' + (oy - 14) + '" width="' + (8 * u + 28) + '" height="' + (4 * u + 28) + '" rx="9" fill="#334155"/><rect x="' + ox + '" y="' + oy + '" width="' + 8 * u + '" height="' + 4 * u + '" fill="#111827"/><g fill="#CBD5E1">';
+    for (i = 1; i < 8; i++) s += '<circle cx="' + (ox + i * u) + '" cy="' + (oy - 7) + '" r="2.4"/><circle cx="' + (ox + i * u) + '" cy="' + (oy + 4 * u + 7) + '" r="2.4"/>';
+    for (i = 1; i < 4; i++) s += '<circle cx="' + (ox - 7) + '" cy="' + (oy + i * u) + '" r="2.4"/><circle cx="' + (ox + 8 * u + 7) + '" cy="' + (oy + i * u) + '" r="2.4"/>';
+    s += '</g>' + line(g.ob, '#FACC15', small ? 2.5 : 2, '3 6') + line(g.pre, '#FFFFFF', small ? 3.5 : 2.6) + line(g.post, '#38BDF8', small ? 3.5 : 2.6);
+    var B = function (q, col) { var a = P(q).split(','); return '<circle cx="' + a[0] + '" cy="' + a[1] + '" r="' + r.toFixed(1) + '" fill="' + col + '" stroke="#0B1220" stroke-width="1"/>'; };
+    if (!small) g.marks.forEach(function (q, k) { var a = P(q).split(','), x = Math.min(Math.max(+a[0], ox + 11), ox + 8 * u - 11), y = Math.min(Math.max(+a[1], oy + 11), oy + 4 * u - 11); s += '<circle cx="' + x + '" cy="' + y + '" r="9.5" fill="#38BDF8"/><text x="' + x + '" y="' + (y + 4.3) + '" text-anchor="middle" font-size="12.5" font-weight="900" font-family="sans-serif" fill="#111827">' + (k + 1) + '</text>'; });
+    return s + B(g.o1, '#FACC15') + B(g.o2, '#F43F5E') + B(g.cue, '#FFFFFF') + '</svg>';
+  }
+  function tipSvg(c) {
+    var x = 59 + c.tipxy[0] * 50, y = 59 + c.tipxy[1] * 50;
+    return '<svg viewBox="0 0 118 118" role="img" aria-label="撞点：' + c.tip + '"><circle cx="59" cy="59" r="54" fill="#fff"/><g stroke="#CBD5E1" stroke-width="1.2"><line x1="5" y1="59" x2="113" y2="59"/><line x1="59" y1="5" x2="59" y2="113"/></g><circle cx="59" cy="59" r="31" fill="none" stroke="#CBD5E1" stroke-width="1.2" stroke-dasharray="3 3"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="10" fill="#38BDF8" stroke="#0B1220" stroke-width="2"/></svg>';
+  }
+  function tags(c, full) { var i = LV.indexOf(c.level) + 1; return '<span class="l3-tags"><span class="lv' + i + '">' + c.level + (full && i === 3 ? '（4段〜プロレベル）' : '') + '</span><span>' + esc(c.cat) + '</span></span>'; }
+  function list() {
+    var a = D.cards.filter(function (c) { return (!st.cat || c.cat === st.cat) && (!st.lv || c.level === st.lv) && (!st.fav || fav[c.id]); });
+    if (st.so) a.sort(function (x, y) { return (LV.indexOf(x.level) - LV.indexOf(y.level)) * (st.so === 1 ? 1 : -1) || x.no - y.no; });
+    $('pc-n').textContent = a.length + ' 件を表示しています' + (st.fav ? '（マイ帳面）' : '');
+    $('pc-g').innerHTML = a.length ? a.map(function (c) { return '<article class="l3-pc"><button type="button" class="op" data-id="' + c.id + '">' + posSvg(c, true) + '<span class="bd"><b>' + esc(c.name) + '</b>' + tags(c) + '</span></button><button type="button" class="l3-st" data-fav="' + c.id + '" aria-pressed="' + !!fav[c.id] + '" aria-label="' + esc(c.name) + 'をマイ帳面に' + (fav[c.id] ? '入れてあります。はずす' : '入れる') + '">★</button></article>'; }).join('') : '<p class="l3-none">' + (st.fav ? 'マイ帳面には、まだ何も入っていません。カードの右上の★を押すと、ここに残ります。' : 'この条件に合う配置はありません。しぼりこみを変えてみてください。') + '</p>';
+  }
+  function open(id) {
+    var c = D.cards.filter(function (x) { return x.id === id; })[0]; if (!c) return; cur = c;
+    $('pc-dt').textContent = c.name; $('pc-ds').setAttribute('aria-pressed', !!fav[c.id]);
+    $('pc-db').innerHTML = tags(c, true) + '<p class="ld">' + esc(c.lead) + '</p>' + posSvg(c) +
+      '<p class="l3-lg"><span><i style="background:#fff"></i>手球</span><span><i style="background:#FACC15"></i>第1的球</span><span><i style="background:#F43F5E"></i>第2的球</span><span><i class="ln" style="background:#fff"></i>当たるまで</span><span><i class="ln"></i>当たったあと</span><span><i class="nm">1</i>クッションの順番</span><span><i class="ln" style="background:#FACC15"></i>第1的球の逃げ道（点線）</span></p>' +
+      '<p class="rt">' + esc(c.route) + '</p>' +
+      '<div class="l3-pm">' + tipSvg(c) + '<dl><dt>撞点</dt><dd>' + esc(c.tip) + '</dd><dt>厚み</dt><dd>' + esc(c.thick) + '</dd><dt>ヒネリ</dt><dd>' + esc(c.english) + '</dd><dt>強さ</dt><dd>' + c.speed + '</dd><dt>システム</dt><dd>' + esc(c.system) + '</dd></dl></div>' +
+      '<h4>実戦の注意点</h4><ul>' + c.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' +
+      (c.pattern ? '<p class="cv">取り口：' + esc(c.pattern) + '（ことばの説明は、この下の「取り口のことば」にあります）</p>' : '') + '<p class="cv">図と数字は、計算で描いた目安です。台の状態と撞き方で変わります。</p>';
+    var d = $('pc-d'); if (d.showModal) { if (!d.open) d.showModal(); } else d.setAttribute('open', ''); d.scrollTop = 0;
+    try { history.replaceState(null, '', '#pos-' + c.id); } catch (e) {}
+  }
+  function close() { var d = $('pc-d'); if (d.close) d.close(); else d.removeAttribute('open'); }
+  function toggle(id) { if (fav[id]) delete fav[id]; else fav[id] = 1; save(); list(); if (cur && cur.id === id) $('pc-ds').setAttribute('aria-pressed', !!fav[id]); }
+  $('pc-cat').innerHTML = ['すべて'].concat(D.cats).map(function (c, i) { return '<a href="#l3-pos" role="button" data-c="' + (i ? esc(c) : '') + '"' + (i ? '' : ' class="on"') + '>' + esc(c) + '</a>'; }).join('');
+  $('pc-cat').addEventListener('click', function (e) { var a = e.target.closest('a'); if (!a) return; e.preventDefault(); st.cat = a.getAttribute('data-c'); [].forEach.call(this.children, function (x) { x.classList.toggle('on', x === a); }); list(); });
+  $('pc-lv').innerHTML = '<option value="">すべて</option>' + LV.map(function (l, i) { return '<option value="' + l + '">' + l + (i === 2 ? '（4段〜プロレベル）' : '') + '</option>'; }).join('');
+  $('pc-lv').addEventListener('change', function () { st.lv = this.value; list(); }); $('pc-so').addEventListener('change', function () { st.so = +this.value; list(); });
+  $('pc-fav').addEventListener('click', function () { st.fav = !st.fav; this.setAttribute('aria-pressed', st.fav); list(); });
+  $('pc-g').addEventListener('click', function (e) { var f = e.target.closest('[data-fav]'), o = e.target.closest('[data-id]'); if (f) toggle(f.getAttribute('data-fav')); else if (o) open(o.getAttribute('data-id')); });
+  $('pc-dx').addEventListener('click', close); $('pc-ds').addEventListener('click', function () { if (cur) toggle(cur.id); });
+  $('pc-d').addEventListener('click', function (e) { if (e.target === this) close(); });
+  $('pc-d').addEventListener('close', function () { cur = null; try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} });
+  list(); var h = /^#pos-(.+)$/.exec(location.hash); if (h) open(h[1]);
+})();
+</script>
 <script>
 (function () {
   'use strict';

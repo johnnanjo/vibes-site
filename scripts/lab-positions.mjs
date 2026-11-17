@@ -1,5 +1,5 @@
-/* VIBES 3C LAB: builds data/3c-lab-positions.json (the position cards of the dictionary tab).
-   Run: node scripts/lab-positions.mjs   (add --check to print the route of every card)
+/* VIBES 3C LAB: works out the position cards of the dictionary tab from data/3c-lab-shots.json. build.mjs imports pageData().
+   Check: node scripts/lab-positions.mjs --check   (prints the route of every card and any warning)
    Each card is written as a shot (ball places, thickness, tip, how many cushions) and the path is then worked out here,
    so the picture always agrees with its own numbers: ball-to-ball deflection for a rolling / sliding cue ball, equal-angle
    cushions plus a sideways push from the english that fades at every cushion. The second object ball is placed on the path.
@@ -64,7 +64,7 @@ export function describe(s, g) {
     english: tips ? (first > 0 ? '順ヒネリ' : first < 0 ? '逆ヒネリ' : 'ヒネリ') + ' ' + tips + 'チップ（' + lr + '）' : 'ヒネリなし',
     tip: centre ? '中心' : ud + (tips ? '・' + lr + ' ' + tips + 'チップ（時計の' + hour + '時）' : '（時計の' + hour + '時）'),
     tipxy: [Math.round(x * 100) / 100, Math.round(y * 100) / 100],
-    speed: g.Lall < 13 ? '弱' : g.Lall < 21 ? '中' : '強',
+    speed: g.Lall < 10 ? '弱' : g.Lall < 19 ? '中' : '強',
     route: (s.kick ? g.rails.slice(0, s.kick).map((k) => JP[k]).join('→') + '→第1的球→' + (g.rails.slice(s.kick).map((k) => JP[k]).join('→') + (g.rails.length > s.kick ? '→' : '')) : '第1的球→' + g.rails.map((k) => JP[k]).join('→') + '→') + '第2的球',
   };
 }
@@ -72,9 +72,11 @@ export const CARDS = JSON.parse(fs.readFileSync(new URL('../data/3c-lab-shots.js
 export function build() {
   return CARDS.cards.map((c, i) => { const g = shot(c.shot), d = describe(c.shot, g); return { id: c.id, no: i + 1, name: c.name, cat: c.cat, level: c.level, pattern: c.pattern || '', lead: c.lead, system: c.system, notes: c.notes, ...d, cushions: g.rails.length, geo: { cue: r2(c.shot.cue), o1: r2(g.o1), o2: r2(g.o2), pre: g.pre.map(r2), post: g.post.map(r2), ob: g.ob.map(r2), marks: g.marks.map(r2) }, _rails: g.rails.join(''), _warn: g.warn, _L: g.Lall }; });
 }
+/* what the page needs (build.mjs puts this into /pages/3c-lab) */
+export const pageData = () => ({ cats: CARDS.cats, levels: CARDS.levels, cards: build().map(({ _rails, _warn, _L, ...c }) => c) });
 if (process.argv[1] && process.argv[1].endsWith('lab-positions.mjs')) {
   const out = build(); let bad = 0;
   for (const c of out) { if (c._warn.length) bad++; if (process.argv.includes('--check') || c._warn.length) console.log(String(c.no).padStart(2), c.id.padEnd(14), c._rails.padEnd(6), c.route, '|', c.thick, '|', c.english, '|', c.tip, '|', c.speed, c._L.toFixed(1), c._warn.length ? '  !! ' + c._warn.join('; ') : ''); }
-  if (!process.argv.includes('--dry')) fs.writeFileSync(new URL('../data/3c-lab-positions.json', import.meta.url), JSON.stringify({ _readme: 'node scripts/lab-positions.mjs が data/3c-lab-shots.json から作るファイル。手で書き換えない。', cats: CARDS.cats, levels: CARDS.levels, cards: out.map(({ _rails, _warn, _L, ...c }) => c) }) + '\n');
+  if (bad) process.exitCode = 1;
   console.log(out.length + ' cards, ' + bad + ' with warnings');
 }
