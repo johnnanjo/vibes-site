@@ -1,4 +1,4 @@
-<!-- VIBES 3C LAB：これからスリークッションを楽しみたい人向け。3つのタブ＝取り口辞典（data/3c-lab.json の patterns を build.mjs が差し込む）／基礎理論（初球・厚み・撞点・クッション・鏡）／システム計算（ファイブ＆ハーフ、プラス）。図はすべてこのファイルの中で描く。動画や外部の画像は使わない。 -->
+<!-- VIBES 3C LAB：これからスリークッションを楽しみたい人向け。3つのタブ＝取り口辞典（data/3c-lab.json の patterns を build.mjs が差し込む）／基礎理論（初球・厚み・撞点・クッション・鏡）／システム計算（ファイブ＆ハーフ、プラス、短・長・短）。図はすべてこのファイルの中で描く。動画や外部の画像は使わない。 -->
 <style>
 .l3{--blue:#1E5AA8;--red:#D7262E;--yel:#F2C200}
 .l3 *{box-sizing:border-box}
@@ -142,8 +142,8 @@ __CARDS__
 </ul></div>
 </section>
 <section class="l3-v l3-sys" id="sys-plus">
-<header><span class="n">SYSTEM 02</span><h3>プラスシステム<small>Plus System</small></h3><p>短クッション側から長クッションへ入れる空クッションや、切り返し・ダブルレールの計算に使うシステムです。</p></header>
-<div class="blk"><span class="tg">計算式</span><p class="fm">手球の出発値 ＋ 1クッション目の狙い目 ＝ 3クッション目の到達値<br><small>（1クッション目 ＝ 目標値 − 手球の出発値）</small></p></div>
+<header><span class="n">SYSTEM 02</span><h3>プラスシステム<small>Plus System</small></h3><p>短クッション側から長クッションへ入れる空クッションや、切り返し・ダブルレールの計算に使うシステムです。長クッション → 短クッション → 長クッションの順に入ります。</p></header>
+<div class="blk"><span class="tg">計算式</span><p class="fm">3クッション目の到達値 ＝ 手球の出発値 ＋ 1クッション目の狙い値<br><small>（1クッション目の狙い値 ＝ 目標到達値 − 手球の出発値）</small></p></div>
 <div class="blk"><span class="tg">数値マップ</span><div id="pl-map"></div>
 <p class="l3-lg" style="margin-top:8px"><span><i style="background:#FACC15"></i>手球の出発値</span><span><i style="background:#38BDF8"></i>1クッション目</span><span><i style="background:#F43F5E"></i>3クッション目</span></p></div>
 <div class="blk calc"><span class="tg">自動計算</span>
@@ -151,12 +151,26 @@ __CARDS__
 <label>3クッション目の目標<select id="pl-t"></select></label>
 <div class="res" id="pl-r" aria-live="polite"></div></div>
 <div class="blk"><span class="tg">実戦の補正ポイント</span><ul>
-<li>数字は基準です。強さとヒネリの量をいつも同じにして、まず数字どおりに撞きます。</li>
-<li>狙った到達値からずれたぶんを、その日の台の補正値としておぼえ、次の球から足し引きします。</li>
-<li>強く撞くと短く、滑るラシャでは長く出ます（基礎理論「クッションの特性」を参照）。</li>
+<li>基本の撞点とストローク：上の撞点（フォロー気味）＋順ヒネリ2チップ（2時または10時）が基本。押し出さず、自然な転がりで撞く。</li>
+<li>引きの補正（マイナス補正）：手球と1クッション目が近い場合や、手球の出発値が大きい（30〜40付近）場合は、カーブが出やすいため、狙い値を 2〜5 小さく狙う。</li>
+<li>台の状態の補正：ラシャが新しい（滑る）台や、クッションの反発が強い台では伸びるため 3〜5 小さく、重い台では 2〜3 大きめに狙う。</li>
 </ul></div>
 </section>
-<section class="l3-v"><div class="l3-soon"><b>3つ目のシステムは準備中です。</b><span>内容がそろい次第、ここに追加します。</span></div></section>
+<section class="l3-v l3-sys" id="sys-sls">
+<header><span class="n">SYSTEM 03</span><h3>短・長・短システム<small>Short-Long-Short／バイアングル</small></h3><p>短クッション → 長クッション → 短クッションの順に入れて切り返す、「短・長・短」ルートの標準の計算システムです。</p></header>
+<div class="blk"><span class="tg">計算式</span><p class="fm">3クッション目の到達値 ＝ 手球の出発値 − 1クッション目の狙い値<br><small>（1クッション目の狙い値 ＝ 手球の出発値 − 目標到達値）</small></p></div>
+<div class="blk"><span class="tg">数値マップ</span><div id="sl-map"></div>
+<p class="l3-lg" style="margin-top:8px"><span><i style="background:#FACC15"></i>手球の出発値</span><span><i style="background:#38BDF8"></i>1クッション目</span><span><i style="background:#F43F5E"></i>3クッション目</span></p></div>
+<div class="blk calc"><span class="tg">自動計算</span>
+<label>手球の出発値<select id="sl-o"></select></label>
+<label>3クッション目の目標<select id="sl-t"></select></label>
+<div class="res" id="sl-r" aria-live="polite"></div></div>
+<div class="blk"><span class="tg">実戦の補正ポイント</span><ul>
+<li>基本の撞点：順ヒネリ2〜3チップ、高さは中心〜やや上。スピードを殺さず、スムーズに振り抜く。</li>
+<li>入る角度による伸びの補正：1クッション目の狙い値が大きい（30〜40付近＝浅い角度で入る）場合は、クッションの反発で2クッション目からあとが伸びやすいため、計算値より 2〜3 小さく狙う。</li>
+<li>キス（衝突）を避ける：的球が2クッション目〜3クッション目の近くにある場合は、ヒネリを増やしてスピードを上げるか、厚みを調整して手球の軌道をずらす。</li>
+</ul></div>
+</section>
 </div>
 <div id="l3-p3" role="tabpanel" aria-labelledby="l3-t3" hidden>
 <section class="l3-v">
@@ -444,22 +458,41 @@ __CARDS__
     [a, b, l].forEach(function (x) { x.addEventListener('change', draw); }); draw();
   })();
 
-  /* SYSTEM 02 Plus System: numbers as given by the operator (cue ball on the right short rail 0-40, first cushion on the top long rail 10-80, third cushion on the bottom long rail 0-80) */
+  /* SYSTEM 02 Plus System (operator's numbers, 2026-11-18): cue ball on the left short rail 0 (top) to 40 (bottom); first cushion on the top long rail 0 (left) to 80; second cushion = right short rail; third cushion on the bottom long rail 0 (left) to 80. Only the three points are marked; no track is drawn. */
   (function () {
-    var so = $('pl-o'), st = $('pl-t'), x = 50, y = 45, tw = 360, th = 180, X = function (i) { return x + tw - 45 * i; };
+    var so = $('pl-o'), st = $('pl-t'), x = 50, y = 45, tw = 360, th = 180, X = function (i) { return x + 45 * i; };
     opts(so, [0, 5, 10, 15, 20, 25, 30, 35, 40], 20, String); opts(st, [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80], 50, String);
     function draw(o, t, f) {
       var s = table(460, 272, x, y, tw, th, 'プラスシステムの数値マップ'), i;
-      for (i = 1; i <= 8; i++) s += tx(X(i) + (i === 8 ? 8 : 0), 24, i * 10, C.ln);
-      for (i = 0; i <= 8; i++) s += tx(X(i) + (i === 0 ? -8 : i === 8 ? 8 : 0), 256, i * 10, C.o2);
-      for (i = 0; i <= 4; i++) s += tx(441, y + th - 45 * i + (i === 0 ? -2 : i === 4 ? 10 : 4), i * 10, C.o1);
-      s += '<circle cx="' + (x + tw) + '" cy="' + (y + th - 4.5 * o) + '" r="6" fill="' + C.o1 + '"/>' + (f != null ? '<circle cx="' + X(f / 10) + '" cy="' + y + '" r="6" fill="' + C.ln + '"/>' : '') + '<circle cx="' + X(t / 10) + '" cy="' + (y + th) + '" r="6" fill="' + C.o2 + '"/>';
+      for (i = 0; i <= 8; i++) s += tx(X(i) + (i === 0 ? 8 : i === 8 ? -8 : 0), 24, i * 10, C.ln) + tx(X(i) + (i === 0 ? 8 : i === 8 ? -8 : 0), 256, i * 10, C.o2);
+      for (i = 0; i <= 4; i++) s += tx(19, y + 45 * i + (i === 0 ? 10 : i === 4 ? -2 : 4), i * 10, C.o1);
+      s += tx(441, y + th / 2 - 4, '2クッ', C.pt, 10) + tx(441, y + th / 2 + 9, 'ション目', C.pt, 8.5);
+      s += '<circle cx="' + x + '" cy="' + (y + 4.5 * o) + '" r="6" fill="' + C.o1 + '"/>' + (f != null ? '<circle cx="' + X(f / 10) + '" cy="' + y + '" r="6" fill="' + C.ln + '"/>' : '') + '<circle cx="' + X(t / 10) + '" cy="' + (y + th) + '" r="6" fill="' + C.o2 + '"/>';
       $('pl-map').innerHTML = s + '</svg>';
     }
     function calc() {
       var o = +so.value, t = +st.value, f = t - o, r = $('pl-r');
-      if (f < 10 || f > 80) { r.className = 'res ng'; r.innerHTML = '<b>この組み合わせは計算できません。</b><span>3クッション目の目標を、手球の出発値より 10 以上大きくしてください。</span>'; draw(o, t, null); return; }
-      r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f + '</b><span>（' + t + ' − ' + o + ' ＝ ' + f + '）</span>'; draw(o, t, f);
+      if (f < 0 || f > 80) { r.className = 'res ng'; r.innerHTML = '<b>この組み合わせは計算できません。</b><span>3クッション目の目標を、手球の出発値と同じか、それより大きくしてください。</span>'; draw(o, t, null); return; }
+      r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f + '</b><span>上の撞点＋順ヒネリ2チップ　（' + t + ' − ' + o + ' ＝ ' + f + '）</span>' + (o >= 30 && f >= 5 ? '<span>手球の出発値が大きいため、2〜5 小さく、' + Math.max(0, f - 5) + '〜' + (f - 2) + ' が目安です。</span>' : ''); draw(o, t, f);
+    }
+    so.addEventListener('change', calc); st.addEventListener('change', calc); calc();
+  })();
+
+  /* SYSTEM 03 short-long-short (operator's numbers, 2026-11-18): cue ball on the bottom long rail, 50 at the bottom-left corner down to 10 at the centre point; first cushion on the right short rail 0 (bottom) to 40 (top); second cushion = top long rail; third cushion on the left short rail 0 (top) to 40 (bottom). */
+  (function () {
+    var so = $('sl-o'), st = $('sl-t'), x = 50, y = 45, tw = 360, th = 180;
+    opts(so, [10, 15, 20, 25, 30, 35, 40, 45, 50], 40, String); opts(st, [0, 5, 10, 15, 20, 25, 30, 35, 40], 20, String);
+    function draw(o, t, f) {
+      var s = table(460, 272, x, y, tw, th, '短・長・短システムの数値マップ'), i;
+      for (i = 0; i <= 4; i++) s += tx(x + 45 * i + (i === 0 ? 8 : 0), 256, 50 - i * 10, C.o1) + tx(441, y + th - 45 * i + (i === 0 ? -2 : i === 4 ? 10 : 4), i * 10, C.ln) + tx(19, y + 45 * i + (i === 0 ? 10 : i === 4 ? -2 : 4), i * 10, C.o2);
+      s += tx(x + tw / 2, 24, '2クッション目', C.pt, 10);
+      s += '<circle cx="' + (x + 4.5 * (50 - o)) + '" cy="' + (y + th) + '" r="6" fill="' + C.o1 + '"/>' + (f != null ? '<circle cx="' + (x + tw) + '" cy="' + (y + th - 4.5 * f) + '" r="6" fill="' + C.ln + '"/>' : '') + '<circle cx="' + x + '" cy="' + (y + 4.5 * t) + '" r="6" fill="' + C.o2 + '"/>';
+      $('sl-map').innerHTML = s + '</svg>';
+    }
+    function calc() {
+      var o = +so.value, t = +st.value, f = o - t, r = $('sl-r');
+      if (f < 0 || f > 40) { r.className = 'res ng'; r.innerHTML = '<b>この組み合わせは計算できません。</b><span>' + (f < 0 ? '3クッション目の目標を、手球の出発値と同じか、それより小さくしてください。' : '1クッション目が 40 を超えます。目標を大きくするか、手球の出発値を小さくしてください。') + '</span>'; draw(o, t, null); return; }
+      r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f + '</b><span>順ヒネリ2〜3チップ・中心〜やや上　（' + o + ' − ' + t + ' ＝ ' + f + '）</span>' + (f >= 30 ? '<span>浅い角度で入るため、2〜3 小さく、' + (f - 3) + '〜' + (f - 2) + ' が目安です。</span>' : ''); draw(o, t, f);
     }
     so.addEventListener('change', calc); st.addEventListener('change', calc); calc();
   })();
