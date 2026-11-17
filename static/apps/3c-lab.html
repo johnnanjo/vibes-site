@@ -28,7 +28,7 @@
 .l3-next a{display:flex;flex-direction:column;gap:3px;background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:15px 16px;text-decoration:none;color:var(--night)}
 .l3-next a b{font-size:17px;font-weight:900;line-height:1.4}
 .l3-next a small{font-size:13px;font-weight:700;color:var(--sub);line-height:1.6}
-.l3-stick{position:sticky;top:0;z-index:16;background:var(--chalk);margin:0 -16px;padding:8px 0}
+.l3-stick{position:sticky;top:78px;z-index:16;background:var(--chalk);margin:0 -16px;padding:8px 0}
 .l3-chips{display:flex;gap:7px;overflow-x:auto;padding:2px 16px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .l3-chips::-webkit-scrollbar{display:none}
 .l3-chips a{flex:none;border:1.5px solid var(--night);background:#fff;color:var(--night);font:900 14.5px/1 var(--jp);padding:0 15px;border-radius:999px;white-space:nowrap;min-height:44px;display:flex;align-items:center;text-decoration:none}
@@ -37,7 +37,7 @@
 .l3-cat{font-size:15px;font-weight:900;line-height:1.4;margin:14px 0 0;display:flex;align-items:center;gap:10px}
 .l3-cat::after{content:"";flex:1;height:1.5px;background:var(--line)}
 .l3-dic{display:grid;gap:12px}
-.l3-c{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-margin-top:76px;min-width:0}
+.l3-c{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-margin-top:150px;min-width:0}
 .l3-c header{display:flex;flex-direction:column;gap:4px;border-bottom:1.5px solid var(--line);padding-bottom:12px}
 .l3-c .n{font:400 15px/1 var(--disp);color:var(--sub)}
 .l3-c h3{margin:0;font-size:25px;font-weight:900;line-height:1.3}
@@ -89,7 +89,9 @@
 .l3-dlg ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;font-size:14.5px;font-weight:700;line-height:1.85}
 .l3-dlg .cv{margin:0;font-size:12.5px;font-weight:700;line-height:1.7;color:var(--sub)}
 @media(min-width:760px){.l3-pg{grid-template-columns:repeat(4,minmax(0,1fr))}.l3-pf{flex-direction:row;align-items:flex-end}.l3-pf .row{flex:1}.l3-dlg{width:min(820px,94vw);height:auto;max-height:92vh;border-radius:22px;margin:auto}}
-.l3-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--night);border-radius:20px;padding:6px;margin-top:22px}
+.l3-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--night);border-radius:20px;padding:6px;margin-top:22px;position:sticky;top:8px;z-index:17;box-shadow:0 8px 20px rgba(23,26,34,.22)}
+@media(max-width:359px){.l3-tabs button{font-size:13px}}
+.l3-sys,#l3-pos,#l3-pat{scroll-margin-top:84px}
 .l3-tabs button{appearance:none;border:0;cursor:pointer;min-height:52px;border-radius:15px;background:transparent;color:var(--chalk);font:900 14.5px/1.3 var(--jp);padding:6px 4px}
 .l3-tabs button[aria-selected=true]{background:var(--lime);color:var(--night)}
 .l3-tabs button:focus-visible,.l3-sys select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
@@ -106,6 +108,7 @@
 .l3-sys select{appearance:none;width:100%;min-height:54px;border-radius:14px;border:2px solid #334155;background:#0B1220;color:#F3F4EF;font:900 20px/1 var(--jp);padding:0 16px}
 .l3-sys .res{border-radius:16px;background:var(--lime);color:var(--night);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
 .l3-sys .res small{font-size:13px;font-weight:900}.l3-sys .res b{font:400 54px/1.05 var(--disp)}.l3-sys .res span{font-size:14px;font-weight:900;line-height:1.6}
+.l3-sys .res .adv{display:block;margin-top:6px;padding-top:8px;border-top:1.5px solid rgba(23,26,34,.25);font-size:13.5px;font-weight:900;line-height:1.65}
 .l3-sys .res.ng{background:#334155;color:#F3F4EF}.l3-sys .res.ng b{font:900 18px/1.5 var(--jp)}
 .l3-soon{background:var(--line2);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:2px;font-size:13.5px;font-weight:700;line-height:1.7}.l3-soon b{font-size:15.5px;font-weight:900}
 .l3-sys ol{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:8px;font-size:14.5px;font-weight:700;line-height:1.85}
@@ -181,6 +184,7 @@ __CARDS__
 <div class="blk calc"><span class="tg">自動計算</span>
 <label>手球の出発値<select id="fh-o"></select></label>
 <label>3クッション目の目標<select id="fh-t"></select></label>
+<label>台の状態<select id="fh-c"><option value="0">ふつうの台</option><option value="1">新しいラシャ・滑る台</option><option value="2">重い台・古いラシャ</option></select></label>
 <div class="res" id="fh-r" aria-live="polite"></div></div>
 <div class="blk"><span class="tg">実戦の補正ポイント</span><ul>
 <li>標準の撞点は「順ヒネリ（2〜3チップ）」。</li>
@@ -196,6 +200,7 @@ __CARDS__
 <div class="blk calc"><span class="tg">自動計算</span>
 <label>手球の出発値<select id="pl-o"></select></label>
 <label>3クッション目の目標<select id="pl-t"></select></label>
+<label>台の状態<select id="pl-c"><option value="0">ふつうの台</option><option value="1">新しいラシャ・滑る台</option><option value="2">重い台・古いラシャ</option></select></label>
 <div class="res" id="pl-r" aria-live="polite"></div></div>
 <div class="blk"><span class="tg">実戦の補正ポイント</span><ul>
 <li>基本の撞点とストローク：上の撞点（フォロー気味）＋順ヒネリ2チップ（2時または10時）が基本。押し出さず、自然な転がりで撞く。</li>
@@ -341,7 +346,8 @@ __CARDS__
   /* position cards of the dictionary tab: filter, sort, favourites (kept in this browser only), detail dialog with the table figure */
   var $ = function (id) { return document.getElementById(id); }, D; try { D = JSON.parse($('pc-data').textContent); } catch (e) { return; }
   var KEY = 'vibes-3c-fav', fav = {}; try { (JSON.parse(localStorage.getItem(KEY) || '[]') || []).forEach(function (k) { fav[k] = 1; }); } catch (e) {}
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(Object.keys(fav))); } catch (e) {} }
+  var keep = true; function save() { try { localStorage.setItem(KEY, JSON.stringify(Object.keys(fav))); keep = localStorage.getItem(KEY) != null; } catch (e) { keep = false; } }
+  try { localStorage.setItem(KEY + '-t', '1'); localStorage.removeItem(KEY + '-t'); } catch (e) { keep = false; }
   var st = { cat: '', lv: '', so: 0, fav: false }, LV = D.levels, cur = null, esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   /* table figure of one position card (geometry worked out by scripts/lab-positions.mjs; units = diamonds, 8 x 4) */
   function posSvg(c, small) {
@@ -351,6 +357,9 @@ __CARDS__
     for (i = 1; i < 8; i++) s += '<circle cx="' + (ox + i * u) + '" cy="' + (oy - 7) + '" r="2.4"/><circle cx="' + (ox + i * u) + '" cy="' + (oy + 4 * u + 7) + '" r="2.4"/>';
     for (i = 1; i < 4; i++) s += '<circle cx="' + (ox - 7) + '" cy="' + (oy + i * u) + '" r="2.4"/><circle cx="' + (ox + 8 * u + 7) + '" cy="' + (oy + i * u) + '" r="2.4"/>';
     s += '</g>' + line(g.ob, '#FACC15', small ? 2.5 : 2, '3 6') + line(g.pre, '#FFFFFF', small ? 3.5 : 2.6) + line(g.post, '#38BDF8', small ? 3.5 : 2.6);
+    var arrow = function (a, b, col, k, z) { var A = P(a).split(','), Bq = P(b).split(','), dx = Bq[0] - A[0], dy = Bq[1] - A[1], l = Math.sqrt(dx * dx + dy * dy); if (l < 34) return ''; var x = +A[0] + dx * k, y = +A[1] + dy * k, g = Math.atan2(dy, dx) * 180 / Math.PI; return '<path d="M-' + z + ',-' + (z * 0.8) + ' L' + z + ',0 L-' + z + ',' + (z * 0.8) + ' Z" fill="' + col + '" transform="translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ') rotate(' + g.toFixed(1) + ')"/>'; };
+    var z = small ? 8 : 6.5; s += arrow(g.pre[g.pre.length - 2], g.pre[g.pre.length - 1], '#FFFFFF', 0.5, z); for (i = 1; i < g.post.length; i++) s += arrow(g.post[i - 1], g.post[i], '#38BDF8', 0.55, z);
+    if (g.ob.length > 1) s += arrow(g.ob[g.ob.length - 2], g.ob[g.ob.length - 1], '#FACC15', 1, z) || arrow(g.ob[0], g.ob[1], '#FACC15', 0.9, z);
     var B = function (q, col) { var a = P(q).split(','); return '<circle cx="' + a[0] + '" cy="' + a[1] + '" r="' + r.toFixed(1) + '" fill="' + col + '" stroke="#0B1220" stroke-width="1"/>'; };
     if (!small) g.marks.forEach(function (q, k) { var a = P(q).split(','), x = Math.min(Math.max(+a[0], ox + 11), ox + 8 * u - 11), y = Math.min(Math.max(+a[1], oy + 11), oy + 4 * u - 11); s += '<circle cx="' + x + '" cy="' + y + '" r="9.5" fill="#38BDF8"/><text x="' + x + '" y="' + (y + 4.3) + '" text-anchor="middle" font-size="12.5" font-weight="900" font-family="sans-serif" fill="#111827">' + (k + 1) + '</text>'; });
     return s + B(g.o1, '#FACC15') + B(g.o2, '#F43F5E') + B(g.cue, '#FFFFFF') + '</svg>';
@@ -363,17 +372,18 @@ __CARDS__
   function list() {
     var a = D.cards.filter(function (c) { return (!st.cat || c.cat === st.cat) && (!st.lv || c.level === st.lv) && (!st.fav || fav[c.id]); });
     if (st.so) a.sort(function (x, y) { return (LV.indexOf(x.level) - LV.indexOf(y.level)) * (st.so === 1 ? 1 : -1) || x.no - y.no; });
-    $('pc-n').textContent = a.length + ' 件を表示しています' + (st.fav ? '（マイ帳面）' : '');
+    $('pc-n').textContent = a.length + ' 件を表示しています' + (st.fav ? '（マイ帳面）' : '') + '　／　マイ帳面 ' + Object.keys(fav).length + ' 件' + (keep ? '' : '（このブラウザでは保存できないため、ページを閉じると消えます）');
     $('pc-g').innerHTML = a.length ? a.map(function (c) { return '<article class="l3-pc"><button type="button" class="op" data-id="' + c.id + '">' + posSvg(c, true) + '<span class="bd"><b>' + esc(c.name) + '</b>' + tags(c) + '</span></button><button type="button" class="l3-st" data-fav="' + c.id + '" aria-pressed="' + !!fav[c.id] + '" aria-label="' + esc(c.name) + 'をマイ帳面に' + (fav[c.id] ? '入れてあります。はずす' : '入れる') + '">★</button></article>'; }).join('') : '<p class="l3-none">' + (st.fav ? 'マイ帳面には、まだ何も入っていません。カードの右上の★を押すと、ここに残ります。' : 'この条件に合う配置はありません。しぼりこみを変えてみてください。') + '</p>';
   }
   function open(id) {
     var c = D.cards.filter(function (x) { return x.id === id; })[0]; if (!c) return; cur = c;
     $('pc-dt').textContent = c.name; $('pc-ds').setAttribute('aria-pressed', !!fav[c.id]);
     $('pc-db').innerHTML = tags(c, true) + '<p class="ld">' + esc(c.lead) + '</p>' + posSvg(c) +
-      '<p class="l3-lg"><span><i style="background:#fff"></i>手球</span><span><i style="background:#FACC15"></i>第1的球</span><span><i style="background:#F43F5E"></i>第2的球</span><span><i class="ln" style="background:#fff"></i>当たるまで</span><span><i class="ln"></i>当たったあと</span><span><i class="nm">1</i>クッションの順番</span><span><i class="ln" style="background:#FACC15"></i>第1的球の逃げ道（点線）</span></p>' +
+      '<p class="l3-lg"><span><i style="background:#fff"></i>手球</span><span><i style="background:#FACC15"></i>第1的球</span><span><i style="background:#F43F5E"></i>第2的球</span><span><i class="ln" style="background:#fff"></i>当たるまで</span><span><i class="ln"></i>当たったあと</span><span><i class="nm">1</i>クッションの順番</span><span><i class="ln" style="background:#FACC15"></i>第1的球の進む向き（点線と矢印）</span></p>' +
       '<p class="rt">' + esc(c.route) + '</p>' +
-      '<div class="l3-pm">' + tipSvg(c) + '<dl><dt>撞点</dt><dd>' + esc(c.tip) + '</dd><dt>厚み</dt><dd>' + esc(c.thick) + '</dd><dt>ヒネリ</dt><dd>' + esc(c.english) + '</dd><dt>強さ</dt><dd>' + c.speed + '</dd><dt>システム</dt><dd>' + esc(c.system) + '</dd></dl></div>' +
+      '<div class="l3-pm">' + tipSvg(c) + '<dl><dt>撞点</dt><dd>' + esc(c.tip) + '</dd><dt>厚み</dt><dd>' + esc(c.thick) + '</dd><dt>ヒネリ</dt><dd>' + esc(c.english) + '</dd><dt>強さ</dt><dd>' + c.speed + '</dd><dt>クッション</dt><dd>' + c.cushions + '回</dd><dt>システム</dt><dd>' + esc(c.system) + '</dd></dl></div>' +
       '<h4>実戦の注意点</h4><ul>' + c.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' +
+      '<h4>キス回避・ミスの傾向</h4><ul><li>' + esc(c.kissNote) + '</li><li>' + esc(c.missNote) + '</li></ul>' +
       (c.pattern ? '<p class="cv">取り口：' + esc(c.pattern) + '（ことばの説明は、この下の「取り口のことば」にあります）</p>' : '') + '<p class="cv">図と数字は、計算で描いた目安です。台の状態と撞き方で変わります。</p>';
     var d = $('pc-d'); if (d.showModal) { if (!d.open) d.showModal(); } else d.setAttribute('open', ''); d.scrollTop = 0;
     try { history.replaceState(null, '', '#pos-' + c.id); } catch (e) {}
@@ -389,6 +399,7 @@ __CARDS__
   $('pc-dx').addEventListener('click', close); $('pc-ds').addEventListener('click', function () { if (cur) toggle(cur.id); });
   $('pc-d').addEventListener('click', function (e) { if (e.target === this) close(); });
   $('pc-d').addEventListener('close', function () { cur = null; try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} });
+  window.addEventListener('storage', function (e) { if (e.key !== KEY) return; fav = {}; try { (JSON.parse(e.newValue || '[]') || []).forEach(function (k) { fav[k] = 1; }); } catch (x) {} list(); if (cur) $('pc-ds').setAttribute('aria-pressed', !!fav[cur.id]); });
   list(); var h = /^#pos-(.+)$/.exec(location.hash); if (h) open(h[1]);
 })();
 </script>
@@ -402,7 +413,7 @@ __CARDS__
       if (!e.isIntersecting) return;
       [].forEach.call(g.children, function (a) { var on = a.getAttribute('href') === '#' + e.target.id; a.classList.toggle('on', on); if (on) g.scrollLeft = Math.max(0, a.offsetLeft - (g.clientWidth - a.offsetWidth) / 2); });
     });
-  }, { rootMargin: '-80px 0px -70% 0px' });
+  }, { rootMargin: '-156px 0px -62% 0px' });
   [].forEach.call(document.querySelectorAll('.l3-c'), function (c) { io.observe(c); });
 })();
 </script>
@@ -421,16 +432,16 @@ __CARDS__
   var so = document.getElementById('fh-o'), st = document.getElementById('fh-t'), fx = function (v) { return v % 1 ? v.toFixed(1) : String(v); };
   so.innerHTML = O.map(function (v) { return '<option value="' + v + '"' + (v === 4.5 ? ' selected' : '') + '>' + fx(v) + '（' + v * 10 + '）</option>'; }).join('');
   st.innerHTML = T.map(function (v) { return '<option value="' + v + '"' + (v === 2 ? ' selected' : '') + '>' + fx(v) + '（' + v * 10 + '）</option>'; }).join('');
-  function lab(x, y, s, c) { return '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="11.5" font-weight="900" font-family="sans-serif" fill="' + c + '">' + s + '</text>'; }
+  function lab(x, y, s, c) { return '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="14" font-weight="900" font-family="sans-serif" fill="' + c + '">' + s + '</text>'; }
   function draw(o, t, f) {
     var s = '<svg viewBox="0 0 460 272" role="img" aria-label="ファイブ＆ハーフの数値マップ"><rect width="460" height="272" rx="12" fill="#0B1220"/><rect x="38" y="33" width="384" height="204" rx="8" fill="#334155"/><rect x="50" y="45" width="360" height="180" fill="#111827"/><g fill="#CBD5E1">', i;
     for (i = 1; i < 8; i++) s += '<circle cx="' + X(i) + '" cy="39" r="2.2"/><circle cx="' + X(i) + '" cy="231" r="2.2"/>';
     for (i = 1; i < 4; i++) s += '<circle cx="44" cy="' + Y(i) + '" r="2.2"/><circle cx="416" cy="' + Y(i) + '" r="2.2"/>';
     s += '</g>';
-    for (i = 0; i <= 8; i++) s += lab(X(i), 24, fx(1 + i / 2), '#FACC15');
-    for (i = 1; i <= 3; i++) s += lab(441, Y(i) + 4, 5 + i, '#FACC15');
-    for (i = 0; i <= 5; i++) s += lab(X(i) + (i === 0 ? 8 : 0), 62, i, '#F43F5E');
-    for (i = 1; i <= 8; i++) s += lab(X(i) - (i === 8 ? 6 : 0), 256, i, '#38BDF8');
+    for (i = 0; i <= 8; i++) s += lab(X(i), 25, fx(1 + i / 2), '#FACC15');
+    for (i = 1; i <= 3; i++) s += lab(441, Y(i) + 5, 5 + i, '#FACC15');
+    for (i = 0; i <= 5; i++) s += lab(X(i) + (i === 0 ? 9 : 0), 64, i, '#F43F5E');
+    for (i = 1; i <= 8; i++) s += lab(X(i) - (i === 8 ? 6 : 0), 259, i, '#38BDF8');
     if (f != null) {
       var a = o <= 5 ? [X((o - 1) * 2), 45] : [410, Y(o - 5)], b = [X(f), 225], d = [X(t), 45], c = [50, 45 + 180 * (45 * t) / (45 * f + 45 * t || 1)];
       s += '<path d="M' + a + ' L' + b + ' L' + c + ' L' + d + '" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-dasharray="6 5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="' + a[0] + '" cy="' + a[1] + '" r="6" fill="#FACC15"/><circle cx="' + b[0] + '" cy="' + b[1] + '" r="6" fill="#38BDF8"/><circle cx="' + d[0] + '" cy="' + d[1] + '" r="6" fill="#F43F5E"/>';
@@ -441,10 +452,13 @@ __CARDS__
     var o = +so.value, t = +st.value, f = Math.round((o - t) * 10) / 10, r = document.getElementById('fh-r');
     if (f <= 0 || f > 8) { r.className = 'res ng'; r.innerHTML = '<b>この組み合わせは計算できません。</b><span>手球の出発値を、3クッション目の目標より大きくしてください。</span>'; draw(o, t, null); return; }
     var deep = o > 5, lo = Math.round((f - 0.5) * 10) / 10, hi = Math.round((f - 0.3) * 10) / 10;
-    r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f.toFixed(1) + '</b><span>順ヒネリ 2〜3チップ　（' + fx(o) + ' − ' + fx(t) + ' ＝ ' + f.toFixed(1) + '）</span>' + (deep ? '<span>深い角度のため、0.3〜0.5 引いて ' + lo.toFixed(1) + '〜' + hi.toFixed(1) + ' が目安です。</span>' : '');
+    var cd = +document.getElementById('fh-c').value, adv = [];
+    adv.push(deep ? '深い角度：クッションに食い込んで短く出やすいため、0.3〜0.5 引いて ' + Math.max(0, lo).toFixed(1) + '〜' + Math.max(0, hi).toFixed(1) + ' が目安です。' : '角度の補正：なし（手球の出発値が 5 以下）。');
+    adv.push(cd === 1 ? '台の状態：新しいラシャ・滑る台は伸びやすくなります。最初の1球で伸びたぶんを測り、補正値にします。' : cd === 2 ? '台の状態：湿気のある日や古いラシャは短くなります。最初の1球で短くなったぶんを測り、補正値にします。' : '台の状態：ふつう。数字どおりが基準です。');
+    r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f.toFixed(1) + '</b><span>順ヒネリ 2〜3チップ　（' + fx(o) + ' − ' + fx(t) + ' ＝ ' + f.toFixed(1) + '）</span><span class="adv">補正の目安<br>' + adv.join('<br>') + '</span>';
     draw(o, t, f);
   }
-  so.addEventListener('change', calc); st.addEventListener('change', calc); calc();
+  so.addEventListener('change', calc); st.addEventListener('change', calc); document.getElementById('fh-c').addEventListener('change', calc); calc();
 })();
 </script>
 <script>
@@ -568,18 +582,22 @@ __CARDS__
     opts(so, [0, 5, 10, 15, 20, 25, 30, 35, 40], 20, String); opts(st, [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80], 50, String);
     function draw(o, t, f) {
       var s = table(460, 272, x, y, tw, th, 'プラスシステムの数値マップ'), i;
-      for (i = 0; i <= 8; i++) s += tx(X(i) + (i === 0 ? 8 : i === 8 ? -8 : 0), 24, i * 10, C.ln) + tx(X(i) + (i === 0 ? 8 : i === 8 ? -8 : 0), 256, i * 10, C.o2);
-      for (i = 0; i <= 4; i++) s += tx(19, y + 45 * i + (i === 0 ? 10 : i === 4 ? -2 : 4), i * 10, C.o1);
-      s += tx(441, y + th / 2 - 4, '2クッ', C.pt, 10) + tx(441, y + th / 2 + 9, 'ション目', C.pt, 8.5);
+      for (i = 0; i <= 8; i++) s += tx(X(i) + (i === 0 ? 8 : i === 8 ? -8 : 0), 25, i * 10, C.ln, 14) + tx(X(i) + (i === 0 ? 8 : i === 8 ? -8 : 0), 259, i * 10, C.o2, 14);
+      for (i = 0; i <= 4; i++) s += tx(19, y + 45 * i + (i === 0 ? 11 : i === 4 ? -1 : 5), i * 10, C.o1, 14);
+      s += '<text transform="translate(437 ' + (y + th / 2) + ') rotate(90)" text-anchor="middle" font-size="12" font-weight="900" font-family="sans-serif" fill="' + C.pt + '">2クッション目</text>';
       s += '<circle cx="' + x + '" cy="' + (y + 4.5 * o) + '" r="6" fill="' + C.o1 + '"/>' + (f != null ? '<circle cx="' + X(f / 10) + '" cy="' + y + '" r="6" fill="' + C.ln + '"/>' : '') + '<circle cx="' + X(t / 10) + '" cy="' + (y + th) + '" r="6" fill="' + C.o2 + '"/>';
       $('pl-map').innerHTML = s + '</svg>';
     }
     function calc() {
       var o = +so.value, t = +st.value, f = t - o, r = $('pl-r');
       if (f < 0 || f > 80) { r.className = 'res ng'; r.innerHTML = '<b>この組み合わせは計算できません。</b><span>3クッション目の目標を、手球の出発値と同じか、それより大きくしてください。</span>'; draw(o, t, null); return; }
-      r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f + '</b><span>上の撞点＋順ヒネリ2チップ　（' + t + ' − ' + o + ' ＝ ' + f + '）</span>' + (o >= 30 && f >= 5 ? '<span>手球の出発値が大きいため、2〜5 小さく、' + Math.max(0, f - 5) + '〜' + (f - 2) + ' が目安です。</span>' : ''); draw(o, t, f);
+      var cd = +$('pl-c').value, lo = 0, hi = 0, adv = [];
+      if (o >= 30) { lo -= 5; hi -= 2; adv.push('手球の出発値が大きい（30〜40）：カーブが出やすいため 2〜5 小さく。'); } else adv.push('出発値の補正：なし（手球の出発値が 30 未満）。手球と1クッション目が近いときは 2〜5 小さく。');
+      if (cd === 1) { lo -= 5; hi -= 3; adv.push('台の状態：滑る台・反発が強い台は伸びるため 3〜5 小さく。'); } else if (cd === 2) { lo += 2; hi += 3; adv.push('台の状態：重い台は 2〜3 大きめに。'); } else adv.push('台の状態：ふつう。');
+      adv.push(lo || hi ? '補正後の目安：' + Math.max(0, f + lo) + '〜' + Math.max(0, f + hi) : '補正後の目安：' + f + '（数字どおり）');
+      r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f + '</b><span>上の撞点＋順ヒネリ2チップ　（' + t + ' − ' + o + ' ＝ ' + f + '）</span><span class="adv">補正の目安<br>' + adv.join('<br>') + '</span>'; draw(o, t, f);
     }
-    so.addEventListener('change', calc); st.addEventListener('change', calc); calc();
+    so.addEventListener('change', calc); st.addEventListener('change', calc); $('pl-c').addEventListener('change', calc); calc();
   })();
 
   /* SYSTEM 03 short-long-short (operator's numbers, 2026-11-18): cue ball on the bottom long rail, 50 at the bottom-left corner down to 10 at the centre point; first cushion on the right short rail 0 (bottom) to 40 (top); second cushion = top long rail; third cushion on the left short rail 0 (top) to 40 (bottom). */
@@ -588,15 +606,15 @@ __CARDS__
     opts(so, [10, 15, 20, 25, 30, 35, 40, 45, 50], 40, String); opts(st, [0, 5, 10, 15, 20, 25, 30, 35, 40], 20, String);
     function draw(o, t, f) {
       var s = table(460, 272, x, y, tw, th, '短・長・短システムの数値マップ'), i;
-      for (i = 0; i <= 4; i++) s += tx(x + 45 * i + (i === 0 ? 8 : 0), 256, 50 - i * 10, C.o1) + tx(441, y + th - 45 * i + (i === 0 ? -2 : i === 4 ? 10 : 4), i * 10, C.ln) + tx(19, y + 45 * i + (i === 0 ? 10 : i === 4 ? -2 : 4), i * 10, C.o2);
-      s += tx(x + tw / 2, 24, '2クッション目', C.pt, 10);
+      for (i = 0; i <= 4; i++) s += tx(x + 45 * i + (i === 0 ? 8 : 0), 259, 50 - i * 10, C.o1, 14) + tx(441, y + th - 45 * i + (i === 0 ? -1 : i === 4 ? 11 : 5), i * 10, C.ln, 14) + tx(19, y + 45 * i + (i === 0 ? 11 : i === 4 ? -1 : 5), i * 10, C.o2, 14);
+      s += tx(x + tw / 2, 25, '2クッション目', C.pt, 12);
       s += '<circle cx="' + (x + 4.5 * (50 - o)) + '" cy="' + (y + th) + '" r="6" fill="' + C.o1 + '"/>' + (f != null ? '<circle cx="' + (x + tw) + '" cy="' + (y + th - 4.5 * f) + '" r="6" fill="' + C.ln + '"/>' : '') + '<circle cx="' + x + '" cy="' + (y + 4.5 * t) + '" r="6" fill="' + C.o2 + '"/>';
       $('sl-map').innerHTML = s + '</svg>';
     }
     function calc() {
       var o = +so.value, t = +st.value, f = o - t, r = $('sl-r');
       if (f < 0 || f > 40) { r.className = 'res ng'; r.innerHTML = '<b>この組み合わせは計算できません。</b><span>' + (f < 0 ? '3クッション目の目標を、手球の出発値と同じか、それより小さくしてください。' : '1クッション目が 40 を超えます。目標を大きくするか、手球の出発値を小さくしてください。') + '</span>'; draw(o, t, null); return; }
-      r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f + '</b><span>順ヒネリ2〜3チップ・中心〜やや上　（' + o + ' − ' + t + ' ＝ ' + f + '）</span>' + (f >= 30 ? '<span>浅い角度で入るため、2〜3 小さく、' + (f - 3) + '〜' + (f - 2) + ' が目安です。</span>' : ''); draw(o, t, f);
+      r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f + '</b><span>順ヒネリ2〜3チップ・中心〜やや上　（' + o + ' − ' + t + ' ＝ ' + f + '）</span><span class="adv">補正の目安<br>' + (f >= 30 ? '浅い角度で入る（狙い値 30〜40）：2クッション目からあとが伸びやすいため 2〜3 小さく。<br>補正後の目安：' + (f - 3) + '〜' + (f - 2) : '角度の補正：なし（狙い値が 30 未満）。<br>補正後の目安：' + f + '（数字どおり）') + '</span>'; draw(o, t, f);
     }
     so.addEventListener('change', calc); st.addEventListener('change', calc); calc();
   })();

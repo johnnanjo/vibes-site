@@ -68,9 +68,20 @@ export function describe(s, g) {
     route: (s.kick ? g.rails.slice(0, s.kick).map((k) => JP[k]).join('→') + '→第1的球→' + (g.rails.slice(s.kick).map((k) => JP[k]).join('→') + (g.rails.length > s.kick ? '→' : '')) : '第1的球→' + g.rails.map((k) => JP[k]).join('→') + '→') + '第2的球',
   };
 }
+/* what happens to this shot when the thickness is off by 1/16, and how close the two moving balls come: both are worked out, not written by hand */
+function tendency(s, g) {
+  const B = 2 * R, gap = g.kiss / B - 1, n1 = (v) => (Math.round(v * 2) / 2).toFixed(1).replace('.0', '');
+  const kiss = gap < 2.5 ? '手球と第1的球は、いちばん近いところで球およそ' + n1(Math.max(0.5, gap)) + '個ぶんの間隔ですれ違います。強さが変わるとすれ違う場所もずれるため、強さを決めてから撞きます。' : '手球と第1的球の道は重なりません（いちばん近いところでも、球およそ' + Math.round(gap) + '個ぶん離れています）。';
+  if (s.kick) return { kiss, miss: 'クッションに先に入れる球は、1クッション目の場所がずれると、第1的球への厚みも一緒に変わります。まず1クッション目を点で決めます。' };
+  const off = (df) => { const f = Math.min(0.97, Math.max(0.03, s.f + df)); let h; try { h = shot({ ...s, f }); } catch (e) { return null; } if (h.rails.join('') !== g.rails.join('')) return 'route';
+    const a = h.post[h.post.length - 2], b = h.post[h.post.length - 1], d = unit(sub(b, a)), w = sub(g.o2, a); return Math.abs(w[0] * d[1] - w[1] * d[0]) / B; };
+  const say = (v, w) => v == null ? '' : v === 'route' ? w + 'ずれると、クッションに入る順番が変わってしまいます' : v < 0.95 ? w + 'ずれても当たります' : w + 'ずれると、第2的球から球およそ' + n1(v) + '個ぶん外れます';
+  const tk = off(1 / 16), tn = off(-1 / 16), both = typeof tk === 'number' && typeof tn === 'number' && tk < 0.95 && tn < 0.95;
+  return { kiss, miss: both ? '厚みが1/16 ずれても当たる、幅のある配置です。まず厚みを決めて、迷わず撞きます。' : '厚みが1/16 ' + say(tk, '厚く') + '。' + say(tn, '薄く') + '。' };
+}
 export const CARDS = JSON.parse(fs.readFileSync(new URL('../data/3c-lab-shots.json', import.meta.url), 'utf8'));
 export function build() {
-  return CARDS.cards.map((c, i) => { const g = shot(c.shot), d = describe(c.shot, g); return { id: c.id, no: i + 1, name: c.name, cat: c.cat, level: c.level, pattern: c.pattern || '', lead: c.lead, system: c.system, notes: c.notes, ...d, cushions: g.rails.length, geo: { cue: r2(c.shot.cue), o1: r2(g.o1), o2: r2(g.o2), pre: g.pre.map(r2), post: g.post.map(r2), ob: g.ob.map(r2), marks: g.marks.map(r2) }, _rails: g.rails.join(''), _warn: g.warn, _L: g.Lall }; });
+  return CARDS.cards.map((c, i) => { const g = shot(c.shot), d = describe(c.shot, g), t = tendency(c.shot, g); return { id: c.id, no: i + 1, name: c.name, cat: c.cat, level: c.level, pattern: c.pattern || '', lead: c.lead, system: c.system, notes: c.notes, ...d, kissNote: t.kiss, missNote: t.miss, cushions: g.rails.length, geo: { cue: r2(c.shot.cue), o1: r2(g.o1), o2: r2(g.o2), pre: g.pre.map(r2), post: g.post.map(r2), ob: g.ob.map(r2), marks: g.marks.map(r2) }, _rails: g.rails.join(''), _warn: g.warn, _L: g.Lall }; });
 }
 /* what the page needs (build.mjs puts this into /pages/3c-lab) */
 export const pageData = () => ({ cats: CARDS.cats, levels: CARDS.levels, cards: build().map(({ _rails, _warn, _L, ...c }) => c) });
