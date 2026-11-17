@@ -1,7 +1,7 @@
 (function () {
   var box = document.getElementById('vb-week'); if (!box) return;
   var WD = ['日', '月', '火', '水', '木', '金', '土'];
-  var AREAS = [['tokyo', '東京', 35.69, 139.69], ['saitama', 'さいたま', 35.86, 139.65], ['yokohama', '横浜', 35.44, 139.64], ['chiba', '千葉', 35.61, 140.12], ['sapporo', '札幌', 43.06, 141.35], ['sendai', '仙台', 38.27, 140.87], ['nagoya', '名古屋', 35.18, 136.91], ['osaka', '大阪', 34.69, 135.50], ['hiroshima', '広島', 34.39, 132.46], ['fukuoka', '福岡', 33.59, 130.40], ['naha', '那覇', 26.21, 127.68], ['geo', '現在地', 0, 0]];
+  var AREAS = [['tokyo', '東京', 35.6895, 139.6917], ['saitama', 'さいたま', 35.86, 139.65], ['yokohama', '横浜', 35.44, 139.64], ['chiba', '千葉', 35.61, 140.12], ['sapporo', '札幌', 43.06, 141.35], ['sendai', '仙台', 38.27, 140.87], ['nagoya', '名古屋', 35.18, 136.91], ['osaka', '大阪', 34.69, 135.50], ['hiroshima', '広島', 34.39, 132.46], ['fukuoka', '福岡', 33.59, 130.40], ['naha', '那覇', 26.21, 127.68], ['geo', '現在地', 0, 0]];
   var P = { sun: '<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/>', cloud: '<path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 18z"/>', rain: '<path d="M7 14h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 14zM8 17l-1 3M12 17l-1 3M16 17l-1 3"/>', snow: '<path d="M7 14h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 14zM8 18h.01M12 20h.01M16 18h.01"/>' };
   function ic(c) { c = +c; return c <= 2 ? 'sun' : c <= 48 ? 'cloud' : (c >= 71 && c <= 77) || (c >= 85 && c <= 86) ? 'snow' : 'rain'; }
   function svgI(n, s) { return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (s > 30 ? 1.8 : 2) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + P[n] + '</svg>'; }
@@ -16,11 +16,35 @@
   if (!cur || !cur.id) cur = { id: 'tokyo' };
   AREAS.forEach(function (a) { var o = document.createElement('option'); o.value = a[0]; o.textContent = a[1]; if (a[0] === cur.id) o.selected = true; sel.appendChild(o); });
   function coords() { var a = AREAS.filter(function (x) { return x[0] === cur.id; })[0] || AREAS[0]; if (a[0] === 'geo') return cur.lat ? { name: '現在地', lat: cur.lat, lon: cur.lon } : null; return { name: a[1], lat: a[2], lon: a[3] }; }
-  function loadWx() { var c = coords(); if (!c) return Promise.resolve(null); return fetch('https://api.open-meteo.com/v1/forecast?latitude=' + c.lat + '&longitude=' + c.lon + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current=temperature_2m,weather_code&timezone=Asia%2FTokyo&forecast_days=7').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j) j._name = c.name; return j; }).catch(function () { return null; }); }
+  /* Weather (Open-Meteo). A reply is kept for 30 minutes per place so reloads do not ask again; when the service cannot be reached the last reply for that place (up to a day old) is shown, and with nothing to show the weather card is simply hidden - no error text on the page. */
+  var TTL = 30 * 60e3, STALE = 24 * 36e5, seq = 0;
+  function ckey(c) { return 'vb_wx_c:' + c.lat + ',' + c.lon; }
+  function cget(c, max) { try { var v = JSON.parse(localStorage.getItem(ckey(c)) || 'null'); return v && v.j && v.j.daily && Date.now() - v.t < max && v.j.daily.time.indexOf(jst(0)) >= 0 ? v.j : null; } catch (e) { return null; } }
+  function cput(c, j) { try { localStorage.setItem(ckey(c), JSON.stringify({ t: Date.now(), j: j })); } catch (e) {} }
+  function ask(c) {
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + c.lat + '&longitude=' + c.lon + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current=temperature_2m,weather_code&timezone=Asia%2FTokyo&forecast_days=7';
+    var ac = window.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ac) ac.abort(); }, 8000);
+    return fetch(url, ac ? { signal: ac.signal } : undefined).then(function (r) { clearTimeout(tm); return r.ok ? r.json() : null; }).then(function (j) { return j && j.daily && j.daily.time && j.daily.weather_code ? j : null; }).catch(function () { clearTimeout(tm); return null; });
+  }
+  function loadWx() {
+    var c = coords(); if (!c) return Promise.resolve(null);
+    var hit = cget(c, TTL); if (hit) { hit._name = c.name; return Promise.resolve(hit); }
+    return ask(c).then(function (j) { return j || new Promise(function (ok) { setTimeout(function () { ask(c).then(ok); }, 1200); }); }).then(function (j) {
+      if (j) { cput(c, j); j._name = c.name; return j; }
+      var old = cget(c, STALE); if (old) old._name = c.name; return old;
+    });
+  }
+  function showWx() { var n = ++seq; return loadWx().then(function (j) { if (n === seq) paintWx(j); }); }
   var W = null;
   function paintWx(j) {
-    W = j; var wx = document.getElementById('vb-wx');
-    if (!j || !j.daily) { q('[data-wx-pl]').textContent = '天気を取得できませんでした'; return; }
+    var wx = document.getElementById('vb-wx');
+    var cr = box.querySelector('[data-wx-credit]');
+    if (!j || !j.daily) {
+      /* nothing to show: with another place already on screen keep it; otherwise hide the card quietly */
+      if (wx.getAttribute('data-ok')) { sel.value = wx.getAttribute('data-ok'); return; }
+      W = null; wx.style.display = 'none'; if (cr) cr.style.display = 'none'; paintWeek(); return;
+    }
+    W = j; wx.style.display = ''; if (cr) cr.style.display = ''; wx.setAttribute('data-ok', cur.id);
     var d = j.daily, c = j.current || {}, code = d.weather_code[0], pp = d.precipitation_probability_max[0] || 0;
     var old = wx.querySelector('svg'); old.outerHTML = svgI(ic(code), 44);
     q('[data-wx-pl]').textContent = j._name + '　' + lbl(code);
@@ -46,12 +70,16 @@
     var id = sel.value;
     if (id === 'geo') {
       if (!navigator.geolocation) { sel.value = cur.id; return; }
-      navigator.geolocation.getCurrentPosition(function (p) { cur = { id: 'geo', lat: +p.coords.latitude.toFixed(2), lon: +p.coords.longitude.toFixed(2) }; try { localStorage.setItem('vb_wx', JSON.stringify(cur)); } catch (e) {} loadWx().then(paintWx); }, function () { sel.value = cur.id; });
+      navigator.geolocation.getCurrentPosition(function (p) { cur = { id: 'geo', lat: +p.coords.latitude.toFixed(2), lon: +p.coords.longitude.toFixed(2) }; try { localStorage.setItem('vb_wx', JSON.stringify(cur)); } catch (e) {} showWx(); }, function () { sel.value = cur.id; }, { timeout: 10000, maximumAge: 600000 });
       return;
     }
-    cur = { id: id }; try { localStorage.setItem('vb_wx', JSON.stringify(cur)); } catch (e) {} loadWx().then(paintWx);
+    cur = { id: id }; try { localStorage.setItem('vb_wx', JSON.stringify(cur)); } catch (e) {} showWx();
   });
-  Promise.all([tf, loadWx()]).then(function (r) {
+  /* the list of events must not wait for the weather, nor fail with it */
+  if (cur.id === 'geo' && !cur.lat) cur = { id: 'tokyo' };
+  var first = loadWx(); seq++;
+  window.addEventListener('online', function () { if (!W) showWx(); });
+  Promise.all([tf, first]).then(function (r) {
     LIST = r[0];
     var t0 = jst(0), n = 0;
     if (LIST) LIST.forEach(function (x) { if (x.d <= t0 && x.e >= t0) n++; });

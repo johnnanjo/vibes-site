@@ -25,6 +25,7 @@
 - DIGITAL LAB の方針（2026-11-16）：提供開始は2026-12-01。お店の利用管理は「利用コード」だけで行う。`vibesdigilabo.com`（worker.mjs の LABO ログイン方式・`static/labo/`）は扱わない＝使わない（コードは残してあるが、案内も設定もしない）。毎月の費用と利用の約束ごとは未決定
 - 旧キャロム版カウント（VIBES LIVE TABLE）は閉鎖（2026-11-17 運営者決定）：`/pages/bowlard/?mode=carom` と `/pages/live-table` は `/pages/digital-lab` へ移動させる（`?mode=pocket` はボーラードへ）。スリークッションのカウントは DIGITAL LAB（利用コード）だけ。古いプログラムは残してある
 - イベント用スコアボード（隠しページ。メニューにもサイトマップにも出さない）：`/event-score-pad?match=<試合ID>`（タブレット横向きの入力。`static/apps/event-score-pad.html`）と `/event-score-obs?match=<試合ID>`（OBSのブラウザソース用・背景透過。`static/apps/event-score-obs.html`。2026-11-17 から画面上の横長の帯が標準＝大会名・回戦・イニング・両選手・協賛を1列。`&layout=card` で以前の小さいカード。`&scale=1.2` `&pos=bl`（帯を下へ。カードは tr|bl|br） `&bg=1` `&sponsor=0`）。同期は既存のスコアボード中継（worker.mjs の `/api/count/<6けた>`。試合IDを6けたの番号に変換して部屋にする。入力側＝display、配信側＝remote）。Firebase などの外部DBは使っていない。2026-12-05 の女王杯の配信で使う予定
+- トップの天気（`static/js/home.js`、Open-Meteo）：地域ごとに30分キャッシュ（`localStorage` の `vb_wx_c:<緯度,経度>`）、失敗時は1回やり直し→1日以内の前回分を表示→それもなければ天気のカードを黙って隠す（エラー文は出さない）。地域の選択は `vb_wx`
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック。`youtubeLive` に YouTube チャンネルのURLを入れると `/live`（VIBES LIVE の入口）のボタンが有効になる（空なら「準備中」）。`homeWinners` が true のときだけ、トップに「◯月の優勝者」を出す（2026-11-16 から一時的に閉鎖中＝false）
 
 ## URL
