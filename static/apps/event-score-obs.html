@@ -13,7 +13,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:transparent;overflow:hidden;font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif}
 body.bg{background:#22303F}
-#card{position:fixed;left:40px;top:40px;transform-origin:0 0;width:620px;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);display:grid;grid-template-columns:118px minmax(0,1fr);grid-template-rows:auto auto auto}
+#card{position:fixed;left:40px;top:40px;transform-origin:0 0;width:620px;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);display:grid;grid-template-columns:118px minmax(0,1fr);grid-template-rows:auto auto auto auto}
 #card[hidden]{display:none}
 .hd{grid-column:1/-1;background:#0B192C;color:#fff;font-weight:900;font-size:22px;letter-spacing:.06em;padding:9px 18px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .in{grid-row:2/4;background:#0B192C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-top:2px solid #1D3557}
@@ -26,6 +26,9 @@ body.bg{background:#22303F}
 .rw .x{font-weight:900;font-size:15px;letter-spacing:.06em;white-space:nowrap;background:rgba(0,0,0,.1);border-radius:8px;padding:5px 9px;line-height:1}.rw .x b{font:400 22px/1 VLNum,system-ui,sans-serif;margin-left:6px}
 .rw .s{font:400 50px/1 VLNum,system-ui,sans-serif;min-width:64px;text-align:right}
 .rw .d{display:inline-block;width:12px;height:12px;border-radius:50%;background:#E11D48;margin-right:8px;vertical-align:3px;visibility:hidden}.rw.on .d{visibility:visible}
+.sp{grid-column:1/-1;background:#0B192C;border-top:2px solid #1D3557;display:flex;align-items:center;gap:12px;padding:10px 18px}.sp[hidden]{display:none}
+.sp small{color:#fff;font-weight:900;font-size:16px;letter-spacing:.1em;white-space:nowrap;margin-right:4px}
+.sp img{display:block;height:64px;width:auto;border-radius:6px;background:#fff}
 #msg{position:fixed;left:40px;top:40px;background:#0B192C;color:#fff;font-weight:800;font-size:22px;line-height:1.7;padding:16px 20px;border-radius:14px;max-width:900px}
 #msg[hidden]{display:none}
 </style>
@@ -36,6 +39,7 @@ body.bg{background:#22303F}
   <div class="in"><small>INN</small><b id="inn">1</b></div>
   <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="x">HR<b id="xA">0</b></span><span class="s" id="sA">0</span></div>
   <div class="rw b" id="rB"><i></i><span class="n"><span class="d"></span><span id="nB">PLAYER B</span></span><span class="h" id="hB"></span><span class="x">HR<b id="xB">0</b></span><span class="s" id="sB">0</span></div>
+  <div class="sp" id="sp" hidden><small>協賛</small></div>
 </div>
 <div id="msg" hidden></div>
 <script>
@@ -51,6 +55,9 @@ body.bg{background:#22303F}
   c.style.transform = 'scale(' + sc + ')';
   if (pos === 'tr' || pos === 'br') { c.style.left = 'auto'; c.style.right = '40px'; c.style.transformOrigin = '100% ' + (pos === 'br' ? '100%' : '0'); }
   if (pos === 'bl' || pos === 'br') { c.style.top = 'auto'; c.style.bottom = '40px'; if (pos === 'bl') c.style.transformOrigin = '0 100%'; }
+  /* sponsors' logos shown under the score, per event (the match id may carry a suffix such as w3c-1205-t2). Files are the ones the organiser supplied. */
+  var SPONSORS = { 'w3c-1205': [['/img/event/w3c-1205/sp-3seconds.png', '3seconds'], ['/img/event/w3c-1205/sp-labeaute.png', 'La Beaute']] };
+  Object.keys(SPONSORS).forEach(function (k) { if (match === k || match.indexOf(k + '-') === 0) { SPONSORS[k].forEach(function (s) { var i = new Image(); i.src = s[0]; i.alt = s[1]; $('sp').appendChild(i); }); $('sp').hidden = /[?&]sponsor=0/.test(q); } });
   var KEY = 'vibes-event-obs:' + match, ws = null, tries = 0, timer = null, last = 0;
   function draw(m) {
     if (!m || m.type !== 'state' || !m.p || m.p.length !== 2 || (m.m && m.m !== match)) return;
