@@ -17,7 +17,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
 .top .mt{display:flex;align-items:center;gap:.6vw;background:#12284A;border-radius:1.2vh;padding:.6vh 1vw;font-weight:800;font-size:2.1vh}
 .top .mt small{font-size:1.7vh;color:#B9C4D6}
 .top input{font:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#fff;background:#0B192C;border:.2vh solid #2B4A7A;border-radius:.9vh;padding:.7vh .8vw;min-width:0}
-#iMatch{width:17vw}#iTitle{width:22vw}
+#iMatch{width:12vw}#iTitle{width:19vw}#iRound{width:11vw}
+.top select{font:800 2.1vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#0B192C;background:#FFD700;border:0;border-radius:.9vh;padding:.8vh .6vw;max-width:15vw}
 .top .st{margin-left:auto;display:flex;align-items:center;gap:.6vw;font-weight:800;font-size:2vh}.top .st i{width:1.6vh;height:1.6vh;border-radius:50%;background:#7A8699}.top .st.on i{background:#39D98A}
 .tb{appearance:none;border:.2vh solid #2B4A7A;background:#12284A;color:#fff;font:800 2.1vh/1 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;border-radius:1.2vh;padding:0 1.4vw;min-height:6vh;cursor:pointer}
 .tb.dg{border-color:#FF6B6B;color:#FFD1D1}
@@ -68,6 +69,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
   <div class="top">
     <label class="mt"><small>試合ID</small><input id="iMatch" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="試合ID"></label>
     <label class="mt"><small>表示名</small><input id="iTitle" autocomplete="off" maxlength="24" aria-label="配信に出すタイトル"></label>
+    <label class="mt"><small>回戦</small><select id="sRound" aria-label="いま何回戦か"><option value="">表示しない</option><option>予選リーグ</option><option>1回戦</option><option>2回戦</option><option>3回戦</option><option>敗者1回戦</option><option>敗者2回戦</option><option>敗者3回戦</option><option>準々決勝</option><option>準決勝</option><option>3位決定戦</option><option>決勝</option><option value="*">その他（入力する）</option></select><input id="iRound" maxlength="12" autocomplete="off" aria-label="回戦を入力" hidden></label>
     <div class="st" id="st"><i></i><span id="stT">つないでいます</span></div>
     <button class="tb dg" type="button" id="bReset">リセット</button>
   </div>
@@ -96,13 +98,13 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
   /* the relay's rooms are 6-digit numbers: the match id is turned into one (same rule on the OBS page) */
   function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
   var match = clean((/[?&]match=([^&#]+)/.exec(location.search) || [])[1] ? decodeURIComponent((/[?&]match=([^&#]+)/.exec(location.search))[1]) : '') || 'test';
-  var KEY = 'vibes-event-score:' + match, S = null, ws = null, tries = 0, timer = null, gotRemote = false;
-  function blank() { return { type: 'state', v: 1, m: match, title: 'Queen Cup 2026-2027', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0 }], t: 0 }; }
+  var custom = false, KEY = 'vibes-event-score:' + match, S = null, ws = null, tries = 0, timer = null, gotRemote = false;
+  function blank() { return { type: 'state', v: 1, m: match, title: 'Queen Cup 2026-2027', round: '', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0 }], t: 0 }; }
   /* innings a player has had so far (the second player has not yet played in the current inning while the first is at the table) */
   function inns(i) { return i === 0 ? S.inn : (S.turn === 1 ? S.inn : S.inn - 1); }
   function avg(i) { var n = inns(i); return n > 0 ? (S.p[i].s / n).toFixed(3) : '-'; }
   function endRun() { S.p.forEach(function (p) { p.run = 0; p.hb = p.hr | 0; }); }
-  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); if (!o.title || o.title === '3-' + 'CUSHION') o.title = 'Queen Cup 2026-2027'; return o; }
+  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); if (!o.title || o.title === '3-' + 'CUSHION') o.title = 'Queen Cup 2026-2027'; o.round = String(o.round || '').slice(0, 12); return o; }
   function valid(o) { return o && o.type === 'state' && o.p && o.p.length === 2 && typeof o.inn === 'number'; }
   try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (valid(j)) S = fix(j); } catch (e) {}
   var fresh = !S; if (!S) S = blank();
@@ -113,12 +115,14 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
       $('s' + x[0]).textContent = p.s; $('x' + x[0]).textContent = p.hr; $('v' + x[0]).textContent = avg(x[1]); var r = $('r' + x[0]); if (p.h > 0 && p.s >= p.h) { r.textContent = 'あがり'; r.className = 'fin'; } else { r.textContent = p.h > 0 ? 'あと ' + (p.h - p.s) + ' 点' : ''; r.className = ''; }
       $('p' + x[0]).classList.toggle('on', S.turn === x[1]);
     });
+    var sr = $('sRound'), known = [].some.call(sr.options, function (o) { return o.value !== '*' && (o.value || o.text) === S.round || (o.value === '' && !S.round); });
+    if (S.round && !known) custom = true; sr.value = custom ? '*' : S.round; $('iRound').hidden = !custom; if (custom && document.activeElement !== $('iRound')) $('iRound').value = S.round;
     $('inn').textContent = S.inn; $('nxT').textContent = '次は ' + S.p[S.turn ? 0 : 1].n;
   }
   function push() { if (ws && ws.readyState === 1) { S.p[0].avg = avg(0); S.p[1].avg = avg(1); try { ws.send(JSON.stringify(S)); } catch (e) {} } }
   function save() { S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} draw(); push(); }
   /* ---- connection: this page is the "display" side of the relay (the side whose state is kept and handed to late joiners) ---- */
-  function status(on) { $('st').className = 'st' + (on ? ' on' : ''); $('stT').textContent = on ? '配信の画面とつながっています' : 'つなぎ直しています'; }
+  function status(on) { $('st').className = 'st' + (on ? ' on' : ''); $('stT').textContent = on ? 'つながっています' : 'つなぎ直しています'; }
   function connect() {
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=display'); } catch (e) { status(false); return; }
     var ping; ws.onopen = function () { tries = 0; status(true); push(); ping = setInterval(function () { if (ws.readyState === 1) ws.send('ping'); }, 25000); };
@@ -149,6 +153,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
   bind('nA', function (v) { S.p[0].n = v.slice(0, 16) || 'PLAYER A'; }); bind('nB', function (v) { S.p[1].n = v.slice(0, 16) || 'PLAYER B'; });
   bind('hA', function (v) { S.p[0].h = Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0); }); bind('hB', function (v) { S.p[1].h = Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0); });
   bind('iTitle', function (v) { S.title = v.slice(0, 24) || 'Queen Cup 2026-2027'; });
+  $('sRound').addEventListener('change', function () { var v = $('sRound').value; if (v === '*') { custom = true; S.round = ''; save(); $('iRound').value = ''; $('iRound').focus(); } else { custom = false; S.round = v; save(); } });
+  bind('iRound', function (v) { S.round = v.slice(0, 12); });
   $('iMatch').addEventListener('change', function () { var m = clean($('iMatch').value); if (m && m !== match) location.search = '?match=' + encodeURIComponent(m); else $('iMatch').value = match; });
   $('iMatch').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('iMatch').blur(); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { wake(); if (!ws || ws.readyState > 1) { clearTimeout(timer); connect(); } } });
