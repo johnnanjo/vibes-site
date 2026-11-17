@@ -37,7 +37,7 @@ function home() {
   const housePending = tours.filter((t) => t.cat === 'house' && !t.results && !t.winner && t.d < today && t.d >= addDays(today, -7) && !t.dead).length;
   const month = today.slice(0, 7);
   const prevMonth = addDays(month + '-01', -1).slice(0, 7);
-  const inMonth = (m) => [...players.values()].filter((p) => p.wins[0].d.startsWith(m)).sort((a, b) => (a.wins[0].d < b.wins[0].d ? 1 : -1));
+  const inMonth = (m) => [...players.values()].filter((p) => p.wins.length && p.wins[0].d.startsWith(m)).sort((a, b) => (a.wins[0].d < b.wins[0].d ? 1 : -1));
   let ps = inMonth(month), psLabel = `${+month.slice(5)}月の優勝者`;
   if (!ps.length) { ps = inMonth(prevMonth); psLabel = `${+prevMonth.slice(5)}月の優勝者`; }
   const news = artsOf('news').slice(0, 5);
@@ -302,25 +302,27 @@ function fixHtml(h) {
 
 /* ================= PLAYERS ================= */
 function playersPages() {
-  const list = [...players.values()].sort((a, b) => (a.wins[0].d < b.wins[0].d ? 1 : -1));
-  const body = `<div class="band"><div class="wrap band-in"><p class="crumb"><a href="/">トップ</a></p><div class="ph"><h1>選手</h1><p>VIBESに載った大会の優勝者を、選手ごとにまとめています。結果を掲載するたびに自動で増えていきます。</p></div></div></div>
-<main class="wrap"><section class="sec"><div class="count">${list.length}人</div><div class="hscroll" style="flex-wrap:wrap">${list.map(pCard).join('')}</div></section>
+  const list = [...players.values()].sort((a, b) => (a.last.d < b.last.d ? 1 : a.last.d > b.last.d ? -1 : b.wins.length - a.wins.length));
+  const champs = list.filter((p) => p.wins.length), placed = list.filter((p) => !p.wins.length);
+  const body = `<div class="band"><div class="wrap band-in"><p class="crumb"><a href="/">トップ</a></p><div class="ph"><h1>選手</h1><p>VIBESに載った大会の優勝者と入賞者を、選手ごとにまとめています。結果を掲載するたびに自動で増えていきます。</p></div></div></div>
+<main class="wrap"><section class="sec"><div class="sec-h"><h2>優勝した選手</h2></div><div class="count">${champs.length}人</div><div class="hscroll" style="flex-wrap:wrap">${champs.map(pCard).join('')}</div></section>
+${placed.length ? `<section class="sec"><div class="sec-h"><h2>入賞した選手</h2></div><div class="count">${placed.length}人（公式戦などの準優勝・3位）</div><div class="hscroll" style="flex-wrap:wrap">${placed.map(pCard).join('')}</div></section>` : ''}
 <section class="sec"><div class="empty"><b>ご本人の方へ</b><p>所属・ホームのお店・使用キューなどを追加できます。公式LINEで「選手ページ」とお送りください。</p><a class="btn btn-lineapp btn-sm" href="${LINE_ADD}" target="_blank" rel="noopener">LINEで申請する</a></div></section></main>`;
-  put('/pages/players', page({ title: '選手', desc: 'ビリヤード大会の優勝者を選手ごとに。成績が自動でたまる選手ページ。', path: '/pages/players', cur: 'p', body }));
+  put('/pages/players', page({ title: '選手', desc: 'ビリヤード大会の優勝者・入賞者を選手ごとに。成績が自動でたまる選手ページ。', path: '/pages/players', cur: 'p', body }));
   for (const p of list) {
     const carom = p.disc === 'carom';
     const body = `<div class="band"><div class="wrap band-in narrow"><p class="crumb"><a href="/">トップ</a> ／ <a href="/pages/players">選手</a></p>
 <div style="display:flex;align-items:center;gap:16px">${ball(p.name, carom, true)}<div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:700;color:var(--sub-d)">PLAYER</span><h1 style="font-size:28px;font-weight:900">${esc(p.name)}</h1><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--sub-d)">${fdot(p.disc)}${DISC[p.disc].ja}</span></div></div>
 <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
 <div style="display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:16px;background:var(--night2)"><span class="disp" style="font-size:34px;color:var(--lime)">${p.wins.length}</span><span style="font-size:10px;font-weight:700;color:var(--sub-d)">優勝</span></div>
-<div style="display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:16px;background:var(--night2)"><span class="disp" style="font-size:34px">${p.wins.length}</span><span style="font-size:10px;font-weight:700;color:var(--sub-d)">掲載大会</span></div>
-<div style="display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:16px;background:var(--night2)"><span class="disp" style="font-size:34px">${md(p.wins[0].d)}</span><span style="font-size:10px;font-weight:700;color:var(--sub-d)">最新の結果</span></div></div>
+<div style="display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:16px;background:var(--night2)"><span class="disp" style="font-size:34px">${p.recs.length}</span><span style="font-size:10px;font-weight:700;color:var(--sub-d)">掲載大会</span></div>
+<div style="display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:16px;background:var(--night2)"><span class="disp" style="font-size:34px">${md(p.last.d)}</span><span style="font-size:10px;font-weight:700;color:var(--sub-d)">最新の結果</span></div></div>
 <a class="btn btn-lime btn-block" href="${LINE_ADD}" target="_blank" rel="noopener">${svg('plus', 18, 'currentColor', 2.4)}フォローして結果をLINEで受け取る</a></div></div>
 <main class="wrap narrow"><section class="sec"><div class="sec-h"><h2>VIBESに載った成績</h2></div>
-<div class="card list">${p.wins.map((t) => `<a class="row" href="${t.url}" style="grid-template-columns:64px minmax(0,1fr) auto"><span class="tm" style="font-size:20px">${md(t.d)}</span><span><span class="tt">${esc(t.title)}</span><span class="vv" style="display:block">${catBadge(t)} ${esc(DISC[t.disc].ja)}・${esc(t.venue)}</span></span><b style="font-size:14px">優勝</b></a>`).join('')}</div>
+<div class="card list">${p.recs.map(({ t, rank }) => `<a class="row" href="${t.url}" style="grid-template-columns:64px minmax(0,1fr) auto"><span class="tm" style="font-size:20px">${md(t.d)}</span><span><span class="tt">${esc(t.title)}</span><span class="vv" style="display:block">${catBadge(t)} ${esc(DISC[t.disc].ja)}・${esc(t.venue)}</span></span><b style="font-size:14px${rank === '優勝' ? '' : ';font-weight:700;color:var(--sub)'}">${rank}</b></a>`).join('')}</div>
 <p class="muted" style="font-size:12px">VIBESが掲載した大会の結果から、自動でこのページに追加されます。</p></section>
 <section class="sec"><div class="card dark pad" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center"><span><b style="display:block;font-size:14px">ご本人の方へ</b><span style="display:block;font-size:12px;color:var(--sub-d);margin-top:4px">所属・ホームのお店・使用キューを追加できます。</span></span><a class="btn btn-sm" style="background:var(--chalk);color:var(--night)" href="${LINE_ADD}" target="_blank" rel="noopener">申請する</a></div></section></main>`;
-    put(p.url, page({ title: `${p.name}（ビリヤード選手）`, desc: `${p.name}選手の成績：${p.wins.map((t) => `${md(t.d)} ${t.title} 優勝`).join('、')}`.slice(0, 160), path: p.url, cur: 'p', body }));
+    put(p.url, page({ title: `${p.name}（ビリヤード選手）`, desc: `${p.name}選手の成績：${p.recs.map(({ t, rank }) => `${md(t.d)} ${t.title} ${rank}`).join('、')}`.slice(0, 160), path: p.url, cur: 'p', body }));
   }
 }
 

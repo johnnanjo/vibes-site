@@ -8,7 +8,7 @@
 - 確認：`cd dist && python3 -m http.server`
 
 ## Data（ここを書き換えるとサイトが更新される）
-- `data/tournaments.json` 大会（公式戦／ハウス）。結果は `results` / `winner`。選手ページは `winner` から自動生成。
+- `data/tournaments.json` 大会（公式戦／ハウス）。結果は `results` / `winner`。選手ページは結果から自動生成（`lib/data.mjs`）：`winner`（「／」「・」区切りの複数人も可）＝優勝、ハウス以外の `results` の 🥈＝準優勝・🥉＝3位 も入賞として載る。名前はスペース（全角・半角）の有無と異体字（髙＝高、﨑＝崎 など）を無視して同じ人にまとめ、いちばん多い書き方を表示名にする。選手ページに載らないときは、まず大会そのものがサイトに登録されているかを確認する（2026-11-18：段位戦の優勝者が載らなかった原因は、大会が未登録だったこと）
 - `data/shops.json` ビリヤード場
 - `data/articles.json` NEWS・試合結果・ハウストーナメント・試合速報の記事（`blog.handle` で振り分け）
 - `data/pages.json` 規約などの固定ページ本文、`data/products.json` 商品

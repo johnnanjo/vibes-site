@@ -1,0 +1,19 @@
+{
+ "handle": "players-update-2026-11-18",
+ "title": "【更新情報】2026年11月18日｜選手ページに入賞者と、NBA関東の段位戦の結果を追加しました",
+ "blog": {
+  "handle": "news",
+  "title": "NEWS"
+ },
+ "isPublished": true,
+ "publishedAt": "2026-11-17T23:10:00Z",
+ "updatedAt": "2026-11-17T23:10:00Z",
+ "tags": [
+  "更新情報",
+  "選手",
+  "公式戦",
+  "2026年11月"
+ ],
+ "summary": "選手ページに、優勝だけでなく準優勝・3位の成績も載るようになりました。NBA関東支部の段位戦などの結果も追加しています。",
+ "body": "<p><a href=\"/pages/players\">選手ページ</a>を更新しました。</p><ul><li>公式戦などの準優勝・3位の成績も、選手ごとに載るようになりました。</li><li>名前のスペースの有無や、漢字の書き方のちがい（髙と高 など）があっても、同じ選手としてまとめます。</li></ul><h2>追加した大会の結果</h2><ul><li><a href=\"/pages/tournament/official-nbakanto-20260322-spring-shodan\">第76回 春季 全関東アマチュアスリークッション初段戦</a>（3/22）：優勝 井上 和子</li><li><a href=\"/pages/tournament/official-nbakanto-20260405-spring-nidan\">第76回 春季 全関東アマチュアスリークッション二段戦</a>（4/5）：優勝 森 健一</li><li><a href=\"/pages/tournament/official-nbakanto-20260419-spring-sandan\">第76回 春季 全関東アマチュアスリークッション三段戦</a>（4/19）：優勝 安藤 達也</li><li><a href=\"/pages/tournament/official-nba-20260628-tohoku-3c-24\">第24回 東北3C選手権大会</a>（6/28）：優勝 船木 耕司</li><li><a href=\"/pages/tournament/official-nbakanto-20260830-autumn-nidan\">第76回 秋季 全関東アマチュアスリークッション二段戦</a>（8/30）：優勝 村山 陽祐</li><li><a href=\"/pages/tournament/official-nbakanto-20260923-excite-c-38\">第38回 全関東エキサイトC級スリークッショントーナメント</a>（9/23）：優勝 茂木 悟</li></ul>"
+}
