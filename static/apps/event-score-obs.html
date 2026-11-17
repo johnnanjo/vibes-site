@@ -7,8 +7,9 @@
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/img/favicon-64.png">
 <style>
-/* Event scoreboard, stream side: a small score card for the top-left of the picture in OBS (browser source 1920x1080, transparent ground, no controls).
-   ?match=<id> the same id as /event-score-pad   ?scale=1.5 bigger or smaller   ?pos=tr|bl|br other corners   ?bg=1 dark ground for checking */
+/* Event scoreboard, stream side, for OBS (browser source 1920x1080, transparent ground, no controls).
+   Default: one wide band across the top of the picture (title, round, inning, both players, sponsors).  ?layout=card the earlier small card in a corner.
+   ?match=<id> the same id as /event-score-pad   ?scale=1.2 bigger or smaller   ?pos=bl band at the bottom (card: tr|bl|br corners)   ?bg=1 dark ground for checking */
 @font-face{font-family:VLNum;src:url(/fonts/vibes-num.woff2) format("woff2");font-display:swap}
 *{box-sizing:border-box}
 html,body{margin:0;background:transparent;overflow:hidden;font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif}
@@ -31,6 +32,17 @@ body.bg{background:#22303F}
 .sp{grid-column:1/-1;background:#0B192C;border-top:2px solid #1D3557;display:flex;align-items:center;gap:12px;padding:10px 18px}.sp[hidden]{display:none}
 .sp small{color:#fff;font-weight:900;font-size:16px;letter-spacing:.1em;white-space:nowrap;margin-right:4px}
 .sp img{display:block;height:64px;width:auto;border-radius:6px;background:#fff}
+/* wide band */
+body.bar #card{left:0;top:0;width:100vw;border-radius:0;display:flex;align-items:stretch;height:84px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+body.bar .hd{flex:0 1 auto;min-width:0;padding:0 20px 0 24px;font-size:26px;gap:14px}
+body.bar .hd #tt{flex:0 1 auto}
+body.bar .hd #rd{font-size:22px;padding:4px 14px}
+body.bar .in{flex:none;flex-direction:row;align-items:center;gap:12px;padding:0 22px;border-top:0;border-left:2px solid #1D3557}
+body.bar .in small{font-size:20px}body.bar .in b{font-size:50px}
+body.bar .rw{flex:1 1 0;min-width:0;min-height:0;padding-right:20px}
+body.bar .rw .n{font-size:30px}body.bar .rw .s{font-size:56px;min-width:70px}
+body.bar .sp{flex:none;border-top:0;padding:0 20px;gap:10px}
+body.bar .sp img{height:66px}
 #msg{position:fixed;left:40px;top:40px;background:#0B192C;color:#fff;font-weight:800;font-size:22px;line-height:1.7;padding:16px 20px;border-radius:14px;max-width:900px}
 #msg[hidden]{display:none}
 </style>
@@ -54,9 +66,13 @@ body.bg{background:#22303F}
   var mm = /[?&]match=([^&#]+)/.exec(q), match = clean(mm ? decodeURIComponent(mm[1]) : '');
   var sc = Math.max(0.5, Math.min(3, parseFloat((/[?&]scale=([0-9.]+)/.exec(q) || [])[1]) || 1)), pos = (/[?&]pos=(tr|bl|br)/.exec(q) || [])[1] || 'tl', c = $('card');
   if (/[?&]bg=1/.test(q)) document.body.classList.add('bg');
+  var bar = !/[?&]layout=card/.test(q);
   c.style.transform = 'scale(' + sc + ')';
-  if (pos === 'tr' || pos === 'br') { c.style.left = 'auto'; c.style.right = '40px'; c.style.transformOrigin = '100% ' + (pos === 'br' ? '100%' : '0'); }
-  if (pos === 'bl' || pos === 'br') { c.style.top = 'auto'; c.style.bottom = '40px'; if (pos === 'bl') c.style.transformOrigin = '0 100%'; }
+  if (bar) { document.body.classList.add('bar'); c.style.width = (100 / sc) + 'vw'; if (pos === 'bl' || pos === 'br') { c.style.top = 'auto'; c.style.bottom = '0'; c.style.transformOrigin = '0 100%'; } }
+  else {
+    if (pos === 'tr' || pos === 'br') { c.style.left = 'auto'; c.style.right = '40px'; c.style.transformOrigin = '100% ' + (pos === 'br' ? '100%' : '0'); }
+    if (pos === 'bl' || pos === 'br') { c.style.top = 'auto'; c.style.bottom = '40px'; if (pos === 'bl') c.style.transformOrigin = '0 100%'; }
+  }
   /* sponsors' logos shown under the score, per event (the match id may carry a suffix such as w3c-1205-t2). Files are the ones the organiser supplied. */
   var SPONSORS = { 'w3c-1205': [['/img/event/w3c-1205/sp-3seconds.png', '3seconds'], ['/img/event/w3c-1205/sp-labeaute.png', 'La Beaute']] };
   Object.keys(SPONSORS).forEach(function (k) { if (match === k || match.indexOf(k + '-') === 0) { SPONSORS[k].forEach(function (s) { var i = new Image(); i.src = s[0]; i.alt = s[1]; $('sp').appendChild(i); }); $('sp').hidden = /[?&]sponsor=0/.test(q); } });
