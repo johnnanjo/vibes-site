@@ -1,4 +1,4 @@
-<!-- VIBES 3C LAB：これからスリークッションを楽しみたい人向け。動画なしの「取り口」テキスト辞典（data/3c-lab.json の patterns）。build.mjs がチップとカードを差し込んで /pages/3c-lab に出す。 -->
+<!-- VIBES 3C LAB：これからスリークッションを楽しみたい人向け。3つのタブ＝取り口辞典（data/3c-lab.json の patterns を build.mjs が差し込む）／基礎理論（初球・厚み・撞点・クッション・鏡）／システム計算（ファイブ＆ハーフ、プラス）。図はすべてこのファイルの中で描く。動画や外部の画像は使わない。 -->
 <style>
 .l3{--blue:#1E5AA8;--red:#D7262E;--yel:#F2C200}
 .l3 *{box-sizing:border-box}
@@ -54,8 +54,8 @@
 .l3-cta b{font-size:clamp(20px,5.4vw,26px);font-weight:900;line-height:1.45}
 .l3-cta small{font-size:14px;font-weight:700;line-height:1.7}
 .l3-cta span{margin-top:4px;background:var(--night);color:var(--chalk);font-size:16px;font-weight:900;line-height:1;padding:16px 22px;border-radius:999px}
-.l3-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--night);border-radius:20px;padding:6px;margin-top:22px}
-.l3-tabs button{appearance:none;border:0;cursor:pointer;min-height:52px;border-radius:15px;background:transparent;color:var(--chalk);font:900 15px/1.3 var(--jp);padding:6px 8px}
+.l3-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--night);border-radius:20px;padding:6px;margin-top:22px}
+.l3-tabs button{appearance:none;border:0;cursor:pointer;min-height:52px;border-radius:15px;background:transparent;color:var(--chalk);font:900 14.5px/1.3 var(--jp);padding:6px 4px}
 .l3-tabs button[aria-selected=true]{background:var(--lime);color:var(--night)}
 .l3-tabs button:focus-visible,.l3-sys select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .l3-sys{gap:12px}.l3-sys header{display:flex;flex-direction:column;gap:4px}.l3-sys header .n{font:400 15px/1 var(--disp);color:var(--sub)}
@@ -65,7 +65,7 @@
 .l3-sys .tg{align-self:flex-start;font-size:12.5px;font-weight:900;line-height:1;padding:6px 10px;border-radius:999px;background:var(--line2);color:var(--night)}
 .l3-sys .fm{margin:0;font-size:17px;font-weight:900;line-height:1.7;background:#111827;color:#F3F4EF;border-radius:14px;padding:14px}
 .l3-sys ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;font-size:14.5px;font-weight:700;line-height:1.85}
-.l3-sys #fh-map svg{display:block;width:100%;height:auto;border-radius:12px}
+.l3-sys .blk svg{display:block;width:100%;height:auto;border-radius:12px}
 .l3-sys .calc{background:#111827;border-color:#111827;color:#F3F4EF}.l3-sys .calc .tg{background:#334155;color:#F3F4EF}
 .l3-sys .calc label{display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:900}
 .l3-sys select{appearance:none;width:100%;min-height:54px;border-radius:14px;border:2px solid #334155;background:#0B1220;color:#F3F4EF;font:900 20px/1 var(--jp);padding:0 16px}
@@ -73,7 +73,22 @@
 .l3-sys .res small{font-size:13px;font-weight:900}.l3-sys .res b{font:400 54px/1.05 var(--disp)}.l3-sys .res span{font-size:14px;font-weight:900;line-height:1.6}
 .l3-sys .res.ng{background:#334155;color:#F3F4EF}.l3-sys .res.ng b{font:900 18px/1.5 var(--jp)}
 .l3-soon{background:var(--line2);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:2px;font-size:13.5px;font-weight:700;line-height:1.7}.l3-soon b{font-size:15.5px;font-weight:900}
-@media(min-width:760px){.l3-tabs{max-width:560px}.l3-sys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.l3-sys header{grid-column:1/-1}}
+.l3-sys ol{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:8px;font-size:14.5px;font-weight:700;line-height:1.85}
+.l3-sys .fm small{font-size:13.5px;font-weight:700;opacity:.85}
+.l3-sys .res b.jp{font:900 30px/1.3 var(--jp)}
+.l3-sys .res span+span{font-size:12.5px;font-weight:700}
+.l3-note{margin:0;font-size:14.5px;font-weight:900;line-height:1.75;background:var(--line2);border-radius:14px;padding:11px 13px}
+.l3-seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.l3-pad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.l3-seg button,.l3-pad button{appearance:none;cursor:pointer;min-height:48px;border-radius:14px;border:2px solid var(--night);background:#fff;color:var(--night);font:900 14.5px/1.2 var(--jp);padding:4px}
+.l3-seg button[aria-pressed=true]{background:var(--night);color:var(--chalk)}
+.l3-sys .calc .l3-pad button{border-color:#334155;background:#0B1220;color:#F3F4EF}
+.l3-sys .calc .l3-pad button[aria-pressed=true]{background:var(--lime);border-color:var(--lime);color:var(--night)}
+.l3-seg button:focus-visible,.l3-pad button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.l3-tbl{overflow-x:auto}.l3-tbl table{width:100%;border-collapse:collapse;font-size:14px;font-weight:700;line-height:1.6}
+.l3-tbl th{text-align:left;font-size:12.5px;font-weight:900;color:var(--sub);padding:6px 8px;border-bottom:1.5px solid var(--line)}
+.l3-tbl td{padding:9px 8px;border-bottom:1.5px solid var(--line);vertical-align:top}.l3-tbl td:first-child{font-weight:900;white-space:nowrap}
+@media(min-width:760px){.l3-tabs{max-width:640px}.l3-sys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.l3-sys header{grid-column:1/-1}}
 .l3-c dd.sm{font-size:16px;font-weight:900;line-height:1.75}
 @media(min-width:760px){.l3-rule,.l3-next{grid-template-columns:repeat(3,minmax(0,1fr))}.l3-dic{grid-template-columns:repeat(2,minmax(0,1fr))}.l3-stick{margin:0}.l3-chips{padding-left:0;padding-right:0;flex-wrap:wrap}}
 </style>
@@ -82,7 +97,7 @@
 <p class="crumb"><a href="/" style="color:#fff">トップ</a>　<a href="/pages/carom" style="color:#fff">キャロム</a></p>
 <h1 class="l3-ttl">VIBES 3C LAB</h1>
 <p class="l3-lead">スリークッションを、これから楽しみたい人へ。</p>
-<p class="l3-sub">ルールはシンプル、でも奥が深い。まずは「取り口」と呼ばれる8の形を、辞典で知るところから始めましょう。形が分かると、試合を見るのも、自分で撞くのも、ぐっと面白くなります。</p>
+<p class="l3-sub">ルールはシンプル、でも奥が深い。まずは「取り口」と呼ばれる8の形を、辞典で知るところから。慣れてきたら、厚みや回転の基礎理論、狙う場所を数字で出すシステム計算へ進みましょう。</p>
 </div></div>
 <main class="wrap">
 
@@ -95,7 +110,7 @@
 </div>
 </section>
 
-<div class="l3-tabs" role="tablist" aria-label="3C LAB の内容"><button type="button" role="tab" id="l3-t1" aria-controls="l3-p1" aria-selected="true">取り口辞典</button><button type="button" role="tab" id="l3-t2" aria-controls="l3-p2" aria-selected="false">システム計算・早見表</button></div>
+<div class="l3-tabs" role="tablist" aria-label="3C LAB の内容"><button type="button" role="tab" id="l3-t1" aria-controls="l3-p1" aria-selected="true">取り口辞典</button><button type="button" role="tab" id="l3-t3" aria-controls="l3-p3" aria-selected="false">基礎理論</button><button type="button" role="tab" id="l3-t2" aria-controls="l3-p2" aria-selected="false">システム計算</button></div>
 <div id="l3-p1" role="tabpanel" aria-labelledby="l3-t1">
 <section class="l3-v" id="l3-pat">
 <h2 class="l3-h">取り口辞典　8の形</h2>
@@ -126,7 +141,123 @@ __CARDS__
 <li>ラシャが新品で滑る台では伸びやすく、湿気や古いラシャでは短くなるため、1クッション目で基準の補正値を測ること。</li>
 </ul></div>
 </section>
-<section class="l3-v"><div class="l3-soon"><b>プラスシステムほか、2つのシステムは準備中です。</b><span>内容がそろい次第、ここに追加します。</span></div></section>
+<section class="l3-v l3-sys" id="sys-plus">
+<header><span class="n">SYSTEM 02</span><h3>プラスシステム<small>Plus System</small></h3><p>短クッション側から長クッションへ入れる空クッションや、切り返し・ダブルレールの計算に使うシステムです。</p></header>
+<div class="blk"><span class="tg">計算式</span><p class="fm">手球の出発値 ＋ 1クッション目の狙い目 ＝ 3クッション目の到達値<br><small>（1クッション目 ＝ 目標値 − 手球の出発値）</small></p></div>
+<div class="blk"><span class="tg">数値マップ</span><div id="pl-map"></div>
+<p class="l3-lg" style="margin-top:8px"><span><i style="background:#FACC15"></i>手球の出発値</span><span><i style="background:#38BDF8"></i>1クッション目</span><span><i style="background:#F43F5E"></i>3クッション目</span></p></div>
+<div class="blk calc"><span class="tg">自動計算</span>
+<label>手球の出発値<select id="pl-o"></select></label>
+<label>3クッション目の目標<select id="pl-t"></select></label>
+<div class="res" id="pl-r" aria-live="polite"></div></div>
+<div class="blk"><span class="tg">実戦の補正ポイント</span><ul>
+<li>数字は基準です。強さとヒネリの量をいつも同じにして、まず数字どおりに撞きます。</li>
+<li>狙った到達値からずれたぶんを、その日の台の補正値としておぼえ、次の球から足し引きします。</li>
+<li>強く撞くと短く、滑るラシャでは長く出ます（基礎理論「クッションの特性」を参照）。</li>
+</ul></div>
+</section>
+<section class="l3-v"><div class="l3-soon"><b>3つ目のシステムは準備中です。</b><span>内容がそろい次第、ここに追加します。</span></div></section>
+</div>
+<div id="l3-p3" role="tabpanel" aria-labelledby="l3-t3" hidden>
+<section class="l3-v">
+<h2 class="l3-h">基礎理論</h2>
+<p class="l3-p">システムの数字を使う前に知っておきたい、球の動きの土台です。初球のならべ方から、厚み・回転・クッションの性質・空クッションの考え方まで、順番にまとめました。図はすべて考え方を示す目安です。</p>
+</section>
+
+<section class="l3-v l3-sys" id="th-break" style="padding-top:6px">
+<header><span class="n">基礎 01</span><h3>初球とゲームの流れ</h3><p>ゲームは決まったならべ方から始まります。最初の1球だけは、赤い球に先に当てる決まりです。</p></header>
+<div class="blk"><span class="tg">初球のならべ方</span><div id="th-bk"></div>
+<p class="l3-lg" style="margin-top:8px"><span><i style="background:#fff"></i>自分の手球</span><span><i style="background:#FACC15"></i>相手の手球</span><span><i style="background:#F43F5E"></i>赤球</span></p></div>
+<div class="blk"><span class="tg">おぼえておくこと</span><ul>
+<li>赤球は奥のスポット、相手の手球は手前のスポットに置きます。自分の手球は、その左右どちらかのとなりに置きます。</li>
+<li>初球は、赤球に先に当てます。2球目からは、どちらの的球から当ててもかまいません。</li>
+<li>2つ目の的球に当たるまでに、手球がクッションに3回以上入っていれば得点です。当たれば続けて撞けます。</li>
+</ul></div>
+</section>
+
+<section class="l3-v l3-sys" id="th-thick">
+<header><span class="n">基礎 02</span><h3>厚み<small>的球にどれだけ重ねて当てるか</small></h3><p>手球を的球にどれだけ重ねて当てるかを「厚み」と呼びます。厚みで、的球の進む向きと、2つの球に分かれる勢いが決まります。</p></header>
+<div class="blk calc"><span class="tg">厚みを動かしてみる</span>
+<label>厚み<select id="tk-f"></select></label>
+<div id="tk-map"></div>
+<div class="res" id="tk-r" aria-live="polite"></div></div>
+<div class="blk"><span class="tg">考え方</span><ul>
+<li>的球は、当たった瞬間の「2つの球の中心を結んだ線」の向きへ進みます。</li>
+<li>厚く当てるほど、的球はまっすぐ速く走り、手球は勢いを失います。</li>
+<li>薄く当てるほど、的球はゆっくり横へ動き、手球は勢いを残して走ります。スリークッションで手球を長く走らせたいときは、薄めの厚みが基本です。</li>
+<li>半分の厚み（1/2）は、目で合わせやすい基準です。迷ったら、まず1/2からどちらへずらすかを考えます。</li>
+</ul></div>
+</section>
+
+<section class="l3-v l3-sys" id="th-spin">
+<header><span class="n">基礎 03</span><h3>撞点と回転<small>押し・引き・ヒネリ</small></h3><p>手球のどこを撞くか（撞点）で、回転が変わります。上下は的球に当たったあとの進み方、左右はクッションに入ったあとの出方を変えます。</p></header>
+<div class="blk calc"><span class="tg">撞点をえらぶ</span>
+<div class="l3-pad" id="sp-pad" role="group" aria-label="撞点をえらぶ"></div>
+<div id="sp-map"></div>
+<div class="res" id="sp-r" aria-live="polite"></div></div>
+<div class="blk"><span class="tg">順ヒネリと逆ヒネリ</span>
+<div class="l3-seg" id="en-seg" role="group" aria-label="ヒネリの種類"></div>
+<div id="en-map"></div>
+<p class="l3-note" id="en-r" aria-live="polite"></p>
+<ul>
+<li>クッションに入ったあと、手球が進む方向へ転がる向きの回転が「順ヒネリ」、その反対が「逆ヒネリ」です。</li>
+<li>クッションに向かって右へ進むなら、右ヒネリが順ヒネリです。左へ進むなら、左ヒネリが順ヒネリです。</li>
+<li>撞点を中心からずらす幅は「チップ」（タップ1個ぶん）で数えます。ずらすほど回転は増えますが、撞き損じも増えます。</li>
+</ul></div>
+</section>
+
+<section class="l3-v l3-sys" id="th-cushion">
+<header><span class="n">基礎 04</span><h3>クッションの特性<small>入った角度と出る角度</small></h3><p>クッションは、いつも同じ角度で跳ね返すわけではありません。撞く強さと台の状態で、出る角度が変わります。</p></header>
+<div class="blk"><span class="tg">強さをかえてみる</span>
+<div class="l3-seg" id="cu-seg" role="group" aria-label="撞く強さ"></div>
+<div id="cu-map"></div>
+<p class="l3-note" id="cu-r" aria-live="polite"></p></div>
+<div class="blk"><span class="tg">出方が変わる条件</span>
+<div class="l3-tbl"><table><thead><tr><th>条件</th><th>出方</th></tr></thead><tbody>
+<tr><td>強く撞く</td><td>クッションに食い込み、短く（立って）出る</td></tr>
+<tr><td>弱く撞く</td><td>長く（寝て）出る</td></tr>
+<tr><td>新しくて滑るラシャ</td><td>伸びやすい（長く出る）</td></tr>
+<tr><td>古いラシャ・湿気が多い日</td><td>短くなりやすい</td></tr>
+<tr><td>順ヒネリ</td><td>長く出て、勢いが残る</td></tr>
+<tr><td>逆ヒネリ</td><td>短く出て、勢いが落ちる</td></tr>
+</tbody></table></div>
+<ul><li>ヒネリは、1つ目のクッションでいちばん強く効きます。2つ目、3つ目と進むほど、効き方は小さくなります。</li>
+<li>同じ台でも日によって出方が変わります。撞きはじめに基準の球を1つ撞いて、その日の台を確かめましょう。</li></ul></div>
+</section>
+
+<section class="l3-v l3-sys" id="th-mirror">
+<header><span class="n">基礎 05</span><h3>空クッションの考え方<small>鏡にうつして狙う</small></h3><p>クッションを先に使って当てるときは、クッションを鏡だと考えます。鏡の向こうにうつった的球へまっすぐ撞く、というのが基本の考え方です。</p></header>
+<div class="blk calc"><span class="tg">1クッションの狙い点を計算</span>
+<label>手球からクッションまで<select id="mr-a"></select></label>
+<label>的球からクッションまで<select id="mr-b"></select></label>
+<label>手球と的球の横の間隔<select id="mr-l"></select></label>
+<div id="mr-map"></div>
+<div class="res" id="mr-r" aria-live="polite"></div></div>
+<div class="blk"><span class="tg">考え方</span><ul>
+<li>狙い点は、横の間隔を「手球の距離：的球の距離」に分けた場所です。クッションに近い球のほうへ寄ります。</li>
+<li>この計算は、ヒネリなし・ふつうの強さのときの目安です。強く撞けば短く、順ヒネリなら長く出るぶんを足し引きします。</li>
+<li>2クッション、3クッションと増えても、鏡にうつす考え方は同じです。ただし回数が増えるほどずれが大きくなるため、実戦ではシステムの数字と組み合わせて使います。</li>
+</ul></div>
+</section>
+
+<section class="l3-v l3-sys" id="th-feel">
+<header><span class="n">基礎 06</span><h3>ストロークとルーティン、システムと感覚</h3><p>数字が合っていても、撞き方が毎回ちがうと球は同じ場所へ行きません。同じ手順で、同じように撞くことが、いちばんの土台です。</p></header>
+<div class="blk"><span class="tg">ストローク</span><ul>
+<li>キューはできるだけ水平に、まっすぐ出します。</li>
+<li>撞いたあとも顔と体を動かさず、キューを前へ送ります。</li>
+<li>強さは3段階（弱い・ふつう・強い）を決めておき、まず「ふつう」を安定させます。</li>
+</ul></div>
+<div class="blk"><span class="tg">撞く前のルーティン</span><ol>
+<li>立ったまま、取り口・厚み・撞点・強さを決めます。</li>
+<li>決めてから構えます。構えてから迷ったら、いったん立ち直します。</li>
+<li>素振りを同じ回数おこない、最後に一度止めてから撞きます。</li>
+</ol></div>
+<div class="blk"><span class="tg">システムと感覚</span><ul>
+<li>システムは「基準の線」を出す道具です。答えそのものではありません。</li>
+<li>基準からのずれ（台の状態、強さ、ヒネリの量）を合わせるのが感覚です。</li>
+<li>はじめは数字どおりに撞いて結果を見て、どれだけずれたかをおぼえる。そのくり返しで、感覚が育ちます。</li>
+</ul></div>
+</section>
 </div>
 
 <section class="l3-v">
@@ -161,10 +292,11 @@ __CARDS__
 (function () {
   'use strict';
   /* tabs: dictionary / system guide (#system opens the second one) */
-  var t1 = document.getElementById('l3-t1'), t2 = document.getElementById('l3-t2'), p1 = document.getElementById('l3-p1'), p2 = document.getElementById('l3-p2');
-  function tab(n, keep) { t1.setAttribute('aria-selected', n === 1); t2.setAttribute('aria-selected', n === 2); p1.hidden = n !== 1; p2.hidden = n !== 2; if (!keep) { try { history.replaceState(null, '', n === 2 ? '#system' : location.pathname + location.search); } catch (e) {} } }
-  t1.addEventListener('click', function () { tab(1); }); t2.addEventListener('click', function () { tab(2); });
-  if (location.hash === '#system' || location.hash === '#sys-fh') tab(2, true);
+  var TB = [1, 2, 3].map(function (n) { return [document.getElementById('l3-t' + n), document.getElementById('l3-p' + n)]; }), H = ['', '#system', '#theory'];
+  function tab(n, keep) { TB.forEach(function (x, i) { x[0].setAttribute('aria-selected', i + 1 === n); x[1].hidden = i + 1 !== n; }); if (!keep) { try { history.replaceState(null, '', H[n - 1] || location.pathname + location.search); } catch (e) {} } }
+  TB.forEach(function (x, i) { x[0].addEventListener('click', function () { tab(i + 1); }); });
+  var h = location.hash; if (/^#(system|sys-)/.test(h)) tab(2, true); else if (/^#(theory|th-)/.test(h)) tab(3, true);
+  if (/^#(sys|th)-/.test(h)) { var el = document.getElementById(h.slice(1)); if (el) setTimeout(function () { el.scrollIntoView(); }, 0); }
   /* Five & Half: number map + calculator. Long rail = 8 sections (7 points), short rail = 4 sections (3 points). */
   var X = function (i) { return 50 + 45 * i; }, Y = function (j) { return 45 + 45 * j; };
   var O = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8], T = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
@@ -195,5 +327,141 @@ __CARDS__
     draw(o, t, f);
   }
   so.addEventListener('change', calc); st.addEventListener('change', calc); calc();
+})();
+</script>
+<script>
+(function () {
+  'use strict';
+  /* 3C LAB: basics (break layout, thickness, tip position, cushion, mirror) and the Plus System map + calculator. All figures are drawn here; nothing is loaded from outside. */
+  var $ = function (id) { return document.getElementById(id); };
+  var C = { bg: '#0B1220', fr: '#334155', bd: '#111827', pt: '#CBD5E1', cue: '#FFFFFF', o1: '#FACC15', o2: '#F43F5E', ln: '#38BDF8', dim: '#64748B', tx: '#F3F4EF' };
+  function tx(x, y, s, c, z, a) { return '<text x="' + x + '" y="' + y + '" text-anchor="' + (a || 'middle') + '" font-size="' + (z || 11.5) + '" font-weight="900" font-family="sans-serif" fill="' + (c || C.tx) + '">' + s + '</text>'; }
+  function ball(x, y, r, c) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '" stroke="#0B1220" stroke-width="1"/>'; }
+  function opts(sel, list, def, f) { sel.innerHTML = list.map(function (v) { return '<option value="' + v + '"' + (v === def ? ' selected' : '') + '>' + f(v) + '</option>'; }).join(''); }
+  function seg(box, list, def, cb) {
+    box.innerHTML = list.map(function (v, i) { return '<button type="button" aria-pressed="' + (i === def) + '" data-i="' + i + '">' + v + '</button>'; }).join('');
+    box.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; [].forEach.call(box.children, function (x) { x.setAttribute('aria-pressed', x === b); }); cb(+b.getAttribute('data-i')); });
+    cb(def);
+  }
+  function table(w, h, x, y, tw, th, label) {
+    var s = '<svg viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '"><rect width="' + w + '" height="' + h + '" rx="12" fill="' + C.bg + '"/><rect x="' + (x - 12) + '" y="' + (y - 12) + '" width="' + (tw + 24) + '" height="' + (th + 24) + '" rx="8" fill="' + C.fr + '"/><rect x="' + x + '" y="' + y + '" width="' + tw + '" height="' + th + '" fill="' + C.bd + '"/><g fill="' + C.pt + '">', i;
+    for (i = 1; i < 8; i++) s += '<circle cx="' + (x + tw * i / 8) + '" cy="' + (y - 6) + '" r="2.2"/><circle cx="' + (x + tw * i / 8) + '" cy="' + (y + th + 6) + '" r="2.2"/>';
+    for (i = 1; i < 4; i++) s += '<circle cx="' + (x - 6) + '" cy="' + (y + th * i / 4) + '" r="2.2"/><circle cx="' + (x + tw + 6) + '" cy="' + (y + th * i / 4) + '" r="2.2"/>';
+    return s + '</g>';
+  }
+
+  /* 01 break layout: red on the far spot, the opponent's ball on the near spot, the player's ball beside it (18.25 cm on a 142 cm wide bed) */
+  (function () {
+    var x = 50, y = 40, tw = 360, th = 180, s = table(460, 262, x, y, tw, th, '初球のならべ方');
+    var hx = x + tw / 4, fx = x + tw * 3 / 4, cy = y + th / 2, d = th * 18.25 / 142;
+    s += '<g stroke="' + C.dim + '" stroke-width="1" stroke-dasharray="3 4"><line x1="' + hx + '" y1="' + y + '" x2="' + hx + '" y2="' + (y + th) + '"/></g>';
+    s += ball(fx, cy, 7, C.o2) + ball(hx, cy, 7, C.o1) + ball(hx, cy + d, 7, C.cue) + '<circle cx="' + hx + '" cy="' + (cy - d) + '" r="7" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="3 3"/>';
+    s += tx(fx, cy - 14, '赤球', C.o2) + tx(hx - 14, cy + 4, '相手', C.o1, 11.5, 'end') + tx(hx + 14, cy + d + 4, '自分（左右どちらか）', C.tx, 11.5, 'start');
+    s += tx(x + tw / 2, 252, '初球は、赤球に先に当てます', C.tx, 12.5);
+    $('th-bk').innerHTML = s + '</svg>';
+  })();
+
+  /* 02 thickness: overlap f of the two balls; the object ball leaves along the line of centres, asin(1 - f) off the shot line */
+  (function () {
+    var sel = $('tk-f'), N = ['1/8（とても薄い）', '1/4（薄い）', '3/8', '1/2（半分）', '5/8', '3/4（厚い）', '7/8', '1/1（正面）'];
+    opts(sel, [1, 2, 3, 4, 5, 6, 7, 8], 4, function (v) { return N[v - 1]; });
+    function draw() {
+      var f = +sel.value / 8, off = 1 - f, th = Math.asin(off), deg = Math.round(th * 180 / Math.PI), ob = Math.round(Math.cos(th) * 100), cb = Math.round(Math.sin(th) * 100);
+      var s = '<svg viewBox="0 0 460 210" role="img" aria-label="厚みの図"><rect width="460" height="210" rx="12" fill="' + C.bg + '"/>';
+      /* seen from behind the cue ball */
+      var r = 44, ox = 120, oy = 96;
+      s += tx(120, 22, '撞く人から見た重なり', C.pt) + '<circle cx="' + ox + '" cy="' + oy + '" r="' + r + '" fill="' + C.o1 + '"/><circle cx="' + (ox + off * 2 * r) + '" cy="' + oy + '" r="' + r + '" fill="#fff" fill-opacity=".72" stroke="#fff" stroke-width="1.5"/>';
+      s += tx(ox - 22, 168, '的球', C.o1) + tx(ox + off * 2 * r + 20, 168, '手球', C.tx) + tx(120, 196, '重なり ' + sel.value + '/8', C.ln, 13);
+      /* seen from above: the cue ball comes up the page */
+      var R = 13, bx = 340, by = 96, gx = bx + off * 2 * R, gy = by + Math.sqrt(Math.max(0, 4 * R * R - off * off * 4 * R * R)), L = 74, ex = bx - Math.sin(th) * L, ey = by - Math.cos(th) * L;
+      s += tx(340, 22, '上から見た進み方', C.pt) + '<line x1="' + gx + '" y1="198" x2="' + gx + '" y2="' + gy + '" stroke="' + C.dim + '" stroke-width="2" stroke-dasharray="5 5"/>';
+      s += '<line x1="' + bx + '" y1="' + by + '" x2="' + ex + '" y2="' + ey + '" stroke="' + C.o1 + '" stroke-width="3" stroke-linecap="round"/><circle cx="' + ex + '" cy="' + ey + '" r="4" fill="' + C.o1 + '"/>';
+      if (cb > 3) { var kx = gx + Math.cos(th) * L * cb / 100, ky = gy - Math.sin(th) * L * cb / 100; s += '<line x1="' + gx + '" y1="' + gy + '" x2="' + kx + '" y2="' + ky + '" stroke="' + C.ln + '" stroke-width="3" stroke-linecap="round"/><circle cx="' + kx + '" cy="' + ky + '" r="4" fill="' + C.ln + '"/>'; }
+      s += ball(bx, by, R, C.o1) + ball(gx, gy, R, C.cue);
+      $('tk-map').innerHTML = s + '</svg>';
+      $('tk-r').innerHTML = '<small>的球の進む向き（撞いた線から）</small><b>' + deg + '°</b><span>勢いの分かれ方の目安　的球 ' + ob + '　手球 ' + cb + '</span><span>' + (f >= 0.99 ? '正面に当てると、勢いはほぼ的球へ移り、手球はその場に止まろうとします。' : f >= 0.6 ? '厚め。的球がよく走り、手球はあまり走りません。' : f >= 0.45 ? '半分の厚み。的球はおよそ30°の向きへ進みます。' : '薄め。的球は横へゆっくり動き、手球が長く走ります。') + '</span><span>※ヒネリなしで当たった瞬間の目安です。押し・引きを加えると、手球の進み方は変わります。</span>';
+    }
+    sel.addEventListener('change', draw); draw();
+  })();
+
+  /* 03 tip position */
+  (function () {
+    var P = [['左上', -1, -1], ['上', 0, -1], ['右上', 1, -1], ['左', -1, 0], ['中心', 0, 0], ['右', 1, 0], ['左下', -1, 1], ['下', 0, 1], ['右下', 1, 1]], pad = $('sp-pad');
+    var T = {
+      '0,0': ['センター', '回転をかけない基準の撞点です。まずはここで、まっすぐ撞けることが土台になります。'],
+      '0,-1': ['押し球', '的球に当たったあと、手球が前へ進みます。'],
+      '0,1': ['引き球', '的球に当たったあと、手球が手前へ戻ります。'],
+      '-1,0': ['左ヒネリ', 'クッションに入ったあとの、出る角度と勢いが変わります。左へ進む球なら順ヒネリです。'],
+      '1,0': ['右ヒネリ', 'クッションに入ったあとの、出る角度と勢いが変わります。右へ進む球なら順ヒネリです。'],
+      '-1,-1': ['押し＋左ヒネリ', '手球を前へ進めながら、クッションで角度を変えます。回して取る形でよく使う撞点です。'],
+      '1,-1': ['押し＋右ヒネリ', '手球を前へ進めながら、クッションで角度を変えます。回して取る形でよく使う撞点です。'],
+      '-1,1': ['引き＋左ヒネリ', '手球を手前へ戻しながら、クッションで角度を変えます。'],
+      '1,1': ['引き＋右ヒネリ', '手球を手前へ戻しながら、クッションで角度を変えます。']
+    };
+    function draw(i) {
+      var p = P[i], k = p[1] + ',' + p[2], t = T[k], s = '<svg viewBox="0 0 460 190" role="img" aria-label="撞点の図"><rect width="460" height="190" rx="12" fill="' + C.bg + '"/><circle cx="230" cy="95" r="74" fill="#fff"/><g stroke="#CBD5E1" stroke-width="1.5"><line x1="156" y1="95" x2="304" y2="95"/><line x1="230" y1="21" x2="230" y2="169"/></g><circle cx="230" cy="95" r="37" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 4"/>';
+      s += '<circle cx="' + (230 + p[1] * 37 * (p[2] ? 0.72 : 1)) + '" cy="' + (95 + p[2] * 37 * (p[1] ? 0.72 : 1)) + '" r="13" fill="' + C.ln + '" stroke="#0B1220" stroke-width="2"/>' + tx(396, 99, '点線の内側が目安', C.pt, 11);
+      $('sp-map').innerHTML = s + '</svg>';
+      $('sp-r').innerHTML = '<small>この撞点は</small><b class="jp">' + t[0] + '</b><span>' + t[1] + '</span>';
+    }
+    seg(pad, P.map(function (p) { return p[0]; }), 4, draw);
+  })();
+
+  /* 03b / 04 one cushion, three ways out. Angles are an image of the tendency, not measured values */
+  function rail(id, label, sel, names) {
+    var hit = [200, 52], from = [70, 178], outs = [[262, 178], [330, 178], [412, 170]];
+    var s = '<svg viewBox="0 0 460 200" role="img" aria-label="' + label + '"><rect width="460" height="200" rx="12" fill="' + C.bg + '"/><rect x="20" y="22" width="420" height="24" rx="6" fill="' + C.fr + '"/><rect x="20" y="46" width="420" height="136" fill="' + C.bd + '"/>';
+    s += '<line x1="' + from[0] + '" y1="' + from[1] + '" x2="' + hit[0] + '" y2="' + hit[1] + '" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>';
+    outs.forEach(function (o, i) { var on = i === sel; s += '<line x1="' + hit[0] + '" y1="' + hit[1] + '" x2="' + o[0] + '" y2="' + o[1] + '" stroke="' + (on ? C.ln : C.dim) + '" stroke-width="' + (on ? 3.5 : 1.5) + '" stroke-dasharray="' + (on ? '' : '5 5') + '" stroke-linecap="round"/>' + (on ? '<circle cx="' + o[0] + '" cy="' + o[1] + '" r="5" fill="' + C.ln + '"/>' : '') + tx(o[0], o[1] - 10 - (i === 2 ? 6 : 0), names[i], on ? C.ln : C.dim, 11); });
+    s += ball(from[0], from[1], 8, C.cue) + tx(230, 38, 'クッション', C.pt, 11);
+    $(id).innerHTML = s + '</svg>';
+  }
+  seg($('en-seg'), ['逆ヒネリ', 'ヒネリなし', '順ヒネリ'], 1, function (i) {
+    rail('en-map', '順ヒネリと逆ヒネリの出方の図', i, ['逆', 'なし', '順']);
+    $('en-r').textContent = ['逆ヒネリ：短く（立って）出て、勢いが落ちます。手球を止めたいとき、短く出したいときに使います。', 'ヒネリなし：入った角度と、ほぼ同じ角度で出ます。これが基準の線です。', '順ヒネリ：長く（寝て）出て、勢いが残ります。手球を長く走らせる、スリークッションの基本のヒネリです。'][i];
+  });
+  seg($('cu-seg'), ['強い', 'ふつう', '弱い'], 1, function (i) {
+    rail('cu-map', '撞く強さと出方の図', i, ['強い', 'ふつう', '弱い']);
+    $('cu-r').textContent = ['強い：球がクッションに食い込み、短く（立って）出ます。', 'ふつう：入った角度と、ほぼ同じ角度で出ます。これが基準の線です。', '弱い：長く（寝て）出ます。'][i];
+  });
+
+  /* 05 mirror: the aim point splits the gap along the rail by (cue ball distance : object ball distance) */
+  (function () {
+    var a = $('mr-a'), b = $('mr-b'), l = $('mr-l'), pt = function (v) { return v + ' ポイント'; };
+    opts(a, [0.5, 1, 1.5, 2, 2.5, 3], 2, pt); opts(b, [0.5, 1, 1.5, 2, 2.5, 3], 1, pt); opts(l, [1, 2, 3, 4, 5, 6, 7, 8], 6, pt);
+    function draw() {
+      var A = +a.value, B = +b.value, L = +l.value, u = 42, x0 = 62, ry = 150, aim = L * A / (A + B), cx = x0, cy = ry - A * u, ox = x0 + L * u, oy = ry - B * u, ax = x0 + aim * u, i;
+      var s = '<svg viewBox="0 0 460 300" role="img" aria-label="鏡にうつして狙う図"><rect width="460" height="300" rx="12" fill="' + C.bg + '"/><rect x="20" y="14" width="420" height="136" fill="' + C.bd + '"/><rect x="20" y="150" width="420" height="20" fill="' + C.fr + '"/>';
+      for (i = 0; i <= 8; i++) s += '<circle cx="' + (x0 + i * u) + '" cy="160" r="2.2" fill="' + C.pt + '"/>';
+      s += tx(30, 288, 'クッションより下は、鏡の中のイメージです', C.dim, 11, 'start');
+      s += '<line x1="' + ax + '" y1="' + ry + '" x2="' + ox + '" y2="' + (ry + B * u) + '" stroke="' + C.dim + '" stroke-width="1.5" stroke-dasharray="5 5"/><circle cx="' + ox + '" cy="' + (ry + B * u) + '" r="9" fill="none" stroke="' + C.o1 + '" stroke-width="1.5" stroke-dasharray="3 3"/>' + tx(ox, ry + B * u + 24, 'うつった的球', C.o1, 11);
+      s += '<path d="M' + cx + ' ' + cy + ' L' + ax + ' ' + ry + ' L' + ox + ' ' + oy + '" fill="none" stroke="' + C.ln + '" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="' + ax + '" cy="' + ry + '" r="6" fill="' + C.ln + '"/>';
+      s += ball(cx, cy, 9, C.cue) + ball(ox, oy, 9, C.o1);
+      $('mr-map').innerHTML = s + '</svg>';
+      var v = Math.round(aim * 100) / 100;
+      $('mr-r').innerHTML = '<small>狙い点（手球の真下から数えて）</small><b>' + v + '</b><span>ポイント先　（' + L + ' × ' + A + ' ÷ ' + (A + B) + ' ＝ ' + v + '）</span><span>ヒネリなし・ふつうの強さのときの目安です。</span>';
+    }
+    [a, b, l].forEach(function (x) { x.addEventListener('change', draw); }); draw();
+  })();
+
+  /* SYSTEM 02 Plus System: numbers as given by the operator (cue ball on the right short rail 0-40, first cushion on the top long rail 10-80, third cushion on the bottom long rail 0-80) */
+  (function () {
+    var so = $('pl-o'), st = $('pl-t'), x = 50, y = 45, tw = 360, th = 180, X = function (i) { return x + tw - 45 * i; };
+    opts(so, [0, 5, 10, 15, 20, 25, 30, 35, 40], 20, String); opts(st, [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80], 50, String);
+    function draw(o, t, f) {
+      var s = table(460, 272, x, y, tw, th, 'プラスシステムの数値マップ'), i;
+      for (i = 1; i <= 8; i++) s += tx(X(i) + (i === 8 ? 8 : 0), 24, i * 10, C.ln);
+      for (i = 0; i <= 8; i++) s += tx(X(i) + (i === 0 ? -8 : i === 8 ? 8 : 0), 256, i * 10, C.o2);
+      for (i = 0; i <= 4; i++) s += tx(441, y + th - 45 * i + (i === 0 ? -2 : i === 4 ? 10 : 4), i * 10, C.o1);
+      s += '<circle cx="' + (x + tw) + '" cy="' + (y + th - 4.5 * o) + '" r="6" fill="' + C.o1 + '"/>' + (f != null ? '<circle cx="' + X(f / 10) + '" cy="' + y + '" r="6" fill="' + C.ln + '"/>' : '') + '<circle cx="' + X(t / 10) + '" cy="' + (y + th) + '" r="6" fill="' + C.o2 + '"/>';
+      $('pl-map').innerHTML = s + '</svg>';
+    }
+    function calc() {
+      var o = +so.value, t = +st.value, f = t - o, r = $('pl-r');
+      if (f < 10 || f > 80) { r.className = 'res ng'; r.innerHTML = '<b>この組み合わせは計算できません。</b><span>3クッション目の目標を、手球の出発値より 10 以上大きくしてください。</span>'; draw(o, t, null); return; }
+      r.className = 'res'; r.innerHTML = '<small>狙う1クッション目</small><b>' + f + '</b><span>（' + t + ' − ' + o + ' ＝ ' + f + '）</span>'; draw(o, t, f);
+    }
+    so.addEventListener('change', calc); st.addEventListener('change', calc); calc();
+  })();
 })();
 </script>

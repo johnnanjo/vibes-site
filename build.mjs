@@ -437,7 +437,7 @@ function contentPages() {
     const fig = (x) => { const g = labSvg(x.id, esc(x.nm[0] + 'の軌道図。' + (x.cushion_route || ''))); return g ? `<div class="fg">${g}</div>` : ''; };
     const cats = [...new Set(P.map((x) => x.category))];
     const cards = cats.map((c) => `<h3 class="l3-cat">${esc(c)}</h3><div class="l3-dic">${P.filter((x) => x.category === c).map(card).join('')}</div>`).join('');
-    put('/pages/3c-lab', page({ title: 'VIBES 3C LAB｜スリークッションのはじめ方・取り口辞典', desc: 'スリークッションをこれから楽しみたい人へ。表回し・裏回し・切り返しなど「取り口」8の形を、ひとこと定義・軌道・狙い方で解説する辞典です。', path: '/pages/3c-lab', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-lab.html'), 'utf8').replace('__CHIPS__', () => chips).replace('__CARDS__', () => cards) }));
+    put('/pages/3c-lab', page({ title: 'VIBES 3C LAB｜スリークッションの取り口辞典・基礎理論・システム計算', desc: 'スリークッションをこれから楽しみたい人へ。「取り口」8の形の辞典、厚み・回転・クッションの基礎理論、ファイブ＆ハーフとプラスシステムの自動計算をまとめました。', path: '/pages/3c-lab', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-lab.html'), 'utf8').replace('__CHIPS__', () => chips).replace('__CARDS__', () => cards) }));
   }
   /* VIBES DIGITAL LAB: intro pages (screens only for now; the flow to start using it is published once decided) */
   {
