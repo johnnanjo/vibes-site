@@ -16,20 +16,51 @@
   if (!cur || !cur.id) cur = { id: 'tokyo' };
   AREAS.forEach(function (a) { var o = document.createElement('option'); o.value = a[0]; o.textContent = a[1]; if (a[0] === cur.id) o.selected = true; sel.appendChild(o); });
   function coords() { var a = AREAS.filter(function (x) { return x[0] === cur.id; })[0] || AREAS[0]; if (a[0] === 'geo') return cur.lat ? { name: '現在地', lat: cur.lat, lon: cur.lon } : null; return { name: a[1], lat: a[2], lon: a[3] }; }
-  /* Weather (Open-Meteo). A reply is kept for 30 minutes per place so reloads do not ask again; when the service cannot be reached the last reply for that place (up to a day old) is shown, and with nothing to show the weather card is simply hidden - no error text on the page. */
+  /* Weather (Open-Meteo, then MET Norway). A reply is kept for 30 minutes per place so reloads do not ask again; when the service cannot be reached the last reply for that place (up to a day old) is shown, and with nothing to show the weather card is simply hidden - no error text on the page. */
   var TTL = 30 * 60e3, STALE = 24 * 36e5, seq = 0;
   function ckey(c) { return 'vb_wx_c:' + c.lat + ',' + c.lon; }
   function cget(c, max) { try { var v = JSON.parse(localStorage.getItem(ckey(c)) || 'null'); return v && v.j && v.j.daily && Date.now() - v.t < max && v.j.daily.time.indexOf(jst(0)) >= 0 ? v.j : null; } catch (e) { return null; } }
   function cput(c, j) { try { localStorage.setItem(ckey(c), JSON.stringify({ t: Date.now(), j: j })); } catch (e) {} }
+  function get(url, ms) {
+    var ac = window.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ac) ac.abort(); }, ms);
+    return fetch(url, ac ? { signal: ac.signal } : undefined).then(function (r) { clearTimeout(tm); return r.ok ? r.json() : null; }).catch(function () { clearTimeout(tm); return null; });
+  }
+  /* 1st source: Open-Meteo */
   function ask(c) {
-    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + c.lat + '&longitude=' + c.lon + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current=temperature_2m,weather_code&timezone=Asia%2FTokyo&forecast_days=7';
-    var ac = window.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ac) ac.abort(); }, 8000);
-    return fetch(url, ac ? { signal: ac.signal } : undefined).then(function (r) { clearTimeout(tm); return r.ok ? r.json() : null; }).then(function (j) { return j && j.daily && j.daily.time && j.daily.weather_code ? j : null; }).catch(function () { clearTimeout(tm); return null; });
+    return get('https://api.open-meteo.com/v1/forecast?latitude=' + c.lat + '&longitude=' + c.lon + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current=temperature_2m,weather_code&timezone=Asia%2FTokyo&forecast_days=7', 6000)
+      .then(function (j) { if (!(j && j.daily && j.daily.time && j.daily.weather_code)) return null; j._src = 'Open-Meteo'; return j; });
+  }
+  /* 2nd source, used when the first does not answer (it has had daily outages since October 2026): MET Norway Locationforecast, turned into the same shape.
+     Symbols become the weather codes this script already draws; a day takes its most serious symbol and the highest / lowest temperature seen in Japan time. */
+  function symCode(s) {
+    s = String(s || '').replace(/_(day|night|polartwilight)$/, '');
+    if (/thunder/.test(s)) return 95; if (/snow/.test(s)) return 73; if (/sleet/.test(s)) return 67;
+    if (/heavyrain/.test(s)) return 65; if (/rainshowers/.test(s)) return 80; if (/lightrain/.test(s)) return 61; if (/rain/.test(s)) return 63;
+    if (s === 'fog') return 45; if (s === 'cloudy') return 3; if (s === 'partlycloudy') return 2; if (s === 'fair') return 1; if (s === 'clearsky') return 0; return 3;
+  }
+  var RANK = function (c) { return c >= 95 ? 9 : c >= 71 && c <= 77 ? 8 : c >= 61 ? 7 : c >= 45 ? 4 : c; };
+  function ask2(c) {
+    return get('https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=' + (+c.lat).toFixed(4) + '&lon=' + (+c.lon).toFixed(4), 7000).then(function (j) {
+      var ts = j && j.properties && j.properties.timeseries; if (!ts || !ts.length) return null;
+      var days = {}, order = [], now = null;
+      ts.forEach(function (t) {
+        var d = t.data || {}, ins = (d.instant || {}).details || {}, blk = d.next_1_hours || d.next_6_hours || d.next_12_hours, det = (blk && blk.details) || {}, six = (d.next_6_hours || {}).details || {};
+        var day = new Date(Date.parse(t.time) + 9 * 36e5).toISOString().slice(0, 10), hr = new Date(Date.parse(t.time) + 9 * 36e5).getUTCHours();
+        if (!days[day]) { days[day] = { hi: -99, lo: 99, code: -1, pp: null }; order.push(day); }
+        var o = days[day], hiT = [ins.air_temperature, d.next_1_hours ? null : six.air_temperature_max], loT = [ins.air_temperature, d.next_1_hours ? null : six.air_temperature_min];
+        hiT.forEach(function (v) { if (v != null && v > o.hi) o.hi = v; }); loT.forEach(function (v) { if (v != null && v < o.lo) o.lo = v; });
+        if (blk && blk.summary && hr >= 6 && hr <= 21) { var k = symCode(blk.summary.symbol_code); if (o.code < 0 || RANK(k) > RANK(o.code)) o.code = k; }
+        if (det.probability_of_precipitation != null) o.pp = Math.max(o.pp || 0, det.probability_of_precipitation);
+        if (now == null && ins.air_temperature != null && Date.parse(t.time) >= Date.now() - 36e5) now = { t: ins.air_temperature, c: blk && blk.summary ? symCode(blk.summary.symbol_code) : 3 };
+      });
+      var use = order.filter(function (d) { return d >= jst(0) && days[d].hi > -99; }).slice(0, 7); if (!use.length || use[0] !== jst(0)) return null;
+      return { _src: 'MET Norway', current: { temperature_2m: now ? now.t : null, weather_code: now ? now.c : null }, daily: { time: use, weather_code: use.map(function (d) { return days[d].code < 0 ? 3 : days[d].code; }), temperature_2m_max: use.map(function (d) { return days[d].hi; }), temperature_2m_min: use.map(function (d) { return days[d].lo; }), precipitation_probability_max: use.map(function (d) { return days[d].pp == null ? null : Math.round(days[d].pp); }) } };
+    });
   }
   function loadWx() {
     var c = coords(); if (!c) return Promise.resolve(null);
     var hit = cget(c, TTL); if (hit) { hit._name = c.name; return Promise.resolve(hit); }
-    return ask(c).then(function (j) { return j || new Promise(function (ok) { setTimeout(function () { ask(c).then(ok); }, 1200); }); }).then(function (j) {
+    return ask(c).then(function (j) { return j || ask2(c); }).then(function (j) {
       if (j) { cput(c, j); j._name = c.name; return j; }
       var old = cget(c, STALE); if (old) old._name = c.name; return old;
     });
@@ -45,11 +76,12 @@
       W = null; wx.style.display = 'none'; if (cr) cr.style.display = 'none'; paintWeek(); return;
     }
     W = j; wx.style.display = ''; if (cr) cr.style.display = ''; wx.setAttribute('data-ok', cur.id);
-    var d = j.daily, c = j.current || {}, code = d.weather_code[0], pp = d.precipitation_probability_max[0] || 0;
+    var d = j.daily, c = j.current || {}, code = d.weather_code[0], ppv = d.precipitation_probability_max[0], pp = ppv || 0;
+    if (cr) cr.textContent = '天気：' + (j._src || 'Open-Meteo');
     var old = wx.querySelector('svg'); old.outerHTML = svgI(ic(code), 44);
     q('[data-wx-pl]').textContent = j._name + '　' + lbl(code);
     q('[data-wx-now]').textContent = c.temperature_2m != null ? 'いま ' + Math.round(c.temperature_2m) + '°' : '';
-    q('[data-wx-hl]').textContent = '最高 ' + Math.round(d.temperature_2m_max[0]) + '° ／ 最低 ' + Math.round(d.temperature_2m_min[0]) + '°・降水 ' + pp + '%';
+    q('[data-wx-hl]').textContent = '最高 ' + Math.round(d.temperature_2m_max[0]) + '° ／ 最低 ' + Math.round(d.temperature_2m_min[0]) + '°' + (ppv == null ? '' : '・降水 ' + pp + '%');
     var snow = (+code >= 71 && +code <= 77) || (+code >= 85 && +code <= 86), m = q('[data-wx-msg]');
     m.textContent = snow ? '雪の予報。ケースは防水カバー、足元は滑りにくい靴で。' : (pp >= 50 || +code >= 51) ? '雨の可能性が高め。キューケースは防水カバー＋傘を。' : pp >= 30 ? 'にわか雨の可能性あり。念のためケースカバーを。' : 'キューケースの持ち運びは問題なさそうです。';
     paintWeek();
