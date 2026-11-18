@@ -40,7 +40,8 @@ button{font-family:inherit}
 .hc input{font:900 3vh/1 VLNum,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#FFD700;background:#0B192C;border:.2vh solid #2B4A7A;border-radius:.9vh;width:5.6vw;padding:.6vh .2vw;text-align:center;-webkit-user-select:text;user-select:text}
 .run{background:#fff;color:#0B192C;border-radius:1.6vh;padding:.6vh .9vw;display:flex;flex-direction:column;align-items:center;min-width:7vw}.run small{font-weight:900;font-size:1.5vh;white-space:nowrap}.run b{font:400 6.4vh/1 VLNum,system-ui,sans-serif}.pl:not(.on) .run{background:#0B192C;color:#fff;box-shadow:inset 0 0 0 .3vh #5B7BA8}.pl:not(.on) .run small{color:#B9C4D6}
 .pl .sc{min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3vh}
-.pl .sc b{font:400 27vh/.9 VLNum,system-ui,sans-serif;color:#fff;letter-spacing:-.02em}
+.pl .sc b{font:400 min(44vh,28vw)/.8 VLNum,system-ui,sans-serif;color:#fff;letter-spacing:-.02em}
+.pl .sc b.w3{font-size:min(30vh,20vw)}
 .pl.b .sc b{color:#FFD700}
 .pl .sc .rm{font-weight:800;font-size:2.2vh;color:#B9C4D6;min-height:2.8vh}
 .pl .sc .rm.fin{color:#0B192C;background:#FFD700;border-radius:999px;padding:.3vh 1.4vw}
@@ -255,7 +256,7 @@ button:active{transform:scale(.97)}
     $('iMatch').value = match;
     $$('[data-f]').forEach(function (el) { if (document.activeElement === el) return; var f = el.getAttribute('data-f'), v = f === 'title' ? S.title : f.charAt(0) === 'n' ? S.p[+f.charAt(1)].n : (S.p[+f.charAt(1)].h || ''); if (el.value !== String(v)) el.value = v; });
     [0, 1].forEach(function (i) {
-      var p = S.p[i]; put('s' + i, p.s); put('x' + i, p.hr); put('run' + i, p.run | 0); put('v' + i, avg(i)); put('n' + i, p.n);
+      var p = S.p[i]; put('s' + i, p.s); put('x' + i, p.hr); put('run' + i, p.run | 0); $$('[data-o="s' + i + '"]').forEach(function (e) { e.classList.toggle('w3', p.s >= 100); }); put('v' + i, avg(i)); put('n' + i, p.n);
       $$('[data-o="r' + i + '"]').forEach(function (r) { if (reached(i)) { r.textContent = 'あがり'; r.className = 'rm fin'; } else { r.textContent = p.h > 0 ? 'あと ' + (p.h - p.s) + (pk ? ' セット' : ' 点') : ''; r.className = 'rm'; } });
       put('m' + i, (p.h > 0 ? (pk ? p.h + ' 先取' : '持ち点 ' + p.h) : '') + (c.stats && !pk ? '　HR ' + p.hr : ''));
       $$('[data-pl="' + i + '"]').forEach(function (e) { e.classList.toggle('on', S.turn === i); });
