@@ -475,12 +475,10 @@ function contentPages() {
   put('/pages/digital-lab-admin', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/digital-lab-admin.html'), 'utf8') });
   /* player feature page (stand-alone poster design, its own colours: yellow / black / white) */
   {
-    // Photo slots of the feature page: put static/img/players/yuko-nishimoto-hero.(jpg|webp|png) / -gear.(…) and the frame shows it (auto mono retouch in CSS).
+    // Photo slot of the feature page (02 SIGNATURE GEAR): put static/img/players/yuko-nishimoto-gear.(jpg|webp|png) and a frame with the photo appears (auto mono retouch in CSS). No file = no frame.
     let raw = fs.readFileSync(path.join(ROOT, 'static/apps/yuko-nishimoto.html'), 'utf8');
-    for (const slot of ['hero', 'gear']) {
-      const ext = ['jpg', 'webp', 'png'].find(e => fs.existsSync(path.join(ROOT, `static/img/players/yuko-nishimoto-${slot}.${e}`)));
-      raw = raw.replace(`<!--PHOTO:${slot}-->`, ext ? `<img src="/img/players/yuko-nishimoto-${slot}.${ext}" alt="" loading="${slot === 'hero' ? 'eager' : 'lazy'}">` : '');
-    }
+    const ext = ['jpg', 'webp', 'png'].find(e => fs.existsSync(path.join(ROOT, `static/img/players/yuko-nishimoto-gear.${e}`)));
+    raw = raw.replace('<!--PHOTO:gear-->', ext ? `<div class="af"><img src="/img/players/yuko-nishimoto-gear.${ext}" alt="" loading="lazy"></div>` : '');
     put('/pages/yuko-nishimoto', { raw });
   }
   put('/pages/count-overlay', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-overlay.html'), 'utf8') });
