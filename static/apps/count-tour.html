@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>スリークッション 試合モード（ハンデキャップ戦）｜VIBES DIGITAL LAB</title>
-<meta name="description" content="スリークッションのハンデキャップ戦を進行する画面。エントリー、リーグ分け、対戦表、決勝トーナメント。">
+<meta name="description" content="スリークッションのハンデキャップ戦を進行する画面。エントリー、リーグ分け、対戦表、リーグ表。">
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://vibesbilliards.com/pages/count-tour">
 <link rel="icon" href="/img/favicon-64.png">
@@ -144,7 +144,7 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
   <!-- list of tournaments -->
   <section id="vList">
     <div class="card"><h2>新しい大会を作る</h2>
-      <form id="fNew" class="row"><div class="w2"><label for="nName">大会名</label><input id="nName" maxlength="40" placeholder="例：11月 ハウストーナメント" required></div>
+      <form id="fNew" class="row"><div class="w2"><label for="nName">大会名</label><input id="nName" maxlength="40" placeholder="例：11月 ハウスリーグ戦" required></div>
         <div><label for="nCap">参加人数</label><input id="nCap" type="number" min="3" max="64" inputmode="numeric" placeholder="例：12" required></div>
         <div><label for="nPct">ルール（持ち点の何％）</label><input id="nPct" type="number" min="10" max="100" inputmode="numeric" value="40" required></div>
         <button class="go" type="submit">作る</button></form>
@@ -166,9 +166,9 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
           <div><label for="cLim">イニング制限（0＝なし）</label><input id="cLim" type="number" min="0" max="99" inputmode="numeric"></div>
           <div><label for="cEq">裏撞き</label><select id="cEq"><option value="1">あり</option><option value="0">なし</option></select></div>
           <div><label for="cSize">1リーグの人数</label><select id="cSize"></select></div>
-          <div><label for="cAdv">決勝に進む人数（各リーグ上位）</label><select id="cAdv"></select></div>
-          <div><label for="cFp">決勝のルール（持ち点の何％）</label><input id="cFp" type="number" min="10" max="100" inputmode="numeric"></div>
-          <div><label for="cFl">決勝のイニング制限（0＝なし）</label><input id="cFl" type="number" min="0" max="99" inputmode="numeric"></div>
+          <div data-fin><label for="cAdv">決勝に進む人数（各リーグ上位）</label><select id="cAdv"></select></div>
+          <div data-fin><label for="cFp">決勝のルール（持ち点の何％）</label><input id="cFp" type="number" min="10" max="100" inputmode="numeric"></div>
+          <div data-fin><label for="cFl">決勝のイニング制限（0＝なし）</label><input id="cFl" type="number" min="0" max="99" inputmode="numeric"></div>
           <div><label for="cWm">勝った試合の書き方</label><select id="cWm"><option value="p">点数を書く</option><option value="w">W と書く</option></select></div>
         </div>
         <p class="hint" id="cHint"></p>
@@ -322,13 +322,17 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
   }
 
   /* ---------- screens ---------- */
+  /* League only (operator, 2026-11-18: no knockout stage). The final-stage code stays; FINALS = true brings it back. A meeting that already has a final keeps its tab. */
+  var FINALS = false, finOn = function () { return FINALS || !!(T && (T.F || T.st === 'final')); };
   var TABS = [['entry', 'エントリー'], ['league', 'リーグ表'], ['match', '試合・台'], ['final', '決勝']];
   function openT(id) { T = findT(id); DB.cur = T ? id : ''; save(); tab = !T ? 'entry' : T.st === 'entry' ? 'entry' : T.st === 'league' ? 'match' : 'final'; paint(); }
   function paint() {
     $('vList').hidden = !!T; $('vT').hidden = !T; $('bList').hidden = !T; $('hT').textContent = T ? T.name : '試合モード';
     if (!T) return drawList();
     if (tab !== 'entry' && T.st === 'entry') tab = 'entry';
-    var tb = $('tabs'); tb.textContent = ''; TABS.forEach(function (x) { var b = el('button', tab === x[0] ? 'on' : '', x[1]); b.type = 'button'; b.disabled = x[0] !== 'entry' && T.st === 'entry'; b.style.opacity = b.disabled ? .4 : 1; b.onclick = function () { tab = x[0]; paint(); }; tb.appendChild(b); });
+    if (tab === 'final' && !finOn()) tab = 'league';
+    Array.prototype.forEach.call(document.querySelectorAll('[data-fin]'), function (e) { e.hidden = !finOn(); });
+    var tb = $('tabs'); tb.textContent = ''; TABS.filter(function (x) { return x[0] !== 'final' || finOn(); }).forEach(function (x) { var b = el('button', tab === x[0] ? 'on' : '', x[1]); b.type = 'button'; b.disabled = x[0] !== 'entry' && T.st === 'entry'; b.style.opacity = b.disabled ? .4 : 1; b.onclick = function () { tab = x[0]; paint(); }; tb.appendChild(b); });
     $('pEntry').hidden = tab !== 'entry'; $('pLeague').hidden = tab !== 'league'; $('pMatch').hidden = tab !== 'match'; $('pFinal').hidden = tab !== 'final';
     if (tab === 'entry') drawEntry(); else if (tab === 'league') drawLeague(); else if (tab === 'match') { drawTables(); drawMatches(); } else drawFinal();
   }
@@ -362,7 +366,7 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
   function drawLeague() {
     var B = $('lgB'); B.textContent = ''; $('bRedraw').hidden = T.M.some(function (m) { return m.res; });
     T.L.forEach(function (g, li) {
-      var sh = el('div', 'sheet'), h = el('h3', '', T.name + '　リーグ' + LN(li)); h.appendChild(el('small', '', T.date + '　上位' + T.adv + '人が決勝へ　試合点数＝持ち点×' + T.pct + '%' + (T.lim ? '　' + T.lim + 'イニング打切り' : ''))); sh.appendChild(h);
+      var sh = el('div', 'sheet'), h = el('h3', '', T.name + '　リーグ' + LN(li)); h.appendChild(el('small', '', T.date + (finOn() ? '　上位' + T.adv + '人が決勝へ' : '') + '　試合点数＝持ち点×' + T.pct + '%' + (T.lim ? '　' + T.lim + 'イニング打切り' : ''))); sh.appendChild(h);
       var tb = el('table', 'lg'), th = el('thead'), tr = el('tr'); tr.appendChild(el('th', 'nm', '名前')); tr.appendChild(el('th', '', '試合点数')).style.width = '44px';
       g.forEach(function (id) { tr.appendChild(el('th', 'o', ent(id).n.split(' ')[0])); });
       [['勝/負', '分'], ['勝ち点'], ['ハイラン', 'ベスト'], ['総得点', '総イニング'], ['アベレージ', 'HCアベレージ'], ['順位']].forEach(function (x) { var c = el('th', '', x[0]); if (x[1]) { c.appendChild(el('br')); c.appendChild(document.createTextNode(x[1])); } tr.appendChild(c); });
@@ -373,7 +377,7 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
         var wl = el('td', 's'); wl.appendChild(document.createTextNode(r.w + ' / ')); wl.appendChild(el('span', 'r', r.l)); wl.appendChild(el('u', '', r.d)); row.appendChild(wl);
         var wp = el('td', 's', r.wp); wp.style.fontSize = '20px'; wp.style.fontWeight = '900'; row.appendChild(wp);
         row.appendChild(two(r.hr, r.bg || '−')); row.appendChild(two(r.tp, r.ti)); row.appendChild(two(r.ti ? r.ga.toFixed(3) : '−', r.tp ? r.ha.toFixed(2) : '−', 1, 1));
-        row.appendChild(el('td', 'rk' + (r.rk && r.rk <= T.adv && lgDone() ? ' q' : ''), r.rk || '')); bd.appendChild(row); });
+        row.appendChild(el('td', 'rk' + (finOn() && r.rk && r.rk <= T.adv && lgDone() ? ' q' : ''), r.rk || '')); bd.appendChild(row); });
       tb.appendChild(bd); sh.appendChild(tb); B.appendChild(sh);
     });
   }
@@ -395,7 +399,7 @@ table.fr tr.c1 td:first-child{color:var(--red);font-weight:900}table.fr tr.c2 td
       r.appendChild(el('div', 'sc', m.res ? m.res.sc[0] + ' − ' + m.res.sc[1] : lv ? (lv.s.score || []).join(' − ') : ''));
       r.appendChild(el('span', 'tag' + (m.res ? (o === null ? ' warn' : ' done') : lv ? ' live' : ''), m.res ? (o === null ? '勝者を選んでください' : '終了') : lv ? lv.t.name + ' 試合中' : tbl ? tbl.name + ' に送信済み' : 'まだ'));
       var a = el('div', 'act noprint'); if (!m.res && !lv) { var s = el('button', 'sm', '台に送る'); s.type = 'button'; s.onclick = function () { openSend(m); }; a.appendChild(s); } var e = el('button', 'sm', m.res ? '直す' : '結果を入れる'); e.type = 'button'; e.onclick = function () { openRes(m); }; a.appendChild(e); r.appendChild(a); B.appendChild(r); });
-    if (!fin && left === 0 && ms.length) { var n = el('p', 'hint', 'リーグ戦がすべて終わりました。「決勝」から決勝トーナメントを作れます。'); B.appendChild(n); }
+    if (!fin && left === 0 && ms.length) { var n = el('p', 'hint', finOn() ? 'リーグ戦がすべて終わりました。「決勝」から決勝トーナメントを作れます。' : 'リーグ戦がすべて終わりました。「リーグ表」で順位を確認できます。'); B.appendChild(n); }
   }
   function drawFinal() {
     var done = lgDone(); $('fnStart').hidden = !!T.F; $('fnQ').hidden = !T.F; $('fnK').hidden = !T.F;

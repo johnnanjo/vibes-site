@@ -158,8 +158,8 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   <p style="text-align:left;font-size:2.1vh"><b>② 映像を映す別のモニター</b><br>そのモニターのPCで <b>vibesbilliards.com/pages/count-live/</b> を開き、番号 <b id="cmC" style="font-family:VLNum,Unbounded,Anton,sans-serif"></b> を入れます。カメラの映像とスコアが映ります。</p>
   <p style="font-size:1.8vh;color:var(--sub)">撮影用のスマホ・別のモニターとも、同じWi-Fiにつないでください。</p>
   <div class="acts"><button type="button" class="btn go" id="cmX">閉じる (Esc)</button></div></div></div>
-<div class="ov" id="trL" hidden><div class="panel" role="dialog" aria-label="トーナメント"><h2>トーナメント（試合モード）</h2>
-  <div class="qrw"><div class="qr" id="trQ"></div><p><b>受付のタブレットかパソコンで開きます</b><br>このQRコードを読むか、下のページを開いてください。エントリー、リーグ分け、対戦表、決勝トーナメントを進められます。</p></div>
+<div class="ov" id="trL" hidden><div class="panel" role="dialog" aria-label="リーグ戦"><h2>リーグ戦（試合モード）</h2>
+  <div class="qrw"><div class="qr" id="trQ"></div><p><b>受付のタブレットかパソコンで開きます</b><br>このQRコードを読むか、下のページを開いてください。エントリー、リーグ分け、対戦表、リーグ表を進められます。</p></div>
   <div class="u">vibesbilliards.com/pages/count-tour</div>
   <p style="font-size:2.1vh">この台に試合を送るときは、受付の画面で「台を追加」を押し、この番号を入れます。</p><div class="c" id="trC"></div>
   <div class="acts"><button type="button" class="btn go" id="trX">閉じる (Enter)</button></div></div></div>
@@ -198,7 +198,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
     nine: { t: '9ボール', back: 'pocket', items: [{ id: 'nine-set', b: 'セットマッチ', s: '9-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g59', b: '5-9', s: '9-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] },
     ten: { t: '10ボール', back: 'pocket', items: [{ id: 'ten-set', b: 'セットマッチ', s: '10-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g510', b: '5-10', s: '10-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] }
   };
-  function edMenu() { MENU.top.items = ED === 'carom' ? [{ id: 'carom', b: 'ニューゲーム', s: 'NEW GAME', c: 'carom', d: 'スリークッション・バンド' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }, { id: 'tour', b: 'トーナメント', s: 'TOURNAMENT', c: 'pocket', d: 'ハンデキャップ戦・リーグと決勝' }].concat(TOOLS)
+  function edMenu() { MENU.top.items = ED === 'carom' ? [{ id: 'carom', b: 'ニューゲーム', s: 'NEW GAME', c: 'carom', d: 'スリークッション・バンド' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }, { id: 'tour', b: 'リーグ戦', s: 'LEAGUE', c: 'pocket', d: 'ハンデキャップ戦・リーグ表と対戦表' }].concat(TOOLS)
     : ED === 'pocket' ? [{ id: 'pocket', b: 'ニューゲーム', s: 'NEW GAME', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }].concat(TOOLS) : []; }
   edMenu();
   var COL = { carom: ['#2468C0', '#1E5AA8', '#164482'], pocket: ['#6E7683', '#5A616C', '#434953'], purple: ['#8656C4', '#6A3FA0', '#4C2B78'], green: ['#1F9A5C', '#14804A', '#0D5C35'], yellow: ['#FFD83A', '#F2C200', '#C79E00', 1], blue: ['#3A66E8', '#1D4ED8', '#1539A3'], red: ['#E04A52', '#C4262E', '#8F1A21'] };
