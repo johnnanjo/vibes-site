@@ -7,49 +7,100 @@
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/img/favicon-64.png">
 <style>
-/* VIBES DIGITAL LAB: the organiser's control panel for the event scoreboard. Hidden page (not in menus or the sitemap).
-   Pick a ready-made setting, adjust it, and it hands out two addresses for one table: the operating screen (/event-score-pad) and the showing screen (/event-score-obs).
-   The settings travel inside the operating screen's address; nothing is stored on a server. The 4-digit lock only stops accidental use: it is not a secret. */
+/* VIBES DIGITAL LAB: the organiser's desk for an event day. Hidden page (not in menus or the sitemap).
+   Three tabs: (1) players' list and reception, (2) table set-up (hands out the operating / showing addresses and sends the next pairing to a table),
+   (3) finished games collected from the tables, with the best-game and high-run tables.
+   The players' list and the results are kept in THIS browser only (localStorage); nothing personal is written to the site or a server.
+   The 4-digit lock only stops accidental use: it is not a secret. */
 @font-face{font-family:VLNum;src:url(/fonts/vibes-num.woff2) format("woff2");font-display:swap}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 html{background:#0B192C}
 body{margin:0;background:#0B192C;color:#fff;font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;font-weight:700;line-height:1.7;-webkit-text-size-adjust:100%}
-.w{max-width:760px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 60px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:18px}
-h1{margin:6px 0 0;font-size:24px;font-weight:900;line-height:1.35}h1 small{display:block;font-size:13px;color:#B9C4D6;font-weight:800;letter-spacing:.08em}
+.w{max-width:860px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 70px max(14px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:16px}
+h1{margin:4px 0 0;font-size:22px;font-weight:900;line-height:1.35}h1 small{display:block;font-size:12.5px;color:#B9C4D6;font-weight:800;letter-spacing:.08em}
 h2{margin:0;font-size:18px;font-weight:900;line-height:1.4;display:flex;align-items:center;gap:10px}h2 i{flex:none;font-style:normal;width:30px;height:30px;border-radius:50%;background:#FFD700;color:#0B192C;display:grid;place-items:center;font:400 18px/1 VLNum,system-ui,sans-serif}
 p{margin:0;font-size:14px;color:#B9C4D6}
 .box{background:#12284A;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
-button,input,select{font-family:inherit}
+button,input,select,textarea{font-family:inherit}
+button{-webkit-user-select:none;user-select:none}
+.tabs{position:sticky;top:8px;z-index:5;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:#060D18;border-radius:20px;padding:6px;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.tabs button{appearance:none;cursor:pointer;border:0;min-height:58px;border-radius:15px;background:transparent;color:#fff;font-weight:900;font-size:14.5px;line-height:1.3;padding:4px}
+.tabs button[aria-selected=true]{background:#FFD700;color:#0B192C}
 .pre{display:grid;gap:10px}
 .pre button{appearance:none;cursor:pointer;text-align:left;border:3px solid #2B4A7A;background:#0B192C;color:#fff;border-radius:18px;padding:14px 16px;min-height:68px;display:flex;flex-direction:column;gap:2px}
 .pre button b{font-size:16.5px;font-weight:900;line-height:1.4}.pre button span{font-size:12.5px;font-weight:700;color:#B9C4D6;line-height:1.6}
 .pre button[aria-pressed=true]{border-color:#FFD700;background:#1A3560}
 .f{display:flex;flex-direction:column;gap:6px;min-width:0}
 .f>span{font-size:13.5px;font-weight:900}
-.f small{font-size:12px;color:#B9C4D6;font-weight:700;line-height:1.6}
+.f small,small.n{font-size:12px;color:#B9C4D6;font-weight:700;line-height:1.6}
 .seg{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
 .seg.two{grid-auto-flow:row;grid-template-columns:1fr}
 .seg button{appearance:none;cursor:pointer;min-height:50px;border-radius:14px;border:2px solid #2B4A7A;background:#0B192C;color:#fff;font-weight:900;font-size:14.5px;line-height:1.35;padding:6px 4px}
 .seg button[aria-pressed=true]{background:#FFD700;border-color:#FFD700;color:#0B192C}
-input[type=text],input[type=number],input[type=tel]{width:100%;min-height:52px;border-radius:14px;border:2px solid #2B4A7A;background:#0B192C;color:#fff;font-weight:900;font-size:17px;padding:0 14px;min-width:0}
+input[type=text],input[type=number],input[type=tel],select,textarea{width:100%;min-height:52px;border-radius:14px;border:2px solid #2B4A7A;background:#0B192C;color:#fff;font-weight:900;font-size:17px;padding:0 14px;min-width:0}
+select{appearance:none}
+textarea{min-height:130px;padding:12px 14px;line-height:1.7;font-size:16px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.go{appearance:none;cursor:pointer;border:0;border-radius:20px;background:#FFD700;color:#0B192C;font-weight:900;font-size:19px;min-height:68px;padding:8px 14px}
-.go:active,.pre button:active,.seg button:active,.cp:active{transform:scale(.98)}
+.go{appearance:none;cursor:pointer;border:0;border-radius:20px;background:#FFD700;color:#0B192C;font-weight:900;font-size:18px;min-height:64px;padding:8px 14px}
+.go.b{background:#38BDF8}
+.go:active,.pre button:active,.seg button:active,.cp:active,.tg:active,.sm:active{transform:scale(.98)}
 .out{border:3px solid #FFD700}
 .url{display:block;background:#0B192C;border:2px solid #2B4A7A;border-radius:12px;padding:10px 12px;font:700 12.5px/1.6 ui-monospace,Menlo,Consolas,monospace;color:#E5EDF8;word-break:break-all;-webkit-user-select:all;user-select:all}
-.cp{appearance:none;cursor:pointer;border:2px solid #38BDF8;background:transparent;color:#BAE6FD;border-radius:14px;min-height:50px;font-weight:900;font-size:15px;padding:0 14px}
+.cp,.sm{appearance:none;cursor:pointer;border:2px solid #38BDF8;background:transparent;color:#BAE6FD;border-radius:14px;min-height:50px;font-weight:900;font-size:15px;padding:0 14px}
 .cp.dn{background:#38BDF8;color:#0B192C}
+.sm.dg{border-color:#FF6B6B;color:#FFD1D1}.sm.q{border-color:#2B4A7A;color:#fff}
 .lk{display:inline-flex;align-items:center;justify-content:center;border:2px solid #2B4A7A;border-radius:14px;min-height:50px;font-weight:900;font-size:15px;color:#fff;text-decoration:none;padding:0 14px}
 .qr{background:#fff;border-radius:16px;padding:10px;width:min(240px,70vw);align-self:center}.qr svg{display:block;width:100%;height:auto}
 ol,ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px;font-size:14.5px;line-height:1.8}
-.gate{min-height:80vh;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.gate{min-height:80vh;justify-content:center}
 .gate input{font:400 44px/1 VLNum,system-ui,sans-serif;text-align:center;letter-spacing:.3em;min-height:84px}
 .err{color:#FFD1D1;font-weight:900;font-size:14px}
 .sum{font-size:13.5px;color:#fff;background:#0B192C;border-radius:14px;padding:12px 14px;line-height:1.9}
 details{background:#0B192C;border-radius:14px;padding:2px 14px}summary{cursor:pointer;font-weight:900;font-size:14.5px;padding:12px 0}
 details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
-@media(min-width:620px){.pre{grid-template-columns:1fr 1fr}.seg.two{grid-template-columns:1fr 1fr}}
+/* reception counters */
+.cnt{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cnt div{background:#0B192C;border-radius:16px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.cnt b{font:400 32px/1 VLNum,system-ui,sans-serif}.cnt b small{font:800 13px/1 "Hiragino Sans","Noto Sans JP",system-ui,sans-serif;color:#B9C4D6}
+.cnt span{font-size:11.5px;font-weight:800;color:#B9C4D6;white-space:nowrap}
+.cnt .all b{color:#FFD700}
+/* players */
+.pls{display:flex;flex-direction:column;gap:10px}
+.pc{background:#0B192C;border:2px solid #2B4A7A;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pc.in{border-color:#39D98A}
+.pc .hd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center}
+.pc .no{font:400 22px/1 VLNum,system-ui,sans-serif;background:#12284A;border-radius:10px;min-width:44px;height:44px;display:grid;place-items:center;padding:0 6px}
+.pc .nm b{display:block;font-size:18px;font-weight:900;line-height:1.35;overflow-wrap:anywhere}.pc .nm span{display:block;font-size:12.5px;color:#B9C4D6;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+.pc .pt{font:400 26px/1 VLNum,system-ui,sans-serif;color:#FFD700;text-align:right}.pc .pt small{display:block;font:800 10.5px/1.3 "Hiragino Sans","Noto Sans JP",system-ui,sans-serif;color:#B9C4D6}
+.tgs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.tg{appearance:none;cursor:pointer;min-height:52px;border-radius:14px;border:2px solid #2B4A7A;background:#12284A;color:#B9C4D6;font-weight:900;font-size:14px;line-height:1.3;padding:4px}
+.tg[aria-pressed=true]{background:#39D98A;border-color:#39D98A;color:#0B192C}
+.pc .ed{display:grid;gap:8px}
+.pc .ops{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.none{background:#0B192C;border-radius:16px;padding:16px;font-size:14px;color:#B9C4D6;line-height:1.8}
+/* history and awards */
+.hc{background:#0B192C;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.hc .mt{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;color:#B9C4D6;font-weight:800}
+.hc table{width:100%;border-collapse:collapse}
+.hc th{font-size:11px;color:#B9C4D6;font-weight:800;padding:2px 4px;text-align:right}.hc th:first-child{text-align:left}
+.hc td{font:400 22px/1.1 VLNum,system-ui,sans-serif;padding:6px 4px;text-align:right;border-top:2px solid #1D3557}
+.hc td:first-child{font:900 15.5px/1.35 "Hiragino Sans","Noto Sans JP",system-ui,sans-serif;text-align:left;overflow-wrap:anywhere}.hc td:first-child small{display:block;font-size:11.5px;font-weight:700;color:#B9C4D6}
+.hc tr.wn td{color:#FFD700}
+.rk{display:flex;flex-direction:column;gap:6px}
+.rk div{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;background:#0B192C;border-radius:14px;padding:10px 12px}
+.rk i{font:400 24px/1 VLNum,system-ui,sans-serif;font-style:normal;text-align:center}
+.rk div.top{background:#FFD700;color:#0B192C}.rk div.top span small{color:#3B3200}
+.rk span b{display:block;font-size:16.5px;font-weight:900;line-height:1.35;overflow-wrap:anywhere}.rk span small{display:block;font-size:12px;font-weight:700;color:#B9C4D6;line-height:1.5}
+.rk em{font:400 30px/1 VLNum,system-ui,sans-serif;font-style:normal}
+.rm{display:flex;align-items:center;gap:10px;background:#0B192C;border-radius:14px;padding:10px 12px;font-size:14px}
+.rm i{flex:none;width:12px;height:12px;border-radius:50%;background:#7A8699}.rm.on i{background:#39D98A}
+.rm b{flex:1;min-width:0;overflow-wrap:anywhere}.rm button{flex:none;min-height:44px}
+.cf{position:fixed;inset:0;background:rgba(5,12,24,.86);display:flex;align-items:center;justify-content:center;z-index:9;padding:16px}
+.cf>div{background:#12284A;border:3px solid #2B4A7A;border-radius:22px;padding:20px;max-width:520px;width:100%;display:flex;flex-direction:column;gap:14px;text-align:center}
+.cf b{font-size:18px;font-weight:900;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#39D98A;color:#0B192C;font-weight:900;font-size:15px;border-radius:999px;padding:12px 20px;z-index:10;max-width:92vw;text-align:center}
+@media(min-width:620px){.pre{grid-template-columns:1fr 1fr}.seg.two{grid-template-columns:1fr 1fr}.pls{display:grid;grid-template-columns:1fr 1fr}.tabs button{font-size:16px}}
 </style>
 </head>
 <body>
@@ -62,103 +113,223 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
 </div>
 <div class="w" id="app" hidden>
   <h1><small>VIBES DIGITAL LAB</small>管理者画面</h1>
-  <p>試合の形式をえらんで、操作する画面と、表示する画面のアドレスを出します。台ごとに1回、この画面で設定します。</p>
+  <div class="tabs" role="tablist"><button type="button" role="tab" data-tab="1" aria-selected="true">① 選手名簿<br>・受付</button><button type="button" role="tab" data-tab="2" aria-selected="false">② 試合の設定<br>・割り当て</button><button type="button" role="tab" data-tab="3" aria-selected="false">③ 試合の履歴<br>・賞典</button></div>
 
-  <section class="box"><h2><i>1</i>試合の形式をえらぶ</h2><div class="pre" id="pre"></div></section>
+  <!-- ============ 1: players ============ -->
+  <div id="t1" class="w" style="padding:0">
+    <section class="box"><h2>受付の状況</h2>
+      <div class="cnt"><div class="all"><b id="cAll">0</b><span>登録</span></div><div><b id="cIn">0</b><span>受付（出席）</span></div><div><b id="cFee">0</b><span>参加費 受領</span></div><div><b id="cDoc">0</b><span>同意書 確認</span></div></div>
+      <small class="n">名簿は、この端末のこのブラウザの中だけに保存されます。ほかの端末には出ません。ブラウザの履歴・データを消すと名簿も消えるので、大会が終わるまで消さないでください。</small>
+    </section>
+    <section class="box"><h2>選手を追加する</h2>
+      <div class="two"><label class="f"><span>選手名</span><input id="aN" type="text" maxlength="16" autocomplete="off"></label><label class="f"><span>所属店</span><input id="aS" type="text" maxlength="24" autocomplete="off"></label></div>
+      <div class="two"><label class="f"><span>持ち点</span><input id="aH" type="number" inputmode="numeric" min="0" max="999"></label><label class="f"><span>備考</span><input id="aM" type="text" maxlength="40" autocomplete="off"></label></div>
+      <button class="go" type="button" id="aGo">この選手を追加</button>
+      <details><summary>まとめて登録する（LINEやExcelから貼り付け）</summary><div>
+        <p>1行に1人、「選手名, 所属, 持ち点」の順で貼り付けます。区切りは、コンマ・読点（、）・タブのどれでもかまいません。所属と持ち点は、なくても登録できます。</p>
+        <textarea id="bulk" placeholder="山田 花子, WIND, 10&#10;佐藤 愛, ニュー文化, 8" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+        <button class="go b" type="button" id="bGo">貼り付けた選手を登録</button>
+      </div></details>
+    </section>
+    <section class="box"><h2>選手名簿</h2>
+      <div class="two"><label class="f"><span>しぼりこみ</span><select id="pF"><option value="">全員</option><option value="in0">まだ受付していない人</option><option value="in1">受付した人</option><option value="fee0">参加費がまだの人</option><option value="doc0">同意書がまだの人</option></select></label><label class="f"><span>名前でさがす</span><input id="pQ" type="text" autocomplete="off"></label></div>
+      <div class="pls" id="pls"></div>
+      <div class="two"><button class="sm" type="button" id="pCsv">名簿をCSVで保存</button><button class="sm dg" type="button" id="pClr">名簿をすべて消す</button></div>
+    </section>
+  </div>
 
-  <section class="box"><h2><i>2</i>こまかい設定</h2>
-    <div class="f"><span>操作のしかた</span><div class="seg two" data-k="ctl"><button type="button" data-v="pad">相手レフリー<br>台のわきのタブレットで操作</button><button type="button" data-v="phone">専属の審判<br>スマホで操作（QRコード）</button></div></div>
-    <div class="f"><span>種目</span><div class="seg" data-k="mode"><button type="button" data-v="3c">スリークッション</button><button type="button" data-v="pocket">ポケット</button><button type="button" data-v="free">フリープレイ</button></div></div>
-    <div class="f" id="fH"><span id="lH">試合点数（持ち点）</span><div class="two"><label class="f"><small>選手A（白球）</small><input id="h0" type="number" inputmode="numeric" min="0" max="999"></label><label class="f"><small>選手B（黄球）</small><input id="h1" type="number" inputmode="numeric" min="0" max="999"></label></div>
-      <div class="seg" id="quick"><button type="button" data-h="8">8点</button><button type="button" data-h="9">9点</button><button type="button" data-h="10">10点</button></div><small id="sH">0にすると、あがりの判定をしません。試合ごとの点数は、操作する画面でも変えられます。</small></div>
-    <div class="f" data-3c><span>裏撞き（先攻があがったあと、後攻がもう1回撞く）</span><div class="seg" data-k="back"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
-    <div class="f" data-3c><span>打切りキュー数（イニングの上限）</span><div class="seg" data-k="limit"><button type="button" data-v="0">なし</button><button type="button" data-v="20">20</button><button type="button" data-v="25">25</button><button type="button" data-v="30">30</button><button type="button" data-v="35">35</button></div><input id="limit" type="number" inputmode="numeric" min="0" max="200" aria-label="打切りキュー数を数字で入れる"><small>ほかの数字は、上のらんに直接入れます。残りのキュー数が画面に出て、上限で試合終了になります。</small></div>
-    <div class="f"><span>ショットクロック</span><div class="seg" data-k="clk"><button type="button" data-v="0">なし</button><button type="button" data-v="30">30秒</button><button type="button" data-v="35">35秒</button><button type="button" data-v="40">40秒</button></div></div>
-    <div class="f" data-clk><span>残り10秒の警告（音と点滅）</span><div class="seg" data-k="warn"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
-    <div class="f" data-clk><span id="lTo">タイムアウトの枚数（1人あたり）</span><div class="seg" data-k="to"><button type="button" data-v="0">0</button><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button></div></div>
-    <div class="f" data-3c><span>アベレージ・ハイランの表示</span><div class="seg" data-k="stats"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div><small>試合終了の画面には、どちらの設定でも出ます。</small></div>
-    <div class="f" data-pk><span>ブレイクの順番</span><div class="seg" data-k="brk"><button type="button" data-v="alt">交互</button><button type="button" data-v="win">勝った人</button><button type="button" data-v="manual">手で切り替え</button></div></div>
-    <div class="f"><span>表示する画面の形</span><div class="seg two" data-k="lay"><button type="button" data-v="monitor">会場のモニター用<br>（全画面・大きな文字）</button><button type="button" data-v="top">配信（OBS）用<br>画面の上の帯</button><button type="button" data-v="bottom">配信（OBS）用<br>画面の下の帯</button></div><small>どれをえらんでも、3つのアドレスはすべて出します。</small></div>
-  </section>
+  <!-- ============ 2: table set-up ============ -->
+  <div id="t2" class="w" style="padding:0" hidden>
+    <section class="box"><h2><i>1</i>試合の形式をえらぶ</h2><div class="pre" id="pre"></div></section>
+    <section class="box"><h2><i>2</i>こまかい設定</h2>
+      <div class="f"><span>操作のしかた</span><div class="seg two" data-k="ctl"><button type="button" data-v="pad">相手レフリー<br>台のわきのタブレットで操作</button><button type="button" data-v="phone">専属の審判<br>スマホで操作（QRコード）</button></div></div>
+      <div class="f"><span>種目</span><div class="seg" data-k="mode"><button type="button" data-v="3c">スリークッション</button><button type="button" data-v="pocket">ポケット</button><button type="button" data-v="free">フリープレイ</button></div></div>
+      <div class="f" data-3c><span>裏撞き（先攻があがったあと、後攻がもう1回撞く）</span><div class="seg" data-k="back"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
+      <div class="f" data-3c><span>打切りキュー数（イニングの上限）</span><div class="seg" data-k="limit"><button type="button" data-v="0">なし</button><button type="button" data-v="20">20</button><button type="button" data-v="25">25</button><button type="button" data-v="30">30</button><button type="button" data-v="35">35</button></div><input id="limit" type="number" inputmode="numeric" min="0" max="200" aria-label="打切りキュー数を数字で入れる"><small>ほかの数字は、上のらんに直接入れます。残りのキュー数が画面に出て、上限で試合終了になります。</small></div>
+      <div class="f"><span>ショットクロック</span><div class="seg" data-k="clk"><button type="button" data-v="0">なし</button><button type="button" data-v="30">30秒</button><button type="button" data-v="35">35秒</button><button type="button" data-v="40">40秒</button></div></div>
+      <div class="f" data-clk><span>残り10秒の警告（音と点滅）</span><div class="seg" data-k="warn"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
+      <div class="f" data-clk><span id="lTo">タイムアウトの枚数（1人あたり）</span><div class="seg" data-k="to"><button type="button" data-v="0">0</button><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button></div></div>
+      <div class="f" data-3c><span>アベレージ・ハイランの表示</span><div class="seg" data-k="stats"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div><small>試合終了の画面には、どちらの設定でも出ます。</small></div>
+      <div class="f" data-pk><span>ブレイクの順番</span><div class="seg" data-k="brk"><button type="button" data-v="alt">交互</button><button type="button" data-v="win">勝った人</button><button type="button" data-v="manual">手で切り替え</button></div></div>
+      <div class="f"><span>表示する画面の形</span><div class="seg two" data-k="lay"><button type="button" data-v="monitor">会場のモニター用<br>（全画面・大きな文字）</button><button type="button" data-v="top">配信（OBS）用<br>画面の上の帯</button><button type="button" data-v="bottom">配信（OBS）用<br>画面の下の帯</button></div><small>どれをえらんでも、3つのアドレスはすべて出します。</small></div>
+    </section>
+    <section class="box"><h2><i>3</i>台と大会の名前</h2>
+      <div class="two"><label class="f"><span>試合ID（台ごとの名前）</span><input id="match" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40"></label><label class="f"><span>台の呼び名（履歴に出ます）</span><input id="label" type="text" maxlength="16" autocomplete="off" placeholder="Table 1"></label></div>
+      <small class="n">試合IDは、半角の英字・数字・ハイフン。操作する画面と表示する画面は、同じ試合IDでつながります。台が2つあるときは、台ごとに別の試合IDにします。</small>
+      <label class="f"><span>表示名（大会名）</span><input id="title" type="text" maxlength="24" autocomplete="off"></label>
+    </section>
+    <section class="box"><h2><i>4</i>対戦する選手</h2>
+      <p id="rsNote"></p>
+      <div class="two"><label class="f"><span>選手A（白球）を名簿からえらぶ</span><select id="r0"></select></label><label class="f"><span>選手B（黄球）を名簿からえらぶ</span><select id="r1"></select></label></div>
+      <div class="two"><label class="f"><span>選手Aの名前</span><input id="n0" type="text" maxlength="16" autocomplete="off"></label><label class="f"><span>選手Bの名前</span><input id="n1" type="text" maxlength="16" autocomplete="off"></label></div>
+      <div class="f" id="fH"><span id="lH">試合点数（持ち点）</span><div class="two"><input id="h0" type="number" inputmode="numeric" min="0" max="999" aria-label="選手Aの持ち点"><input id="h1" type="number" inputmode="numeric" min="0" max="999" aria-label="選手Bの持ち点"></div>
+        <div class="seg" id="quick"><button type="button" data-h="8">8点</button><button type="button" data-h="9">9点</button><button type="button" data-h="10">10点</button></div><small>0にすると、あがりの判定をしません。</small></div>
+      <label class="f"><span>回戦</span><select id="round"><option value="">表示しない</option><option>予選リーグ</option><option>1回戦</option><option>2回戦</option><option>3回戦</option><option>敗者1回戦</option><option>敗者2回戦</option><option>敗者3回戦</option><option>準々決勝</option><option>準決勝</option><option>3位決定戦</option><option>決勝</option></select></label>
+      <button class="go b" type="button" id="send">この対戦を、台の操作画面へ送る</button>
+      <small class="n">台の操作画面がすでにひらいているときに使います。台が空いていればすぐに切り替わり、試合の途中なら、台の画面に「切り替えますか」と出ます。設定（打切りやクロック）を変えたときは、下のボタンでアドレスを出し直してください。</small>
+    </section>
+    <button class="go" type="button" id="issue">設定を反映して、アドレスとQRコードを出す</button>
+    <section class="box out" id="out" hidden>
+      <h2><i>5</i>発行したアドレス</h2>
+      <div class="sum" id="sum"></div>
+      <div class="f"><span id="lC">操作する画面（タブレット・スマホ）</span><p id="pC"></p><div class="qr" id="qC"></div><code class="url" id="uC"></code><div class="two"><button class="cp" type="button" data-cp="uC">アドレスをコピー</button><a class="lk" id="aC" target="_blank" rel="noopener">この端末でひらく</a></div><small>操作する画面は、1つの台につき1台の端末だけでひらいてください。2台で同時にひらくと、点数が食いちがいます。</small></div>
+      <div class="f"><span id="lD">表示する画面</span><code class="url" id="uD"></code><div class="two"><button class="cp" type="button" data-cp="uD">アドレスをコピー</button><a class="lk" id="aD" target="_blank" rel="noopener">この端末でひらく</a></div></div>
+      <details><summary>ほかの形の表示アドレス・QRコード</summary><div>
+        <p>会場のモニター用（全画面）</p><code class="url" id="uM"></code><button class="cp" type="button" data-cp="uM">コピー</button>
+        <p>配信（OBS）用・上の帯</p><code class="url" id="uT"></code><button class="cp" type="button" data-cp="uT">コピー</button>
+        <p>配信（OBS）用・下の帯</p><code class="url" id="uB"></code><button class="cp" type="button" data-cp="uB">コピー</button>
+        <p>会場のモニター用のQRコード（モニターにつないだ端末で読み取る）</p><div class="qr" id="qM"></div>
+      </div></details>
+      <div class="f"><span>つなぎ方</span><ol id="steps"></ol></div>
+    </section>
+  </div>
 
-  <section class="box"><h2><i>3</i>台と大会の名前</h2>
-    <label class="f"><span>試合ID（台ごとの名前）</span><input id="match" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40"><small>半角の英字・数字・ハイフン。操作する画面と表示する画面は、同じ試合IDでつながります。台が2つあるときは、台ごとに別の試合IDにします。</small></label>
-    <label class="f"><span>表示名（大会名）</span><input id="title" type="text" maxlength="24" autocomplete="off"></label>
-    <div class="two"><label class="f"><span>選手Aの名前（あとからでも可）</span><input id="n0" type="text" maxlength="16" autocomplete="off"></label><label class="f"><span>選手Bの名前（あとからでも可）</span><input id="n1" type="text" maxlength="16" autocomplete="off"></label></div>
-  </section>
-
-  <button class="go" type="button" id="issue">設定を反映して、アドレスとQRコードを出す</button>
-
-  <section class="box out" id="out" hidden>
-    <h2><i>4</i>発行したアドレス</h2>
-    <div class="sum" id="sum"></div>
-    <div class="f"><span id="lC">操作する画面（タブレット・スマホ）</span><p id="pC"></p><div class="qr" id="qC"></div><code class="url" id="uC"></code><div class="two"><button class="cp" type="button" data-cp="uC">アドレスをコピー</button><a class="lk" id="aC" target="_blank" rel="noopener">この端末でひらく</a></div><small>操作する画面は、1つの台につき1台の端末だけでひらいてください。2台で同時にひらくと、点数が食いちがいます。</small></div>
-    <div class="f"><span id="lD">表示する画面</span><code class="url" id="uD"></code><div class="two"><button class="cp" type="button" data-cp="uD">アドレスをコピー</button><a class="lk" id="aD" target="_blank" rel="noopener">この端末でひらく</a></div></div>
-    <details><summary>ほかの形の表示アドレス・QRコード</summary><div>
-      <p>会場のモニター用（全画面）</p><code class="url" id="uM"></code><button class="cp" type="button" data-cp="uM">コピー</button>
-      <p>配信（OBS）用・上の帯</p><code class="url" id="uT"></code><button class="cp" type="button" data-cp="uT">コピー</button>
-      <p>配信（OBS）用・下の帯</p><code class="url" id="uB"></code><button class="cp" type="button" data-cp="uB">コピー</button>
-      <p>会場のモニター用のQRコード（モニターにつないだ端末で読み取る）</p><div class="qr" id="qM"></div>
-    </div></details>
-    <div class="f"><span>つなぎ方</span><ol id="steps"></ol></div>
-  </section>
+  <!-- ============ 3: history and awards ============ -->
+  <div id="t3" class="w" style="padding:0" hidden>
+    <section class="box"><h2>結果を集める台</h2>
+      <p>下の台で試合が終わるたびに、結果がこの画面へ自動で入ります。この画面をとじていた間の結果も、ひらき直したときにまとめて入ります。</p>
+      <div id="rooms" style="display:flex;flex-direction:column;gap:8px"></div>
+      <div class="two"><input id="rmAdd" type="text" placeholder="試合IDを追加" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40" aria-label="試合IDを追加"><button class="sm" type="button" id="rmGo">この台も集める</button></div>
+    </section>
+    <section class="box"><h2>BG賞（ベストゲーム・最高アベレージ）</h2>
+      <div class="seg" data-opt="bg"><button type="button" data-v="win" aria-pressed="true">勝った試合だけ</button><button type="button" data-v="all" aria-pressed="false">すべての試合</button></div>
+      <div class="rk" id="rkBG"></div>
+      <small class="n">1試合のアベレージ（得点÷イニング）が高い順です。同じ数字のときは、イニングの少ないほう、次に早く終わったほうを上にしています。選手ごとに、いちばん良い1試合だけを出します。</small>
+    </section>
+    <section class="box"><h2>HR賞（ハイラン）</h2><div class="rk" id="rkHR"></div><small class="n">1イニングでの連続得点が多い順です。同じ数字の選手は、同じ順位です。選手ごとに、いちばん多い記録だけを出します。</small></section>
+    <section class="box"><h2>試合の履歴　<span id="hN" style="font:400 22px/1 VLNum,system-ui,sans-serif;color:#FFD700"></span></h2>
+      <div class="two"><button class="go b" type="button" id="hCsv" style="font-size:16px;min-height:56px">CSVで保存</button><button class="sm q" type="button" id="hAddT">結果を手で追加</button></div>
+      <div class="pc" id="hAdd" hidden><div class="ed">
+        <div class="two"><input id="mN0" type="text" maxlength="16" placeholder="選手A" aria-label="選手A"><input id="mN1" type="text" maxlength="16" placeholder="選手B" aria-label="選手B"></div>
+        <div class="two"><input id="mS0" type="number" inputmode="numeric" placeholder="Aの得点" aria-label="Aの得点"><input id="mS1" type="number" inputmode="numeric" placeholder="Bの得点" aria-label="Bの得点"></div>
+        <div class="two"><input id="mI0" type="number" inputmode="numeric" placeholder="Aのイニング" aria-label="Aのイニング"><input id="mI1" type="number" inputmode="numeric" placeholder="Bのイニング" aria-label="Bのイニング"></div>
+        <div class="two"><input id="mR0" type="number" inputmode="numeric" placeholder="Aのハイラン" aria-label="Aのハイラン"><input id="mR1" type="number" inputmode="numeric" placeholder="Bのハイラン" aria-label="Bのハイラン"></div>
+        <div class="two"><input id="mT" type="text" maxlength="16" placeholder="台（例：Table 1）" aria-label="台"><input id="mRd" type="text" maxlength="12" placeholder="回戦" aria-label="回戦"></div>
+        <button class="go" type="button" id="mGo">この結果を追加</button></div></div>
+      <div id="hist" style="display:flex;flex-direction:column;gap:10px"></div>
+      <button class="sm dg" type="button" id="hClr">履歴をすべて消す</button>
+      <small class="n">履歴も、この端末のこのブラウザの中だけに保存されます。大会が終わったら、CSVで保存しておいてください。</small>
+    </section>
+  </div>
 </div>
+<div class="cf" id="cf" hidden><div><b id="cfT"></b><p id="cfP"></p><div class="two"><button class="sm q" type="button" id="cfNo">やめる</button><button class="sm dg" type="button" id="cfOk">消す</button></div></div></div>
+<div class="toast" id="toast" hidden></div>
 <script src="/js/qr.js"></script>
 <script>
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); }, $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function keep(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { toast('この端末では保存できませんでした'); return false; } }
+  var tt; function toast(t) { var e = $('toast'); e.textContent = t; e.hidden = false; clearTimeout(tt); tt = setTimeout(function () { e.hidden = true; }, 2200); }
+  var cfFn = null; function confirmDo(t, p, fn) { $('cfT').textContent = t; $('cfP').textContent = p || ''; cfFn = fn; $('cf').hidden = false; }
+  $('cfNo').addEventListener('click', function () { $('cf').hidden = true; }); $('cfOk').addEventListener('click', function () { $('cf').hidden = true; if (cfFn) cfFn(); });
+  function csv(name, rows) {
+    var t = '﻿' + rows.map(function (r) { return r.map(function (v) { v = String(v == null ? '' : v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(','); }).join('\r\n');
+    try { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([t], { type: 'text/csv;charset=utf-8' })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800); } catch (e) { toast('保存できませんでした'); }
+  }
+  function stamp() { var d = new Date(), z = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + '-' + z(d.getHours()) + z(d.getMinutes()); }
   /* ---- lock: stops accidental use only ---- */
   function hh(s) { var a = 0xdeadbeef ^ 7, b = 0x41c6ce57 ^ 7; for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); a = Math.imul(a ^ c, 2654435761); b = Math.imul(b ^ c, 1597334677); } a = Math.imul(a ^ (a >>> 16), 2246822507) ^ Math.imul(b ^ (b >>> 13), 3266489909); b = Math.imul(b ^ (b >>> 16), 2246822507) ^ Math.imul(a ^ (a >>> 13), 3266489909); return (4294967296 * (2097151 & b) + (a >>> 0)).toString(36); }
-  var PASS = '1cgr24o0zaq';
-  function unlock() { $('gate').hidden = true; $('app').hidden = false; try { sessionStorage.setItem('vibes-lab-admin', '1'); } catch (e) {} }
+  var PASS = '1cgr24o0zaq', started = false;
+  function unlock() { $('gate').hidden = true; $('app').hidden = false; try { sessionStorage.setItem('vibes-lab-admin', '1'); } catch (e) {} if (!started) { started = true; start(); } }
   function tryPin() { if (hh('vibes-lab-admin:' + $('pin').value.trim()) === PASS) unlock(); else { $('perr').hidden = false; $('pin').value = ''; $('pin').focus(); } }
   $('pgo').addEventListener('click', tryPin); $('pin').addEventListener('keydown', function (e) { if (e.key === 'Enter') tryPin(); }); $('pin').addEventListener('input', function () { $('perr').hidden = true; if ($('pin').value.length === 4) tryPin(); });
-  try { if (sessionStorage.getItem('vibes-lab-admin') === '1') unlock(); } catch (e) {}
 
-  /* ---- ready-made settings ---- */
+  /* ---- tabs ---- */
+  function tab(n) { [1, 2, 3].forEach(function (i) { $('t' + i).hidden = i !== n; }); $$('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', +b.dataset.tab === n); }); try { sessionStorage.setItem('vibes-lab-tab', n); } catch (e) {} if (n === 2) rosterSelects(); if (n === 3) drawHist(); window.scrollTo(0, 0); }
+  $$('.tabs button').forEach(function (b) { b.addEventListener('click', function () { tab(+b.dataset.tab); }); });
+
+  /* =================== 1: players' list =================== */
+  var RK = 'vibes-lab-roster', R = load(RK, []); if (!Array.isArray(R)) R = [];
+  var editing = '';
+  function rid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function nextNo() { return R.reduce(function (m, p) { return Math.max(m, +p.no || 0); }, 0) + 1; }
+  function addPlayer(name, shop, h, memo) { name = String(name || '').trim().slice(0, 16); if (!name) return false; R.push({ id: rid(), no: nextNo(), name: name, shop: String(shop || '').trim().slice(0, 24), h: Math.max(0, Math.min(999, parseInt(h, 10) || 0)), memo: String(memo || '').trim().slice(0, 40), in: false, fee: false, doc: false }); return true; }
+  function drawRoster() {
+    $('cAll').textContent = R.length; [['cIn', 'in'], ['cFee', 'fee'], ['cDoc', 'doc']].forEach(function (x) { $(x[0]).innerHTML = R.filter(function (p) { return p[x[1]]; }).length + '<small>／' + R.length + '</small>'; });
+    var f = $('pF').value, q = $('pQ').value.trim().toLowerCase();
+    var a = R.slice().sort(function (x, y) { return (+x.no || 0) - (+y.no || 0); }).filter(function (p) { if (f === 'in0' && p.in) return false; if (f === 'in1' && !p.in) return false; if (f === 'fee0' && p.fee) return false; if (f === 'doc0' && p.doc) return false; return !q || (p.name + ' ' + p.shop).toLowerCase().indexOf(q) >= 0; });
+    $('pls').innerHTML = a.length ? a.map(function (p) {
+      if (editing === p.id) return '<div class="pc" data-id="' + p.id + '"><div class="ed"><div class="two"><input data-e="no" type="number" inputmode="numeric" value="' + esc(p.no) + '" aria-label="エントリー番号"><input data-e="h" type="number" inputmode="numeric" value="' + esc(p.h || '') + '" placeholder="持ち点" aria-label="持ち点"></div><input data-e="name" type="text" maxlength="16" value="' + esc(p.name) + '" aria-label="選手名"><input data-e="shop" type="text" maxlength="24" value="' + esc(p.shop) + '" placeholder="所属店" aria-label="所属店"><input data-e="memo" type="text" maxlength="40" value="' + esc(p.memo) + '" placeholder="備考" aria-label="備考"></div><div class="ops"><button class="sm q" type="button" data-a="cancel">やめる</button><button class="sm" type="button" data-a="save">保存する</button></div><button class="sm dg" type="button" data-a="del">この選手を消す</button></div>';
+      return '<div class="pc' + (p.in ? ' in' : '') + '" data-id="' + p.id + '"><div class="hd"><span class="no">' + esc(p.no) + '</span><span class="nm"><b>' + esc(p.name) + '</b><span>' + esc(p.shop || '所属なし') + (p.memo ? '　｜　' + esc(p.memo) : '') + '</span></span><span class="pt">' + (p.h || '–') + '<small>持ち点</small></span></div><div class="tgs"><button class="tg" type="button" data-t="in" aria-pressed="' + !!p.in + '">受付<br>（出席）</button><button class="tg" type="button" data-t="fee" aria-pressed="' + !!p.fee + '">参加費<br>受領</button><button class="tg" type="button" data-t="doc" aria-pressed="' + !!p.doc + '">同意書<br>確認</button></div><button class="sm q" type="button" data-a="edit" style="min-height:44px">なおす・消す</button></div>';
+    }).join('') : '<div class="none">' + (R.length ? 'この条件に合う選手はいません。' : 'まだ選手が登録されていません。上の「選手を追加する」から登録してください。') + '</div>';
+  }
+  function saveR() { keep(RK, R); drawRoster(); }
+  $('aGo').addEventListener('click', function () { if (!addPlayer($('aN').value, $('aS').value, $('aH').value, $('aM').value)) { toast('選手名を入れてください'); $('aN').focus(); return; } ['aN', 'aS', 'aH', 'aM'].forEach(function (i) { $(i).value = ''; }); saveR(); toast('追加しました'); $('aN').focus(); });
+  $('bGo').addEventListener('click', function () {
+    var n = 0, dup = 0; $('bulk').value.split(/\r?\n/).forEach(function (line) {
+      var c = line.split(/[,，、\t]/).map(function (x) { return x.trim(); }); if (!c[0] || /^(選手名|名前|氏名)$/.test(c[0])) return;
+      var h = '', shop = c[1] || ''; if (c.length >= 3) h = c[2]; else if (/^\d+$/.test(shop)) { h = shop; shop = ''; }
+      if (R.some(function (p) { return p.name.replace(/\s/g, '') === c[0].replace(/\s/g, ''); })) { dup++; return; }
+      if (addPlayer(c[0], shop, String(h).replace(/[^0-9]/g, ''), c[3] || '')) n++;
+    });
+    if (n) { $('bulk').value = ''; saveR(); } toast(n + '人を登録しました' + (dup ? '（同じ名前の ' + dup + '人は飛ばしました）' : ''));
+  });
+  $('pls').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; var card = b.closest('.pc'), p = R.filter(function (x) { return x.id === card.dataset.id; })[0]; if (!p) return;
+    if (b.dataset.t) { p[b.dataset.t] = !p[b.dataset.t]; saveR(); }
+    else if (b.dataset.a === 'edit') { editing = p.id; drawRoster(); }
+    else if (b.dataset.a === 'cancel') { editing = ''; drawRoster(); }
+    else if (b.dataset.a === 'save') { var g = function (k) { return card.querySelector('[data-e="' + k + '"]').value; }; var nm = g('name').trim().slice(0, 16); if (!nm) { toast('選手名を入れてください'); return; } p.name = nm; p.shop = g('shop').trim().slice(0, 24); p.memo = g('memo').trim().slice(0, 40); p.h = Math.max(0, Math.min(999, parseInt(g('h'), 10) || 0)); p.no = Math.max(1, parseInt(g('no'), 10) || p.no); editing = ''; saveR(); toast('保存しました'); }
+    else if (b.dataset.a === 'del') confirmDo(p.name + ' さんを名簿から消しますか？', '受付の記録も一緒に消えます。', function () { R = R.filter(function (x) { return x.id !== p.id; }); editing = ''; saveR(); });
+  });
+  $('pF').addEventListener('change', drawRoster); $('pQ').addEventListener('input', drawRoster);
+  $('pCsv').addEventListener('click', function () { csv('vibes-roster-' + stamp() + '.csv', [['エントリーNo', '選手名', '所属店', '持ち点', '備考', '受付', '参加費', '同意書']].concat(R.slice().sort(function (x, y) { return x.no - y.no; }).map(function (p) { return [p.no, p.name, p.shop, p.h || '', p.memo, p.in ? '○' : '', p.fee ? '○' : '', p.doc ? '○' : '']; }))); });
+  $('pClr').addEventListener('click', function () { confirmDo('名簿をすべて消しますか？', R.length + '人ぶんの名簿と受付の記録が消えます。元には戻せません。', function () { R = []; saveR(); }); });
+
+  /* =================== 2: table set-up =================== */
   var PRE = [
-    { id: 'queen', b: '12/5 女王杯（Pre Queen Cup）', s: 'スクラッチ 8〜10点・相手レフリー・クロックなし・打切りあり・裏撞きあり', c: { ctl: 'pad', mode: '3c', h: [10, 10], back: 1, limit: 30, clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', title: 'Queen Cup 2026-2027' } },
-    { id: 'official', b: '3C 公式戦（専属審判・クロックあり）', s: '持ち点制・40秒・タイムアウト3枚・審判がスマホで操作', c: { ctl: 'phone', mode: '3c', h: [30, 30], back: 1, limit: 0, clk: 40, warn: 1, to: 3, stats: 1, brk: 'alt', lay: 'top', match: '', title: '3-CUSHION' } },
-    { id: 'house', b: '3C ハウス・段位戦', s: 'ハンデ持ち点・40秒・タイムアウト2枚・打切りあり', c: { ctl: 'pad', mode: '3c', h: [20, 15], back: 1, limit: 35, clk: 40, warn: 1, to: 2, stats: 1, brk: 'alt', lay: 'monitor', match: '', title: '3-CUSHION' } },
-    { id: 'pocket', b: 'ポケット（9ボール・10ボール）', s: 'セット先取・ブレイクの表示・35秒・エクステンション1回', c: { ctl: 'pad', mode: 'pocket', h: [5, 5], back: 0, limit: 0, clk: 35, warn: 1, to: 1, stats: 0, brk: 'alt', lay: 'monitor', match: '', title: '9-BALL' } },
-    { id: 'free', b: 'お店のフリープレイ', s: '得点とイニングだけ・クロックなし・制限なし', c: { ctl: 'pad', mode: 'free', h: [0, 0], back: 0, limit: 0, clk: 0, warn: 0, to: 0, stats: 0, brk: 'alt', lay: 'monitor', match: '', title: 'VIBES BILLIARDS' } }
+    { id: 'queen', b: '12/5 女王杯（Pre Queen Cup）', s: 'スクラッチ 8〜10点・相手レフリー・クロックなし・打切りあり・裏撞きあり', c: { ctl: 'pad', mode: '3c', h: [10, 10], back: 1, limit: 30, clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Queen Cup 2026-2027' } },
+    { id: 'official', b: '3C 公式戦（専属審判・クロックあり）', s: '持ち点制・40秒・タイムアウト3枚・審判がスマホで操作', c: { ctl: 'phone', mode: '3c', h: [30, 30], back: 1, limit: 0, clk: 40, warn: 1, to: 3, stats: 1, brk: 'alt', lay: 'top', match: '', label: '', title: '3-CUSHION' } },
+    { id: 'house', b: '3C ハウス・段位戦', s: 'ハンデ持ち点・40秒・タイムアウト2枚・打切りあり', c: { ctl: 'pad', mode: '3c', h: [20, 15], back: 1, limit: 35, clk: 40, warn: 1, to: 2, stats: 1, brk: 'alt', lay: 'monitor', match: '', label: '', title: '3-CUSHION' } },
+    { id: 'pocket', b: 'ポケット（9ボール・10ボール）', s: 'セット先取・ブレイクの表示・35秒・エクステンション1回', c: { ctl: 'pad', mode: 'pocket', h: [5, 5], back: 0, limit: 0, clk: 35, warn: 1, to: 1, stats: 0, brk: 'alt', lay: 'monitor', match: '', label: '', title: '9-BALL' } },
+    { id: 'free', b: 'お店のフリープレイ', s: '得点とイニングだけ・クロックなし・制限なし', c: { ctl: 'pad', mode: 'free', h: [0, 0], back: 0, limit: 0, clk: 0, warn: 0, to: 0, stats: 0, brk: 'alt', lay: 'monitor', match: '', label: '', title: 'VIBES BILLIARDS' } }
   ];
   var C = null, pre = '';
   function rnd() { var s = 't-', a = 'abcdefghjkmnpqrstuvwxyz23456789'; for (var i = 0; i < 6; i++) s += a.charAt(Math.floor(Math.random() * a.length)); return s; }
   function clean(m) { return String(m || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40); }
   $('pre').innerHTML = PRE.map(function (p) { return '<button type="button" data-p="' + p.id + '" aria-pressed="false"><b>' + p.b + '</b><span>' + p.s + '</span></button>'; }).join('');
-  function pick(id) { var p = PRE.filter(function (x) { return x.id === id; })[0]; pre = id; C = JSON.parse(JSON.stringify(p.c)); if (!C.match) C.match = rnd(); $('h0').value = C.h[0]; $('h1').value = C.h[1]; $('limit').value = C.limit || ''; $('match').value = C.match; $('title').value = C.title; $('n0').value = ''; $('n1').value = ''; $('out').hidden = true; draw(); }
-  function draw() {
+  function pick(id) { var p = PRE.filter(function (x) { return x.id === id; })[0]; pre = id; C = JSON.parse(JSON.stringify(p.c)); if (!C.match) C.match = rnd(); $('h0').value = C.h[0]; $('h1').value = C.h[1]; $('limit').value = C.limit || ''; $('match').value = C.match; $('label').value = C.label || ''; $('title').value = C.title; $('out').hidden = true; drawSet(); }
+  function drawSet() {
     $$('#pre button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === pre); });
     $$('.seg[data-k]').forEach(function (g) { var k = g.getAttribute('data-k'); [].forEach.call(g.children, function (b) { b.setAttribute('aria-pressed', String(C[k]) === b.getAttribute('data-v')); }); });
     var pk = C.mode === 'pocket', fr = C.mode === 'free';
     $$('[data-3c]').forEach(function (e) { e.hidden = pk; }); $$('[data-pk]').forEach(function (e) { e.hidden = !pk; }); $$('[data-clk]').forEach(function (e) { e.hidden = !C.clk; });
-    $('lH').textContent = pk ? '先取するセット数' : '試合点数（持ち点）'; $('quick').hidden = pk || fr; $('lTo').textContent = pk ? 'エクステンションの回数（1人あたり）' : 'タイムアウトの枚数（1人あたり）';
+    $('lH').textContent = pk ? '先取するセット数（A・B）' : '試合点数（持ち点）（A・B）'; $('quick').hidden = pk || fr; $('lTo').textContent = pk ? 'エクステンションの回数（1人あたり）' : 'タイムアウトの枚数（1人あたり）';
     $$('#quick button').forEach(function (b) { b.setAttribute('aria-pressed', $('h0').value === b.getAttribute('data-h') && $('h1').value === b.getAttribute('data-h')); });
   }
+  /* players from the list: those who have checked in (everyone, while nobody has) */
+  function rosterSelects() {
+    var inn = R.filter(function (p) { return p.in; }), src = (inn.length ? inn : R).slice().sort(function (x, y) { return x.no - y.no; });
+    $('rsNote').textContent = !R.length ? '名簿に選手がいません。①のタブで登録すると、ここでえらべるようになります。名前を直接入れることもできます。' : inn.length ? '受付した ' + inn.length + '人からえらべます。えらぶと、名前と持ち点が入ります。' : 'まだ誰も受付していないため、名簿の全員を出しています。';
+    [0, 1].forEach(function (i) { var s = $('r' + i), v = s.value; s.innerHTML = '<option value="">えらぶ</option>' + src.map(function (p) { return '<option value="' + p.id + '">' + esc(p.no + '　' + p.name + (p.shop ? '（' + p.shop + '）' : '') + (p.h ? '　' + p.h + '点' : '')) + '</option>'; }).join(''); s.value = src.some(function (p) { return p.id === v; }) ? v : ''; });
+  }
+  [0, 1].forEach(function (i) { $('r' + i).addEventListener('change', function () { var p = R.filter(function (x) { return x.id === $('r' + i).value; })[0]; if (!p) return; $('n' + i).value = p.name; if (p.h) $('h' + i).value = p.h; $('out').hidden = true; drawSet(); }); });
   document.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     if (b.dataset.p) return pick(b.dataset.p);
     var g = b.closest('.seg[data-k]');
-    if (g) { var k = g.getAttribute('data-k'), v = b.getAttribute('data-v'); C[k] = /^(ctl|mode|brk|lay)$/.test(k) ? v : +v; if (k === 'limit') $('limit').value = +v || ''; if (k === 'mode' && v === 'pocket') { C.stats = 0; C.back = 0; C.limit = 0; $('limit').value = ''; } $('out').hidden = true; draw(); return; }
-    if (b.dataset.h) { $('h0').value = b.dataset.h; $('h1').value = b.dataset.h; $('out').hidden = true; draw(); return; }
+    if (g) { var k = g.getAttribute('data-k'), v = b.getAttribute('data-v'); C[k] = /^(ctl|mode|brk|lay)$/.test(k) ? v : +v; if (k === 'limit') $('limit').value = +v || ''; if (k === 'mode' && v === 'pocket') { C.stats = 0; C.back = 0; C.limit = 0; $('limit').value = ''; } $('out').hidden = true; drawSet(); return; }
+    var o = b.closest('.seg[data-opt]'); if (o) { [].forEach.call(o.children, function (x) { x.setAttribute('aria-pressed', x === b); }); drawHist(); return; }
+    if (b.dataset.h) { $('h0').value = b.dataset.h; $('h1').value = b.dataset.h; $('out').hidden = true; drawSet(); return; }
     if (b.dataset.cp) {
-      var el = $(b.dataset.cp), t = el.textContent, done = function () { b.classList.add('dn'); var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function () { b.classList.remove('dn'); b.textContent = o; }, 1600); };
+      var el = $(b.dataset.cp), t = el.textContent, done = function () { b.classList.add('dn'); var old = b.textContent; b.textContent = 'コピーしました'; setTimeout(function () { b.classList.remove('dn'); b.textContent = old; }, 1600); };
       var sel = function () { try { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (x) {} };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, sel); else sel();
     }
   });
-  $('limit').addEventListener('input', function () { C.limit = Math.max(0, Math.min(200, parseInt($('limit').value, 10) || 0)); $('out').hidden = true; draw(); });
-  ['h0', 'h1', 'match', 'title', 'n0', 'n1'].forEach(function (id) { $(id).addEventListener('input', function () { $('out').hidden = true; if (id.charAt(0) === 'h') draw(); }); });
-
+  $('limit').addEventListener('input', function () { C.limit = Math.max(0, Math.min(200, parseInt($('limit').value, 10) || 0)); $('out').hidden = true; drawSet(); });
+  ['h0', 'h1', 'match', 'title', 'n0', 'n1', 'label'].forEach(function (id) { $(id).addEventListener('input', function () { $('out').hidden = true; if (id.charAt(0) === 'h') drawSet(); }); });
+  function hs() { return [0, 1].map(function (i) { return Math.max(0, Math.min(999, parseInt($('h' + i).value, 10) || 0)); }); }
   function b64(o) { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
   function qr(id, u) { try { var q = qrcode(0, 'M'); q.addData(u); q.make(); $(id).innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { $(id).textContent = ''; } }
   $('issue').addEventListener('click', function () {
-    var m = clean($('match').value) || rnd(); $('match').value = m;
-    var h = [0, 1].map(function (i) { return Math.max(0, Math.min(999, parseInt($('h' + i).value, 10) || 0)); }), pk = C.mode === 'pocket';
+    var m = clean($('match').value) || rnd(); $('match').value = m; watch(m, $('label').value.trim());
+    var h = hs(), pk = C.mode === 'pocket';
     var cfg = { id: Date.now().toString(36), mode: C.mode, limit: pk ? 0 : C.limit | 0, back: !pk && !!C.back, clk: C.clk | 0, warn: !!C.warn, to: C.clk ? C.to | 0 : 0, stats: !pk && !!C.stats, brk: C.brk, h: h, title: $('title').value.trim().slice(0, 24) };
-    var n = [$('n0').value.trim().slice(0, 16), $('n1').value.trim().slice(0, 16)]; if (n[0] || n[1]) cfg.n = n;
+    var n = [$('n0').value.trim().slice(0, 16), $('n1').value.trim().slice(0, 16)]; if (n[0] || n[1]) cfg.n = n; if ($('round').value) cfg.round = $('round').value;
     var base = location.origin, e = encodeURIComponent(m);
     var uC = base + '/event-score-pad?match=' + e + '&cfg=' + b64(cfg), uM = base + '/event-score-obs?match=' + e + '&layout=monitor', uT = base + '/event-score-obs?match=' + e, uB = uT + '&pos=bl';
     var uD = C.lay === 'monitor' ? uM : C.lay === 'bottom' ? uB : uT, phone = C.ctl === 'phone';
@@ -167,20 +338,98 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     $('lC').textContent = phone ? '操作する画面（審判のスマホ）' : '操作する画面（台のわきのタブレット）';
     $('pC').textContent = phone ? '審判のスマホのカメラで、このQRコードを読み取ります。スマホは縦向きで使います。' : 'タブレットのカメラで、このQRコードを読み取ります。タブレットは横向きで使います。';
     $('lD').textContent = C.lay === 'monitor' ? '表示する画面（会場のモニター用）' : '表示する画面（配信・OBS用・' + (C.lay === 'bottom' ? '下' : '上') + 'の帯）';
-    $('sum').innerHTML = ['試合ID：' + m, '種目：' + (pk ? 'ポケット（' + h[0] + '−' + h[1] + ' セット先取）' : C.mode === 'free' ? 'フリープレイ' : 'スリークッション（' + (h[0] || h[1] ? h[0] + '点−' + h[1] + '点' : '点数の上限なし') + '）'),
+    $('sum').innerHTML = ['試合ID：' + m + ($('label').value.trim() ? '（' + $('label').value.trim() + '）' : ''), '種目：' + (pk ? 'ポケット（' + h[0] + '−' + h[1] + ' セット先取）' : C.mode === 'free' ? 'フリープレイ' : 'スリークッション（' + (h[0] || h[1] ? h[0] + '点−' + h[1] + '点' : '点数の上限なし') + '）'),
       pk ? 'ブレイク：' + { alt: '交互', win: '勝った人', manual: '手で切り替え' }[C.brk] : '裏撞き：' + (cfg.back ? 'あり' : 'なし') + '　／　打切り：' + (cfg.limit ? cfg.limit + ' キュー' : 'なし'),
       'ショットクロック：' + (cfg.clk ? cfg.clk + '秒' + '　／　' + (pk ? 'エクステンション ' : 'タイムアウト ') + cfg.to + (pk ? '回' : '枚') + '　／　警告 ' + (cfg.warn ? 'あり' : 'なし') : 'なし'),
-      pk ? '' : 'アベレージ・ハイラン：' + (cfg.stats ? '出す' : '出さない')].filter(Boolean).map(function (x) { return x.replace(/[&<>]/g, ''); }).join('<br>');
+      pk ? '' : 'アベレージ・ハイラン：' + (cfg.stats ? '出す' : '出さない')].filter(Boolean).map(esc).join('<br>');
     var st = [];
     st.push(phone ? '審判のスマホで、上のQRコードを読み取ります。「つながっています」と出れば準備完了です。' : '台のわきのタブレットで、上のQRコードを読み取ります（または、アドレスを送ってひらきます）。横向きにして、「つながっています」と出れば準備完了です。');
     st.push('配信するパソコンのOBSで、「ソース」に「ブラウザ」を追加します。アドレスに「配信（OBS）用」のアドレスを入れ、幅 1920・高さ 1080 にします。');
     st.push('会場のモニターには、モニターにつないだ端末のブラウザで「会場のモニター用」のアドレスをひらき、全画面にします。');
-    st.push('操作する画面で、選手の名前と' + (pk ? '先取するセット数' : '持ち点') + 'を確かめます。' + (pk ? 'セットを取ったら「+1」、' : '点が入るたびに「+1」、撞き終わったら「交代」。') + (cfg.clk ? 'クロックは「+1」と「交代」で自動で動き出します。' : ''));
-    st.push('試合が終わると、勝敗・得点・イニング・アベレージ・ハイランが大きく出ます。記録したら「次の試合へ（0に戻す）」を押します。');
+    st.push('次の試合からは、上の「対戦する選手」で2人をえらび、「この対戦を、台の操作画面へ送る」を押すと、台の画面の名前と持ち点が切り替わります。');
+    st.push('試合が終わると、結果が大きく出て、③のタブの履歴に自動で入ります。');
     $('steps').innerHTML = st.map(function (x) { return '<li>' + x + '</li>'; }).join('');
     $('out').hidden = false; $('out').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
-  pick('queen');
+  $('send').addEventListener('click', function () {
+    var m = clean($('match').value); if (!m) { toast('試合IDを入れてください'); return; }
+    var n = [$('n0').value.trim().slice(0, 16), $('n1').value.trim().slice(0, 16)]; if (!n[0] || !n[1]) { toast('選手を2人えらんでください'); return; }
+    watch(m, $('label').value.trim()); var msg = JSON.stringify({ type: 'assign', m: m, n: n, h: hs(), round: $('round').value });
+    var tryN = 0, t = setInterval(function () { var r = SOCK[m]; if (r && r.ws && r.ws.readyState === 1) { clearInterval(t); try { r.ws.send(msg); toast(n[0] + ' 対 ' + n[1] + ' を送りました'); } catch (e) { toast('送れませんでした'); } } else if (++tryN > 25) { clearInterval(t); toast('つながらないため、送れませんでした'); } }, 200);
+  });
+
+  /* =================== 3: results from the tables =================== */
+  var HK = 'vibes-lab-hist', DK = 'vibes-lab-hist-del', MK = 'vibes-lab-rooms';
+  var H = load(HK, []), DEL = load(DK, []), ROOMS = load(MK, []), SOCK = {}; if (!Array.isArray(H)) H = []; if (!Array.isArray(DEL)) DEL = []; if (!Array.isArray(ROOMS)) ROOMS = [];
+  var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+  function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
+  function shopOf(name) { var k = String(name).replace(/\s/g, ''), p = R.filter(function (x) { return x.name.replace(/\s/g, '') === k; })[0]; return p ? p.shop : ''; }
+  function labelOf(m) { var r = ROOMS.filter(function (x) { return x.m === m; })[0]; return r && r.label ? r.label : m; }
+  function take(r) {
+    if (!r || !r.gid || !r.n || !r.s || DEL.indexOf(r.gid) >= 0) return false;
+    var rec = { gid: r.gid, t: +r.t || Date.now(), m: String(r.m || ''), table: labelOf(String(r.m || '')), title: String(r.title || ''), round: String(r.round || ''), mode: r.mode || '3c', n: [String(r.n[0]), String(r.n[1])], shop: [shopOf(r.n[0]), shopOf(r.n[1])], h: [r.h ? r.h[0] | 0 : 0, r.h ? r.h[1] | 0 : 0], s: [r.s[0] | 0, r.s[1] | 0], in: [r.in ? r.in[0] | 0 : 0, r.in ? r.in[1] | 0 : 0], hr: [r.hr ? r.hr[0] | 0 : 0, r.hr ? r.hr[1] | 0 : 0], w: typeof r.w === 'number' ? r.w : -1, why: r.why || '' };
+    var i = -1; H.forEach(function (x, k) { if (x.gid === rec.gid) i = k; });
+    if (i >= 0) { if (JSON.stringify(H[i].s) === JSON.stringify(rec.s) && JSON.stringify(H[i].in) === JSON.stringify(rec.in) && H[i].w === rec.w) return false; rec.table = H[i].table || rec.table; H[i] = rec; } else H.push(rec);
+    return true;
+  }
+  function onState(m) {
+    if (!m || m.type !== 'state') return; var ch = false;
+    (Array.isArray(m.log) ? m.log : []).forEach(function (r) { if (take(r)) ch = true; });
+    /* a result that was taken back at the table ("結果を取り消して戻る") leaves the table's own record: drop it here too */
+    if (m.gid && !m.over && Array.isArray(m.log)) { var n = H.length; H = H.filter(function (x) { return x.gid !== m.gid || x.manual; }); if (H.length !== n) ch = true; }
+    if (ch) { keep(HK, H); drawHist(); toast('試合の結果が入りました'); }
+  }
+  function open(m) {
+    var r = SOCK[m] = SOCK[m] || { tries: 0 }; if (r.ws && r.ws.readyState <= 1) return;
+    try { r.ws = new WebSocket('wss://' + WSH + '/api/count/' + room(m) + '?role=remote'); } catch (e) { return; }
+    r.ws.onopen = function () { r.tries = 0; r.on = true; drawRooms(); clearInterval(r.ping); r.ping = setInterval(function () { if (r.ws.readyState === 1) r.ws.send('ping'); }, 25000); };
+    r.ws.onmessage = function (ev) { if (ev.data === 'pong') return; var j; try { j = JSON.parse(ev.data); } catch (e) { return; } r.seen = true; onState(j); drawRooms(); };
+    r.ws.onclose = function () { clearInterval(r.ping); r.on = false; drawRooms(); if (!ROOMS.some(function (x) { return x.m === m; })) return; clearTimeout(r.timer); r.timer = setTimeout(function () { open(m); }, Math.min(8000, 500 * Math.pow(2, r.tries++))); };
+    r.ws.onerror = function () { try { r.ws.close(); } catch (e) {} };
+  }
+  function watch(m, label) { m = clean(m); if (!m) return; var r = ROOMS.filter(function (x) { return x.m === m; })[0]; if (!r) { r = { m: m, label: label || '' }; ROOMS.push(r); } else if (label) r.label = label; keep(MK, ROOMS); open(m); drawRooms(); }
+  function drawRooms() { $('rooms').innerHTML = ROOMS.length ? ROOMS.map(function (r) { var s = SOCK[r.m] || {}; return '<div class="rm' + (s.on ? ' on' : '') + '"><i></i><b>' + esc(r.label ? r.label + '（' + r.m + '）' : r.m) + '<br><small class="n">' + (s.on ? (s.seen ? 'つながっています' : 'つながっています（台の操作画面がまだひらかれていません）') : 'つなぎ直しています') + '</small></b><button class="sm q" type="button" data-rm="' + esc(r.m) + '">外す</button></div>'; }).join('') : '<div class="none">まだ台がありません。②のタブでアドレスを出すと、その台がここに入ります。</div>'; }
+  $('rooms').addEventListener('click', function (e) { var b = e.target.closest('[data-rm]'); if (!b) return; var m = b.dataset.rm; ROOMS = ROOMS.filter(function (x) { return x.m !== m; }); keep(MK, ROOMS); if (SOCK[m] && SOCK[m].ws) { try { SOCK[m].ws.close(); } catch (x) {} } drawRooms(); });
+  $('rmGo').addEventListener('click', function () { var m = clean($('rmAdd').value); if (!m) { toast('試合IDを入れてください'); return; } $('rmAdd').value = ''; watch(m, ''); });
+  var av = function (s, i) { return i > 0 ? s / i : 0; }, a3 = function (s, i) { return i > 0 ? (s / i).toFixed(3) : '-'; };
+  function hm(t) { var d = new Date(t), z = function (n) { return (n < 10 ? '0' : '') + n; }; return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + z(d.getHours()) + ':' + z(d.getMinutes()); }
+  function drawHist() {
+    var a = H.slice().sort(function (x, y) { return y.t - x.t; }); $('hN').textContent = a.length ? a.length + '試合' : '';
+    $('hist').innerHTML = a.length ? a.map(function (r) {
+      var pk = r.mode === 'pocket';
+      return '<div class="hc"><div class="mt"><span>' + hm(r.t) + '</span><span>' + esc(r.table || r.m) + '</span>' + (r.round ? '<span>' + esc(r.round) + '</span>' : '') + '<span>' + (r.w < 0 ? '引き分け' : '勝者 ' + esc(r.n[r.w])) + (r.why === 'limit' ? '（打切り）' : '') + '</span>' + (r.manual ? '<span>手で追加</span>' : '') + '</div><table><tr><th></th><th>' + (pk ? 'セット' : '得点') + '</th>' + (pk ? '' : '<th>イニング</th><th>AVG</th><th>HR</th>') + '</tr>' + [0, 1].map(function (i) { return '<tr' + (r.w === i ? ' class="wn"' : '') + '><td>' + esc(r.n[i]) + (r.shop && r.shop[i] ? '<small>' + esc(r.shop[i]) + '</small>' : '') + '</td><td>' + r.s[i] + '</td>' + (pk ? '' : '<td>' + r.in[i] + '</td><td>' + a3(r.s[i], r.in[i]) + '</td><td>' + r.hr[i] + '</td>') + '</tr>'; }).join('') + '</table><button class="sm dg" type="button" data-del="' + esc(r.gid) + '" style="min-height:44px;align-self:flex-end">この結果を消す</button></div>';
+    }).join('') : '<div class="none">まだ終わった試合がありません。台で試合が終わると、ここに自動で入ります。</div>';
+    /* awards: three-cushion games only, one line per player (the best one) */
+    var ent = []; H.forEach(function (r) { if (r.mode === 'pocket') return; [0, 1].forEach(function (i) { if (r.in[i] > 0 || r.hr[i] > 0) ent.push({ n: r.n[i], shop: r.shop ? r.shop[i] : '', s: r.s[i], in: r.in[i], avg: av(r.s[i], r.in[i]), hr: r.hr[i], won: r.w === i, opp: r.n[i ? 0 : 1], round: r.round, t: r.t }); }); });
+    var key = function (n) { return String(n).replace(/\s/g, ''); }, best = function (list, cmp) { var seen = {}, out = []; list.slice().sort(cmp).forEach(function (e) { var k = key(e.n); if (!seen[k]) { seen[k] = 1; out.push(e); } }); return out; };
+    var onlyWin = (document.querySelector('[data-opt="bg"] [aria-pressed="true"]') || {}).dataset.v !== 'all';
+    var bg = best(ent.filter(function (e) { return e.in > 0 && (!onlyWin || e.won); }), function (x, y) { return y.avg - x.avg || x.in - y.in || x.t - y.t; }).slice(0, 10);
+    var hr = best(ent.filter(function (e) { return e.hr > 0; }), function (x, y) { return y.hr - x.hr || x.t - y.t; }).slice(0, 10);
+    var rows = function (list, val, same, sub) { var rank = 0; return list.length ? list.map(function (e, i) { if (i === 0 || !same(list[i - 1], e)) rank = i + 1; return '<div' + (rank === 1 ? ' class="top"' : '') + '><i>' + rank + '</i><span><b>' + esc(e.n) + '</b><small>' + esc((e.shop ? e.shop + '　' : '') + sub(e)) + '</small></span><em>' + val(e) + '</em></div>'; }).join('') : '<div class="none" style="display:block">まだ記録がありません。</div>'; };
+    $('rkBG').innerHTML = rows(bg, function (e) { return e.avg.toFixed(3); }, function (a, b) { return a.avg.toFixed(3) === b.avg.toFixed(3) && a.in === b.in; }, function (e) { return e.s + '点／' + e.in + 'イニング　対 ' + e.opp + (e.round ? '（' + e.round + '）' : '') + (e.won ? '' : '　※負け・引き分けの試合'); });
+    $('rkHR').innerHTML = rows(hr, function (e) { return e.hr; }, function (a, b) { return a.hr === b.hr; }, function (e) { return '対 ' + e.opp + (e.round ? '（' + e.round + '）' : ''); });
+  }
+  $('hist').addEventListener('click', function (e) { var b = e.target.closest('[data-del]'); if (!b) return; var g = b.dataset.del; confirmDo('この結果を消しますか？', 'BG賞・HR賞の順位からも外れます。', function () { H = H.filter(function (x) { return x.gid !== g; }); DEL.push(g); DEL = DEL.slice(-300); keep(HK, H); keep(DK, DEL); drawHist(); }); });
+  $('hClr').addEventListener('click', function () { confirmDo('履歴をすべて消しますか？', H.length + '試合ぶんの結果が消えます。先にCSVで保存しておくと安心です。', function () { H.forEach(function (x) { DEL.push(x.gid); }); DEL = DEL.slice(-300); H = []; keep(HK, H); keep(DK, DEL); drawHist(); }); });
+  $('hAddT').addEventListener('click', function () { $('hAdd').hidden = !$('hAdd').hidden; });
+  $('mGo').addEventListener('click', function () {
+    var v = function (id) { return $(id).value.trim(); }, nn = function (id) { return Math.max(0, parseInt(v(id), 10) || 0); }; if (!v('mN0') || !v('mN1')) { toast('選手の名前を入れてください'); return; }
+    var s = [nn('mS0'), nn('mS1')];
+    H.push({ gid: 'm' + rid(), t: Date.now(), m: '', table: v('mT'), title: '', round: v('mRd'), mode: '3c', n: [v('mN0').slice(0, 16), v('mN1').slice(0, 16)], shop: [shopOf(v('mN0')), shopOf(v('mN1'))], h: [0, 0], s: s, in: [nn('mI0'), nn('mI1')], hr: [nn('mR0'), nn('mR1')], w: s[0] > s[1] ? 0 : s[1] > s[0] ? 1 : -1, why: '', manual: true });
+    keep(HK, H); ['mN0', 'mN1', 'mS0', 'mS1', 'mI0', 'mI1', 'mR0', 'mR1', 'mRd'].forEach(function (i) { $(i).value = ''; }); $('hAdd').hidden = true; drawHist(); toast('追加しました');
+  });
+  $('hCsv').addEventListener('click', function () {
+    var d = function (t) { var x = new Date(t), z = function (n) { return (n < 10 ? '0' : '') + n; }; return x.getFullYear() + '-' + z(x.getMonth() + 1) + '-' + z(x.getDate()) + ' ' + z(x.getHours()) + ':' + z(x.getMinutes()); };
+    csv('vibes-results-' + stamp() + '.csv', [['日時', 'テーブル', '回戦', '選手A', '所属A', '持ち点A', '得点A', 'イニングA', 'AVG_A', 'HR_A', '選手B', '所属B', '持ち点B', '得点B', 'イニングB', 'AVG_B', 'HR_B', '勝者', '終わり方']].concat(H.slice().sort(function (x, y) { return x.t - y.t; }).map(function (r) { var o = [d(r.t), r.table || r.m, r.round]; [0, 1].forEach(function (i) { o.push(r.n[i], r.shop ? r.shop[i] : '', r.h[i] || '', r.s[i], r.in[i], a3(r.s[i], r.in[i]), r.hr[i]); }); o.push(r.w < 0 ? '引き分け' : r.n[r.w], r.why === 'limit' ? '打切り' : r.manual ? '手で追加' : 'あがり'); return o; })));
+  });
+
+  function start() {
+    drawRoster(); pick('queen'); rosterSelects(); drawRooms(); drawHist(); ROOMS.forEach(function (r) { open(r.m); });
+    var t = 1; try { t = +sessionStorage.getItem('vibes-lab-tab') || 1; } catch (e) {} tab(t);
+    window.addEventListener('online', function () { ROOMS.forEach(function (r) { open(r.m); }); });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) ROOMS.forEach(function (r) { open(r.m); }); });
+  }
+  try { if (sessionStorage.getItem('vibes-lab-admin') === '1') unlock(); } catch (e) {}
 })();
 </script>
 </body>

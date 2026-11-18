@@ -164,6 +164,7 @@ button:active{transform:scale(.97)}
   </div></details>
 </div>
 <div class="dlg" id="dlg" hidden><div><b class="h">スコアとイニングを、0に戻しますか？</b><p>選手の名前と持ち点は残ります。配信とモニターの画面も、すぐに0になります。</p><nav><button class="no" type="button" data-act="dno">やめる</button><button class="ok" type="button" data-act="dok">0に戻す</button></nav></div></div>
+<div class="dlg" id="asg" hidden><div><b class="h">運営本部から、次の対戦が届きました</b><div class="win" id="asgT"></div><p>切り替えると、いまのスコアは0に戻ります。試合の途中なら「あとで」を押してください。</p><nav><button class="no" type="button" data-act="asgno">あとで（いまの試合を続ける）</button><button class="ye" type="button" data-act="asgok">この対戦に切り替える</button></nav></div></div>
 <div class="dlg" id="fin" hidden><div><b class="h">試合終了</b><div class="win" data-o="win"></div><table class="res" id="resT"></table><p data-o="why"></p><nav><button class="no" type="button" data-act="undo">結果を取り消して、試合に戻る</button><button class="ye" type="button" data-act="newgame">次の試合へ（0に戻す）</button></nav></div></div>
 <script>
 (function () {
@@ -177,14 +178,17 @@ button:active{transform:scale(.97)}
   var match = clean(qs('match')) || 'test';
   var CFG0 = { id: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt' };
   function cfgOf(o) { var c = {}, k; for (k in CFG0) c[k] = CFG0[k]; if (o) { c.id = String(o.id || ''); if (/^(3c|pocket|free)$/.test(o.mode)) c.mode = o.mode; c.limit = Math.max(0, Math.min(200, o.limit | 0)); c.back = !!o.back; c.clk = [0, 30, 35, 40].indexOf(o.clk | 0) >= 0 ? o.clk | 0 : 0; c.warn = o.warn !== false; c.to = Math.max(0, Math.min(3, o.to | 0)); c.stats = o.stats !== false; if (/^(alt|win|manual)$/.test(o.brk)) c.brk = o.brk; } return c; }
-  var custom = false, KEY = 'vibes-event-score:' + match, S = null, ws = null, tries = 0, timer = null;
-  function blank() { return { type: 'state', v: 2, m: match, title: 'Queen Cup 2026-2027', round: '', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0, to: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0, to: 0 }], cfg: cfgOf(null), over: null, rep: false, ck: null, t: 0 }; }
+  var custom = false, KEY = 'vibes-event-score:' + match, LKEY = 'vibes-event-log:' + match, S = null, ws = null, tries = 0, timer = null, LOG = [], PEND = null;
+  function gid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  try { LOG = JSON.parse(localStorage.getItem(LKEY) || '[]') || []; if (!Array.isArray(LOG)) LOG = []; } catch (e) { LOG = []; }
+  function logSave() { LOG = LOG.slice(-80); try { localStorage.setItem(LKEY, JSON.stringify(LOG)); } catch (e) {} }
+  function blank() { return { type: 'state', v: 2, m: match, title: 'Queen Cup 2026-2027', round: '', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0, to: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0, to: 0 }], cfg: cfgOf(null), over: null, rep: false, ck: null, gid: gid(), t: 0 }; }
   var P = function () { return S.cfg.mode === 'pocket'; };
   /* innings a player has had so far (the second player has not yet played in the current inning while the first is at the table) */
   function inns(i) { return i === 0 ? S.inn : (S.turn === 1 ? S.inn : S.inn - 1); }
   function avg(i) { var n = inns(i); return n > 0 ? (S.p[i].s / n).toFixed(3) : '-'; }
   function endRun() { S.p.forEach(function (p) { p.run = 0; p.hb = p.hr | 0; }); }
-  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.to = p.to | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); if (!o.title) o.title = 'Queen Cup 2026-2027'; o.round = String(o.round || '').slice(0, 12); o.cfg = cfgOf(o.cfg); o.over = o.over && typeof o.over.w === 'number' ? o.over : null; o.rep = !!o.rep; o.v = 2; return o; }
+  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.to = p.to | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); if (!o.title) o.title = 'Queen Cup 2026-2027'; o.round = String(o.round || '').slice(0, 12); o.cfg = cfgOf(o.cfg); o.over = o.over && typeof o.over.w === 'number' ? o.over : null; o.rep = !!o.rep; o.v = 2; if (!o.gid) o.gid = gid(); return o; }
   function valid(o) { return o && o.type === 'state' && o.p && o.p.length === 2 && typeof o.inn === 'number'; }
   try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (valid(j)) S = fix(j); } catch (e) {}
   var fresh = !S; if (!S) S = blank();
@@ -196,6 +200,7 @@ button:active{transform:scale(.97)}
     if (inCfg.title) S.title = String(inCfg.title).slice(0, 24);
     if (inCfg.h) [0, 1].forEach(function (i) { if (inCfg.h[i] != null) S.p[i].h = Math.max(0, Math.min(999, inCfg.h[i] | 0)); });
     if (inCfg.n) [0, 1].forEach(function (i) { if (inCfg.n[i]) S.p[i].n = String(inCfg.n[i]).slice(0, 16); });
+    if (typeof inCfg.round === 'string') S.round = inCfg.round.slice(0, 12);
     S.ck = null; S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
   }
   /* ---- shot clock: {left: ms, run: bool, t: when left was true}. The display pages count down by themselves from the last message ---- */
@@ -204,7 +209,13 @@ button:active{transform:scale(.97)}
   var lastBeep = 99, AC = null;
   function beep(f, d) { if (!S.cfg.warn) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); var o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f; g.gain.value = 0.25; o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + d); } catch (e) {} }
   function reached(i) { return S.p[i].h > 0 && S.p[i].s >= S.p[i].h; }
-  function finish(w, why) { S.over = { w: w, why: why }; if (S.ck) ckSet(ckLeft(), false); }
+  /* every finished game is kept on this device and travels with the score, so the organiser's panel can collect results whenever it is opened */
+  function finish(w, why) {
+    S.over = { w: w, why: why }; if (S.ck) ckSet(ckLeft(), false);
+    LOG = LOG.filter(function (r) { return r.gid !== S.gid; });
+    LOG.push({ gid: S.gid, t: Date.now(), m: match, title: S.title, round: S.round, mode: S.cfg.mode, n: [S.p[0].n, S.p[1].n], h: [S.p[0].h, S.p[1].h], s: [S.p[0].s, S.p[1].s], in: [Math.max(0, inns(0)), Math.max(0, inns(1))], hr: [S.p[0].hr | 0, S.p[1].hr | 0], w: w, why: why }); logSave();
+  }
+  function unfinish() { LOG = LOG.filter(function (r) { return r.gid !== S.gid; }); logSave(); S.over = null; }
   /* called after a point is added by player i */
   function check(i) {
     if (!reached(i)) return;
@@ -233,7 +244,7 @@ button:active{transform:scale(.97)}
       check(i);
     } else if (S.rep && !reached(0)) S.rep = false;
   }
-  function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.ck = null; }
+  function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.ck = null; S.gid = gid(); }
   /* ---- drawing: every element marked data-o="key" gets the text for that key (both layouts at once) ---- */
   function put(k, v) { $$('[data-o="' + k + '"]').forEach(function (e) { if (e.textContent !== String(v)) e.textContent = v; }); }
   function show(sel, on) { $$(sel).forEach(function (e) { e.hidden = !on; }); }
@@ -281,7 +292,7 @@ button:active{transform:scale(.97)}
     if (run && !force) { if (sec <= 10 && sec < lastBeep && sec > 0) { lastBeep = sec; beep(880, 0.08); } if (l <= 0 && lastBeep > 0) { lastBeep = 0; beep(440, 0.9); S.ck = { left: 0, run: false, t: Date.now() }; save(); } }
   }
   setInterval(function () { tick(false); }, 200);
-  function snap() { var o = JSON.parse(JSON.stringify(S)); [0, 1].forEach(function (i) { o.p[i].avg = avg(i); o.p[i].in = Math.max(0, inns(i)); }); if (o.ck) { o.ck.left = ckLeft(); o.ck.t = Date.now(); } return o; }
+  function snap() { var o = JSON.parse(JSON.stringify(S)); [0, 1].forEach(function (i) { o.p[i].avg = avg(i); o.p[i].in = Math.max(0, inns(i)); }); if (o.ck) { o.ck.left = ckLeft(); o.ck.t = Date.now(); } o.log = LOG.slice(-25); return o; }
   function push() { if (ws && ws.readyState === 1) { try { ws.send(JSON.stringify(snap())); } catch (e) {} } }
   function store() { S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
   function save() { store(); draw(); push(); }
@@ -290,7 +301,7 @@ button:active{transform:scale(.97)}
   function connect() {
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=display'); } catch (e) { status(false); return; }
     var ping; ws.onopen = function () { tries = 0; status(true); push(); ping = setInterval(function () { if (ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'hello') push(); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'hello') push(); else if (m.type === 'assign' && m.m === match) assign(m); };
     ws.onclose = function () { clearInterval(ping); status(false); clearTimeout(timer); timer = setTimeout(connect, Math.min(8000, 500 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
@@ -299,9 +310,16 @@ button:active{transform:scale(.97)}
     if (!fresh) { takeCfg(); draw(); return connect(); }
     var w, done = false, go = function () { if (done) return; done = true; try { w.close(); } catch (e) {} takeCfg(); draw(); connect(); };
     try { w = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=remote'); } catch (e) { return go(); }
-    w.onmessage = function (ev) { var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (valid(m) && m.m === match) { S = fix(m); if (S.ck) S.ck.t = Date.now(); store(); go(); } };
+    w.onmessage = function (ev) { var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (valid(m) && m.m === match) { if (Array.isArray(m.log) && !LOG.length) { LOG = m.log; logSave(); } delete m.log; S = fix(m); if (S.ck) S.ck.t = Date.now(); store(); go(); } };
     w.onerror = go; w.onclose = go; setTimeout(go, 1500);
   }
+  /* the next pairing sent from the organiser's panel: taken at once when the table is idle (0-0 in the first inning, or a finished game); otherwise the operator decides */
+  function idle() { return !!S.over || (S.p[0].s === 0 && S.p[1].s === 0 && S.inn === 1 && S.turn === 0); }
+  function applyAssign(a) {
+    newGame(); [0, 1].forEach(function (i) { if (a.n && a.n[i]) S.p[i].n = String(a.n[i]).slice(0, 16); if (a.h && a.h[i] != null && a.h[i] !== '') S.p[i].h = Math.max(0, Math.min(999, a.h[i] | 0)); });
+    if (a.round != null) { S.round = String(a.round).slice(0, 12); custom = false; } PEND = null; $('asg').hidden = true; save();
+  }
+  function assign(a) { if (idle()) return applyAssign(a); PEND = a; $('asgT').textContent = (a.n ? a.n[0] + '　対　' + a.n[1] : '') + (a.round ? '（' + a.round + '）' : ''); $('asg').hidden = false; }
   /* ---- actions ---- */
   document.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b || b.disabled) return; var d = b.dataset, who = function (v) { return v === 't' ? S.turn : +v; };
@@ -315,7 +333,9 @@ button:active{transform:scale(.97)}
     else if (d.act === 'reset') $('dlg').hidden = false;
     else if (d.act === 'dno') $('dlg').hidden = true;
     else if (d.act === 'dok' || d.act === 'newgame') { newGame(); $('dlg').hidden = true; save(); }
-    else if (d.act === 'undo') { S.over = null; save(); }
+    else if (d.act === 'undo') { unfinish(); save(); }
+    else if (d.act === 'asgno') { PEND = null; $('asg').hidden = true; }
+    else if (d.act === 'asgok') { if (PEND) applyAssign(PEND); }
   });
   document.addEventListener('input', function (e) {
     var el = e.target, f = el.getAttribute && el.getAttribute('data-f'); if (!f) return; var v = el.value;
