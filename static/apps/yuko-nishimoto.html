@@ -51,8 +51,8 @@ section{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-di
 .hg{display:flex;align-items:flex-start;gap:12px;margin-top:14px;text-decoration:none}
 .hg .tp{font-size:14px;letter-spacing:.08em;flex:none;margin-top:3px}
 .hgl{display:flex;flex-direction:column;gap:4px;min-width:0;border-left:3px solid var(--p);padding-left:10px}
-.hgl>span{display:grid;grid-template-columns:58px minmax(0,1fr);gap:8px;font-size:12.5px;line-height:1.5}
-.hgl i{font-style:normal;font-weight:800;color:#BDBDBD}.hgl b{font-weight:900}
+.hgl>span{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px;font-size:12.5px;line-height:1.5}
+.hgl i{font-style:normal;font-weight:800;color:#BDBDBD;white-space:nowrap}.hgl b{font-weight:900}
 .bd{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}
 .bd div{padding:10px 8px 9px;display:flex;flex-direction:column;gap:4px;min-width:0;box-shadow:4px 5px 0 rgba(255,255,255,.14)}
 .bd div:nth-child(1){background:var(--p);transform:rotate(-2deg)}.bd div:nth-child(2){background:var(--l);color:var(--k);transform:rotate(1.4deg)}.bd div:nth-child(3){background:var(--pa);color:var(--k);transform:rotate(-1deg)}
@@ -97,7 +97,7 @@ section{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-di
 .gr h3 em{font-style:normal;color:var(--l)}
 .gr .jn{position:relative;font-size:17px;font-weight:900;line-height:1.5}
 .gr dl{position:relative;margin-top:14px;border-top:2px dashed #4A4A4A}
-.gr dl div{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:2px dashed #4A4A4A;font-size:13px;line-height:1.5}
+.gr dl div{display:grid;grid-template-columns:5.4em minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:2px dashed #4A4A4A;font-size:13px;line-height:1.5}
 .gr dt{font-weight:900;color:#BDBDBD}.gr dd{font-weight:900}
 .gr .tg{position:relative;display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;font-size:13px;letter-spacing:.06em}
 /* 4 world */
@@ -105,7 +105,7 @@ section{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-di
 #world h2{font-size:clamp(58px,18.5vw,116px);display:flex;flex-direction:column;align-items:flex-start;gap:6px}
 #world h2 .c{color:var(--p)}
 .rows{display:flex;flex-direction:column;margin-top:24px}
-.rows div{display:grid;grid-template-columns:78px minmax(0,1fr);gap:12px;align-items:start;padding:13px 0;border-top:2px dashed #3D3D3D}
+.rows div{display:grid;grid-template-columns:5em minmax(0,1fr);gap:12px;align-items:start;padding:13px 0;border-top:2px dashed #3D3D3D}
 .rows .y{font:400 34px/.9 Anton,sans-serif;color:var(--l)}.rows .y small{display:block;font:900 10px/1.6 "Hiragino Sans","Noto Sans JP",sans-serif;color:#BDBDBD;letter-spacing:.08em}
 .rows b{display:block;font-size:14.5px;font-weight:900;line-height:1.5}
 .rows span{font-size:12px;font-weight:700;color:#C9C9C9}
@@ -117,8 +117,8 @@ section{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-di
 h3.sub{font-size:15px;font-weight:900;margin:28px 0 12px}
 h3.sub .tp{font-size:15px}
 .tl{display:flex;flex-direction:column;gap:6px}
-.tl div{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--k);color:var(--w);padding:9px 12px}
-.tl .y{font:400 30px/1 Anton,sans-serif;color:var(--l)}
+.tl div{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--k);color:var(--w);padding:9px 12px}
+.tl .y{font:400 30px/1 Anton,sans-serif;color:var(--l);min-width:2.05em;white-space:nowrap}
 .tl b{font-size:13.5px;font-weight:900;line-height:1.4}.tl b small{display:block;font-size:11px;font-weight:700;color:#C9C9C9}
 .tl .v{font:400 22px/1 Anton,sans-serif;background:var(--p);color:var(--w);padding:5px 8px;white-space:nowrap;transform:rotate(-3deg)}
 .tl .x{background:transparent;color:var(--k);border:3px solid var(--k)}.tl .x .y{color:var(--k)}.tl .x b small{color:#27300A}.tl .x .v{background:var(--k);font:900 12px/1.6 "Hiragino Sans","Noto Sans JP",sans-serif}
@@ -153,7 +153,7 @@ h3.sub .tp{font-size:15px}
     <span class="tp l s en" style="font-size:15px;letter-spacing:.08em">JPBF / ADAM JAPAN PRO</span>
     <h1 class="en"><span>YUKO</span><span class="c">NISHI</span><span class="c">MOTO</span></h1>
     <p class="q en"><span class="tp l">THE ABSOLUTE QUEEN</span><span class="tp p r">OF 3-CUSHION.</span></p>
-    <p class="nm"><b>西本 優子</b><small>JPBF所属・アダムジャパン契約プロ（2006年プロ入り）<span style="white-space:nowrap">／ 東京都出身</span></small></p>
+    <p class="nm"><b>西本 優子</b><small>JPBF所属・アダムジャパン契約プロ<span style="white-space:nowrap">（2006年プロ入り）</span><span style="white-space:nowrap">／ 東京都出身</span></small></p>
     <a class="hg" href="#gear" aria-label="使用用具。くわしくは使用用具の章へ"><span class="tp l s en">GEAR</span><span class="hgl"><span><i>キュー</i><b>ADAM MUSASHI 雁木（西本優子モデル）</b></span><span><i>シャフト</i><b>3C GRASP -藍-（AI）</b></span></span></a>
     <a class="igl" href="https://www.instagram.com/yuko.nishimoto.10/" target="_blank" rel="noopener" aria-label="西本優子プロのInstagram @yuko.nishimoto.10"><svg class="ig" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor" stroke="none"/></svg><span><small>Instagram</small><b>@yuko.nishimoto.10</b></span></a>
     <div class="bd">
@@ -229,7 +229,7 @@ h3.sub .tp{font-size:15px}
     <div class="rows">
       <div><span class="y">2012<small>TOKYO</small></span><p><b>第4回 世界レディース3C選手権</b><span>日本・東京</span><br><span class="tp w s">準優勝</span></p></div>
       <div><span class="y">2014<small>SINOP</small></span><p><b>第5回 世界レディース3C選手権</b><span>トルコ・シノップ</span><br><span class="tp w s">準優勝</span></p></div>
-      <div><span class="y">2022<small>WORLD</small></span><p><b>第10回 世界レディース3C選手権</b><br><span class="tp l s">3位タイ</span></p></div>
+      <div><span class="y">2022<small>WORLD</small></span><p><b>第10回 世界レディース3C選手権</b><span class="tp l s">3位タイ</span></p></div>
       <div><span class="y">2023<small>JUL / ANKARA</small></span><p><b>WCBSチャンピオンシップ</b><span>トルコ・アンカラ ／ アジアB代表</span><br><span class="tp p s">団体戦 優勝</span></p></div>
       <div><span class="y">2023<small>SEP / ANKARA</small></span><p><b>第11回 世界レディース3C選手権</b><span>トルコ・アンカラ</span><br><span class="tp w s">準優勝</span></p></div>
       <div><span class="y">2023<small>NOV / LAUSANNE</small></span><p><b>ローザンヌ・ビリヤードマスターズ 女子部門</b><span>スイス ／ アジア枠の招待選手</span><br><span class="tp l s">出場</span></p></div>
@@ -286,5 +286,24 @@ h3.sub .tp{font-size:15px}
       使用用具は2026年11月時点の情報です。まちがいにお気づきの方は、公式LINEでお知らせください。<br>このページは VIBES BILLIARDS が制作した紹介ページです。</p>
   </div>
 </section>
+<script>
+/* Some phones enlarge all text (system font size). Shrink any big line that no longer fits its box. */
+(function(){
+  var Q='h1,h2,.bd b,.gr h3,.sc b,.ln b,.big .n,.tl .y,.op .y,.rows .y,.hd';
+  function fit(){
+    document.querySelectorAll(Q).forEach(function(e){
+      e.style.fontSize='';
+      for(var i=0;i<6;i++){
+        var c=e.clientWidth,w=e.scrollWidth;
+        if(!c||w<=c+1)break;
+        e.style.fontSize=(parseFloat(getComputedStyle(e).fontSize)*c/w*.97)+'px';
+      }
+    });
+  }
+  window.__fit=fit;fit();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+  addEventListener('load',fit);addEventListener('resize',fit);
+})();
+</script>
 </body>
 </html>
