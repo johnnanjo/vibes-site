@@ -15,14 +15,14 @@
 <link rel="icon" href="/img/favicon-64.png">
 <!--
   ============ 写真の差し替え方（運営者向け・ページには表示されません） ============
-  下の PHOTOS の3つに、写真のアドレスを入れるだけで差し替わります（空のままなら、図形のアートを表示します）。
-    hero     … いちばん上の大きな写真（縦長がおすすめ。人物が中央〜右寄り）
-    play     … 「BEST GAME」の写真（構えやショットの横長〜正方形）
-    portrait … 「WORLD」の写真（表情がわかる縦長）
-  写真は自動でモノクロ・高コントラストになり、イエローの図形と重なります。
-  置き場所の例：/img/players/yuko-nishimoto-hero.jpg（static/img/players/ に置く）。ご本人・撮影者の許可がある写真だけを使ってください。
+  下の PHOTOS の3つに、画像のアドレスを入れると差し替わります（空にすると、図形のアートを表示します）。
+    hero     … いちばん上（名前の右上）
+    play     … 「THE BEST GAME」の上
+    portrait … 「WORLD」の右上
+  いまは「黒いシルエット」の画像（背景が透明のPNG。static/img/players/yuko-nishimoto-*.png）を入れています（2026-11-18 運営者の指定）。
+  差し替えるときも、人物を切り抜いた黒一色・背景透明のPNGにしてください。白（WORLD は黄）の板の上に、全体が収まるように表示されます。
 -->
-<script>var PHOTOS = { hero: '/img/players/yuko-nishimoto-hero.jpg', play: '/img/players/yuko-nishimoto-play.jpg', portrait: '/img/players/yuko-nishimoto-portrait.jpg' };</script>
+<script>var PHOTOS = { hero: '/img/players/yuko-nishimoto-hero.png', play: '/img/players/yuko-nishimoto-play.png', portrait: '/img/players/yuko-nishimoto-portrait.png' };</script>
 <style>
 @font-face{font-family:Anton;src:url(/fonts/anton-latin-400-normal.woff2) format("woff2");font-display:swap}
 :root{--y:#FACC15;--k:#0A0A0A;--w:#FFFFFF;--g:max(20px,env(safe-area-inset-left))}
@@ -41,9 +41,12 @@ section{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-di
 .no b{font:400 30px/1 Anton,sans-serif}
 /* photo slots: a picture when PHOTOS has one, a drawn composition when not */
 .ph{position:relative;overflow:hidden;background:var(--k)}
-.ph[data-slot=portrait] img{object-position:62% 30%}.ph[data-slot=play] img{object-position:55% 30%}.ph[data-slot=hero] img{object-position:50% 20%}
-.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(100%) contrast(135%) brightness(105%)}
-.ph.has::after{content:"";position:absolute;inset:0;background:linear-gradient(200deg,transparent 40%,var(--y) 140%);mix-blend-mode:multiply;pointer-events:none}
+/* the pictures are black silhouettes (transparent PNG): shown whole on a light panel */
+.ph.has{background:var(--w)}#world .ph.has{background:var(--y)}
+.ph img{position:absolute;object-fit:contain}
+#hero .ph img{right:0;top:9%;width:74%;height:52%;object-position:100% 0}
+#best .ph img{left:8%;right:0;bottom:8%;top:6%;width:92%;height:86%;object-position:50% 100%}
+#world .ph img{right:4%;bottom:10%;width:62%;height:80%;object-position:100% 100%}
 .ph.has svg{display:none}
 .ph svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 /* 1 hero */
@@ -54,7 +57,7 @@ section{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-di
 #hero .in{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;padding:0 var(--g) max(26px,env(safe-area-inset-bottom));max-width:560px;width:100%;margin:0 auto}
 #hero h1{font-size:clamp(84px,27.5vw,170px);color:var(--k)}
 #hero h1 span{display:block}
-#hero h1 .o{color:var(--w);-webkit-text-stroke:2px var(--k);paint-order:stroke fill;text-shadow:5px 5px 0 var(--k)}
+#hero h1 .o{color:var(--k);text-shadow:4px 4px 0 var(--w)}
 #hero .cat{white-space:nowrap;font:400 clamp(16px,5.2vw,30px)/1 Anton,sans-serif;background:var(--k);color:var(--y);padding:8px 12px;align-self:flex-start;letter-spacing:.03em}
 #hero .jp{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;background:var(--y);align-self:flex-start;padding:4px 10px 4px 0}
 #hero .jp b{font-size:30px;font-weight:900;letter-spacing:.12em;line-height:1.2}
@@ -126,7 +129,7 @@ h3.sub::after{content:"";flex:1;height:4px;background:currentColor}
   #hero .ph{animation:cut .9s cubic-bezier(.2,.8,.2,1) both}
   @keyframes up{from{transform:translateY(40%);opacity:0}}@keyframes cut{from{clip-path:polygon(100% 0,100% 0,100% 100%,100% 100%)}}
 }
-@media (min-width:760px){.wrap,#hero .in{max-width:640px}#hero .ph{inset:0 0 0 52%;clip-path:polygon(24% 0,100% 0,100% 100%,0 100%)}}
+@media (min-width:760px){.wrap,#hero .in{max-width:640px}#hero .ph{inset:0 0 0 52%;clip-path:polygon(24% 0,100% 0,100% 100%,0 100%)}#hero .ph img{right:4%;top:auto;bottom:8%;width:80%;height:70%;object-position:100% 100%}}
 </style>
 </head>
 <body>
