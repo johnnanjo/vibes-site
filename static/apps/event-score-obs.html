@@ -3,33 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>イベント用 配信スコア表示｜VIBES BILLIARDS</title>
+<title>スコア表示｜VIBES DIGITAL LAB</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/img/favicon-64.png">
 <style>
-/* Event scoreboard, stream side, for OBS (browser source 1920x1080, transparent ground, no controls).
-   Default: one wide band across the top of the picture (title, round, inning, both players, sponsors).  ?layout=card the earlier small card in a corner.
-   ?match=<id> the same id as /event-score-pad   ?scale=1.2 bigger or smaller   ?pos=bl band at the bottom (card: tr|bl|br corners)   ?bg=1 dark ground for checking */
+/* Event scoreboard, showing side (no controls). ?match=<id> the same id as /event-score-pad.
+   Default: one wide band across the top of the picture for OBS (browser source 1920x1080, transparent ground).  ?pos=bl band at the bottom.
+   ?layout=monitor the whole screen for a monitor in the room (dark ground, very large figures).  ?layout=card the earlier small card (corners: ?pos=tr|bl|br).
+   ?scale=1.2 bigger or smaller   ?bg=1 dark ground for checking   ?sponsor=0 no sponsors   ?result=0 no result panel at the end of a match */
 @font-face{font-family:VLNum;src:url(/fonts/vibes-num.woff2) format("woff2");font-display:swap}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;background:transparent;overflow:hidden;font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif}
 body.bg{background:#22303F}
 #card{position:fixed;left:40px;top:40px;transform-origin:0 0;width:620px;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);display:grid;grid-template-columns:118px minmax(0,1fr);grid-template-rows:auto auto auto auto}
-#card[hidden]{display:none}
 .hd{grid-column:1/-1;background:#0B192C;color:#fff;font-weight:900;font-size:22px;letter-spacing:.06em;padding:9px 12px 9px 18px;line-height:1.3;display:flex;align-items:center;gap:12px}
 .hd #tt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hd #rd{flex:none;background:#FFD700;color:#000;font-size:20px;letter-spacing:.04em;border-radius:8px;padding:3px 12px;line-height:1.35;white-space:nowrap}.hd #rd[hidden]{display:none}
+.hd #rd{flex:none;background:#FFD700;color:#000;font-size:20px;letter-spacing:.04em;border-radius:8px;padding:3px 12px;line-height:1.35;white-space:nowrap}
 .in{grid-row:2/4;background:#0B192C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-top:2px solid #1D3557}
-.in small{font-weight:900;font-size:19px;letter-spacing:.14em}.in b{font:400 54px/1 VLNum,system-ui,sans-serif}
-.rw{display:grid;grid-template-columns:14px minmax(0,1fr) auto auto auto;align-items:center;gap:10px;padding:0 18px 0 0;min-height:66px;color:#000}
+.in small{font-weight:900;font-size:19px;letter-spacing:.14em;white-space:nowrap}.in b{font:400 54px/1 VLNum,system-ui,sans-serif}
+.in em{font-style:normal;font-weight:900;font-size:13px;line-height:1.2;color:#FFD700;white-space:nowrap}
+.ck{display:none;background:#0B192C;color:#38BDF8;border-left:2px solid #1D3557;align-items:center;justify-content:center;padding:0 18px;font:400 52px/1 VLNum,system-ui,sans-serif;min-width:96px}
+.ck.warn{color:#FF6B6B;animation:bl .5s steps(2) infinite}.ck.stop{opacity:.55}
+@keyframes bl{50%{opacity:.25}}
+.rw{display:grid;grid-template-columns:14px minmax(0,1fr) auto auto auto auto;align-items:center;gap:10px;padding:0 18px 0 0;min-height:66px;color:#000}
 .rw.a{background:#fff}.rw.b{background:#FFD700}
 .rw i{align-self:stretch;background:transparent}.rw.on i{background:#E11D48}
 .rw .n{font-weight:900;font-size:27px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rw .h{font-weight:800;font-size:17px;opacity:.6;white-space:nowrap}
 .rw .x{font-weight:900;font-size:15px;letter-spacing:.06em;white-space:nowrap;background:rgba(0,0,0,.1);border-radius:8px;padding:5px 9px;line-height:1}.rw .x b{font:400 22px/1 VLNum,system-ui,sans-serif;margin-left:6px}
+.rw .o{display:flex;gap:4px}.rw .o u{width:11px;height:16px;border-radius:3px;background:#0B192C;text-decoration:none}.rw .o u.used{opacity:.18}
 .rw .s{font:400 50px/1 VLNum,system-ui,sans-serif;min-width:64px;text-align:right}
 .rw .d{display:inline-block;width:12px;height:12px;border-radius:50%;background:#E11D48;margin-right:8px;vertical-align:3px;visibility:hidden}.rw.on .d{visibility:visible}
-.sp{grid-column:1/-1;background:#0B192C;border-top:2px solid #1D3557;display:flex;align-items:center;gap:12px;padding:10px 18px}.sp[hidden]{display:none}
+.sp{grid-column:1/-1;background:#0B192C;border-top:2px solid #1D3557;display:flex;align-items:center;gap:12px;padding:10px 18px}
 .sp small{color:#fff;font-weight:900;font-size:16px;letter-spacing:.1em;white-space:nowrap;margin-right:4px}
 .sp img{display:block;height:64px;width:auto;border-radius:6px;background:#fff}
 /* wide band */
@@ -38,23 +44,59 @@ body.bar .hd{flex:0 1 auto;min-width:0;padding:0 20px 0 24px;font-size:26px;gap:
 body.bar .hd #tt{flex:0 1 auto}
 body.bar .hd #rd{font-size:22px;padding:4px 14px}
 body.bar .in{flex:none;flex-direction:row;align-items:center;gap:12px;padding:0 22px;border-top:0;border-left:2px solid #1D3557}
-body.bar .in small{font-size:20px}body.bar .in b{font-size:50px}
+body.bar .in small{font-size:20px}body.bar .in b{font-size:50px}body.bar .in em{font-size:15px}
+body.bar .ck.use{display:flex;flex:none}
 body.bar .rw{flex:1 1 0;min-width:0;min-height:0;padding-right:20px}
 body.bar .rw .n{font-size:30px}body.bar .rw .s{font-size:56px;min-width:70px}
 body.bar .sp{flex:none;border-top:0;padding:0 20px;gap:10px}
 body.bar .sp img{height:66px}
+/* whole screen for a monitor in the room */
+body.mon{background:#060D18}
+body.mon #card{left:0;top:0;width:100vw;height:100vh;border-radius:0;box-shadow:none;display:grid;grid-template-columns:minmax(0,1fr) 20vw minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;background:#060D18;gap:1.4vh 1vw;padding:1.6vh 1.2vw}
+body.mon .hd{grid-column:1/-1;background:transparent;font-size:5vh;padding:.4vh 1vw;gap:1.4vw}
+body.mon .hd #rd{font-size:4vh;padding:.6vh 1.6vw;border-radius:1.2vh}
+body.mon .in{grid-column:2;grid-row:2;background:#0B192C;border:0;border-radius:3vh;gap:1vh;padding:1vh}
+body.mon .in small{font-size:3.4vh}body.mon .in b{font-size:19vh}body.mon .in em{font-size:3.6vh}
+body.mon .ck.use{display:flex;grid-column:2;grid-row:2;align-self:end;justify-self:stretch;border:0;border-radius:0 0 3vh 3vh;background:#12284A;font-size:13vh;padding:1.4vh 0;min-width:0}
+body.mon #card.hasck .in{padding-bottom:20vh}
+body.mon .rw{grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2vh;padding:2vh 1vw;border-radius:3vh;border:1vh solid transparent;min-width:0}
+body.mon .rw.a{grid-column:1}body.mon .rw.b{grid-column:3}
+body.mon .rw.on{border-color:#E11D48}
+body.mon .rw i{display:none}
+body.mon .rw .n{font-size:7.4vh;max-width:100%;order:1}
+body.mon .rw .d{width:2.4vh;height:2.4vh;margin-right:1.2vw;vertical-align:.8vh}
+body.mon .rw .s{font-size:44vh;line-height:.9;min-width:0;text-align:center;order:2}
+body.mon .rw .h{font-size:4vh;order:3;opacity:.7}
+body.mon .rw .x{font-size:3vh;padding:1vh 1.4vw;border-radius:1.4vh;order:4}body.mon .rw .x b{font-size:5vh;margin-left:1vw}
+body.mon .rw .o{order:5;gap:.8vw}body.mon .rw .o u{width:1.6vw;height:3.4vh;border-radius:.6vh}
+body.mon .sp{grid-column:1/-1;background:transparent;border:0;padding:0 1vw;gap:1.2vw}
+body.mon .sp small{font-size:2.6vh}body.mon .sp img{height:8vh}
+/* result at the end of a match */
+#fin{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1100px,92vw);background:#0B192C;color:#fff;border:4px solid #FFD700;border-radius:26px;padding:26px 30px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:16px;text-align:center;z-index:5}
+#fin .t{font-weight:900;font-size:26px;letter-spacing:.2em;color:#B9C4D6}
+#fin .w{font-weight:900;font-size:52px;line-height:1.3;color:#0B192C;background:#FFD700;border-radius:16px;padding:8px 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#fin table{width:100%;border-collapse:collapse}
+#fin th{font-size:20px;font-weight:900;color:#B9C4D6;padding:6px}
+#fin td{font:400 64px/1.05 VLNum,system-ui,sans-serif;padding:12px 6px;border-top:3px solid #1D3557}
+#fin td:first-child{font:900 38px/1.3 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}
+#fin tr.win td{color:#FFD700}
+#fin .y{font-weight:800;font-size:20px;color:#B9C4D6}
+body.mon #fin{width:94vw;border-width:.8vh;border-radius:4vh;padding:4vh 3vw;gap:2.6vh}
+body.mon #fin .t{font-size:4vh}body.mon #fin .w{font-size:8.5vh;border-radius:2.4vh;padding:1.4vh 2vw}
+body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw}body.mon #fin td:first-child{font-size:6.4vh;max-width:40vw}body.mon #fin .y{font-size:3vh}
 #msg{position:fixed;left:40px;top:40px;background:#0B192C;color:#fff;font-weight:800;font-size:22px;line-height:1.7;padding:16px 20px;border-radius:14px;max-width:900px}
-#msg[hidden]{display:none}
 </style>
 </head>
 <body>
 <div id="card" hidden>
   <div class="hd"><span id="tt">Queen Cup 2026-2027</span><span id="rd" hidden></span></div>
-  <div class="in"><small>INN</small><b id="inn">1</b></div>
-  <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="x">HR<b id="xA">0</b></span><span class="s" id="sA">0</span></div>
-  <div class="rw b" id="rB"><i></i><span class="n"><span class="d"></span><span id="nB">PLAYER B</span></span><span class="h" id="hB"></span><span class="x">HR<b id="xB">0</b></span><span class="s" id="sB">0</span></div>
+  <div class="in"><small id="inl">INN</small><b id="inn">1</b><em id="lim" hidden></em></div>
+  <div class="ck" id="ck"></div>
+  <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="o" id="oA"></span><span class="x" id="xwA">HR<b id="xA">0</b></span><span class="s" id="sA">0</span></div>
+  <div class="rw b" id="rB"><i></i><span class="n"><span class="d"></span><span id="nB">PLAYER B</span></span><span class="h" id="hB"></span><span class="o" id="oB"></span><span class="x" id="xwB">HR<b id="xB">0</b></span><span class="s" id="sB">0</span></div>
   <div class="sp" id="sp" hidden><small>協賛</small></div>
 </div>
+<div id="fin" hidden><div class="t">試合終了</div><div class="w" id="fw"></div><table id="ft"></table><div class="y" id="fy"></div></div>
 <div id="msg" hidden></div>
 <script>
 (function () {
@@ -65,34 +107,53 @@ body.bar .sp img{height:66px}
   function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
   var mm = /[?&]match=([^&#]+)/.exec(q), match = clean(mm ? decodeURIComponent(mm[1]) : '');
   var sc = Math.max(0.5, Math.min(3, parseFloat((/[?&]scale=([0-9.]+)/.exec(q) || [])[1]) || 1)), pos = (/[?&]pos=(tr|bl|br)/.exec(q) || [])[1] || 'tl', c = $('card');
+  var lay = (/[?&]layout=(card|monitor)/.exec(q) || [])[1] || 'bar', showRes = !/[?&]result=0/.test(q);
   if (/[?&]bg=1/.test(q)) document.body.classList.add('bg');
-  var bar = !/[?&]layout=card/.test(q);
-  c.style.transform = 'scale(' + sc + ')';
-  if (bar) { document.body.classList.add('bar'); c.style.width = (100 / sc) + 'vw'; if (pos === 'bl' || pos === 'br') { c.style.top = 'auto'; c.style.bottom = '0'; c.style.transformOrigin = '0 100%'; } }
+  if (lay === 'monitor') document.body.classList.add('mon');
+  else if (lay === 'bar') { c.style.transform = 'scale(' + sc + ')'; document.body.classList.add('bar'); c.style.width = (100 / sc) + 'vw'; if (pos === 'bl' || pos === 'br') { c.style.top = 'auto'; c.style.bottom = '0'; c.style.transformOrigin = '0 100%'; } }
   else {
+    c.style.transform = 'scale(' + sc + ')';
     if (pos === 'tr' || pos === 'br') { c.style.left = 'auto'; c.style.right = '40px'; c.style.transformOrigin = '100% ' + (pos === 'br' ? '100%' : '0'); }
     if (pos === 'bl' || pos === 'br') { c.style.top = 'auto'; c.style.bottom = '40px'; if (pos === 'bl') c.style.transformOrigin = '0 100%'; }
   }
-  /* sponsors' logos shown under the score, per event (the match id may carry a suffix such as w3c-1205-t2). Files are the ones the organiser supplied. */
+  /* sponsors' logos shown with the score, per event (the match id may carry a suffix such as w3c-1205-t2). Files are the ones the organiser supplied. */
   var SPONSORS = { 'w3c-1205': [['/img/event/w3c-1205/sp-3seconds.png', '3seconds'], ['/img/event/w3c-1205/sp-labeaute.png', 'La Beaute']] };
   Object.keys(SPONSORS).forEach(function (k) { if (match === k || match.indexOf(k + '-') === 0) { SPONSORS[k].forEach(function (s) { var i = new Image(); i.src = s[0]; i.alt = s[1]; $('sp').appendChild(i); }); $('sp').hidden = /[?&]sponsor=0/.test(q); } });
-  var KEY = 'vibes-event-obs:' + match, ws = null, tries = 0, timer = null, last = 0;
-  function draw(m) {
+  var KEY = 'vibes-event-obs:' + match, ws = null, tries = 0, timer = null, last = 0, CK = null;
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function draw(m, live) {
     if (!m || m.type !== 'state' || !m.p || m.p.length !== 2 || (m.m && m.m !== match)) return;
-    $('tt').textContent = m.title || 'Queen Cup 2026-2027'; $('rd').textContent = m.round || ''; $('rd').hidden = !m.round; $('inn').textContent = m.inn;
-    [['A', 0], ['B', 1]].forEach(function (x) { var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('x' + x[0]).textContent = p.hr | 0; $('r' + x[0]).classList.toggle('on', m.turn === x[1]); });
+    var g = m.cfg || {}, pk = g.mode === 'pocket', stats = g.stats !== false && !pk;
+    $('tt').textContent = m.title || 'Queen Cup 2026-2027'; $('rd').textContent = m.round || ''; $('rd').hidden = !m.round;
+    $('inl').textContent = pk ? 'RACK' : 'INN'; $('inn').textContent = pk ? (m.p[0].s | 0) + (m.p[1].s | 0) + 1 : m.inn;
+    var lim = g.limit | 0, le = $('lim'); le.hidden = !lim || pk; if (lim) le.textContent = m.inn >= lim ? '最終キュー' : '残り ' + (lim - m.inn);
+    [['A', 0], ['B', 1]].forEach(function (x) {
+      var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('x' + x[0]).textContent = p.hr | 0; $('xw' + x[0]).hidden = !stats;
+      $('r' + x[0]).classList.toggle('on', m.turn === x[1]);
+      var o = '', n = g.clk ? g.to | 0 : 0; for (var k = 0; k < n; k++) o += '<u' + (k < (p.to | 0) ? ' class="used"' : '') + '></u>'; $('o' + x[0]).innerHTML = o;
+    });
+    /* shot clock: counted here from the moment the message arrived, so the two devices' clocks need not agree */
+    CK = g.clk && m.ck ? { left: +m.ck.left || 0, run: !!m.ck.run && live !== false, at: Date.now() } : g.clk ? { left: g.clk * 1000, run: false, at: Date.now() } : null; $('ck').classList.toggle('use', !!g.clk); c.classList.toggle('hasck', !!g.clk); tick();
+    var f = $('fin'); f.hidden = !(m.over && showRes);
+    if (m.over) {
+      var w = m.over.w; $('fw').textContent = w < 0 ? '引き分け' : '勝者　' + m.p[w].n;
+      $('ft').innerHTML = '<tr><th></th><th>' + (pk ? 'セット' : '得点') + '</th>' + (pk ? '' : '<th>イニング</th><th>アベレージ</th><th>ハイラン</th>') + '</tr>' + [0, 1].map(function (i) { var p = m.p[i]; return '<tr' + (w === i ? ' class="win"' : '') + '><td>' + esc(p.n) + '</td><td>' + (p.s | 0) + '</td>' + (pk ? '' : '<td>' + (p.in | 0) + '</td><td>' + esc(p.avg || '-') + '</td><td>' + (p.hr | 0) + '</td>') + '</tr>'; }).join('');
+      $('fy').textContent = m.over.why === 'limit' ? '打切り ' + lim + ' キュー' : '';
+    }
     c.hidden = false; $('msg').hidden = true; try { localStorage.setItem(KEY, JSON.stringify(m)); } catch (e) {}
   }
+  function tick() { var e = $('ck'); if (!CK) { e.textContent = ''; return; } var l = Math.max(0, CK.run ? CK.left - (Date.now() - CK.at) : CK.left); e.textContent = Math.ceil(l / 1000); e.classList.toggle('warn', CK.run && l <= 10000); e.classList.toggle('stop', !CK.run); }
+  setInterval(tick, 200);
   function connect() {
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=remote'); } catch (e) { return; }
     var ping; ws.onopen = function () { tries = 0; last = Date.now(); ping = setInterval(function () { if (ws.readyState === 1) ws.send('ping'); if (Date.now() - last > 70000) { try { ws.close(); } catch (e) {} } }, 25000); };
-    ws.onmessage = function (ev) { last = Date.now(); if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } draw(m); };
+    ws.onmessage = function (ev) { last = Date.now(); if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } draw(m, true); };
     ws.onclose = function () { clearInterval(ping); clearTimeout(timer); timer = setTimeout(connect, Math.min(8000, 500 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
   if (!match) { $('msg').hidden = false; $('msg').textContent = 'アドレスの最後に、試合IDを付けて開いてください。例：/event-score-obs?match=w3c-1205'; return; }
-  /* the last score seen stays on screen through a reload or a short loss of connection */
-  try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (j) draw(j); } catch (e) {}
+  /* the last score seen stays on screen through a reload or a short loss of connection (a running clock is shown stopped until the next message) */
+  try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (j) draw(j, false); } catch (e) {}
   connect(); window.addEventListener('online', function () { if (!ws || ws.readyState > 1) { clearTimeout(timer); connect(); } });
 })();
 </script>

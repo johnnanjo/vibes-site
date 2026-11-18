@@ -467,6 +467,8 @@ function contentPages() {
   /* event scoreboard (hidden pages, opened only by address): tablet input + OBS overlay, kept apart by ?match=<id>; realtime through the scoreboard relay */
   put('/event-score-pad', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-score-pad.html'), 'utf8') });
   put('/event-score-obs', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-score-obs.html'), 'utf8') });
+  /* organiser's control panel for the event scoreboard (hidden page, simple 4-digit lock) */
+  put('/pages/digital-lab-admin', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/digital-lab-admin.html'), 'utf8') });
   put('/pages/count-overlay', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-overlay.html'), 'utf8') });
   put('/pages/count-cam', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-cam.html'), 'utf8') });
   put('/pages/count-live', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-live.html'), 'utf8') });
@@ -591,7 +593,7 @@ const urls = [];
 for (const [url, v] of out) {
   const html = v.raw ?? v.html;
   write(DIST, url, html); n++;
-  if (url !== '/404.html' && !/^\/pages\/count(-3c|-remote|-pocket|-cam|-live|-tour|-overlay)?$/.test(url) && !/^\/event-score-/.test(url)) urls.push(url); /* count-3c: in private testing, not listed */
+  if (url !== '/404.html' && !/^\/pages\/count(-3c|-remote|-pocket|-cam|-live|-tour|-overlay)?$/.test(url) && !/^\/event-score-/.test(url) && url !== '/pages/digital-lab-admin') urls.push(url); /* count-3c: in private testing, not listed */
   for (const [code, , prefix] of LANGS.slice(1)) { write(DIST, prefix + (url === '/' ? '/' : url), localize(html, code, prefix)); n++; }
 }
 const sm = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${SITE}${encodeURI(decodeURI(u))}</loc></url>`).join('\n')}\n</urlset>`;

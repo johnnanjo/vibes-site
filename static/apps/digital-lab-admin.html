@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ja" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>管理者画面｜VIBES DIGITAL LAB</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/img/favicon-64.png">
+<style>
+/* VIBES DIGITAL LAB: the organiser's control panel for the event scoreboard. Hidden page (not in menus or the sitemap).
+   Pick a ready-made setting, adjust it, and it hands out two addresses for one table: the operating screen (/event-score-pad) and the showing screen (/event-score-obs).
+   The settings travel inside the operating screen's address; nothing is stored on a server. The 4-digit lock only stops accidental use: it is not a secret. */
+@font-face{font-family:VLNum;src:url(/fonts/vibes-num.woff2) format("woff2");font-display:swap}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{background:#0B192C}
+body{margin:0;background:#0B192C;color:#fff;font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;font-weight:700;line-height:1.7;-webkit-text-size-adjust:100%}
+.w{max-width:760px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 60px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:18px}
+h1{margin:6px 0 0;font-size:24px;font-weight:900;line-height:1.35}h1 small{display:block;font-size:13px;color:#B9C4D6;font-weight:800;letter-spacing:.08em}
+h2{margin:0;font-size:18px;font-weight:900;line-height:1.4;display:flex;align-items:center;gap:10px}h2 i{flex:none;font-style:normal;width:30px;height:30px;border-radius:50%;background:#FFD700;color:#0B192C;display:grid;place-items:center;font:400 18px/1 VLNum,system-ui,sans-serif}
+p{margin:0;font-size:14px;color:#B9C4D6}
+.box{background:#12284A;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+button,input,select{font-family:inherit}
+.pre{display:grid;gap:10px}
+.pre button{appearance:none;cursor:pointer;text-align:left;border:3px solid #2B4A7A;background:#0B192C;color:#fff;border-radius:18px;padding:14px 16px;min-height:68px;display:flex;flex-direction:column;gap:2px}
+.pre button b{font-size:16.5px;font-weight:900;line-height:1.4}.pre button span{font-size:12.5px;font-weight:700;color:#B9C4D6;line-height:1.6}
+.pre button[aria-pressed=true]{border-color:#FFD700;background:#1A3560}
+.f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.f>span{font-size:13.5px;font-weight:900}
+.f small{font-size:12px;color:#B9C4D6;font-weight:700;line-height:1.6}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
+.seg.two{grid-auto-flow:row;grid-template-columns:1fr}
+.seg button{appearance:none;cursor:pointer;min-height:50px;border-radius:14px;border:2px solid #2B4A7A;background:#0B192C;color:#fff;font-weight:900;font-size:14.5px;line-height:1.35;padding:6px 4px}
+.seg button[aria-pressed=true]{background:#FFD700;border-color:#FFD700;color:#0B192C}
+input[type=text],input[type=number],input[type=tel]{width:100%;min-height:52px;border-radius:14px;border:2px solid #2B4A7A;background:#0B192C;color:#fff;font-weight:900;font-size:17px;padding:0 14px;min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.go{appearance:none;cursor:pointer;border:0;border-radius:20px;background:#FFD700;color:#0B192C;font-weight:900;font-size:19px;min-height:68px;padding:8px 14px}
+.go:active,.pre button:active,.seg button:active,.cp:active{transform:scale(.98)}
+.out{border:3px solid #FFD700}
+.url{display:block;background:#0B192C;border:2px solid #2B4A7A;border-radius:12px;padding:10px 12px;font:700 12.5px/1.6 ui-monospace,Menlo,Consolas,monospace;color:#E5EDF8;word-break:break-all;-webkit-user-select:all;user-select:all}
+.cp{appearance:none;cursor:pointer;border:2px solid #38BDF8;background:transparent;color:#BAE6FD;border-radius:14px;min-height:50px;font-weight:900;font-size:15px;padding:0 14px}
+.cp.dn{background:#38BDF8;color:#0B192C}
+.lk{display:inline-flex;align-items:center;justify-content:center;border:2px solid #2B4A7A;border-radius:14px;min-height:50px;font-weight:900;font-size:15px;color:#fff;text-decoration:none;padding:0 14px}
+.qr{background:#fff;border-radius:16px;padding:10px;width:min(240px,70vw);align-self:center}.qr svg{display:block;width:100%;height:auto}
+ol,ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px;font-size:14.5px;line-height:1.8}
+.gate{min-height:80vh;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.gate input{font:400 44px/1 VLNum,system-ui,sans-serif;text-align:center;letter-spacing:.3em;min-height:84px}
+.err{color:#FFD1D1;font-weight:900;font-size:14px}
+.sum{font-size:13.5px;color:#fff;background:#0B192C;border-radius:14px;padding:12px 14px;line-height:1.9}
+details{background:#0B192C;border-radius:14px;padding:2px 14px}summary{cursor:pointer;font-weight:900;font-size:14.5px;padding:12px 0}
+details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
+@media(min-width:620px){.pre{grid-template-columns:1fr 1fr}.seg.two{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="w gate" id="gate">
+  <h1><small>VIBES DIGITAL LAB</small>管理者画面</h1>
+  <p>4けたのパスコードを入れてください。</p>
+  <input id="pin" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="パスコード">
+  <button class="go" type="button" id="pgo">ひらく</button>
+  <p class="err" id="perr" hidden>パスコードがちがいます。</p>
+</div>
+<div class="w" id="app" hidden>
+  <h1><small>VIBES DIGITAL LAB</small>管理者画面</h1>
+  <p>試合の形式をえらんで、操作する画面と、表示する画面のアドレスを出します。台ごとに1回、この画面で設定します。</p>
+
+  <section class="box"><h2><i>1</i>試合の形式をえらぶ</h2><div class="pre" id="pre"></div></section>
+
+  <section class="box"><h2><i>2</i>こまかい設定</h2>
+    <div class="f"><span>操作のしかた</span><div class="seg two" data-k="ctl"><button type="button" data-v="pad">相手レフリー<br>台のわきのタブレットで操作</button><button type="button" data-v="phone">専属の審判<br>スマホで操作（QRコード）</button></div></div>
+    <div class="f"><span>種目</span><div class="seg" data-k="mode"><button type="button" data-v="3c">スリークッション</button><button type="button" data-v="pocket">ポケット</button><button type="button" data-v="free">フリープレイ</button></div></div>
+    <div class="f" id="fH"><span id="lH">試合点数（持ち点）</span><div class="two"><label class="f"><small>選手A（白球）</small><input id="h0" type="number" inputmode="numeric" min="0" max="999"></label><label class="f"><small>選手B（黄球）</small><input id="h1" type="number" inputmode="numeric" min="0" max="999"></label></div>
+      <div class="seg" id="quick"><button type="button" data-h="8">8点</button><button type="button" data-h="9">9点</button><button type="button" data-h="10">10点</button></div><small id="sH">0にすると、あがりの判定をしません。試合ごとの点数は、操作する画面でも変えられます。</small></div>
+    <div class="f" data-3c><span>裏撞き（先攻があがったあと、後攻がもう1回撞く）</span><div class="seg" data-k="back"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
+    <div class="f" data-3c><span>打切りキュー数（イニングの上限）</span><div class="seg" data-k="limit"><button type="button" data-v="0">なし</button><button type="button" data-v="20">20</button><button type="button" data-v="25">25</button><button type="button" data-v="30">30</button><button type="button" data-v="35">35</button></div><input id="limit" type="number" inputmode="numeric" min="0" max="200" aria-label="打切りキュー数を数字で入れる"><small>ほかの数字は、上のらんに直接入れます。残りのキュー数が画面に出て、上限で試合終了になります。</small></div>
+    <div class="f"><span>ショットクロック</span><div class="seg" data-k="clk"><button type="button" data-v="0">なし</button><button type="button" data-v="30">30秒</button><button type="button" data-v="35">35秒</button><button type="button" data-v="40">40秒</button></div></div>
+    <div class="f" data-clk><span>残り10秒の警告（音と点滅）</span><div class="seg" data-k="warn"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
+    <div class="f" data-clk><span id="lTo">タイムアウトの枚数（1人あたり）</span><div class="seg" data-k="to"><button type="button" data-v="0">0</button><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button></div></div>
+    <div class="f" data-3c><span>アベレージ・ハイランの表示</span><div class="seg" data-k="stats"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div><small>試合終了の画面には、どちらの設定でも出ます。</small></div>
+    <div class="f" data-pk><span>ブレイクの順番</span><div class="seg" data-k="brk"><button type="button" data-v="alt">交互</button><button type="button" data-v="win">勝った人</button><button type="button" data-v="manual">手で切り替え</button></div></div>
+    <div class="f"><span>表示する画面の形</span><div class="seg two" data-k="lay"><button type="button" data-v="monitor">会場のモニター用<br>（全画面・大きな文字）</button><button type="button" data-v="top">配信（OBS）用<br>画面の上の帯</button><button type="button" data-v="bottom">配信（OBS）用<br>画面の下の帯</button></div><small>どれをえらんでも、3つのアドレスはすべて出します。</small></div>
+  </section>
+
+  <section class="box"><h2><i>3</i>台と大会の名前</h2>
+    <label class="f"><span>試合ID（台ごとの名前）</span><input id="match" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40"><small>半角の英字・数字・ハイフン。操作する画面と表示する画面は、同じ試合IDでつながります。台が2つあるときは、台ごとに別の試合IDにします。</small></label>
+    <label class="f"><span>表示名（大会名）</span><input id="title" type="text" maxlength="24" autocomplete="off"></label>
+    <div class="two"><label class="f"><span>選手Aの名前（あとからでも可）</span><input id="n0" type="text" maxlength="16" autocomplete="off"></label><label class="f"><span>選手Bの名前（あとからでも可）</span><input id="n1" type="text" maxlength="16" autocomplete="off"></label></div>
+  </section>
+
+  <button class="go" type="button" id="issue">設定を反映して、アドレスとQRコードを出す</button>
+
+  <section class="box out" id="out" hidden>
+    <h2><i>4</i>発行したアドレス</h2>
+    <div class="sum" id="sum"></div>
+    <div class="f"><span id="lC">操作する画面（タブレット・スマホ）</span><p id="pC"></p><div class="qr" id="qC"></div><code class="url" id="uC"></code><div class="two"><button class="cp" type="button" data-cp="uC">アドレスをコピー</button><a class="lk" id="aC" target="_blank" rel="noopener">この端末でひらく</a></div><small>操作する画面は、1つの台につき1台の端末だけでひらいてください。2台で同時にひらくと、点数が食いちがいます。</small></div>
+    <div class="f"><span id="lD">表示する画面</span><code class="url" id="uD"></code><div class="two"><button class="cp" type="button" data-cp="uD">アドレスをコピー</button><a class="lk" id="aD" target="_blank" rel="noopener">この端末でひらく</a></div></div>
+    <details><summary>ほかの形の表示アドレス・QRコード</summary><div>
+      <p>会場のモニター用（全画面）</p><code class="url" id="uM"></code><button class="cp" type="button" data-cp="uM">コピー</button>
+      <p>配信（OBS）用・上の帯</p><code class="url" id="uT"></code><button class="cp" type="button" data-cp="uT">コピー</button>
+      <p>配信（OBS）用・下の帯</p><code class="url" id="uB"></code><button class="cp" type="button" data-cp="uB">コピー</button>
+      <p>会場のモニター用のQRコード（モニターにつないだ端末で読み取る）</p><div class="qr" id="qM"></div>
+    </div></details>
+    <div class="f"><span>つなぎ方</span><ol id="steps"></ol></div>
+  </section>
+</div>
+<script src="/js/qr.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); }, $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
+  /* ---- lock: stops accidental use only ---- */
+  function hh(s) { var a = 0xdeadbeef ^ 7, b = 0x41c6ce57 ^ 7; for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); a = Math.imul(a ^ c, 2654435761); b = Math.imul(b ^ c, 1597334677); } a = Math.imul(a ^ (a >>> 16), 2246822507) ^ Math.imul(b ^ (b >>> 13), 3266489909); b = Math.imul(b ^ (b >>> 16), 2246822507) ^ Math.imul(a ^ (a >>> 13), 3266489909); return (4294967296 * (2097151 & b) + (a >>> 0)).toString(36); }
+  var PASS = '1cgr24o0zaq';
+  function unlock() { $('gate').hidden = true; $('app').hidden = false; try { sessionStorage.setItem('vibes-lab-admin', '1'); } catch (e) {} }
+  function tryPin() { if (hh('vibes-lab-admin:' + $('pin').value.trim()) === PASS) unlock(); else { $('perr').hidden = false; $('pin').value = ''; $('pin').focus(); } }
+  $('pgo').addEventListener('click', tryPin); $('pin').addEventListener('keydown', function (e) { if (e.key === 'Enter') tryPin(); }); $('pin').addEventListener('input', function () { $('perr').hidden = true; if ($('pin').value.length === 4) tryPin(); });
+  try { if (sessionStorage.getItem('vibes-lab-admin') === '1') unlock(); } catch (e) {}
+
+  /* ---- ready-made settings ---- */
+  var PRE = [
+    { id: 'queen', b: '12/5 女王杯（Pre Queen Cup）', s: 'スクラッチ 8〜10点・相手レフリー・クロックなし・打切りあり・裏撞きあり', c: { ctl: 'pad', mode: '3c', h: [10, 10], back: 1, limit: 30, clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', title: 'Queen Cup 2026-2027' } },
+    { id: 'official', b: '3C 公式戦（専属審判・クロックあり）', s: '持ち点制・40秒・タイムアウト3枚・審判がスマホで操作', c: { ctl: 'phone', mode: '3c', h: [30, 30], back: 1, limit: 0, clk: 40, warn: 1, to: 3, stats: 1, brk: 'alt', lay: 'top', match: '', title: '3-CUSHION' } },
+    { id: 'house', b: '3C ハウス・段位戦', s: 'ハンデ持ち点・40秒・タイムアウト2枚・打切りあり', c: { ctl: 'pad', mode: '3c', h: [20, 15], back: 1, limit: 35, clk: 40, warn: 1, to: 2, stats: 1, brk: 'alt', lay: 'monitor', match: '', title: '3-CUSHION' } },
+    { id: 'pocket', b: 'ポケット（9ボール・10ボール）', s: 'セット先取・ブレイクの表示・35秒・エクステンション1回', c: { ctl: 'pad', mode: 'pocket', h: [5, 5], back: 0, limit: 0, clk: 35, warn: 1, to: 1, stats: 0, brk: 'alt', lay: 'monitor', match: '', title: '9-BALL' } },
+    { id: 'free', b: 'お店のフリープレイ', s: '得点とイニングだけ・クロックなし・制限なし', c: { ctl: 'pad', mode: 'free', h: [0, 0], back: 0, limit: 0, clk: 0, warn: 0, to: 0, stats: 0, brk: 'alt', lay: 'monitor', match: '', title: 'VIBES BILLIARDS' } }
+  ];
+  var C = null, pre = '';
+  function rnd() { var s = 't-', a = 'abcdefghjkmnpqrstuvwxyz23456789'; for (var i = 0; i < 6; i++) s += a.charAt(Math.floor(Math.random() * a.length)); return s; }
+  function clean(m) { return String(m || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40); }
+  $('pre').innerHTML = PRE.map(function (p) { return '<button type="button" data-p="' + p.id + '" aria-pressed="false"><b>' + p.b + '</b><span>' + p.s + '</span></button>'; }).join('');
+  function pick(id) { var p = PRE.filter(function (x) { return x.id === id; })[0]; pre = id; C = JSON.parse(JSON.stringify(p.c)); if (!C.match) C.match = rnd(); $('h0').value = C.h[0]; $('h1').value = C.h[1]; $('limit').value = C.limit || ''; $('match').value = C.match; $('title').value = C.title; $('n0').value = ''; $('n1').value = ''; $('out').hidden = true; draw(); }
+  function draw() {
+    $$('#pre button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === pre); });
+    $$('.seg[data-k]').forEach(function (g) { var k = g.getAttribute('data-k'); [].forEach.call(g.children, function (b) { b.setAttribute('aria-pressed', String(C[k]) === b.getAttribute('data-v')); }); });
+    var pk = C.mode === 'pocket', fr = C.mode === 'free';
+    $$('[data-3c]').forEach(function (e) { e.hidden = pk; }); $$('[data-pk]').forEach(function (e) { e.hidden = !pk; }); $$('[data-clk]').forEach(function (e) { e.hidden = !C.clk; });
+    $('lH').textContent = pk ? '先取するセット数' : '試合点数（持ち点）'; $('quick').hidden = pk || fr; $('lTo').textContent = pk ? 'エクステンションの回数（1人あたり）' : 'タイムアウトの枚数（1人あたり）';
+    $$('#quick button').forEach(function (b) { b.setAttribute('aria-pressed', $('h0').value === b.getAttribute('data-h') && $('h1').value === b.getAttribute('data-h')); });
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.p) return pick(b.dataset.p);
+    var g = b.closest('.seg[data-k]');
+    if (g) { var k = g.getAttribute('data-k'), v = b.getAttribute('data-v'); C[k] = /^(ctl|mode|brk|lay)$/.test(k) ? v : +v; if (k === 'limit') $('limit').value = +v || ''; if (k === 'mode' && v === 'pocket') { C.stats = 0; C.back = 0; C.limit = 0; $('limit').value = ''; } $('out').hidden = true; draw(); return; }
+    if (b.dataset.h) { $('h0').value = b.dataset.h; $('h1').value = b.dataset.h; $('out').hidden = true; draw(); return; }
+    if (b.dataset.cp) {
+      var el = $(b.dataset.cp), t = el.textContent, done = function () { b.classList.add('dn'); var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function () { b.classList.remove('dn'); b.textContent = o; }, 1600); };
+      var sel = function () { try { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (x) {} };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, sel); else sel();
+    }
+  });
+  $('limit').addEventListener('input', function () { C.limit = Math.max(0, Math.min(200, parseInt($('limit').value, 10) || 0)); $('out').hidden = true; draw(); });
+  ['h0', 'h1', 'match', 'title', 'n0', 'n1'].forEach(function (id) { $(id).addEventListener('input', function () { $('out').hidden = true; if (id.charAt(0) === 'h') draw(); }); });
+
+  function b64(o) { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function qr(id, u) { try { var q = qrcode(0, 'M'); q.addData(u); q.make(); $(id).innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { $(id).textContent = ''; } }
+  $('issue').addEventListener('click', function () {
+    var m = clean($('match').value) || rnd(); $('match').value = m;
+    var h = [0, 1].map(function (i) { return Math.max(0, Math.min(999, parseInt($('h' + i).value, 10) || 0)); }), pk = C.mode === 'pocket';
+    var cfg = { id: Date.now().toString(36), mode: C.mode, limit: pk ? 0 : C.limit | 0, back: !pk && !!C.back, clk: C.clk | 0, warn: !!C.warn, to: C.clk ? C.to | 0 : 0, stats: !pk && !!C.stats, brk: C.brk, h: h, title: $('title').value.trim().slice(0, 24) };
+    var n = [$('n0').value.trim().slice(0, 16), $('n1').value.trim().slice(0, 16)]; if (n[0] || n[1]) cfg.n = n;
+    var base = location.origin, e = encodeURIComponent(m);
+    var uC = base + '/event-score-pad?match=' + e + '&cfg=' + b64(cfg), uM = base + '/event-score-obs?match=' + e + '&layout=monitor', uT = base + '/event-score-obs?match=' + e, uB = uT + '&pos=bl';
+    var uD = C.lay === 'monitor' ? uM : C.lay === 'bottom' ? uB : uT, phone = C.ctl === 'phone';
+    $('uC').textContent = uC; $('uM').textContent = uM; $('uT').textContent = uT; $('uB').textContent = uB; $('uD').textContent = uD; $('aC').href = uC; $('aD').href = uD;
+    qr('qC', uC); qr('qM', uM);
+    $('lC').textContent = phone ? '操作する画面（審判のスマホ）' : '操作する画面（台のわきのタブレット）';
+    $('pC').textContent = phone ? '審判のスマホのカメラで、このQRコードを読み取ります。スマホは縦向きで使います。' : 'タブレットのカメラで、このQRコードを読み取ります。タブレットは横向きで使います。';
+    $('lD').textContent = C.lay === 'monitor' ? '表示する画面（会場のモニター用）' : '表示する画面（配信・OBS用・' + (C.lay === 'bottom' ? '下' : '上') + 'の帯）';
+    $('sum').innerHTML = ['試合ID：' + m, '種目：' + (pk ? 'ポケット（' + h[0] + '−' + h[1] + ' セット先取）' : C.mode === 'free' ? 'フリープレイ' : 'スリークッション（' + (h[0] || h[1] ? h[0] + '点−' + h[1] + '点' : '点数の上限なし') + '）'),
+      pk ? 'ブレイク：' + { alt: '交互', win: '勝った人', manual: '手で切り替え' }[C.brk] : '裏撞き：' + (cfg.back ? 'あり' : 'なし') + '　／　打切り：' + (cfg.limit ? cfg.limit + ' キュー' : 'なし'),
+      'ショットクロック：' + (cfg.clk ? cfg.clk + '秒' + '　／　' + (pk ? 'エクステンション ' : 'タイムアウト ') + cfg.to + (pk ? '回' : '枚') + '　／　警告 ' + (cfg.warn ? 'あり' : 'なし') : 'なし'),
+      pk ? '' : 'アベレージ・ハイラン：' + (cfg.stats ? '出す' : '出さない')].filter(Boolean).map(function (x) { return x.replace(/[&<>]/g, ''); }).join('<br>');
+    var st = [];
+    st.push(phone ? '審判のスマホで、上のQRコードを読み取ります。「つながっています」と出れば準備完了です。' : '台のわきのタブレットで、上のQRコードを読み取ります（または、アドレスを送ってひらきます）。横向きにして、「つながっています」と出れば準備完了です。');
+    st.push('配信するパソコンのOBSで、「ソース」に「ブラウザ」を追加します。アドレスに「配信（OBS）用」のアドレスを入れ、幅 1920・高さ 1080 にします。');
+    st.push('会場のモニターには、モニターにつないだ端末のブラウザで「会場のモニター用」のアドレスをひらき、全画面にします。');
+    st.push('操作する画面で、選手の名前と' + (pk ? '先取するセット数' : '持ち点') + 'を確かめます。' + (pk ? 'セットを取ったら「+1」、' : '点が入るたびに「+1」、撞き終わったら「交代」。') + (cfg.clk ? 'クロックは「+1」と「交代」で自動で動き出します。' : ''));
+    st.push('試合が終わると、勝敗・得点・イニング・アベレージ・ハイランが大きく出ます。記録したら「次の試合へ（0に戻す）」を押します。');
+    $('steps').innerHTML = st.map(function (x) { return '<li>' + x + '</li>'; }).join('');
+    $('out').hidden = false; $('out').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  pick('queen');
+})();
+</script>
+</body>
+</html>

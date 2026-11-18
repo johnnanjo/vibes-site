@@ -3,126 +3,290 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>イベント用 スコア入力｜VIBES BILLIARDS</title>
+<title>スコア操作｜VIBES DIGITAL LAB</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/img/favicon-64.png">
 <style>
-/* Event scoreboard, input side (tablet in landscape, one screen, no scrolling). Hidden page: opened only by its address.
-   ?match=<id> keeps each event's score apart. This page owns the score and sends it to /event-score-obs through the scoreboard relay. */
+/* Event scoreboard, operating side. Hidden page: opened only by its address (issued by /pages/digital-lab-admin).
+   ?match=<id> keeps each table's score apart. ?cfg=<settings> (from the admin page) is taken in once per issue.
+   Landscape = tablet beside the table (the opponent keeps the score). Portrait = phone in one hand (a referee): the same actions as large buttons.
+   This page owns the score and sends it to /event-score-obs through the scoreboard relay; open it on ONE device per table. */
 @font-face{font-family:VLNum;src:url(/fonts/vibes-num.woff2) format("woff2");font-display:swap}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;-webkit-user-select:none;user-select:none;touch-action:manipulation}
-#app{height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr);gap:1.2vh;padding:max(1.4vh,env(safe-area-inset-top)) max(1.4vw,env(safe-area-inset-right)) max(1.4vh,env(safe-area-inset-bottom)) max(1.4vw,env(safe-area-inset-left))}
+[hidden]{display:none!important}
+button{font-family:inherit}
+#app{height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:1.1vh;padding:max(1.4vh,env(safe-area-inset-top)) max(1.4vw,env(safe-area-inset-right)) max(1.4vh,env(safe-area-inset-bottom)) max(1.4vw,env(safe-area-inset-left))}
 .top{display:flex;align-items:center;gap:1vw;min-height:6.5vh}
 .top .mt{display:flex;align-items:center;gap:.6vw;background:#12284A;border-radius:1.2vh;padding:.6vh 1vw;font-weight:800;font-size:2.1vh}
 .top .mt small{font-size:1.7vh;color:#B9C4D6}
-.top input{font:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#fff;background:#0B192C;border:.2vh solid #2B4A7A;border-radius:.9vh;padding:.7vh .8vw;min-width:0}
-#iMatch{width:12vw}#iTitle{width:19vw}#iRound{width:11vw}
-.top select{font:800 2.1vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#0B192C;background:#FFD700;border:0;border-radius:.9vh;padding:.8vh .6vw;max-width:15vw}
-.top .st{margin-left:auto;display:flex;align-items:center;gap:.6vw;font-weight:800;font-size:2vh}.top .st i{width:1.6vh;height:1.6vh;border-radius:50%;background:#7A8699}.top .st.on i{background:#39D98A}
-.tb{appearance:none;border:.2vh solid #2B4A7A;background:#12284A;color:#fff;font:800 2.1vh/1 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;border-radius:1.2vh;padding:0 1.4vw;min-height:6vh;cursor:pointer}
+.top input{font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;font-weight:800;font-size:2.1vh;color:#fff;background:#0B192C;border:.2vh solid #2B4A7A;border-radius:.9vh;padding:.7vh .8vw;min-width:0;-webkit-user-select:text;user-select:text}
+#iMatch{width:11vw}#iTitle{width:18vw}#iRound{width:10vw}
+.top select{font:800 2.1vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#0B192C;background:#FFD700;border:0;border-radius:.9vh;padding:.8vh .6vw;max-width:14vw}
+.st{margin-left:auto;display:flex;align-items:center;gap:.6vw;font-weight:800;font-size:2vh;white-space:nowrap}.st i{width:1.6vh;height:1.6vh;border-radius:50%;background:#7A8699}.st.on i{background:#39D98A}
+.tb{appearance:none;border:.2vh solid #2B4A7A;background:#12284A;color:#fff;font:800 2.1vh/1 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;border-radius:1.2vh;padding:0 1.4vw;min-height:6vh;cursor:pointer;white-space:nowrap}
 .tb.dg{border-color:#FF6B6B;color:#FFD1D1}
+.info{display:flex;align-items:center;gap:.8vw;min-height:4.6vh;font-weight:800;font-size:2.1vh;flex-wrap:nowrap;overflow:hidden}
+.info span{background:#12284A;border-radius:999px;padding:.7vh 1.2vw;white-space:nowrap}
+.info .hot{background:#FFD700;color:#0B192C}
+.info .ban{background:#E11D48;color:#fff;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;border-radius:1.2vh}
 .main{display:grid;grid-template-columns:minmax(0,1fr) 22vw minmax(0,1fr);gap:1.2vw;min-height:0}
-.pl{min-height:0;background:#12284A;border:.7vh solid #12284A;border-radius:3vh;padding:1.6vh 1.4vw;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:1vh}
+.pl{min-height:0;background:#12284A;border:.7vh solid #12284A;border-radius:3vh;padding:1.4vh 1.4vw;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:.8vh}
 .pl.on{border-color:#FFD700;box-shadow:0 0 0 .4vh rgba(255,215,0,.25)}
 .pl .hd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.8vw;align-items:center}
-.pl .ball{width:4.2vh;height:4.2vh;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff 0 12%,var(--b) 40%);box-shadow:inset -.5vh -.6vh 0 rgba(0,0,0,.18)}
-.pl .nm{font:900 3.6vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#fff;background:transparent;border:0;border-bottom:.3vh solid #2B4A7A;border-radius:0;padding:.4vh .2vw;width:100%;min-width:0;-webkit-user-select:text;user-select:text}
-.pl .hc{display:flex;align-items:center;gap:.4vw;font-weight:800;font-size:1.9vh;color:#B9C4D6;white-space:nowrap}
-.pl .hc input{font:900 3vh/1 VLNum,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#FFD700;background:#0B192C;border:.2vh solid #2B4A7A;border-radius:.9vh;width:7.5vw;padding:.6vh .3vw;text-align:center;-webkit-user-select:text;user-select:text}
-.pl .sc{min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4vh}
-.pl .sc b{font:400 34vh/.9 VLNum,system-ui,sans-serif;color:#fff;letter-spacing:-.02em}
+.ball{width:4.2vh;height:4.2vh;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff 0 12%,var(--b) 40%);box-shadow:inset -.5vh -.6vh 0 rgba(0,0,0,.18)}
+.nm{font:900 3.4vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#fff;background:transparent;border:0;border-bottom:.3vh solid #2B4A7A;border-radius:0;padding:.4vh .2vw;width:100%;min-width:0;-webkit-user-select:text;user-select:text}
+.hc{display:flex;align-items:center;gap:.4vw;font-weight:800;font-size:1.9vh;color:#B9C4D6;white-space:nowrap}
+.hc input{font:900 3vh/1 VLNum,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#FFD700;background:#0B192C;border:.2vh solid #2B4A7A;border-radius:.9vh;width:7.5vw;padding:.6vh .3vw;text-align:center;-webkit-user-select:text;user-select:text}
+.pl .sc{min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3vh}
+.pl .sc b{font:400 27vh/.9 VLNum,system-ui,sans-serif;color:#fff;letter-spacing:-.02em}
 .pl.b .sc b{color:#FFD700}
-.pl .sc span{font-weight:800;font-size:2.2vh;color:#B9C4D6;min-height:2.8vh}
-.pl .sc .stt{display:flex;gap:1.6vw;font-weight:800;font-size:2.3vh;color:#B9C4D6;min-height:0}.pl .sc .stt em{font:400 3.2vh/1 VLNum,system-ui,sans-serif;font-style:normal;color:#fff;margin-left:.5vw}
-.pl .sc b{font-size:30vh}
-.pl .sc span.fin{color:#0B192C;background:#FFD700;border-radius:999px;padding:.3vh 1.4vw}
+.pl .sc .rm{font-weight:800;font-size:2.2vh;color:#B9C4D6;min-height:2.8vh}
+.pl .sc .rm.fin{color:#0B192C;background:#FFD700;border-radius:999px;padding:.3vh 1.4vw}
+.stt{display:flex;gap:1.6vw;font-weight:800;font-size:2.2vh;color:#B9C4D6}.stt em{font:400 3.1vh/1 VLNum,system-ui,sans-serif;font-style:normal;color:#fff;margin-left:.5vw}
+.rowb{display:flex;gap:.8vw;align-items:center;justify-content:center;flex-wrap:wrap}
+.tn,.tob{appearance:none;border:.2vh solid #2B4A7A;background:transparent;color:#B9C4D6;font:800 1.8vh/1 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;border-radius:999px;padding:.9vh 1vw;cursor:pointer;white-space:nowrap;min-height:4.4vh}
+.pl.on .tn{background:#FFD700;border-color:#FFD700;color:#0B192C}
+.tob{border-color:#38BDF8;color:#BAE6FD}.tob:disabled{opacity:.35}
 .pl .bt{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.4fr);gap:1vw}
-.pl .bt button{appearance:none;border:0;cursor:pointer;border-radius:2.2vh;min-height:15vh;font:400 8vh/1 VLNum,system-ui,sans-serif}
+.pl .bt button{appearance:none;border:0;cursor:pointer;border-radius:2.2vh;min-height:14vh;font:400 8vh/1 VLNum,system-ui,sans-serif}
 .pl .bt .mn{background:#0B192C;color:#fff;box-shadow:inset 0 0 0 .3vh #2B4A7A;font-size:5.4vh}
 .pl .bt .pp{background:#fff;color:#0B192C}.pl.b .bt .pp{background:#FFD700}
-.pl .bt button:active,.mid button:active,.tb:active{transform:scale(.97)}
-.pl .tn{appearance:none;border:.2vh solid #2B4A7A;background:transparent;color:#B9C4D6;font:800 1.8vh/1 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;border-radius:999px;padding:.9vh 1vw;cursor:pointer;white-space:nowrap}
-.pl.on .tn{background:#FFD700;border-color:#FFD700;color:#0B192C}
-.mid{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:1.2vh}
-.inn{background:#12284A;border-radius:3vh;padding:1.6vh 1vw;display:flex;flex-direction:column;align-items:center;gap:.6vh}
-.inn small{font-weight:800;font-size:2.2vh;color:#B9C4D6}
-.inn b{font:400 15vh/.95 VLNum,system-ui,sans-serif}
+button:active{transform:scale(.97)}
+.mid{min-height:0;display:flex;flex-direction:column;gap:1.1vh}
+.inn{background:#12284A;border-radius:3vh;padding:1.2vh 1vw;display:flex;flex-direction:column;align-items:center;gap:.4vh}
+.inn small{font-weight:800;font-size:2.1vh;color:#B9C4D6}
+.inn b{font:400 12vh/.95 VLNum,system-ui,sans-serif}
 .inn div{display:grid;grid-template-columns:1fr 1fr;gap:.8vw;width:100%}
-.inn button{appearance:none;border:0;cursor:pointer;border-radius:1.6vh;min-height:8vh;background:#0B192C;color:#fff;box-shadow:inset 0 0 0 .3vh #2B4A7A;font:400 4.4vh/1 VLNum,system-ui,sans-serif}
-.nx{appearance:none;border:0;cursor:pointer;border-radius:3vh;background:#FFD700;color:#0B192C;font:900 5.2vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh;min-height:0}
+.inn button,.ckp button{appearance:none;border:0;cursor:pointer;border-radius:1.6vh;min-height:7vh;background:#0B192C;color:#fff;box-shadow:inset 0 0 0 .3vh #2B4A7A;font:400 4vh/1 VLNum,system-ui,sans-serif}
+.ckp{background:#12284A;border-radius:3vh;padding:1.2vh 1vw;display:flex;flex-direction:column;align-items:center;gap:.6vh}
+.ckp small{font-weight:800;font-size:2vh;color:#B9C4D6}
+.ckp b{font:400 11vh/.95 VLNum,system-ui,sans-serif}
+.ckp.warn b{color:#FF6B6B;animation:bl .5s steps(2) infinite}
+.ckp div{display:grid;grid-template-columns:1.4fr 1fr;gap:.8vw;width:100%}
+.ckp button{font:900 2.2vh/1 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif}.ckp .go{background:#38BDF8;color:#0B192C;box-shadow:none}
+@keyframes bl{50%{opacity:.25}}
+.nx{flex:1;min-height:9vh;appearance:none;border:0;cursor:pointer;border-radius:3vh;background:#FFD700;color:#0B192C;font:900 5vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh}
 .nx small{font-size:2vh;font-weight:800}
-.hint{font-weight:700;font-size:1.7vh;line-height:1.5;color:#B9C4D6;text-align:center;margin:0}
-.dlg{position:fixed;inset:0;background:rgba(5,12,24,.82);display:flex;align-items:center;justify-content:center;z-index:9}
-.dlg[hidden]{display:none}
-.dlg div{background:#12284A;border:.3vh solid #2B4A7A;border-radius:3vh;padding:4vh 3vw;max-width:70vw;display:flex;flex-direction:column;gap:2.4vh;text-align:center}
-.dlg b{font-size:3.4vh;font-weight:900;line-height:1.5}.dlg p{margin:0;font-size:2.2vh;font-weight:700;line-height:1.7;color:#B9C4D6}
-.dlg nav{display:grid;grid-template-columns:1fr 1fr;gap:1.4vw}
-.dlg button{appearance:none;border:0;cursor:pointer;border-radius:2vh;min-height:10vh;font:900 3vh/1 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif}
-.dlg .no{background:#0B192C;color:#fff;box-shadow:inset 0 0 0 .3vh #2B4A7A}.dlg .ok{background:#FF6B6B;color:#0B192C}
-@media (orientation:portrait){.rot{display:flex}}
-.rot{display:none;position:fixed;inset:0;background:#0B192C;z-index:20;align-items:center;justify-content:center;text-align:center;font-weight:900;font-size:5vw;line-height:1.7;padding:8vw}
+.dlg{position:fixed;inset:0;background:rgba(5,12,24,.86);display:flex;align-items:center;justify-content:center;z-index:9;padding:3vmin}
+.dlg>div{background:#12284A;border:.3vh solid #2B4A7A;border-radius:3vh;padding:3.4vmin;max-width:min(92vw,980px);width:100%;max-height:94vh;overflow:auto;display:flex;flex-direction:column;gap:2.2vmin;text-align:center}
+.dlg b.h{font-size:3.6vmin;font-weight:900;line-height:1.5}.dlg p{margin:0;font-size:2.3vmin;font-weight:700;line-height:1.7;color:#B9C4D6}
+.dlg nav{display:grid;grid-template-columns:1fr 1fr;gap:1.6vmin}
+.dlg nav button{appearance:none;border:0;cursor:pointer;border-radius:2vmin;min-height:max(56px,9vmin);font:900 max(15px,2.8vmin)/1.3 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;padding:0 1vmin}
+.dlg .no{background:#0B192C;color:#fff;box-shadow:inset 0 0 0 .3vh #2B4A7A}.dlg .ok{background:#FF6B6B;color:#0B192C}.dlg .ye{background:#FFD700;color:#0B192C}
+.res{width:100%;border-collapse:collapse;font-weight:800;font-size:max(14px,2.5vmin)}
+.res th{font-size:max(11px,1.9vmin);color:#B9C4D6;font-weight:800;padding:.8vmin}
+.res td{padding:1.2vmin .8vmin;border-top:.2vh solid #2B4A7A;font:400 max(22px,5vmin)/1 VLNum,system-ui,sans-serif}
+.res td:first-child{font:900 max(15px,3vmin)/1.3 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;text-align:left}
+.res tr.w td{color:#FFD700}
+.win{font-size:max(18px,4.2vmin);font-weight:900;color:#0B192C;background:#FFD700;border-radius:1.6vmin;padding:1.2vmin}
+/* ---- phone in one hand (portrait) ---- */
+#ph{display:none}
+@media (orientation:portrait){
+  #app{display:none}
+  html,body{overflow:auto}
+  #ph{display:flex;flex-direction:column;gap:10px;min-height:100dvh;padding:max(10px,env(safe-area-inset-top)) 12px max(14px,env(safe-area-inset-bottom))}
+  .ph-top{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px}.ph-top b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+  .ph-sc{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:stretch}
+  .ph-p{background:#12284A;border:4px solid #12284A;border-radius:18px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+  .ph-p.on{border-color:#FFD700}
+  .ph-p span{font-weight:900;font-size:14px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ph-p b{font:400 64px/1 VLNum,system-ui,sans-serif}.ph-p.b b{color:#FFD700}
+  .ph-p small{font-weight:800;font-size:11.5px;color:#B9C4D6;white-space:nowrap}
+  .ph-in{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:800;font-size:11px;color:#B9C4D6;min-width:58px}
+  .ph-in b{font:400 34px/1 VLNum,system-ui,sans-serif;color:#fff}
+  .ph-in .ck{font:400 30px/1 VLNum,system-ui,sans-serif;color:#38BDF8}.ph-in .ck.warn{color:#FF6B6B;animation:bl .5s steps(2) infinite}
+  .ph-ban{background:#E11D48;border-radius:12px;padding:10px 12px;font-weight:900;font-size:14.5px;line-height:1.5;text-align:center}
+  .ph-ban.q{background:#12284A;color:#B9C4D6;font-size:13px}
+  .ph-b{appearance:none;border:0;cursor:pointer;border-radius:20px;font-weight:900;color:#0B192C}
+  .ph-plus{flex:1;min-height:150px;background:#fff;font:400 84px/1 VLNum,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+  .ph-plus.b{background:#FFD700}.ph-plus small{font:900 15px/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif}
+  .ph-next{min-height:92px;background:#FFD700;font-size:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.ph-next small{font-size:13px;font-weight:800}
+  .ph-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ph-s{min-height:68px;background:#12284A;color:#fff;box-shadow:inset 0 0 0 2px #2B4A7A;font-size:17px;line-height:1.3;padding:4px}
+  .ph-s.go{background:#38BDF8;color:#0B192C;box-shadow:none}.ph-s:disabled{opacity:.35}
+  details{background:#12284A;border-radius:16px;padding:4px 12px}
+  summary{font-weight:900;font-size:15px;padding:12px 0;cursor:pointer}
+  .ph-f{display:grid;gap:10px;padding:4px 0 14px}
+  .ph-f label{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size:12.5px;color:#B9C4D6}
+  .ph-f input{font:800 17px/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#fff;background:#0B192C;border:2px solid #2B4A7A;border-radius:12px;padding:12px;min-width:0;-webkit-user-select:text;user-select:text}
+  .ph-f .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ph-f button{appearance:none;cursor:pointer;min-height:54px;border-radius:14px;border:2px solid #FF6B6B;background:transparent;color:#FFD1D1;font-weight:900;font-size:16px}
+  .dlg nav{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
+<!-- tablet, landscape -->
 <div id="app">
   <div class="top">
     <label class="mt"><small>試合ID</small><input id="iMatch" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="試合ID"></label>
-    <label class="mt"><small>表示名</small><input id="iTitle" autocomplete="off" maxlength="24" aria-label="配信に出すタイトル"></label>
+    <label class="mt"><small>表示名</small><input data-f="title" autocomplete="off" maxlength="24" aria-label="配信に出すタイトル" id="iTitle"></label>
     <label class="mt"><small>回戦</small><select id="sRound" aria-label="いま何回戦か"><option value="">表示しない</option><option>予選リーグ</option><option>1回戦</option><option>2回戦</option><option>3回戦</option><option>敗者1回戦</option><option>敗者2回戦</option><option>敗者3回戦</option><option>準々決勝</option><option>準決勝</option><option>3位決定戦</option><option>決勝</option><option value="*">その他（入力する）</option></select><input id="iRound" maxlength="12" autocomplete="off" aria-label="回戦を入力" hidden></label>
-    <div class="st" id="st"><i></i><span id="stT">つないでいます</span></div>
-    <button class="tb dg" type="button" id="bReset">リセット</button>
+    <div class="st" data-st><i></i><span data-o="st">つないでいます</span></div>
+    <button class="tb dg" type="button" data-act="reset">リセット</button>
   </div>
+  <div class="info"><span data-o="mode"></span><span data-o="lim" hidden></span><span data-o="ckc" hidden></span><span class="ban" data-o="ban" hidden></span></div>
   <div class="main">
-    <section class="pl a" id="pA"><div class="hd"><span class="ball" style="--b:#E9EEF5"></span><input class="nm" id="nA" maxlength="16" autocomplete="off" aria-label="選手A（白球）の名前"><label class="hc">持ち点<input id="hA" inputmode="numeric" maxlength="3" aria-label="選手Aの持ち点"></label></div>
-      <div class="sc"><b id="sA">0</b><span id="rA"></span><div class="stt"><span>ハイラン<em id="xA">0</em></span><span>アベレージ<em id="vA">-</em></span></div><button class="tn" type="button" data-turn="0">この選手の番にする</button></div>
+    <section class="pl a" data-pl="0"><div class="hd"><span class="ball" style="--b:#E9EEF5"></span><input class="nm" data-f="n0" maxlength="16" autocomplete="off" aria-label="選手A（白球）の名前"><label class="hc"><span data-o="hl">持ち点</span><input data-f="h0" inputmode="numeric" maxlength="3" aria-label="選手Aの持ち点"></label></div>
+      <div class="sc"><b data-o="s0">0</b><span class="rm" data-o="r0"></span><div class="stt" data-stats><span>ハイラン<em data-o="x0">0</em></span><span>アベレージ<em data-o="v0">-</em></span></div><div class="rowb"><button class="tn" type="button" data-turn="0" data-o="tn0">この選手の番にする</button><button class="tob" type="button" data-to="0" hidden></button></div></div>
       <div class="bt"><button class="mn" type="button" data-add="0,-1" aria-label="選手Aの得点を1点へらす">−1</button><button class="pp" type="button" data-add="0,1" aria-label="選手Aに1点入れる">+1</button></div></section>
     <div class="mid">
-      <div class="inn"><small>イニング</small><b id="inn">1</b><div><button type="button" data-inn="-1" aria-label="イニングを1つ戻す">−1</button><button type="button" data-inn="1" aria-label="イニングを1つ進める">+1</button></div></div>
-      <button class="nx" type="button" id="bNext">交代<small id="nxT"></small></button>
-      <p class="hint">点が入るたびに「+1」。<br>撞き終わったら「交代」。</p>
+      <div class="inn" data-inns><small>イニング</small><b data-o="inn">1</b><div><button type="button" data-inn="-1" aria-label="イニングを1つ戻す">−1</button><button type="button" data-inn="1" aria-label="イニングを1つ進める">+1</button></div></div>
+      <div class="ckp" data-ck hidden><small>ショットクロック</small><b data-o="ck">40</b><div><button class="go" type="button" data-act="ckgo" data-o="ckb">スタート</button><button type="button" data-act="ckre">戻す</button></div></div>
+      <button class="nx" type="button" data-act="next"><span data-o="nxl">交代</span><small data-o="nxt"></small></button>
     </div>
-    <section class="pl b" id="pB"><div class="hd"><span class="ball" style="--b:#FFD700"></span><input class="nm" id="nB" maxlength="16" autocomplete="off" aria-label="選手B（黄球）の名前"><label class="hc">持ち点<input id="hB" inputmode="numeric" maxlength="3" aria-label="選手Bの持ち点"></label></div>
-      <div class="sc"><b id="sB">0</b><span id="rB"></span><div class="stt"><span>ハイラン<em id="xB">0</em></span><span>アベレージ<em id="vB">-</em></span></div><button class="tn" type="button" data-turn="1">この選手の番にする</button></div>
+    <section class="pl b" data-pl="1"><div class="hd"><span class="ball" style="--b:#FFD700"></span><input class="nm" data-f="n1" maxlength="16" autocomplete="off" aria-label="選手B（黄球）の名前"><label class="hc"><span data-o="hl">持ち点</span><input data-f="h1" inputmode="numeric" maxlength="3" aria-label="選手Bの持ち点"></label></div>
+      <div class="sc"><b data-o="s1">0</b><span class="rm" data-o="r1"></span><div class="stt" data-stats><span>ハイラン<em data-o="x1">0</em></span><span>アベレージ<em data-o="v1">-</em></span></div><div class="rowb"><button class="tn" type="button" data-turn="1" data-o="tn1">この選手の番にする</button><button class="tob" type="button" data-to="1" hidden></button></div></div>
       <div class="bt"><button class="mn" type="button" data-add="1,-1" aria-label="選手Bの得点を1点へらす">−1</button><button class="pp" type="button" data-add="1,1" aria-label="選手Bに1点入れる">+1</button></div></section>
   </div>
 </div>
-<div class="dlg" id="dlg" hidden><div><b>スコアとイニングを、0に戻しますか？</b><p>選手の名前と持ち点は残ります。配信の画面も、すぐに0になります。</p><nav><button class="no" type="button" id="dNo">やめる</button><button class="ok" type="button" id="dOk">0に戻す</button></nav></div></div>
-<div class="rot">タブレットを<br>横向きにしてください</div>
+<!-- phone, portrait -->
+<div id="ph">
+  <div class="ph-top"><b data-o="ttl"></b><div class="st" data-st><i></i><span data-o="st">つないでいます</span></div></div>
+  <div class="ph-sc">
+    <div class="ph-p a" data-pl="0"><span data-o="n0"></span><b data-o="s0">0</b><small data-o="m0"></small></div>
+    <div class="ph-in"><span data-o="innl">イニング</span><b data-o="inn">1</b><span data-o="lims"></span><span class="ck" data-o="ck" data-ck hidden></span></div>
+    <div class="ph-p b" data-pl="1"><span data-o="n1"></span><b data-o="s1">0</b><small data-o="m1"></small></div>
+  </div>
+  <div class="ph-ban" data-o="ban" hidden></div>
+  <button class="ph-b ph-plus" type="button" data-add="t,1" data-o="plus">+1<small data-o="plusn"></small></button>
+  <button class="ph-b ph-next" type="button" data-act="next"><span data-o="nxl">交代</span><small data-o="nxt"></small></button>
+  <div class="ph-row"><button class="ph-b ph-s" type="button" data-add="t,-1">−1点<br>（まちがいを戻す）</button><button class="ph-b ph-s" type="button" data-to="t" data-o="tot" hidden></button></div>
+  <div class="ph-row" data-ck hidden><button class="ph-b ph-s go" type="button" data-act="ckgo" data-o="ckb">クロック スタート</button><button class="ph-b ph-s" type="button" data-act="ckre">クロックを戻す</button></div>
+  <details><summary>名前・持ち点・番の入れ替え</summary><div class="ph-f">
+    <div class="two"><label>選手A（白球）<input data-f="n0" maxlength="16" autocomplete="off"></label><label><span data-o="hl">持ち点</span><input data-f="h0" inputmode="numeric" maxlength="3"></label></div>
+    <div class="two"><label>選手B（黄球）<input data-f="n1" maxlength="16" autocomplete="off"></label><label><span data-o="hl">持ち点</span><input data-f="h1" inputmode="numeric" maxlength="3"></label></div>
+    <label>表示名（大会名）<input data-f="title" maxlength="24" autocomplete="off"></label>
+    <div class="two"><button type="button" data-turn="0" style="border-color:#2B4A7A;color:#fff">Aの番にする</button><button type="button" data-turn="1" style="border-color:#2B4A7A;color:#fff">Bの番にする</button></div>
+    <div class="two" data-inns><button type="button" data-inn="-1" style="border-color:#2B4A7A;color:#fff">イニング −1</button><button type="button" data-inn="1" style="border-color:#2B4A7A;color:#fff">イニング +1</button></div>
+    <button type="button" data-act="reset">スコアを0に戻す（リセット）</button>
+  </div></details>
+</div>
+<div class="dlg" id="dlg" hidden><div><b class="h">スコアとイニングを、0に戻しますか？</b><p>選手の名前と持ち点は残ります。配信とモニターの画面も、すぐに0になります。</p><nav><button class="no" type="button" data-act="dno">やめる</button><button class="ok" type="button" data-act="dok">0に戻す</button></nav></div></div>
+<div class="dlg" id="fin" hidden><div><b class="h">試合終了</b><div class="win" data-o="win"></div><table class="res" id="resT"></table><p data-o="why"></p><nav><button class="no" type="button" data-act="undo">結果を取り消して、試合に戻る</button><button class="ye" type="button" data-act="newgame">次の試合へ（0に戻す）</button></nav></div></div>
 <script>
 (function () {
   'use strict';
-  var $ = function (id) { return document.getElementById(id); };
+  var $ = function (id) { return document.getElementById(id); }, $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   function clean(m) { return String(m || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40); }
-  /* the relay's rooms are 6-digit numbers: the match id is turned into one (same rule on the OBS page) */
+  /* the relay's rooms are 6-digit numbers: the match id is turned into one (same rule on the display page) */
   function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
-  var match = clean((/[?&]match=([^&#]+)/.exec(location.search) || [])[1] ? decodeURIComponent((/[?&]match=([^&#]+)/.exec(location.search))[1]) : '') || 'test';
-  var custom = false, KEY = 'vibes-event-score:' + match, S = null, ws = null, tries = 0, timer = null, gotRemote = false;
-  function blank() { return { type: 'state', v: 1, m: match, title: 'Queen Cup 2026-2027', round: '', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0 }], t: 0 }; }
+  function qs(k) { var m = new RegExp('[?&]' + k + '=([^&#]+)').exec(location.search); return m ? decodeURIComponent(m[1]) : ''; }
+  var match = clean(qs('match')) || 'test';
+  var CFG0 = { id: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt' };
+  function cfgOf(o) { var c = {}, k; for (k in CFG0) c[k] = CFG0[k]; if (o) { c.id = String(o.id || ''); if (/^(3c|pocket|free)$/.test(o.mode)) c.mode = o.mode; c.limit = Math.max(0, Math.min(200, o.limit | 0)); c.back = !!o.back; c.clk = [0, 30, 35, 40].indexOf(o.clk | 0) >= 0 ? o.clk | 0 : 0; c.warn = o.warn !== false; c.to = Math.max(0, Math.min(3, o.to | 0)); c.stats = o.stats !== false; if (/^(alt|win|manual)$/.test(o.brk)) c.brk = o.brk; } return c; }
+  var custom = false, KEY = 'vibes-event-score:' + match, S = null, ws = null, tries = 0, timer = null;
+  function blank() { return { type: 'state', v: 2, m: match, title: 'Queen Cup 2026-2027', round: '', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0, to: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0, to: 0 }], cfg: cfgOf(null), over: null, rep: false, ck: null, t: 0 }; }
+  var P = function () { return S.cfg.mode === 'pocket'; };
   /* innings a player has had so far (the second player has not yet played in the current inning while the first is at the table) */
   function inns(i) { return i === 0 ? S.inn : (S.turn === 1 ? S.inn : S.inn - 1); }
   function avg(i) { var n = inns(i); return n > 0 ? (S.p[i].s / n).toFixed(3) : '-'; }
   function endRun() { S.p.forEach(function (p) { p.run = 0; p.hb = p.hr | 0; }); }
-  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); if (!o.title || o.title === '3-' + 'CUSHION') o.title = 'Queen Cup 2026-2027'; o.round = String(o.round || '').slice(0, 12); return o; }
+  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.to = p.to | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); if (!o.title) o.title = 'Queen Cup 2026-2027'; o.round = String(o.round || '').slice(0, 12); o.cfg = cfgOf(o.cfg); o.over = o.over && typeof o.over.w === 'number' ? o.over : null; o.rep = !!o.rep; o.v = 2; return o; }
   function valid(o) { return o && o.type === 'state' && o.p && o.p.length === 2 && typeof o.inn === 'number'; }
   try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (valid(j)) S = fix(j); } catch (e) {}
   var fresh = !S; if (!S) S = blank();
+  /* settings handed over by the admin page: taken in once per issue (its id), never touching the running score */
+  var inCfg = null; try { var raw = qs('cfg'); if (raw) inCfg = JSON.parse(decodeURIComponent(escape(atob(raw.replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { inCfg = null; }
+  function takeCfg() {
+    if (!inCfg || !inCfg.id || inCfg.id === S.cfg.id) return;
+    S.cfg = cfgOf(inCfg);
+    if (inCfg.title) S.title = String(inCfg.title).slice(0, 24);
+    if (inCfg.h) [0, 1].forEach(function (i) { if (inCfg.h[i] != null) S.p[i].h = Math.max(0, Math.min(999, inCfg.h[i] | 0)); });
+    if (inCfg.n) [0, 1].forEach(function (i) { if (inCfg.n[i]) S.p[i].n = String(inCfg.n[i]).slice(0, 16); });
+    S.ck = null; S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  }
+  /* ---- shot clock: {left: ms, run: bool, t: when left was true}. The display pages count down by themselves from the last message ---- */
+  function ckLeft() { if (!S.ck) return S.cfg.clk * 1000; return Math.max(0, S.ck.run ? S.ck.left - (Date.now() - S.ck.t) : S.ck.left); }
+  function ckSet(left, run) { if (!S.cfg.clk) { S.ck = null; return; } S.ck = { left: left, run: !!run, t: Date.now() }; lastBeep = Math.ceil(left / 1000); }
+  var lastBeep = 99, AC = null;
+  function beep(f, d) { if (!S.cfg.warn) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); var o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f; g.gain.value = 0.25; o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + d); } catch (e) {} }
+  function reached(i) { return S.p[i].h > 0 && S.p[i].s >= S.p[i].h; }
+  function finish(w, why) { S.over = { w: w, why: why }; if (S.ck) ckSet(ckLeft(), false); }
+  /* called after a point is added by player i */
+  function check(i) {
+    if (!reached(i)) return;
+    if (P() || !S.cfg.back) return finish(i, 'target');
+    if (i === 1) return finish(reached(0) ? -1 : 1, 'target');   /* the second player ends the inning: nothing left to answer */
+    /* the first player is out: the second player still has the answering visit (ura-tsuki); "交代" starts it */
+  }
+  function next() {
+    if (S.over) return; endRun();
+    if (P()) { S.turn = S.turn ? 0 : 1; ckSet(S.cfg.clk * 1000, false); return; }
+    if (S.turn === 0) { S.turn = 1; if (reached(0) && S.cfg.back) S.rep = true; }
+    else {
+      if (S.rep) return finish(reached(1) ? -1 : 0, 'target');
+      if (S.cfg.limit && S.inn >= S.cfg.limit) return finish(S.p[0].s > S.p[1].s ? 0 : S.p[1].s > S.p[0].s ? 1 : -1, 'limit');
+      S.turn = 0; S.inn = Math.min(999, S.inn + 1);
+    }
+    ckSet(S.cfg.clk * 1000, !!S.cfg.clk);
+  }
+  function add(i, d) {
+    if (S.over && d > 0) return; var p = S.p[i], was = p.s; p.s = Math.max(0, Math.min(999, p.s + d));
+    if (p.s === was) return;
+    p.run = Math.max(0, p.run + d); p.hr = Math.max(p.hb | 0, p.run);   /* hb = high run before this visit, so a mistaken +1 taken back with −1 leaves no wrong high run */
+    if (d > 0) {
+      if (P()) { if (S.cfg.brk === 'alt') S.turn = S.turn ? 0 : 1; else if (S.cfg.brk === 'win') S.turn = i; ckSet(S.cfg.clk * 1000, false); }
+      else ckSet(S.cfg.clk * 1000, !!S.cfg.clk);
+      check(i);
+    } else if (S.rep && !reached(0)) S.rep = false;
+  }
+  function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.ck = null; }
+  /* ---- drawing: every element marked data-o="key" gets the text for that key (both layouts at once) ---- */
+  function put(k, v) { $$('[data-o="' + k + '"]').forEach(function (e) { if (e.textContent !== String(v)) e.textContent = v; }); }
+  function show(sel, on) { $$(sel).forEach(function (e) { e.hidden = !on; }); }
   function draw() {
-    $('iMatch').value = match; if (document.activeElement !== $('iTitle')) $('iTitle').value = S.title;
-    [['A', 0], ['B', 1]].forEach(function (x) {
-      var p = S.p[x[1]]; if (document.activeElement !== $('n' + x[0])) $('n' + x[0]).value = p.n; if (document.activeElement !== $('h' + x[0])) $('h' + x[0]).value = p.h || '';
-      $('s' + x[0]).textContent = p.s; $('x' + x[0]).textContent = p.hr; $('v' + x[0]).textContent = avg(x[1]); var r = $('r' + x[0]); if (p.h > 0 && p.s >= p.h) { r.textContent = 'あがり'; r.className = 'fin'; } else { r.textContent = p.h > 0 ? 'あと ' + (p.h - p.s) + ' 点' : ''; r.className = ''; }
-      $('p' + x[0]).classList.toggle('on', S.turn === x[1]);
+    var c = S.cfg, pk = P(), cur = S.p[S.turn], oth = S.p[S.turn ? 0 : 1];
+    $('iMatch').value = match;
+    $$('[data-f]').forEach(function (el) { if (document.activeElement === el) return; var f = el.getAttribute('data-f'), v = f === 'title' ? S.title : f.charAt(0) === 'n' ? S.p[+f.charAt(1)].n : (S.p[+f.charAt(1)].h || ''); if (el.value !== String(v)) el.value = v; });
+    [0, 1].forEach(function (i) {
+      var p = S.p[i]; put('s' + i, p.s); put('x' + i, p.hr); put('v' + i, avg(i)); put('n' + i, p.n);
+      $$('[data-o="r' + i + '"]').forEach(function (r) { if (reached(i)) { r.textContent = 'あがり'; r.className = 'rm fin'; } else { r.textContent = p.h > 0 ? 'あと ' + (p.h - p.s) + (pk ? ' セット' : ' 点') : ''; r.className = 'rm'; } });
+      put('m' + i, (p.h > 0 ? (pk ? p.h + ' 先取' : '持ち点 ' + p.h) : '') + (c.stats && !pk ? '　HR ' + p.hr : ''));
+      $$('[data-pl="' + i + '"]').forEach(function (e) { e.classList.toggle('on', S.turn === i); });
+      put('tn' + i, pk ? 'ブレイクにする' : 'この選手の番にする');
+      $$('[data-to="' + i + '"]').forEach(function (b) { b.hidden = !(c.to > 0 && c.clk > 0); b.disabled = S.turn !== i || p.to >= c.to || !!S.over; b.textContent = (pk ? 'エクステンション' : 'タイムアウト') + ' 残り' + Math.max(0, c.to - p.to); });
     });
+    put('hl', pk ? '先取' : '持ち点'); put('ttl', S.title + (S.round ? '　' + S.round : ''));
+    put('mode', pk ? 'ポケット（セット先取）' : c.mode === 'free' ? 'フリープレイ' : 'スリークッション' + (c.back ? '・裏撞きあり' : ''));
+    var rem = c.limit ? Math.max(0, c.limit - S.inn) : 0, last = c.limit && S.inn >= c.limit;
+    $$('[data-o="lim"]').forEach(function (e) { e.hidden = !c.limit || pk; e.className = last ? 'hot' : ''; e.textContent = '打切り ' + c.limit + ' キュー｜' + (last ? '最終キュー' : '残り ' + rem); });
+    put('lims', c.limit && !pk ? (last ? '最終キュー' : '残り ' + rem) : '');
+    $$('[data-o="ckc"]').forEach(function (e) { e.hidden = !c.clk; e.textContent = 'クロック ' + c.clk + '秒'; });
+    var ban = S.over ? '' : S.rep ? '裏撞き：' + S.p[1].n + ' の番です。撞き終わったら「交代」で試合終了。' : (!pk && c.back && reached(0) && S.turn === 0) ? S.p[0].n + ' があがり。「交代」を押して、' + S.p[1].n + ' の裏撞きへ。' : last && !pk ? '最終キューです（打切り ' + c.limit + '）。' + (S.turn === 1 ? '撞き終わったら「交代」で試合終了。' : '') : '';
+    $$('[data-o="ban"]').forEach(function (e) { e.hidden = !ban; e.textContent = ban; });
     var sr = $('sRound'), known = [].some.call(sr.options, function (o) { return o.value !== '*' && (o.value || o.text) === S.round || (o.value === '' && !S.round); });
     if (S.round && !known) custom = true; sr.value = custom ? '*' : S.round; $('iRound').hidden = !custom; if (custom && document.activeElement !== $('iRound')) $('iRound').value = S.round;
-    $('inn').textContent = S.inn; $('nxT').textContent = '次は ' + S.p[S.turn ? 0 : 1].n;
+    put('inn', pk ? S.p[0].s + S.p[1].s + 1 : S.inn); put('innl', pk ? 'ラック' : 'イニング');
+    put('nxl', pk ? 'ブレイク交代' : (S.rep || (last && S.turn === 1)) ? '交代（試合終了）' : '交代'); put('nxt', pk ? 'いまのブレイク：' + cur.n : '次は ' + oth.n);
+    put('plusn', cur.n + ' に1' + (pk ? 'セット' : '点')); $$('[data-o="plus"]').forEach(function (e) { e.classList.toggle('b', S.turn === 1); });
+    $$('[data-o="tot"]').forEach(function (b) { b.hidden = !(c.to > 0 && c.clk > 0); b.disabled = cur.to >= c.to || !!S.over; b.innerHTML = (pk ? 'エクステンション' : 'タイムアウト') + '<br>残り ' + Math.max(0, c.to - cur.to); });
+    show('[data-stats]', c.stats && !pk); show('[data-inns]', !pk); show('[data-ck]', !!c.clk);
+    tick(true);
+    /* result */
+    var f = $('fin'); f.hidden = !S.over;
+    if (S.over) {
+      var w = S.over.w; put('win', w < 0 ? '引き分け' : '勝者　' + S.p[w].n);
+      put('why', S.over.why === 'limit' ? '打切り ' + c.limit + ' キューに達したため、試合終了です。' : pk ? '' : c.back ? '裏撞きまで終わりました。' : '');
+      $('resT').innerHTML = '<tr><th></th><th>' + (pk ? 'セット' : '得点') + '</th>' + (pk ? '' : '<th>イニング</th><th>アベレージ</th><th>ハイラン</th>') + '</tr>' + [0, 1].map(function (i) { var p = S.p[i]; return '<tr' + (w === i ? ' class="w"' : '') + '><td></td><td>' + p.s + '</td>' + (pk ? '' : '<td>' + inns(i) + '</td><td>' + avg(i) + '</td><td>' + p.hr + '</td>') + '</tr>'; }).join('');
+      [].forEach.call($('resT').querySelectorAll('td:first-child'), function (td, i) { td.textContent = S.p[i].n; });
+    }
   }
-  function push() { if (ws && ws.readyState === 1) { S.p[0].avg = avg(0); S.p[1].avg = avg(1); try { ws.send(JSON.stringify(S)); } catch (e) {} } }
-  function save() { S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} draw(); push(); }
+  function tick(force) {
+    if (!S.cfg.clk) return; var l = ckLeft(), sec = Math.ceil(l / 1000), run = !!(S.ck && S.ck.run), warn = run && l <= 10000;
+    put('ck', sec); put('ckb', run ? 'ストップ' : 'スタート');
+    $$('.ckp,.ph-in .ck').forEach(function (e) { e.classList.toggle('warn', warn); });
+    if (run && !force) { if (sec <= 10 && sec < lastBeep && sec > 0) { lastBeep = sec; beep(880, 0.08); } if (l <= 0 && lastBeep > 0) { lastBeep = 0; beep(440, 0.9); S.ck = { left: 0, run: false, t: Date.now() }; save(); } }
+  }
+  setInterval(function () { tick(false); }, 200);
+  function snap() { var o = JSON.parse(JSON.stringify(S)); [0, 1].forEach(function (i) { o.p[i].avg = avg(i); o.p[i].in = Math.max(0, inns(i)); }); if (o.ck) { o.ck.left = ckLeft(); o.ck.t = Date.now(); } return o; }
+  function push() { if (ws && ws.readyState === 1) { try { ws.send(JSON.stringify(snap())); } catch (e) {} } }
+  function store() { S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function save() { store(); draw(); push(); }
   /* ---- connection: this page is the "display" side of the relay (the side whose state is kept and handed to late joiners) ---- */
-  function status(on) { $('st').className = 'st' + (on ? ' on' : ''); $('stT').textContent = on ? 'つながっています' : 'つなぎ直しています'; }
+  function status(on) { $$('[data-st]').forEach(function (e) { e.className = 'st' + (on ? ' on' : ''); }); put('st', on ? 'つながっています' : 'つなぎ直しています'); }
   function connect() {
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=display'); } catch (e) { status(false); return; }
     var ping; ws.onopen = function () { tries = 0; status(true); push(); ping = setInterval(function () { if (ws.readyState === 1) ws.send('ping'); }, 25000); };
@@ -130,33 +294,41 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0B192C;color:#fff;fon
     ws.onclose = function () { clearInterval(ping); status(false); clearTimeout(timer); timer = setTimeout(connect, Math.min(8000, 500 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
-  /* a tablet that has never held this match (swapped device, cleared browser) first asks the relay for the last known score */
+  /* a device that has never held this match (swapped device, cleared browser) first asks the relay for the last known score */
   function start() {
-    if (!fresh) return connect();
-    var w, done = false, go = function () { if (done) return; done = true; try { w.close(); } catch (e) {} draw(); connect(); };
+    if (!fresh) { takeCfg(); draw(); return connect(); }
+    var w, done = false, go = function () { if (done) return; done = true; try { w.close(); } catch (e) {} takeCfg(); draw(); connect(); };
     try { w = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=remote'); } catch (e) { return go(); }
-    w.onmessage = function (ev) { var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (valid(m) && m.m === match) { S = fix(m); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} go(); } };
+    w.onmessage = function (ev) { var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (valid(m) && m.m === match) { S = fix(m); if (S.ck) S.ck.t = Date.now(); store(); go(); } };
     w.onerror = go; w.onclose = go; setTimeout(go, 1500);
   }
   /* ---- actions ---- */
   document.addEventListener('click', function (e) {
-    var b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.add) { var a = b.dataset.add.split(','), p = S.p[+a[0]]; var d = +a[1], was = p.s; p.s = Math.max(0, Math.min(999, p.s + d)); if (p.s !== was) { p.run = Math.max(0, p.run + d); p.hr = Math.max(p.hb | 0, p.run); } save(); } /* hb = high run before this visit, so a mistaken +1 taken back with −1 does not leave a wrong high run */
-    else if (b.dataset.inn) { S.inn = Math.max(1, Math.min(999, S.inn + (+b.dataset.inn))); save(); }
-    else if (b.dataset.turn) { if (S.turn !== +b.dataset.turn) endRun(); S.turn = +b.dataset.turn; save(); }
-    else if (b.id === 'bNext') { endRun(); if (S.turn === 0) S.turn = 1; else { S.turn = 0; S.inn = Math.min(999, S.inn + 1); } save(); }
-    else if (b.id === 'bReset') $('dlg').hidden = false;
-    else if (b.id === 'dNo') $('dlg').hidden = true;
-    else if (b.id === 'dOk') { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; }); S.inn = 1; S.turn = 0; $('dlg').hidden = true; save(); }
+    var b = e.target.closest('button'); if (!b || b.disabled) return; var d = b.dataset, who = function (v) { return v === 't' ? S.turn : +v; };
+    if (d.add) { var a = d.add.split(','); add(who(a[0]), +a[1]); save(); }
+    else if (d.inn) { if (S.over) return; S.inn = Math.max(1, Math.min(999, S.inn + (+d.inn))); save(); }
+    else if (d.turn) { if (S.over) return; if (S.turn !== +d.turn) { endRun(); S.rep = false; } S.turn = +d.turn; save(); }
+    else if (d.to) { var i = who(d.to), p = S.p[i]; if (S.over || i !== S.turn || p.to >= S.cfg.to || !S.cfg.clk) return; p.to++; ckSet(ckLeft() + S.cfg.clk * 1000, S.ck ? S.ck.run : false); save(); }
+    else if (d.act === 'next') { next(); save(); }
+    else if (d.act === 'ckgo') { if (S.over) return; var l = ckLeft(); ckSet(l > 0 ? l : S.cfg.clk * 1000, !(S.ck && S.ck.run)); save(); }
+    else if (d.act === 'ckre') { ckSet(S.cfg.clk * 1000, false); save(); }
+    else if (d.act === 'reset') $('dlg').hidden = false;
+    else if (d.act === 'dno') $('dlg').hidden = true;
+    else if (d.act === 'dok' || d.act === 'newgame') { newGame(); $('dlg').hidden = true; save(); }
+    else if (d.act === 'undo') { S.over = null; save(); }
   });
-  function bind(id, fn) { var el = $(id); el.addEventListener('input', function () { fn(el.value); S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} push(); if (/^h/.test(id)) draw(); $('nxT').textContent = '次は ' + S.p[S.turn ? 0 : 1].n; }); el.addEventListener('blur', draw); el.addEventListener('keydown', function (e) { if (e.key === 'Enter') el.blur(); }); }
-  bind('nA', function (v) { S.p[0].n = v.slice(0, 16) || 'PLAYER A'; }); bind('nB', function (v) { S.p[1].n = v.slice(0, 16) || 'PLAYER B'; });
-  bind('hA', function (v) { S.p[0].h = Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0); }); bind('hB', function (v) { S.p[1].h = Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0); });
-  bind('iTitle', function (v) { S.title = v.slice(0, 24) || 'Queen Cup 2026-2027'; });
+  document.addEventListener('input', function (e) {
+    var el = e.target, f = el.getAttribute && el.getAttribute('data-f'); if (!f) return; var v = el.value;
+    if (f === 'title') S.title = v.slice(0, 24) || 'Queen Cup 2026-2027';
+    else if (f.charAt(0) === 'n') S.p[+f.charAt(1)].n = v.slice(0, 16) || (f === 'n0' ? 'PLAYER A' : 'PLAYER B');
+    else S.p[+f.charAt(1)].h = Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0);
+    store(); push(); draw();
+  });
+  document.addEventListener('focusout', function (e) { if (e.target.getAttribute && e.target.getAttribute('data-f')) setTimeout(draw, 0); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.target.blur(); });
   $('sRound').addEventListener('change', function () { var v = $('sRound').value; if (v === '*') { custom = true; S.round = ''; save(); $('iRound').value = ''; $('iRound').focus(); } else { custom = false; S.round = v; save(); } });
-  bind('iRound', function (v) { S.round = v.slice(0, 12); });
+  $('iRound').addEventListener('input', function () { S.round = $('iRound').value.slice(0, 12); store(); push(); });
   $('iMatch').addEventListener('change', function () { var m = clean($('iMatch').value); if (m && m !== match) location.search = '?match=' + encodeURIComponent(m); else $('iMatch').value = match; });
-  $('iMatch').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('iMatch').blur(); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { wake(); if (!ws || ws.readyState > 1) { clearTimeout(timer); connect(); } } });
   window.addEventListener('online', function () { if (!ws || ws.readyState > 1) { clearTimeout(timer); connect(); } });
   var wake = function () { try { if (navigator.wakeLock && document.visibilityState === 'visible') navigator.wakeLock.request('screen').catch(function () {}); } catch (e) {} };
