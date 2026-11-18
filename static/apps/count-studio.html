@@ -33,7 +33,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
 .hd .mv b{background:var(--y);color:var(--k);border-radius:99px;padding:0 1.2vh;min-width:3.4vh;text-align:center;font-size:2vh}
 .hd svg,.cam .ic svg{width:3vh;height:3vh;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
 /* main */
-.mn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);gap:1vw;min-height:0}
+.mn{display:grid;grid-template-columns:minmax(0,1fr) var(--camw,minmax(0,2fr)) minmax(0,1fr);gap:1vw;min-height:0}
 .pl{background:var(--k2);border-radius:2vh;border:.5vh solid transparent;display:flex;flex-direction:column;gap:1vh;padding:1.4vh 1vw;min-width:0;min-height:0}
 .pl.on{border-color:var(--y);box-shadow:0 0 4vh rgba(242,194,0,.25)}
 .pl .tag{align-self:flex-start;font-size:1.7vh;background:var(--k3);color:var(--sub);border-radius:99px;padding:.3vh 1.2vh}
@@ -52,19 +52,19 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
 .pl:not(.on) .pt,.pl:not(.on) .mi{opacity:.35}
 /* camera */
 .cam{position:relative;background:#000;border-radius:2vh;overflow:hidden;min-width:0;min-height:0;border:.3vh solid var(--ln)}
-.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
-.cam video.flip{transform:scaleX(-1)}
+.cam video{position:absolute;left:50%;top:50%;width:100%;height:100%;object-fit:contain;background:#000;transform:translate(-50%,-50%)}
 .cam .gr{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to right,transparent calc(33.33% - 1px),rgba(255,255,255,.45) 33.33%,transparent calc(33.33% + 1px),transparent calc(66.66% - 1px),rgba(255,255,255,.45) 66.66%,transparent calc(66.66% + 1px)),linear-gradient(to bottom,transparent calc(33.33% - 1px),rgba(255,255,255,.45) 33.33%,transparent calc(33.33% + 1px),transparent calc(66.66% - 1px),rgba(255,255,255,.45) 66.66%,transparent calc(66.66% + 1px))}
 .cam .off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;text-align:center;padding:2vh 2vw;font-size:2.2vh;line-height:1.7;color:var(--sub)}
 .cam .off button{background:var(--y);color:var(--k);font-size:3vh;font-weight:900;padding:1.6vh 3vw}
 .cam .ic{position:absolute;right:1vh;bottom:1vh;display:flex;gap:.8vh}
-.cam .ic button{background:rgba(14,15,18,.78);min-width:9vh;min-height:8vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3vh;font-size:1.5vh;padding:.6vh 1vh}
+.cam .ic{flex-wrap:wrap;justify-content:flex-end;left:1vh}
+.cam .ic button{background:rgba(14,15,18,.78);min-width:8vh;min-height:8vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3vh;font-size:1.5vh;padding:.6vh 1vh}
 .cam .ic button[aria-pressed="true"]{background:var(--y);color:var(--k)}
 .cam .lv{position:absolute;left:1vh;top:1vh;background:rgba(14,15,18,.78);border-radius:99px;padding:.4vh 1.4vh;font-size:1.7vh}
 .cam .rp{position:absolute;inset:0;background:#000;display:flex}
-.cam .rp video{position:static;flex:1;min-width:0}
 .cam .rp b{position:absolute;left:1vh;top:1vh;background:var(--y);color:var(--k);border-radius:99px;padding:.5vh 1.8vh;font-size:2.2vh}
-.cam .rp button{position:absolute;right:1vh;top:1vh;background:rgba(14,15,18,.85);padding:0 2.4vh;min-height:7vh;font-size:2.2vh}
+.cam .rp b{max-width:calc(100% - 2vh);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cam .rp button{position:absolute;right:1vh;bottom:1vh;background:rgba(14,15,18,.85);padding:0 2.4vh;min-height:7vh;font-size:2.2vh}
 /* footer */
 .ft{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:1vw;min-height:13vh}
 .ck{background:var(--k2);border-radius:2vh;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:1.4vw;padding:0 1.4vw}
@@ -91,7 +91,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
 #toast{position:fixed;left:50%;bottom:17vh;transform:translateX(-50%);z-index:30;background:var(--w);color:var(--k);border-radius:99px;padding:1vh 3vh;font-size:2.2vh}
 /* narrow or upright screens: camera on top, players side by side */
 @media (max-aspect-ratio:11/10){
-  .mn{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,38%) minmax(0,1fr)}.cam{grid-column:1/-1;grid-row:1}
+  .mn{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,46%) minmax(0,1fr)}.cam{grid-column:1/-1;grid-row:1}
   .pl .sc{font-size:min(16vh,26vw)}.hd{flex-wrap:wrap}.hd>*{font-size:1.8vh}.hd .tm{flex:1 1 100%}
   .ft{grid-template-columns:1fr auto}.ck{grid-column:1/-1;min-height:11vh}.nx{min-height:9vh}
 }
@@ -132,9 +132,10 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
       <video id="v" autoplay playsinline muted></video>
       <i class="gr" id="grid" hidden></i>
       <span class="lv" id="lv" hidden>ライブ</span>
-      <div class="off" id="off"><span id="offT">Webカメラをつないで、下のボタンを押してください。<br>映像はこの画面の中だけで使い、外へは送りません。</span><button type="button" id="bCam">カメラを入れる</button></div>
+      <div class="off" id="off"><span id="offT">Webカメラをつないで、下のボタンを押してください。<br>台は縦長に映します（カメラは台の長い辺に合わせて横向きに置く）。<br>映像はこの画面の中だけで使い、外へは送りません。</span><button type="button" id="bCam">カメラを入れる</button></div>
       <div class="ic" id="ic" hidden>
         <button type="button" id="bSw" aria-label="カメラを切り替える"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9 A8 8 0 0 1 19 8 M20 15 A8 8 0 0 1 5 16 M19 3 V8 H14 M5 21 V16 H10"/></svg>切替</button>
+        <button type="button" id="bRo" aria-label="映像の向きを変える（縦・横）"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="14" rx="1.5"/><path d="M4 14 V19 H9 M4 19 A9 9 0 0 0 20 16"/></svg>向き</button>
         <button type="button" id="bFl" aria-pressed="false" aria-label="左右を反転する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 V21 M8 7 L3 12 L8 17 Z M16 7 L21 12 L16 17 Z"/></svg>反転</button>
         <button type="button" id="bGr" aria-pressed="false" aria-label="目安の線を出す"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3 V21 M15 3 V21 M3 9 H21 M3 15 H21"/></svg>線</button>
       </div>
@@ -322,9 +323,19 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
   function camUi(on) {
     $('off').hidden = on; $('ic').hidden = !on; $('lv').hidden = !on;
     $('rec').className = 'rec' + (on && REC_OK ? ' on' : ''); $('recT').textContent = on ? (REC_OK ? '録画待機中' : '録画は使えません') : 'カメラなし';
-    v.classList.toggle('flip', !!prefs.flip); $('bFl').setAttribute('aria-pressed', String(!!prefs.flip));
+    fit(); $('bFl').setAttribute('aria-pressed', String(!!prefs.flip));
     $('grid').hidden = !(on && prefs.grid); $('bGr').setAttribute('aria-pressed', String(!!prefs.grid));
   }
+  /* A billiard table is long, so the picture stands upright by default: the camera films the table lengthwise and the screen turns it 90 degrees. */
+  if (prefs.rot == null) prefs.rot = 90;
+  function fit() {
+    var mn = document.querySelector('.mn'), cam = document.querySelector('.cam'), up = prefs.rot % 180 !== 0, wide = innerWidth / innerHeight > 1.1;
+    mn.style.setProperty('--camw', up && wide ? Math.round(Math.min(mn.clientHeight * 9 / 16, mn.clientWidth * .46)) + 'px' : '');
+    if (!up || !wide) mn.style.removeProperty('--camw');
+    var W = cam.clientWidth, H = cam.clientHeight;
+    [v, $('rv')].forEach(function (e) { e.style.width = (up ? H : W) + 'px'; e.style.height = (up ? W : H) + 'px'; e.style.transform = 'translate(-50%,-50%) rotate(' + prefs.rot + 'deg)' + (prefs.flip ? ' scaleX(-1)' : ''); });
+  }
+  addEventListener('resize', function () { fit(); fit(); });
   function camStop() { recStop(); if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; v.srcObject = null; camUi(false); }
   function camStart(id) {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { $('offT').textContent = 'このブラウザではカメラを使えません。Chrome か Edge でひらいてください。'; return; }
@@ -345,6 +356,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
   }
   $('bCam').onclick = function () { camStart(prefs.id); };
   $('bSw').onclick = function () { if (devs.length < 2) return; devI = (devI + 1) % devs.length; camStart(devs[devI].deviceId); };
+  $('bRo').onclick = function () { prefs.rot = (prefs.rot + 90) % 360; savePrefs(); fit(); fit(); toast(prefs.rot % 180 ? '縦向きの表示' : '横向きの表示'); };
   $('bFl').onclick = function () { prefs.flip = !prefs.flip; savePrefs(); camUi(!!stream); };
   $('bGr').onclick = function () { prefs.grid = !prefs.grid; savePrefs(); camUi(!!stream); };
   $('mOffCam').onclick = function () { camStop(); $('oMenu').hidden = true; };
@@ -381,7 +393,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
   }
   var rv = $('rv');
   function replay(c) {
-    $('rpT').textContent = 'リプレイ　' + c.who + '（' + c.sc + '）'; $('rp').hidden = false; rv.classList.toggle('flip', !!prefs.flip);
+    $('rpT').textContent = 'リプレイ　' + c.who + '（' + c.sc + '）'; $('rp').hidden = false; fit();
     rv.src = c.url; rv.onloadedmetadata = function () { try { if (c.from > 0.5) rv.currentTime = c.from; } catch (e) {} rv.play().catch(function () {}); };
     rv.onended = function () { $('rp').hidden = true; };
   }
@@ -400,7 +412,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
   };
   $('mvX').onclick = function () { $('oMv').hidden = true; };
   addEventListener('pagehide', function () { recStop(); });
-  camUi(false); draw();
+  camUi(false); draw(); fit(); fit();
   window.__studio = { S: function () { return S; }, clips: clips };
 })();
 </script>
