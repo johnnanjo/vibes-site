@@ -474,7 +474,15 @@ function contentPages() {
   /* organiser's control panel for the event scoreboard (hidden page, simple 4-digit lock) */
   put('/pages/digital-lab-admin', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/digital-lab-admin.html'), 'utf8') });
   /* player feature page (stand-alone poster design, its own colours: yellow / black / white) */
-  put('/pages/yuko-nishimoto', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/yuko-nishimoto.html'), 'utf8') });
+  {
+    // Photo slots of the feature page: put static/img/players/yuko-nishimoto-hero.(jpg|webp|png) / -gear.(…) and the frame shows it (auto mono retouch in CSS).
+    let raw = fs.readFileSync(path.join(ROOT, 'static/apps/yuko-nishimoto.html'), 'utf8');
+    for (const slot of ['hero', 'gear']) {
+      const ext = ['jpg', 'webp', 'png'].find(e => fs.existsSync(path.join(ROOT, `static/img/players/yuko-nishimoto-${slot}.${e}`)));
+      raw = raw.replace(`<!--PHOTO:${slot}-->`, ext ? `<img src="/img/players/yuko-nishimoto-${slot}.${ext}" alt="" loading="${slot === 'hero' ? 'eager' : 'lazy'}">` : '');
+    }
+    put('/pages/yuko-nishimoto', { raw });
+  }
   put('/pages/count-overlay', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-overlay.html'), 'utf8') });
   put('/pages/count-cam', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-cam.html'), 'utf8') });
   put('/pages/count-live', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-live.html'), 'utf8') });
