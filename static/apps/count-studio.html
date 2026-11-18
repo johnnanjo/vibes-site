@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ja" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>スタジオモニター（カメラ映像＋スコア＋スーパーショット）｜VIBES DIGITAL LAB</title>
+<meta name="description" content="大型モニターとWebカメラで使う、スリークッションのスタジオモニター。スコア、ショットクロック、直前のプレーを残すスーパーショット。">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://vibesbilliards.com/pages/count-studio">
+<link rel="icon" href="/img/favicon-64.png">
+<meta name="theme-color" content="#0E0F12">
+<style>
+/* Studio monitor: one screen = live camera in the middle, a player on each side, shot clock below. Matte black + VIBES yellow.
+   Touch works on the monitor itself; a phone opened from the QR code in the menu works as a remote (same relay as the scoreboards).
+   Video never leaves the browser: the last seconds are kept in memory and a "super shot" turns them into a clip. */
+@font-face{font-family:VNum;src:url(/fonts/anton-latin-400-normal.woff2) format("woff2");font-display:swap}
+:root{--k:#0E0F12;--k2:#191B21;--k3:#262932;--ln:#3A3E4A;--y:#F2C200;--w:#F3F4EF;--sub:#A9AEBB;--red:#E5484D;--gap:1.2vh}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--k);color:var(--w);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;font-weight:800;overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;border:0;border-radius:1.4vh;background:var(--k3);cursor:pointer;padding:0;min-height:44px}
+button:active{transform:translateY(2px);filter:brightness(1.15)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.num{font-family:VNum,"Arial Narrow",Impact,sans-serif;font-weight:400;font-variant-numeric:tabular-nums}
+#app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:var(--gap);padding:max(var(--gap),env(safe-area-inset-top)) max(1.2vw,env(safe-area-inset-right)) max(var(--gap),env(safe-area-inset-bottom)) max(1.2vw,env(safe-area-inset-left))}
+/* header */
+.hd{display:flex;align-items:stretch;gap:1vw;min-height:7.5vh}
+.hd>*{background:var(--k2);border-radius:1.4vh;display:flex;align-items:center;justify-content:center;gap:.8vw;padding:0 1.4vw;font-size:2.3vh;text-decoration:none;color:var(--w);white-space:nowrap}
+.hd .tm{flex:1;justify-content:flex-start}.hd .tm small,.hd .st small{font-size:1.7vh;color:var(--sub)}
+.hd .num{font-size:4.6vh;line-height:1}
+.hd .rec i{width:1.6vh;height:1.6vh;border-radius:50%;background:var(--ln)}.hd .rec.on i{background:var(--red);animation:bl 1.4s infinite}
+@keyframes bl{50%{opacity:.25}}
+.hd .mv b{background:var(--y);color:var(--k);border-radius:99px;padding:0 1.2vh;min-width:3.4vh;text-align:center;font-size:2vh}
+.hd svg,.cam .ic svg{width:3vh;height:3vh;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* main */
+.mn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);gap:1vw;min-height:0}
+.pl{background:var(--k2);border-radius:2vh;border:.5vh solid transparent;display:flex;flex-direction:column;gap:1vh;padding:1.4vh 1vw;min-width:0;min-height:0}
+.pl.on{border-color:var(--y);box-shadow:0 0 4vh rgba(242,194,0,.25)}
+.pl .tag{align-self:flex-start;font-size:1.7vh;background:var(--k3);color:var(--sub);border-radius:99px;padding:.3vh 1.2vh}
+.pl.on .tag{background:var(--y);color:var(--k)}
+.pl input{width:100%;min-width:0;background:transparent;border:0;border-bottom:2px solid var(--ln);color:var(--w);font-family:inherit;font-weight:900;font-size:3.2vh;line-height:1.3;padding:.4vh 0;border-radius:0;user-select:text;-webkit-user-select:text}
+.pl .h{display:flex;align-items:center;gap:.8vw;font-size:1.9vh;color:var(--sub)}.pl .h input{width:5em;font-size:2.6vh;text-align:center}
+.pl .sc{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;font-size:min(30vh,15vw);line-height:.85}
+.pl:nth-child(3) .sc{color:var(--y)}
+.pl .sub{display:grid;grid-template-columns:1fr 1fr;gap:.6vw;font-size:1.7vh;color:var(--sub);text-align:center}
+.pl .sub b{display:block;font-size:3.4vh;color:var(--w);line-height:1.1}
+.pl .bt{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8vh .6vw}
+.pl .pt{background:var(--y);color:var(--k);font-size:3.6vh;font-weight:900;min-height:10vh}
+.pl .mi{min-width:6vw;font-size:2.6vh;background:var(--k3)}
+.pl .ss{grid-column:1/-1;min-height:7vh;font-size:2.3vh;background:transparent;border:.3vh solid var(--y);color:var(--w);display:flex;align-items:center;justify-content:center;gap:.6vw}
+.pl .ss i{width:1.6vh;height:1.6vh;border-radius:50%;background:var(--red)}
+.pl:not(.on) .pt,.pl:not(.on) .mi{opacity:.35}
+/* camera */
+.cam{position:relative;background:#000;border-radius:2vh;overflow:hidden;min-width:0;min-height:0;border:.3vh solid var(--ln)}
+.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.cam video.flip{transform:scaleX(-1)}
+.cam .gr{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to right,transparent calc(33.33% - 1px),rgba(255,255,255,.45) 33.33%,transparent calc(33.33% + 1px),transparent calc(66.66% - 1px),rgba(255,255,255,.45) 66.66%,transparent calc(66.66% + 1px)),linear-gradient(to bottom,transparent calc(33.33% - 1px),rgba(255,255,255,.45) 33.33%,transparent calc(33.33% + 1px),transparent calc(66.66% - 1px),rgba(255,255,255,.45) 66.66%,transparent calc(66.66% + 1px))}
+.cam .off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;text-align:center;padding:2vh 2vw;font-size:2.2vh;line-height:1.7;color:var(--sub)}
+.cam .off button{background:var(--y);color:var(--k);font-size:3vh;font-weight:900;padding:1.6vh 3vw}
+.cam .ic{position:absolute;right:1vh;bottom:1vh;display:flex;gap:.8vh}
+.cam .ic button{background:rgba(14,15,18,.78);min-width:9vh;min-height:8vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3vh;font-size:1.5vh;padding:.6vh 1vh}
+.cam .ic button[aria-pressed="true"]{background:var(--y);color:var(--k)}
+.cam .lv{position:absolute;left:1vh;top:1vh;background:rgba(14,15,18,.78);border-radius:99px;padding:.4vh 1.4vh;font-size:1.7vh}
+.cam .rp{position:absolute;inset:0;background:#000;display:flex}
+.cam .rp video{position:static;flex:1;min-width:0}
+.cam .rp b{position:absolute;left:1vh;top:1vh;background:var(--y);color:var(--k);border-radius:99px;padding:.5vh 1.8vh;font-size:2.2vh}
+.cam .rp button{position:absolute;right:1vh;top:1vh;background:rgba(14,15,18,.85);padding:0 2.4vh;min-height:7vh;font-size:2.2vh}
+/* footer */
+.ft{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:1vw;min-height:13vh}
+.ck{background:var(--k2);border-radius:2vh;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:1.4vw;padding:0 1.4vw}
+.ck .n{font-size:10vh;line-height:1;min-width:1.5em;text-align:center}
+.ck.warn .n{color:var(--red)}.ck.warn .g i{background:var(--red)}
+.ck.zero{animation:bl .6s infinite}
+.ck small{display:block;font-size:1.6vh;color:var(--sub)}
+.ck .g{height:3vh;background:var(--k3);border-radius:99px;overflow:hidden}.ck .g i{display:block;height:100%;width:100%;background:var(--y);border-radius:99px;transition:width .25s linear}
+.ck button{padding:0 2vw;min-height:8vh;font-size:2.2vh}
+.inn{background:var(--k2);border-radius:2vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 2.4vw;font-size:1.7vh;color:var(--sub)}.inn b{font-size:8vh;line-height:1;color:var(--w)}
+.nx{background:var(--y);color:var(--k);font-size:4vh;font-weight:900;padding:0 4vw;border-radius:2vh}
+/* overlays */
+.ov{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:3vh 3vw}
+.bx{background:var(--k2);border-radius:2.4vh;padding:3vh 2.4vw;width:min(92vw,980px);max-height:94vh;overflow:auto;display:flex;flex-direction:column;gap:2vh}
+.bx h2{margin:0;font-size:3vh}.bx p{margin:0;font-size:2vh;line-height:1.7;color:var(--sub);font-weight:700}
+.bx .row{display:flex;gap:1vw;flex-wrap:wrap}.bx .row button{flex:1;padding:1.4vh 1.6vw;font-size:2.2vh;min-height:7vh}
+.bx button.y{background:var(--y);color:var(--k)}.bx button[aria-pressed="true"]{background:var(--y);color:var(--k)}
+.qr{background:#fff;border-radius:1.6vh;padding:1.2vh;width:min(30vh,60vw);align-self:center}.qr svg{display:block;width:100%;height:auto}
+.cl{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.4vh}
+.cl div{background:var(--k3);border-radius:1.6vh;padding:1.2vh;display:flex;flex-direction:column;gap:.8vh;font-size:1.8vh}
+.cl video{width:100%;aspect-ratio:16/9;background:#000;border-radius:1vh}
+.cl .row a{flex:1;display:flex;align-items:center;justify-content:center;background:var(--k);color:var(--w);border-radius:1.4vh;text-decoration:none;font-size:2vh;min-height:6vh}
+.win b{font-size:12vh;line-height:1;color:var(--y)}.win{text-align:center;align-items:center}
+#toast{position:fixed;left:50%;bottom:17vh;transform:translateX(-50%);z-index:30;background:var(--w);color:var(--k);border-radius:99px;padding:1vh 3vh;font-size:2.2vh}
+/* narrow or upright screens: camera on top, players side by side */
+@media (max-aspect-ratio:11/10){
+  .mn{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,38%) minmax(0,1fr)}.cam{grid-column:1/-1;grid-row:1}
+  .pl .sc{font-size:min(16vh,26vw)}.hd{flex-wrap:wrap}.hd>*{font-size:1.8vh}.hd .tm{flex:1 1 100%}
+  .ft{grid-template-columns:1fr auto}.ck{grid-column:1/-1;min-height:11vh}.nx{min-height:9vh}
+}
+/* phone remote */
+#rm{height:100%;display:flex;flex-direction:column;gap:12px;padding:max(14px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+#rm .s{font-size:14px;color:var(--sub);display:flex;align-items:center;gap:8px}#rm .s i{width:10px;height:10px;border-radius:50%;background:var(--red)}#rm .s.on i{background:#3DD68C}
+#rm .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#rm .p{background:var(--k2);border-radius:14px;border:3px solid transparent;padding:10px;text-align:center;font-size:14px;min-width:0}#rm .p.on{border-color:var(--y)}
+#rm .p b{display:block;font-size:64px;line-height:1}#rm .p span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#rm .inf{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;font-size:13px;color:var(--sub)}#rm .inf b{display:block;font-size:34px;color:var(--w);line-height:1.1}
+#rm .big{flex:1;min-height:120px;background:var(--y);color:var(--k);font-size:44px;font-weight:900;border-radius:18px}
+#rm .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}#rm .g3 button{min-height:64px;font-size:16px;border-radius:14px}
+#rm .nx{min-height:84px;font-size:30px;background:var(--w)}
+#rm .ss{min-height:64px;font-size:18px;border:2px solid var(--y);background:transparent;border-radius:14px}
+</style>
+</head>
+<body>
+<!-- monitor -->
+<div id="app" hidden>
+  <header class="hd">
+    <a href="/pages/count" aria-label="ホームへ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 L12 3 L21 11 M6 9.5 V20 H18 V9.5"/></svg>ホーム</a>
+    <div class="tm"><small>経過時間</small><span class="num" id="el">00:00:00</span></div>
+    <div class="st"><small>セット</small><span class="num" id="sets">0 − 0</span></div>
+    <div class="rec" id="rec"><i></i><span id="recT">カメラなし</span></div>
+    <button type="button" class="mv" id="bMv"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9 L15 12 L10 15 Z" fill="currentColor"/></svg>動画<b id="mvN">0</b></button>
+    <button type="button" id="bMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7 H20 M4 12 H20 M4 17 H20"/></svg>メニュー</button>
+  </header>
+  <main class="mn">
+    <section class="pl" data-p="0" aria-label="選手A">
+      <span class="tag">選手A（白球）</span>
+      <input data-f="n" maxlength="16" aria-label="選手Aの名前" autocomplete="off">
+      <label class="h">持ち点<input data-f="h" inputmode="numeric" maxlength="3" aria-label="選手Aの持ち点"></label>
+      <div class="sc num" data-o="sc">0</div>
+      <div class="sub"><span>連続得点<b class="num" data-o="run">0</b></span><span>ハイラン<b class="num" data-o="hr">0</b></span></div>
+      <div class="bt"><button type="button" class="pt" data-a="plus">＋1点</button><button type="button" class="mi" data-a="minus" aria-label="1点もどす">−1</button><button type="button" class="ss" data-a="shot"><i></i>スーパーショット</button></div>
+    </section>
+    <section class="cam" aria-label="カメラの映像">
+      <video id="v" autoplay playsinline muted></video>
+      <i class="gr" id="grid" hidden></i>
+      <span class="lv" id="lv" hidden>ライブ</span>
+      <div class="off" id="off"><span id="offT">Webカメラをつないで、下のボタンを押してください。<br>映像はこの画面の中だけで使い、外へは送りません。</span><button type="button" id="bCam">カメラを入れる</button></div>
+      <div class="ic" id="ic" hidden>
+        <button type="button" id="bSw" aria-label="カメラを切り替える"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9 A8 8 0 0 1 19 8 M20 15 A8 8 0 0 1 5 16 M19 3 V8 H14 M5 21 V16 H10"/></svg>切替</button>
+        <button type="button" id="bFl" aria-pressed="false" aria-label="左右を反転する"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 V21 M8 7 L3 12 L8 17 Z M16 7 L21 12 L16 17 Z"/></svg>反転</button>
+        <button type="button" id="bGr" aria-pressed="false" aria-label="目安の線を出す"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3 V21 M15 3 V21 M3 9 H21 M3 15 H21"/></svg>線</button>
+      </div>
+      <div class="rp" id="rp" hidden><video id="rv" playsinline muted></video><b id="rpT">リプレイ</b><button type="button" id="rpX">とじる</button></div>
+    </section>
+    <section class="pl" data-p="1" aria-label="選手B">
+      <span class="tag">選手B（黄球）</span>
+      <input data-f="n" maxlength="16" aria-label="選手Bの名前" autocomplete="off">
+      <label class="h">持ち点<input data-f="h" inputmode="numeric" maxlength="3" aria-label="選手Bの持ち点"></label>
+      <div class="sc num" data-o="sc">0</div>
+      <div class="sub"><span>連続得点<b class="num" data-o="run">0</b></span><span>ハイラン<b class="num" data-o="hr">0</b></span></div>
+      <div class="bt"><button type="button" class="pt" data-a="plus">＋1点</button><button type="button" class="mi" data-a="minus" aria-label="1点もどす">−1</button><button type="button" class="ss" data-a="shot"><i></i>スーパーショット</button></div>
+    </section>
+  </main>
+  <footer class="ft">
+    <div class="ck" id="ck"><span><small>ショットクロック</small><b class="n num" id="ckN">40</b></span><div class="g" aria-hidden="true"><i id="ckG"></i></div><button type="button" id="ckP">止める</button><button type="button" id="ckR">リセット</button></div>
+    <div class="inn">イニング<b class="num" id="inn">1</b></div>
+    <button type="button" class="nx" id="bNx">交代</button>
+  </footer>
+</div>
+
+<!-- menu -->
+<div class="ov" id="oMenu" hidden><div class="bx" role="dialog" aria-label="メニュー">
+  <h2>メニュー</h2>
+  <p>スマホをリモコンにする：スマホのカメラで読み取ってください。モニターにさわらずに、点数・交代・スーパーショットを操作できます。</p>
+  <div class="qr" id="qr"></div>
+  <p>ショットクロックの秒数</p>
+  <div class="row" id="ckSel"><button type="button" data-v="0">使わない</button><button type="button" data-v="30">30秒</button><button type="button" data-v="35">35秒</button><button type="button" data-v="40">40秒</button></div>
+  <div class="row"><button type="button" id="mNew">新しい試合（点数を0に）</button><button type="button" id="mSets">セット数を0に</button></div>
+  <div class="row"><button type="button" id="mOffCam">カメラを切る</button><button type="button" class="y" id="mX">とじる</button></div>
+  <p>テンキーでも操作できます：「＋」＝1点、「−」＝1点もどす、「Enter」＝交代。</p>
+</div></div>
+<!-- clips -->
+<div class="ov" id="oMv" hidden><div class="bx" role="dialog" aria-label="スーパーショットの動画">
+  <h2>スーパーショットの動画</h2>
+  <p id="mvE">まだありません。カメラを入れてから「スーパーショット」を押すと、直前の約20秒がここに残ります。</p>
+  <div class="cl" id="cl"></div>
+  <p>動画はこの画面をとじると消えます。残したいものは「保存」で端末に保存してください（外へは送られません）。</p>
+  <div class="row"><button type="button" class="y" id="mvX">とじる</button></div>
+</div></div>
+<!-- win -->
+<div class="ov" id="oWin" hidden><div class="bx win" role="dialog" aria-label="試合終了">
+  <p>試合終了</p><b id="wN"></b><p id="wT"></p>
+  <div class="row" style="align-self:stretch"><button type="button" id="wU">取り消してもどる</button><button type="button" class="y" id="wNx">次の試合へ（0にもどす）</button></div>
+</div></div>
+<div id="toast" hidden role="status"></div>
+
+<!-- phone remote -->
+<div id="rm" hidden>
+  <div class="s" id="rS"><i></i><span id="rST">つないでいます</span></div>
+  <div class="two"><div class="p" id="rP0"><span id="rN0">選手A</span><b class="num" id="rS0">0</b></div><div class="p" id="rP1"><span id="rN1">選手B</span><b class="num" id="rS1">0</b></div></div>
+  <div class="inf"><span>イニング<b class="num" id="rI">1</b></span><span>ショットクロック<b class="num" id="rC">–</b></span></div>
+  <button type="button" class="big" data-k="+">＋1点</button>
+  <div class="g3"><button type="button" data-k="-">−1（もどす）</button><button type="button" data-c="clock">時計リセット</button><button type="button" data-c="pause">時計を止める</button></div>
+  <button type="button" class="ss" data-c="shot">スーパーショット（直前のプレーを残す）</button>
+  <button type="button" class="nx" data-k="Enter">交代</button>
+</div>
+
+<script src="/js/qr.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+  var q = new URLSearchParams(location.search), RC = (q.get('r') || '').replace(/\D/g, '');
+  var tT; function toast(t) { var e = $('toast'); e.textContent = t; e.hidden = false; clearTimeout(tT); tT = setTimeout(function () { e.hidden = true; }, 2600); }
+  function sock(code, role, onmsg, onst) {
+    var ws, tries = 0, ping, timer, dead = false;
+    (function go() {
+      if (dead) return;
+      try { ws = new WebSocket('wss://' + WSH + '/api/count/' + code + '?role=' + role); } catch (e) { return; }
+      ws.onopen = function () { tries = 0; onst(true); ping = setInterval(function () { if (ws.readyState === 1) ws.send('ping'); }, 25000); };
+      ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } onmsg(m); };
+      ws.onclose = function () { clearInterval(ping); onst(false); clearTimeout(timer); timer = setTimeout(go, Math.min(8000, 500 * Math.pow(2, tries++))); };
+      ws.onerror = function () { try { ws.close(); } catch (e) {} };
+    })();
+    return { send: function (o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } return false; } };
+  }
+
+  /* ================= phone remote ================= */
+  if (RC.length === 6) {
+    $('rm').hidden = false; document.documentElement.style.overflow = 'auto';
+    var rs = sock(RC, 'remote', function (m) {
+      if (m.type !== 'studio') return;
+      [0, 1].forEach(function (i) { $('rN' + i).textContent = m.n[i]; $('rS' + i).textContent = m.sc[i]; $('rP' + i).className = 'p' + (m.turn === i ? ' on' : ''); });
+      $('rI').textContent = m.inn; $('rC').textContent = m.len ? Math.ceil(m.left) : '–';
+    }, function (on) { $('rS').className = 's' + (on ? ' on' : ''); $('rST').textContent = on ? 'モニターにつながっています' : 'つなぎ直しています'; if (on) rs.send({ type: 'hello' }); });
+    $('rm').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      var ok = b.dataset.k ? rs.send({ type: 'key', k: b.dataset.k }) : rs.send({ type: 'cmd', c: b.dataset.c });
+      if (!ok) toast('つながっていません'); else if (navigator.vibrate) navigator.vibrate(15);
+    });
+    return;
+  }
+
+  /* ================= monitor ================= */
+  $('app').hidden = false;
+  var KEY = 'vibes-studio-v1', S;
+  function blank() { return { n: ['選手A', '選手B'], h: [25, 25], sc: [0, 0], hr: [0, 0], run: 0, turn: 0, inn: 1, sets: [0, 0], len: 40, left: 40, ckOn: false, t0: 0, tEnd: 0, over: -1 }; }
+  try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  if (!S || !Array.isArray(S.sc)) S = blank(); else { var d0 = blank(); for (var k0 in d0) if (S[k0] == null) S[k0] = d0[k0]; S.ckOn = false; }
+  var code; try { code = localStorage.getItem('vibes-studio-room'); } catch (e) {}
+  if (!/^\d{6}$/.test(code || '')) { code = String(100000 + Math.floor(Math.random() * 900000)); try { localStorage.setItem('vibes-studio-room', code); } catch (e) {} }
+  var ckT = 0; /* wall time of the last clock update */
+  function store() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  var link = sock(code, 'display', function (m) {
+    if (m.type === 'hello' || m.type === 'ctl') return push();
+    if (m.type === 'key') return key(m.k);
+    if (m.type === 'cmd') { if (m.c === 'shot') shot(S.turn); else if (m.c === 'clock') ckReset(true); else if (m.c === 'pause') ckPause(); }
+  }, function (on) { if (on) push(); });
+  function push() { link.send({ type: 'studio', n: S.n, sc: S.sc, turn: S.turn, inn: S.inn, len: S.len, left: S.left, over: S.over }); }
+  function two(x) { return (x < 10 ? '0' : '') + x; }
+  function draw() {
+    $$('.pl').forEach(function (el) {
+      var i = +el.dataset.p; el.classList.toggle('on', S.turn === i && S.over < 0);
+      var f = el.querySelector('[data-f="n"]'); if (document.activeElement !== f) f.value = S.n[i];
+      var g = el.querySelector('[data-f="h"]'); if (document.activeElement !== g) g.value = S.h[i];
+      el.querySelector('[data-o="sc"]').textContent = S.sc[i];
+      el.querySelector('[data-o="run"]').textContent = S.turn === i ? S.run : 0;
+      el.querySelector('[data-o="hr"]').textContent = S.hr[i];
+    });
+    $('inn').textContent = S.inn; $('sets').textContent = S.sets[0] + ' − ' + S.sets[1];
+    drawCk();
+    $('oWin').hidden = S.over < 0;
+    if (S.over >= 0) { $('wN').textContent = S.n[S.over]; $('wT').textContent = S.sc[0] + ' − ' + S.sc[1] + '　／　' + S.inn + ' イニング'; }
+    $$('#ckSel button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.v === S.len)); });
+  }
+  function drawCk() {
+    var c = $('ck'); c.style.visibility = S.len ? '' : 'hidden';
+    $('ckN').textContent = Math.ceil(S.left); $('ckG').style.width = (S.len ? Math.max(0, S.left / S.len * 100) : 0) + '%';
+    c.classList.toggle('warn', S.len > 0 && S.left <= 10); c.classList.toggle('zero', S.len > 0 && S.left <= 0);
+    $('ckP').textContent = S.ckOn ? '止める' : '動かす';
+  }
+  function save() { store(); draw(); push(); }
+  function begin() { if (!S.t0) S.t0 = Date.now(); }
+  function ckReset(run) { S.left = S.len; S.ckOn = !!(run && S.len && S.over < 0); ckT = Date.now(); save(); }
+  function ckPause() { if (!S.len) return; S.ckOn = !S.ckOn && S.left > 0 && S.over < 0; ckT = Date.now(); save(); }
+  function plus(i) {
+    if (S.over >= 0) return;
+    if (i !== S.turn) return toast('いまは ' + S.n[S.turn] + ' の番です。番を変えるときは「交代」');
+    begin(); S.sc[i]++; S.run++; if (S.run > S.hr[i]) S.hr[i] = S.run;
+    if (S.h[i] > 0 && S.sc[i] >= S.h[i]) { S.over = i; S.ckOn = false; S.tEnd = Date.now(); return save(); }
+    ckReset(true);
+  }
+  function minus(i) { if (S.over >= 0 || i !== S.turn || S.sc[i] <= 0) return; S.sc[i]--; if (S.run > 0) S.run--; save(); }
+  function next() { if (S.over >= 0) return; begin(); if (S.turn === 1) S.inn++; S.turn = 1 - S.turn; S.run = 0; ckReset(true); }
+  function key(k) { if (k === '+') plus(S.turn); else if (k === '-') minus(S.turn); else if (k === 'Enter') next(); }
+  function newGame(keepSets) { var o = S, b = blank(); b.n = o.n; b.h = o.h; b.len = o.len; b.left = o.len; b.sets = keepSets ? o.sets : [0, 0]; S = b; save(); }
+  $$('.pl').forEach(function (el) {
+    var i = +el.dataset.p;
+    el.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var a = b.dataset.a; if (a === 'plus') plus(i); else if (a === 'minus') minus(i); else if (a === 'shot') shot(i); });
+    el.querySelector('[data-f="n"]').addEventListener('change', function () { S.n[i] = this.value.trim().slice(0, 16) || (i ? '選手B' : '選手A'); save(); });
+    el.querySelector('[data-f="h"]').addEventListener('change', function () { S.h[i] = Math.max(0, Math.min(999, parseInt(this.value, 10) || 0)); save(); });
+  });
+  $('bNx').onclick = next; $('ckR').onclick = function () { ckReset(true); }; $('ckP').onclick = ckPause;
+  $('wU').onclick = function () { var i = S.over; S.over = -1; S.sc[i]--; if (S.run > 0) S.run--; save(); };
+  $('wNx').onclick = function () { S.sets[S.over]++; newGame(true); };
+  $('bMenu').onclick = function () {
+    try { var qq = qrcode(0, 'M'); qq.addData(location.origin + location.pathname + '?r=' + code); qq.make(); $('qr').innerHTML = qq.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { $('qr').textContent = ''; }
+    $('oMenu').hidden = false;
+  };
+  $('mX').onclick = function () { $('oMenu').hidden = true; };
+  $('ckSel').onclick = function (e) { var b = e.target.closest('button'); if (!b) return; S.len = +b.dataset.v; ckReset(false); };
+  $('mNew').onclick = function () { newGame(true); $('oMenu').hidden = true; toast('点数を0にもどしました'); };
+  $('mSets').onclick = function () { S.sets = [0, 0]; save(); toast('セット数を0にもどしました'); };
+  addEventListener('keydown', function (e) {
+    if (/^(INPUT|TEXTAREA)$/.test(e.target.tagName)) { if (e.key === 'Enter') e.target.blur(); return; }
+    if (!$('oMenu').hidden || !$('oMv').hidden) { if (e.key === 'Escape') { $('oMenu').hidden = true; $('oMv').hidden = true; } return; }
+    if (e.key === '+' || e.key === '-' || e.key === 'Enter') { e.preventDefault(); key(e.key); }
+  });
+  setInterval(function () {
+    var now = Date.now();
+    if (S.ckOn) { S.left = Math.max(0, S.left - (now - ckT) / 1000); if (S.left <= 0) { S.ckOn = false; store(); push(); } drawCk(); }
+    ckT = now;
+    var t = S.t0 ? Math.floor(((S.over >= 0 ? S.tEnd : now) - S.t0) / 1000) : 0;
+    $('el').textContent = two(Math.floor(t / 3600)) + ':' + two(Math.floor(t / 60) % 60) + ':' + two(t % 60);
+  }, 200);
+  setInterval(function () { if (S.ckOn) push(); }, 1000);
+
+  /* ---- camera ---- */
+  var v = $('v'), stream = null, devs = [], devI = 0, prefs = {};
+  try { prefs = JSON.parse(localStorage.getItem('vibes-studio-cam')) || {}; } catch (e) {}
+  function savePrefs() { try { localStorage.setItem('vibes-studio-cam', JSON.stringify(prefs)); } catch (e) {} }
+  function camUi(on) {
+    $('off').hidden = on; $('ic').hidden = !on; $('lv').hidden = !on;
+    $('rec').className = 'rec' + (on && REC_OK ? ' on' : ''); $('recT').textContent = on ? (REC_OK ? '録画待機中' : '録画は使えません') : 'カメラなし';
+    v.classList.toggle('flip', !!prefs.flip); $('bFl').setAttribute('aria-pressed', String(!!prefs.flip));
+    $('grid').hidden = !(on && prefs.grid); $('bGr').setAttribute('aria-pressed', String(!!prefs.grid));
+  }
+  function camStop() { recStop(); if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; v.srcObject = null; camUi(false); }
+  function camStart(id) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { $('offT').textContent = 'このブラウザではカメラを使えません。Chrome か Edge でひらいてください。'; return; }
+    var want = { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }; if (id) want.deviceId = { exact: id };
+    recStop(); if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+    navigator.mediaDevices.getUserMedia({ video: want, audio: false }).then(function (s) {
+      stream = s; v.srcObject = s; var tr = s.getVideoTracks()[0];
+      tr.onended = function () { camStop(); toast('カメラが外れました'); };
+      return navigator.mediaDevices.enumerateDevices().then(function (l) {
+        devs = l.filter(function (d) { return d.kind === 'videoinput'; });
+        var cur = tr.getSettings().deviceId; devI = Math.max(0, devs.findIndex(function (d) { return d.deviceId === cur; }));
+        prefs.id = cur; savePrefs(); $('bSw').hidden = devs.length < 2; camUi(true); recStart();
+      });
+    }).catch(function (e) {
+      if (id) return camStart(); /* remembered camera is gone: take any */
+      camUi(false); $('offT').textContent = e && e.name === 'NotAllowedError' ? 'カメラの使用が許可されていません。アドレスバーのカメラのマークから「許可」にして、もう一度押してください。' : 'カメラが見つかりません。Webカメラをつないで、もう一度押してください。';
+    });
+  }
+  $('bCam').onclick = function () { camStart(prefs.id); };
+  $('bSw').onclick = function () { if (devs.length < 2) return; devI = (devI + 1) % devs.length; camStart(devs[devI].deviceId); };
+  $('bFl').onclick = function () { prefs.flip = !prefs.flip; savePrefs(); camUi(!!stream); };
+  $('bGr').onclick = function () { prefs.grid = !prefs.grid; savePrefs(); camUi(!!stream); };
+  $('mOffCam').onclick = function () { camStop(); $('oMenu').hidden = true; };
+
+  /* ---- super shot: the last seconds, kept in the browser only ----
+     A recording cannot be cut from the front, so two recorders run, started 20 s apart; each lives 40 s.
+     The older one always holds at least the last 20 s (once the camera has been on that long). A super shot stops it and keeps the file. */
+  var KEEP = 20, MIME = '', REC_OK = false, recs = [], recTimer = 0, clips = [], MAXC = 10;
+  if (window.MediaRecorder) ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'].some(function (m) { if (MediaRecorder.isTypeSupported(m)) { MIME = m; return true; } });
+  REC_OK = !!MIME;
+  function recOne() {
+    if (!stream || !REC_OK) return;
+    var r; try { r = new MediaRecorder(stream, { mimeType: MIME, videoBitsPerSecond: 2500000 }); } catch (e) { REC_OK = false; camUi(true); return; }
+    r._t = performance.now(); r._c = []; r.ondataavailable = function (e) { if (e.data && e.data.size) r._c.push(e.data); };
+    try { r.start(); } catch (e) { return; }
+    recs.push(r);
+    while (recs.length > 2) { var o = recs.shift(); o.ondataavailable = null; try { o.stop(); } catch (e) {} }
+  }
+  function recStart() { recStop(); recOne(); recTimer = setInterval(recOne, KEEP * 1000); }
+  function recStop() { clearInterval(recTimer); recs.forEach(function (r) { r.ondataavailable = null; try { r.stop(); } catch (e) {} }); recs = []; }
+  function shot(i) {
+    if (!stream) return toast('カメラを入れると、スーパーショットを残せます');
+    if (!REC_OK || !recs.length) return toast('このブラウザでは録画を使えません');
+    var r = recs.shift(), age = (performance.now() - r._t) / 1000, who = S.n[i], sc = S.sc[0] + ' − ' + S.sc[1], at = new Date();
+    if (age < 1.5) { recs.unshift(r); return toast('もう少し待ってから押してください'); }
+    r.onstop = function () {
+      var blob = new Blob(r._c, { type: MIME.split(';')[0] }), c = { url: URL.createObjectURL(blob), from: Math.max(0, age - KEEP), len: Math.min(KEEP, age), who: who, sc: sc, at: two(at.getHours()) + ':' + two(at.getMinutes()) + ':' + two(at.getSeconds()), ext: /mp4/.test(MIME) ? 'mp4' : 'webm' };
+      clips.unshift(c); while (clips.length > MAXC) URL.revokeObjectURL(clips.pop().url);
+      $('mvN').textContent = clips.length; replay(c);
+    };
+    try { r.stop(); } catch (e) {}
+    clearInterval(recTimer); recOne(); recTimer = setInterval(recOne, KEEP * 1000);
+    toast('スーパーショットを残しました');
+  }
+  var rv = $('rv');
+  function replay(c) {
+    $('rpT').textContent = 'リプレイ　' + c.who + '（' + c.sc + '）'; $('rp').hidden = false; rv.classList.toggle('flip', !!prefs.flip);
+    rv.src = c.url; rv.onloadedmetadata = function () { try { if (c.from > 0.5) rv.currentTime = c.from; } catch (e) {} rv.play().catch(function () {}); };
+    rv.onended = function () { $('rp').hidden = true; };
+  }
+  $('rpX').onclick = function () { rv.pause(); $('rp').hidden = true; };
+  $('bMv').onclick = function () {
+    $('mvE').hidden = clips.length > 0;
+    $('cl').innerHTML = '';
+    clips.forEach(function (c, n) {
+      var d = document.createElement('div'), t = document.createElement('span'), row = document.createElement('div'), b = document.createElement('button'), a = document.createElement('a');
+      t.textContent = c.at + '　' + c.who + '（' + c.sc + '）・約' + Math.round(c.len) + '秒';
+      row.className = 'row'; b.type = 'button'; b.className = 'y'; b.textContent = '大きく見る'; b.onclick = function () { $('oMv').hidden = true; replay(c); };
+      a.href = c.url; a.download = 'supershot-' + c.at.replace(/:/g, '') + '.' + c.ext; a.textContent = '保存';
+      row.appendChild(b); row.appendChild(a); d.appendChild(t); d.appendChild(row); $('cl').appendChild(d);
+    });
+    $('oMv').hidden = false;
+  };
+  $('mvX').onclick = function () { $('oMv').hidden = true; };
+  addEventListener('pagehide', function () { recStop(); });
+  camUi(false); draw();
+  window.__studio = { S: function () { return S; }, clips: clips };
+})();
+</script>
+</body>
+</html>
