@@ -33,11 +33,12 @@ button{font-family:inherit}
 .main{display:grid;grid-template-columns:minmax(0,1fr) 22vw minmax(0,1fr);gap:1.2vw;min-height:0}
 .pl{min-height:0;background:#12284A;border:.7vh solid #12284A;border-radius:3vh;padding:1.4vh 1.4vw;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:.8vh}
 .pl.on{border-color:#FFD700;box-shadow:0 0 0 .4vh rgba(255,215,0,.25)}
-.pl .hd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.8vw;align-items:center}
+.pl .hd{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:.6vw;align-items:center}
 .ball{width:4.2vh;height:4.2vh;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff 0 12%,var(--b) 40%);box-shadow:inset -.5vh -.6vh 0 rgba(0,0,0,.18)}
 .nm{font:900 3.4vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#fff;background:transparent;border:0;border-bottom:.3vh solid #2B4A7A;border-radius:0;padding:.4vh .2vw;width:100%;min-width:0;-webkit-user-select:text;user-select:text}
-.hc{display:flex;align-items:center;gap:.4vw;font-weight:800;font-size:1.9vh;color:#B9C4D6;white-space:nowrap}
-.hc input{font:900 3vh/1 VLNum,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#FFD700;background:#0B192C;border:.2vh solid #2B4A7A;border-radius:.9vh;width:7.5vw;padding:.6vh .3vw;text-align:center;-webkit-user-select:text;user-select:text}
+.hc{display:flex;align-items:center;font-weight:900;font-size:3.4vh;color:#fff;white-space:nowrap}
+.hc input{font:900 3vh/1 VLNum,"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#FFD700;background:#0B192C;border:.2vh solid #2B4A7A;border-radius:.9vh;width:5.6vw;padding:.6vh .2vw;text-align:center;-webkit-user-select:text;user-select:text}
+.run{background:#fff;color:#0B192C;border-radius:1.6vh;padding:.6vh .9vw;display:flex;flex-direction:column;align-items:center;min-width:7vw}.run small{font-weight:900;font-size:1.5vh;white-space:nowrap}.run b{font:400 6.4vh/1 VLNum,system-ui,sans-serif}.pl:not(.on) .run{opacity:.45}
 .pl .sc{min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3vh}
 .pl .sc b{font:400 27vh/.9 VLNum,system-ui,sans-serif;color:#fff;letter-spacing:-.02em}
 .pl.b .sc b{color:#FFD700}
@@ -54,9 +55,10 @@ button{font-family:inherit}
 .pl .bt .pp{background:#fff;color:#0B192C}.pl.b .bt .pp{background:#FFD700}
 button:active{transform:scale(.97)}
 .mid{min-height:0;display:flex;flex-direction:column;gap:1.1vh}
-.inn{background:#12284A;border-radius:3vh;padding:1.2vh 1vw;display:flex;flex-direction:column;align-items:center;gap:.4vh}
-.inn small{font-weight:800;font-size:2.1vh;color:#B9C4D6}
-.inn b{font:400 12vh/.95 VLNum,system-ui,sans-serif}
+.inn{flex:1;min-height:0;background:#12284A;border:.6vh solid #FFD700;border-radius:3vh;padding:1.2vh 1vw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4vh}
+.inn small{font-weight:900;font-size:2.8vh;color:#fff}
+.inn b{font:400 24vh/.95 VLNum,system-ui,sans-serif;color:#FFD700}
+.mid:has(.ckp:not([hidden])) .inn b{font-size:12vh}
 .inn div{display:grid;grid-template-columns:1fr 1fr;gap:.8vw;width:100%}
 .inn button,.ckp button{appearance:none;border:0;cursor:pointer;border-radius:1.6vh;min-height:7vh;background:#0B192C;color:#fff;box-shadow:inset 0 0 0 .3vh #2B4A7A;font:400 4vh/1 VLNum,system-ui,sans-serif}
 .ckp{background:#12284A;border-radius:3vh;padding:1.2vh 1vw;display:flex;flex-direction:column;align-items:center;gap:.6vh}
@@ -66,7 +68,7 @@ button:active{transform:scale(.97)}
 .ckp div{display:grid;grid-template-columns:1.4fr 1fr;gap:.8vw;width:100%}
 .ckp button{font:900 2.2vh/1 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif}.ckp .go{background:#38BDF8;color:#0B192C;box-shadow:none}
 @keyframes bl{50%{opacity:.25}}
-.nx{flex:1;min-height:9vh;appearance:none;border:0;cursor:pointer;border-radius:3vh;background:#FFD700;color:#0B192C;font:900 5vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh}
+.nx{flex:none;min-height:15vh;appearance:none;border:0;cursor:pointer;border-radius:3vh;background:#FFD700;color:#0B192C;font:900 4.2vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4vh}
 .nx small{font-size:2vh;font-weight:800}
 .dlg{position:fixed;inset:0;background:rgba(5,12,24,.86);display:flex;align-items:center;justify-content:center;z-index:9;padding:3vmin}
 .dlg>div{background:#12284A;border:.3vh solid #2B4A7A;border-radius:3vh;padding:3.4vmin;max-width:min(92vw,980px);width:100%;max-height:94vh;overflow:auto;display:flex;flex-direction:column;gap:2.2vmin;text-align:center}
@@ -128,7 +130,7 @@ button:active{transform:scale(.97)}
   </div>
   <div class="info"><span data-o="mode"></span><span data-o="lim" hidden></span><span data-o="ckc" hidden></span><span class="ban" data-o="ban" hidden></span></div>
   <div class="main">
-    <section class="pl a" data-pl="0"><div class="hd"><span class="ball" style="--b:#E9EEF5"></span><input class="nm" data-f="n0" maxlength="16" autocomplete="off" aria-label="選手A（白球）の名前"><label class="hc"><span data-o="hl">持ち点</span><input data-f="h0" inputmode="numeric" maxlength="3" aria-label="選手Aの持ち点"></label></div>
+    <section class="pl a" data-pl="0"><div class="hd"><span class="ball" style="--b:#E9EEF5"></span><input class="nm" data-f="n0" maxlength="16" autocomplete="off" aria-label="選手A（白球）の名前"><label class="hc">（<input data-f="h0" inputmode="numeric" maxlength="3" aria-label="選手Aの試合点数">）</label><span class="run" data-run><small>連続得点</small><b data-o="run0">0</b></span></div>
       <div class="sc"><b data-o="s0">0</b><span class="rm" data-o="r0"></span><div class="stt" data-stats><span>ハイラン<em data-o="x0">0</em></span><span>アベレージ<em data-o="v0">-</em></span></div><div class="rowb"><button class="tn" type="button" data-turn="0" data-o="tn0">この選手の番にする</button><button class="tob" type="button" data-to="0" hidden></button></div></div>
       <div class="bt"><button class="mn" type="button" data-add="0,-1" aria-label="選手Aの得点を1点へらす">−1</button><button class="pp" type="button" data-add="0,1" aria-label="選手Aに1点入れる">+1</button></div></section>
     <div class="mid">
@@ -136,7 +138,7 @@ button:active{transform:scale(.97)}
       <div class="ckp" data-ck hidden><small>ショットクロック</small><b data-o="ck">40</b><div><button class="go" type="button" data-act="ckgo" data-o="ckb">スタート</button><button type="button" data-act="ckre">戻す</button></div></div>
       <button class="nx" type="button" data-act="next"><span data-o="nxl">交代</span><small data-o="nxt"></small></button>
     </div>
-    <section class="pl b" data-pl="1"><div class="hd"><span class="ball" style="--b:#FFD700"></span><input class="nm" data-f="n1" maxlength="16" autocomplete="off" aria-label="選手B（黄球）の名前"><label class="hc"><span data-o="hl">持ち点</span><input data-f="h1" inputmode="numeric" maxlength="3" aria-label="選手Bの持ち点"></label></div>
+    <section class="pl b" data-pl="1"><div class="hd"><span class="ball" style="--b:#FFD700"></span><input class="nm" data-f="n1" maxlength="16" autocomplete="off" aria-label="選手B（黄球）の名前"><label class="hc">（<input data-f="h1" inputmode="numeric" maxlength="3" aria-label="選手Bの試合点数">）</label><span class="run" data-run><small>連続得点</small><b data-o="run1">0</b></span></div>
       <div class="sc"><b data-o="s1">0</b><span class="rm" data-o="r1"></span><div class="stt" data-stats><span>ハイラン<em data-o="x1">0</em></span><span>アベレージ<em data-o="v1">-</em></span></div><div class="rowb"><button class="tn" type="button" data-turn="1" data-o="tn1">この選手の番にする</button><button class="tob" type="button" data-to="1" hidden></button></div></div>
       <div class="bt"><button class="mn" type="button" data-add="1,-1" aria-label="選手Bの得点を1点へらす">−1</button><button class="pp" type="button" data-add="1,1" aria-label="選手Bに1点入れる">+1</button></div></section>
   </div>
@@ -253,14 +255,14 @@ button:active{transform:scale(.97)}
     $('iMatch').value = match;
     $$('[data-f]').forEach(function (el) { if (document.activeElement === el) return; var f = el.getAttribute('data-f'), v = f === 'title' ? S.title : f.charAt(0) === 'n' ? S.p[+f.charAt(1)].n : (S.p[+f.charAt(1)].h || ''); if (el.value !== String(v)) el.value = v; });
     [0, 1].forEach(function (i) {
-      var p = S.p[i]; put('s' + i, p.s); put('x' + i, p.hr); put('v' + i, avg(i)); put('n' + i, p.n);
+      var p = S.p[i]; put('s' + i, p.s); put('x' + i, p.hr); put('run' + i, p.run | 0); put('v' + i, avg(i)); put('n' + i, p.n);
       $$('[data-o="r' + i + '"]').forEach(function (r) { if (reached(i)) { r.textContent = 'あがり'; r.className = 'rm fin'; } else { r.textContent = p.h > 0 ? 'あと ' + (p.h - p.s) + (pk ? ' セット' : ' 点') : ''; r.className = 'rm'; } });
       put('m' + i, (p.h > 0 ? (pk ? p.h + ' 先取' : '持ち点 ' + p.h) : '') + (c.stats && !pk ? '　HR ' + p.hr : ''));
       $$('[data-pl="' + i + '"]').forEach(function (e) { e.classList.toggle('on', S.turn === i); });
       put('tn' + i, pk ? 'ブレイクにする' : 'この選手の番にする');
       $$('[data-to="' + i + '"]').forEach(function (b) { b.hidden = !(c.to > 0 && c.clk > 0); b.disabled = S.turn !== i || p.to >= c.to || !!S.over; b.textContent = (pk ? 'エクステンション' : 'タイムアウト') + ' 残り' + Math.max(0, c.to - p.to); });
     });
-    put('hl', pk ? '先取' : '持ち点'); put('ttl', S.title + (S.round ? '　' + S.round : ''));
+    put('hl', pk ? '先取' : '持ち点'); $$('[data-run]').forEach(function (e) { e.hidden = pk; }); put('ttl', S.title + (S.round ? '　' + S.round : ''));
     put('mode', pk ? 'ポケット（セット先取）' : c.mode === 'free' ? 'フリープレイ' : 'スリークッション' + (c.back ? '・裏撞きあり' : ''));
     var rem = c.limit ? Math.max(0, c.limit - S.inn) : 0, last = c.limit && S.inn >= c.limit;
     $$('[data-o="lim"]').forEach(function (e) { e.hidden = !c.limit || pk; e.className = last ? 'hot' : ''; e.textContent = '打切り ' + c.limit + ' キュー｜' + (last ? '最終キュー' : '残り ' + rem); });
