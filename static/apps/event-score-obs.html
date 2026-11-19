@@ -39,6 +39,15 @@ body.bg{background:#22303F}
 .sp{grid-column:1/-1;background:#0B192C;border-top:2px solid #1D3557;display:flex;align-items:center;gap:12px;padding:10px 18px}
 .sp small{color:#fff;font-weight:900;font-size:16px;letter-spacing:.1em;white-space:nowrap;margin-right:4px}
 .sp img{display:block;height:64px;width:auto;border-radius:6px;background:#fff}
+/* whose turn: the player at the table keeps full colour inside a thick red frame with a red arrow; the other side is dimmed */
+.rw{position:relative}
+.rw::after{content:"";position:absolute;inset:0;pointer-events:none}
+#card.turn .rw:not(.on)::after{background:rgba(11,25,44,.48)}
+.rw.on::after{box-shadow:inset 0 0 0 5px #E11D48}
+.rw.on i{background:#E11D48}
+.rw .d{width:0;height:0;border-radius:0;background:transparent;border-style:solid;border-width:10px 0 10px 16px;border-color:transparent transparent transparent #E11D48;vertical-align:1px;margin-right:10px}
+body.mon .rw .d{width:0;height:0;border-width:2.2vh 0 2.2vh 3.4vh;margin-right:1.2vw;vertical-align:.4vh}
+body.mon .rw.on::after{box-shadow:none}body.mon .rw::after{border-radius:2vh}
 /* wide band */
 body.bar #card{left:0;top:0;width:100vw;border-radius:0;display:flex;align-items:stretch;height:84px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 body.bar .hd{flex:0 1 auto;min-width:0;padding:0 20px 0 24px;font-size:26px;gap:14px}
@@ -133,9 +142,10 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
     le.hidden = !st; le.textContent = st;
     [['A', 0], ['B', 1]].forEach(function (x) {
       var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('x' + x[0]).textContent = p.hr | 0; $('xw' + x[0]).hidden = !stats;
-      $('r' + x[0]).classList.toggle('on', m.turn === x[1]);
+      $('r' + x[0]).classList.toggle('on', m.turn === x[1] && !m.over);
       var o = '', n = g.clk ? g.to | 0 : 0; for (var k = 0; k < n; k++) o += '<u' + (k < (p.to | 0) ? ' class="used"' : '') + '></u>'; $('o' + x[0]).innerHTML = o;
     });
+    c.classList.toggle('turn', !m.over);
     /* shot clock: counted here from the moment the message arrived, so the two devices' clocks need not agree */
     CK = g.clk && m.ck ? { left: +m.ck.left || 0, run: !!m.ck.run && live !== false, at: Date.now() } : g.clk ? { left: g.clk * 1000, run: false, at: Date.now() } : null; $('ck').classList.toggle('use', !!g.clk); c.classList.toggle('hasck', !!g.clk); tick();
     var f = $('fin'); f.hidden = !(m.over && showRes);
