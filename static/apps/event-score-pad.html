@@ -261,7 +261,7 @@ button:active{transform:scale(.97)}
       put('m' + i, (p.h > 0 ? (pk ? p.h + ' 先取' : '持ち点 ' + p.h) : '') + (c.stats && !pk ? '　HR ' + p.hr : ''));
       $$('[data-pl="' + i + '"]').forEach(function (e) { e.classList.toggle('on', S.turn === i); });
       put('tn' + i, pk ? 'ブレイクにする' : 'この選手の番にする');
-      $$('[data-to="' + i + '"]').forEach(function (b) { b.hidden = !(c.to > 0 && c.clk > 0); b.disabled = S.turn !== i || p.to >= c.to || !!S.over; b.textContent = (pk ? 'エクステンション' : 'タイムアウト') + ' 残り' + Math.max(0, c.to - p.to); });
+      $$('[data-to="' + i + '"]').forEach(function (b) { b.hidden = !(c.to > 0 && c.clk > 0); b.disabled = S.turn !== i || p.to >= c.to || !!S.over; var lf = Math.max(0, c.to - p.to); b.textContent = (pk ? 'エクステンション' : 'タイムアウト') + ' ' + new Array(lf + 1).join('●') + new Array(Math.min(c.to, p.to) + 1).join('○') + ' 残り' + lf; });
     });
     put('hl', pk ? '先取' : '持ち点'); $$('[data-run]').forEach(function (e) { e.hidden = pk; }); put('ttl', S.title + (S.round ? '　' + S.round : ''));
     put('mode', pk ? 'ポケット（セット先取）' : c.mode === 'free' ? 'フリープレイ' : 'スリークッション' + (c.back ? '・裏撞きあり' : ''));

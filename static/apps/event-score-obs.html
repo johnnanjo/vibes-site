@@ -22,7 +22,8 @@ body.bg{background:#22303F}
 .hd #rd{flex:none;background:#FFD700;color:#000;font-size:20px;letter-spacing:.04em;border-radius:8px;padding:3px 12px;line-height:1.35;white-space:nowrap}
 .in{grid-row:2/4;background:#0B192C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-top:2px solid #1D3557}
 .in small{font-weight:900;font-size:19px;letter-spacing:.14em;white-space:nowrap}.in b{font:400 54px/1 VLNum,system-ui,sans-serif}
-.in em{font-style:normal;font-weight:900;font-size:13px;line-height:1.2;color:#FFD700;white-space:nowrap}
+.in em{font-style:normal;font-weight:900;font-size:13px;line-height:1.2;color:#0B192C;background:#FFD700;border-radius:6px;padding:3px 8px;white-space:nowrap}
+.in .ic{display:flex;flex-direction:column;align-items:center;gap:3px}.in .iv{display:flex;align-items:baseline;gap:6px;white-space:nowrap}.in #of{font:400 24px/1 VLNum,system-ui,sans-serif;color:#B9C4D6}
 .ck{display:none;background:#0B192C;color:#38BDF8;border-left:2px solid #1D3557;align-items:center;justify-content:center;padding:0 18px;font:400 52px/1 VLNum,system-ui,sans-serif;min-width:96px}
 .ck.warn{color:#FF6B6B;animation:bl .5s steps(2) infinite}.ck.stop{opacity:.55}
 @keyframes bl{50%{opacity:.25}}
@@ -44,7 +45,7 @@ body.bar .hd{flex:0 1 auto;min-width:0;padding:0 20px 0 24px;font-size:26px;gap:
 body.bar .hd #tt{flex:0 1 auto}
 body.bar .hd #rd{font-size:22px;padding:4px 14px}
 body.bar .in{flex:none;flex-direction:row;align-items:center;gap:12px;padding:0 22px;border-top:0;border-left:2px solid #1D3557}
-body.bar .in small{font-size:20px}body.bar .in b{font-size:50px}body.bar .in em{font-size:15px}
+body.bar .in small{font-size:20px}body.bar .in b{font-size:50px}body.bar .in em{font-size:14px;padding:2px 10px;line-height:1.3}body.bar .in #of{font-size:30px}body.bar .in .ic:has(em:not([hidden])) b{font-size:40px}body.bar .in .ic:has(em:not([hidden])) #of{font-size:24px}
 body.bar .ck.use{display:flex;flex:none}
 body.bar .rw{flex:1 1 0;min-width:0;min-height:0;padding-right:20px}
 body.bar .rw .n{font-size:30px}body.bar .rw .s{font-size:56px;min-width:70px}
@@ -56,7 +57,7 @@ body.mon #card{left:0;top:0;width:100vw;height:100vh;border-radius:0;box-shadow:
 body.mon .hd{grid-column:1/-1;background:transparent;font-size:5vh;padding:.4vh 1vw;gap:1.4vw}
 body.mon .hd #rd{font-size:4vh;padding:.6vh 1.6vw;border-radius:1.2vh}
 body.mon .in{grid-column:2;grid-row:2;background:#0B192C;border:0;border-radius:3vh;gap:1vh;padding:1vh}
-body.mon .in small{font-size:3.4vh}body.mon .in b{font-size:19vh}body.mon .in em{font-size:3.6vh}
+body.mon .in small{font-size:3.4vh}body.mon .in b{font-size:19vh}body.mon .in em{font-size:3.6vh;border-radius:1vh;padding:.6vh 1.2vw}body.mon .in #of{font-size:6vh}body.mon .in .iv{flex-direction:column;align-items:center;gap:0}
 body.mon .ck.use{display:flex;grid-column:2;grid-row:2;align-self:end;justify-self:stretch;border:0;border-radius:0 0 3vh 3vh;background:#12284A;font-size:13vh;padding:1.4vh 0;min-width:0}
 body.mon #card.hasck .in{padding-bottom:20vh}
 body.mon .rw{grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2vh;padding:2vh 1vw;border-radius:3vh;border:1vh solid transparent;min-width:0}
@@ -90,7 +91,7 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
 <body>
 <div id="card" hidden>
   <div class="hd"><span id="tt">Queen Cup 2026-2027</span><span id="rd" hidden></span></div>
-  <div class="in"><small id="inl">INN</small><b id="inn">1</b><em id="lim" hidden></em></div>
+  <div class="in"><small id="inl">INN</small><span class="ic"><span class="iv"><b id="inn">1</b><span id="of" hidden></span></span><em id="lim" hidden></em></span></div>
   <div class="ck" id="ck"></div>
   <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="o" id="oA"></span><span class="x" id="xwA">HR<b id="xA">0</b></span><span class="s" id="sA">0</span></div>
   <div class="rw b" id="rB"><i></i><span class="n"><span class="d"></span><span id="nB">PLAYER B</span></span><span class="h" id="hB"></span><span class="o" id="oB"></span><span class="x" id="xwB">HR<b id="xB">0</b></span><span class="s" id="sB">0</span></div>
@@ -126,7 +127,10 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
     var g = m.cfg || {}, pk = g.mode === 'pocket', stats = g.stats !== false && !pk;
     $('tt').textContent = m.title || 'Queen Cup 2026-2027'; $('rd').textContent = m.round || ''; $('rd').hidden = !m.round;
     $('inl').textContent = pk ? 'RACK' : 'INN'; $('inn').textContent = pk ? (m.p[0].s | 0) + (m.p[1].s | 0) + 1 : m.inn;
-    var lim = g.limit | 0, le = $('lim'); le.hidden = !lim || pk; if (lim) le.textContent = m.inn >= lim ? '最終キュー' : '残り ' + (lim - m.inn);
+    /* inning as "12 / 35" when the match has a cap; the badge lights only for the moments that matter: the last inning, and the second player's reply after the first has reached the target */
+    var lim = g.limit | 0, le = $('lim'), of = $('of'); of.hidden = !lim || pk; of.textContent = '/ ' + lim;
+    var p0 = m.p[0], up = !pk && g.back && p0.h > 0 && p0.s >= p0.h, st = m.over ? '' : m.rep ? '裏撞き' : up && m.turn === 0 ? '裏撞きへ' : lim && !pk && m.inn >= lim ? '最終キュー' : '';
+    le.hidden = !st; le.textContent = st;
     [['A', 0], ['B', 1]].forEach(function (x) {
       var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('x' + x[0]).textContent = p.hr | 0; $('xw' + x[0]).hidden = !stats;
       $('r' + x[0]).classList.toggle('on', m.turn === x[1]);
