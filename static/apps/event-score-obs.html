@@ -18,7 +18,7 @@ html,body{margin:0;background:transparent;overflow:hidden;font-family:"Hiragino 
 body.bg{background:#22303F}
 #card{position:fixed;left:40px;top:40px;transform-origin:0 0;width:620px;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);display:grid;grid-template-columns:118px minmax(0,1fr);grid-template-rows:auto auto auto auto}
 .hd{grid-column:1/-1;background:#0B192C;color:#fff;font-weight:900;font-size:22px;letter-spacing:.06em;padding:9px 12px 9px 18px;line-height:1.3;display:flex;align-items:center;gap:12px}
-.hd #tt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd .tw{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}.hd #tt,.hd #ts{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hd #ts{font-size:13px;font-weight:800;letter-spacing:.02em;color:#B9C4D6;line-height:1.3}
 .hd #rd{flex:none;background:#FFD700;color:#000;font-size:20px;letter-spacing:.04em;border-radius:8px;padding:3px 12px;line-height:1.35;white-space:nowrap}
 .in{grid-row:2/4;background:#0B192C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-top:2px solid #1D3557}
 .in small{font-weight:900;font-size:19px;letter-spacing:.14em;white-space:nowrap}.in b{font:400 54px/1 VLNum,system-ui,sans-serif}
@@ -51,7 +51,7 @@ body.mon .rw.on::after{box-shadow:none}body.mon .rw::after{border-radius:2vh}
 /* wide band */
 body.bar #card{left:0;top:0;width:100vw;border-radius:0;display:flex;align-items:stretch;height:84px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 body.bar .hd{flex:0 1 auto;min-width:0;padding:0 20px 0 24px;font-size:26px;gap:14px}
-body.bar .hd #tt{flex:0 1 auto}
+body.bar .hd .tw{flex:0 1 auto}body.bar .hd #ts{font-size:14px}
 body.bar .hd #rd{font-size:22px;padding:4px 14px}
 body.bar .in{flex:none;flex-direction:row;align-items:center;gap:12px;padding:0 22px;border-top:0;border-left:2px solid #1D3557}
 body.bar .in small{font-size:20px}body.bar .in b{font-size:50px}body.bar .in em{font-size:14px;padding:2px 10px;line-height:1.3}body.bar .in #of{font-size:30px}body.bar .in .ic:has(em:not([hidden])) b{font-size:40px}body.bar .in .ic:has(em:not([hidden])) #of{font-size:24px}
@@ -64,6 +64,7 @@ body.bar .sp img{height:66px}
 body.mon{background:#060D18}
 body.mon #card{left:0;top:0;width:100vw;height:100vh;border-radius:0;box-shadow:none;display:grid;grid-template-columns:minmax(0,1fr) 20vw minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;background:#060D18;gap:1.4vh 1vw;padding:1.6vh 1.2vw}
 body.mon .hd{grid-column:1/-1;background:transparent;font-size:5vh;padding:.4vh 1vw;gap:1.4vw}
+body.mon .hd #ts{font-size:2.4vh}body.mon .hd .tw{flex-direction:row;align-items:baseline;gap:1.4vw}body.mon .hd #tt{flex:none}
 body.mon .hd #rd{font-size:4vh;padding:.6vh 1.6vw;border-radius:1.2vh}
 body.mon .in{grid-column:2;grid-row:2;background:#0B192C;border:0;border-radius:3vh;gap:1vh;padding:1vh}
 body.mon .in small{font-size:3.4vh}body.mon .in b{font-size:19vh}body.mon .in em{font-size:3.6vh;border-radius:1vh;padding:.6vh 1.2vw}body.mon .in #of{font-size:6vh}body.mon .in .iv{flex-direction:column;align-items:center;gap:0}
@@ -99,7 +100,7 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
 </head>
 <body>
 <div id="card" hidden>
-  <div class="hd"><span id="tt">Queen Cup 2026-2027</span><span id="rd" hidden></span></div>
+  <div class="hd"><span class="tw"><span id="tt">Pre Queen Cup 2026-2027</span><small id="ts" hidden></small></span><span id="rd" hidden></span></div>
   <div class="in"><small id="inl">INN</small><span class="ic"><span class="iv"><b id="inn">1</b><span id="of" hidden></span></span><em id="lim" hidden></em></span></div>
   <div class="ck" id="ck"></div>
   <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="o" id="oA"></span><span class="x" id="xwA">HR<b id="xA">0</b></span><span class="s" id="sA">0</span></div>
@@ -134,7 +135,7 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
   function draw(m, live) {
     if (!m || m.type !== 'state' || !m.p || m.p.length !== 2 || (m.m && m.m !== match)) return;
     var g = m.cfg || {}, pk = g.mode === 'pocket', stats = g.stats !== false && !pk;
-    $('tt').textContent = m.title || 'Queen Cup 2026-2027'; $('rd').textContent = m.round || ''; $('rd').hidden = !m.round;
+    var tp = String(m.title || 'Pre Queen Cup 2026-2027').split('｜'); $('tt').textContent = tp[0]; $('ts').textContent = tp[1] || ''; $('ts').hidden = !tp[1]; $('rd').textContent = m.round || ''; $('rd').hidden = !m.round;
     $('inl').textContent = pk ? 'RACK' : 'INN'; $('inn').textContent = pk ? (m.p[0].s | 0) + (m.p[1].s | 0) + 1 : m.inn;
     /* inning as "12 / 35" when the match has a cap; the badge lights only for the moments that matter: the last inning, and the second player's reply after the first has reached the target */
     var lim = g.limit | 0, le = $('lim'), of = $('of'); of.hidden = !lim || pk || !!m.sd; of.textContent = '/ ' + lim;

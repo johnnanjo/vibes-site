@@ -124,8 +124,8 @@ button:active{transform:scale(.97)}
 <div id="app">
   <div class="top">
     <label class="mt"><small>試合ID</small><input id="iMatch" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="試合ID"></label>
-    <label class="mt"><small>表示名</small><input data-f="title" autocomplete="off" maxlength="24" aria-label="配信に出すタイトル" id="iTitle"></label>
-    <label class="mt"><small>回戦</small><select id="sRound" aria-label="いま何回戦か"><option value="">表示しない</option><option>予選リーグ</option><option>1回戦</option><option>2回戦</option><option>3回戦</option><option>敗者1回戦</option><option>敗者2回戦</option><option>敗者3回戦</option><option>準々決勝</option><option>準決勝</option><option>3位決定戦</option><option>決勝</option><option value="*">その他（入力する）</option></select><input id="iRound" maxlength="12" autocomplete="off" aria-label="回戦を入力" hidden></label>
+    <label class="mt"><small>表示名</small><input data-f="title" autocomplete="off" maxlength="60" aria-label="配信に出すタイトル" id="iTitle"></label>
+    <label class="mt"><small>回戦</small><select id="sRound" aria-label="いま何回戦か"><option value="">表示しない</option><option>ゼッケン決定戦</option><option>予選リーグ</option><option>1回戦</option><option>2回戦</option><option>3回戦</option><option>敗者1回戦</option><option>敗者2回戦</option><option>敗者3回戦</option><option>準々決勝</option><option>準決勝</option><option>3位決定戦</option><option>決勝</option><option value="*">その他（入力する）</option></select><input id="iRound" maxlength="12" autocomplete="off" aria-label="回戦を入力" hidden></label>
     <div class="st" data-st><i></i><span data-o="st">つないでいます</span></div>
     <button class="tb dg" type="button" data-act="reset">リセット</button>
   </div>
@@ -160,7 +160,7 @@ button:active{transform:scale(.97)}
   <details><summary>名前・持ち点・番の入れ替え</summary><div class="ph-f">
     <div class="two"><label>選手A（白球）<input data-f="n0" maxlength="16" autocomplete="off"></label><label><span data-o="hl">持ち点</span><input data-f="h0" inputmode="numeric" maxlength="3"></label></div>
     <div class="two"><label>選手B（黄球）<input data-f="n1" maxlength="16" autocomplete="off"></label><label><span data-o="hl">持ち点</span><input data-f="h1" inputmode="numeric" maxlength="3"></label></div>
-    <label>表示名（大会名）<input data-f="title" maxlength="24" autocomplete="off"></label>
+    <label>表示名（大会名）<input data-f="title" maxlength="60" autocomplete="off"></label>
     <div class="two"><button type="button" data-turn="0" style="border-color:#2B4A7A;color:#fff">Aの番にする</button><button type="button" data-turn="1" style="border-color:#2B4A7A;color:#fff">Bの番にする</button></div>
     <div class="two" data-inns><button type="button" data-inn="-1" style="border-color:#2B4A7A;color:#fff">イニング −1</button><button type="button" data-inn="1" style="border-color:#2B4A7A;color:#fff">イニング +1</button></div>
     <button type="button" data-act="reset">スコアを0に戻す（リセット）</button>
@@ -185,13 +185,13 @@ button:active{transform:scale(.97)}
   function gid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   try { LOG = JSON.parse(localStorage.getItem(LKEY) || '[]') || []; if (!Array.isArray(LOG)) LOG = []; } catch (e) { LOG = []; }
   function logSave() { LOG = LOG.slice(-80); try { localStorage.setItem(LKEY, JSON.stringify(LOG)); } catch (e) {} }
-  function blank() { return { type: 'state', v: 2, m: match, title: 'Queen Cup 2026-2027', round: '', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0, to: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0, to: 0 }], cfg: cfgOf(null), over: null, rep: false, ck: null, gid: gid(), t: 0 }; }
+  function blank() { return { type: 'state', v: 2, m: match, title: 'Pre Queen Cup 2026-2027', round: '', inn: 1, turn: 0, p: [{ n: 'PLAYER A', h: 0, s: 0, hr: 0, run: 0, to: 0 }, { n: 'PLAYER B', h: 0, s: 0, hr: 0, run: 0, to: 0 }], cfg: cfgOf(null), over: null, rep: false, ck: null, gid: gid(), t: 0 }; }
   var P = function () { return S.cfg.mode === 'pocket'; };
   /* innings a player has had so far (the second player has not yet played in the current inning while the first is at the table) */
   function inns(i) { return i === 0 ? S.inn : (S.turn === 1 ? S.inn : S.inn - 1); }
   function avg(i) { var n = inns(i); return n > 0 ? (S.p[i].s / n).toFixed(3) : '-'; }
   function endRun() { S.p.forEach(function (p) { p.run = 0; p.hb = p.hr | 0; }); }
-  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.to = p.to | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); if (!o.title) o.title = 'Queen Cup 2026-2027'; o.round = String(o.round || '').slice(0, 12); o.cfg = cfgOf(o.cfg); o.over = o.over && typeof o.over.w === 'number' ? o.over : null; o.rep = !!o.rep; o.v = 2; if (!o.gid) o.gid = gid(); return o; }
+  function fix(o) { o.p.forEach(function (p) { p.hr = p.hr | 0; p.run = p.run | 0; p.to = p.to | 0; p.hb = p.hb == null ? p.hr - p.run > 0 ? p.hr : 0 : p.hb | 0; }); if (!o.title) o.title = 'Pre Queen Cup 2026-2027'; o.round = String(o.round || '').slice(0, 12); o.cfg = cfgOf(o.cfg); o.over = o.over && typeof o.over.w === 'number' ? o.over : null; o.rep = !!o.rep; o.v = 2; if (!o.gid) o.gid = gid(); return o; }
   function valid(o) { return o && o.type === 'state' && o.p && o.p.length === 2 && typeof o.inn === 'number'; }
   try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (valid(j)) S = fix(j); } catch (e) {}
   var fresh = !S; if (!S) S = blank();
@@ -200,7 +200,7 @@ button:active{transform:scale(.97)}
   function takeCfg() {
     if (!inCfg || !inCfg.id || inCfg.id === S.cfg.id) return;
     S.cfg = cfgOf(inCfg);
-    if (inCfg.title) S.title = String(inCfg.title).slice(0, 24);
+    if (inCfg.title) S.title = String(inCfg.title).slice(0, 60);
     if (inCfg.h) [0, 1].forEach(function (i) { if (inCfg.h[i] != null) S.p[i].h = Math.max(0, Math.min(999, inCfg.h[i] | 0)); });
     if (inCfg.n) [0, 1].forEach(function (i) { if (inCfg.n[i]) S.p[i].n = String(inCfg.n[i]).slice(0, 16); });
     if (typeof inCfg.round === 'string') S.round = inCfg.round.slice(0, 12);
@@ -268,7 +268,7 @@ button:active{transform:scale(.97)}
       put('tn' + i, pk ? 'ブレイクにする' : 'この選手の番にする');
       $$('[data-to="' + i + '"]').forEach(function (b) { b.hidden = !(c.to > 0 && c.clk > 0); b.disabled = S.turn !== i || p.to >= c.to || !!S.over; var lf = Math.max(0, c.to - p.to); b.textContent = (pk ? 'エクステンション' : 'タイムアウト') + ' ' + new Array(lf + 1).join('●') + new Array(Math.min(c.to, p.to) + 1).join('○') + ' 残り' + lf; });
     });
-    put('hl', pk ? '先取' : '持ち点'); $$('[data-run]').forEach(function (e) { e.hidden = pk; }); put('ttl', S.title + (S.round ? '　' + S.round : ''));
+    put('hl', pk ? '先取' : '持ち点'); $$('[data-run]').forEach(function (e) { e.hidden = pk; }); put('ttl', S.title.split('｜')[0] + (S.round ? '　' + S.round : ''));
     put('mode', pk ? 'ポケット（セット先取）' : c.mode === 'free' ? 'フリープレイ' : 'スリークッション' + (c.back ? '・裏撞きあり' : ''));
     var rem = c.limit ? Math.max(0, c.limit - S.inn) : 0, last = c.limit && S.inn >= c.limit && !S.sd;
     $$('[data-o="lim"]').forEach(function (e) { e.hidden = !c.limit || pk; e.className = last ? 'hot' : ''; e.className = last || S.sd ? 'hot' : ''; e.textContent = S.sd ? 'サドンデス（先に1点で勝ち）' : '打切り ' + c.limit + ' キュー｜' + (last ? '最終キュー' : '残り ' + rem); });
@@ -347,7 +347,7 @@ button:active{transform:scale(.97)}
   });
   document.addEventListener('input', function (e) {
     var el = e.target, f = el.getAttribute && el.getAttribute('data-f'); if (!f) return; var v = el.value;
-    if (f === 'title') S.title = v.slice(0, 24) || 'Queen Cup 2026-2027';
+    if (f === 'title') S.title = v.slice(0, 60) || 'Pre Queen Cup 2026-2027';
     else if (f.charAt(0) === 'n') S.p[+f.charAt(1)].n = v.slice(0, 16) || (f === 'n0' ? 'PLAYER A' : 'PLAYER B');
     else S.p[+f.charAt(1)].h = Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0);
     store(); push(); draw();

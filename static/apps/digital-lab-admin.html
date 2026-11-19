@@ -157,7 +157,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     <section class="box"><h2><i>3</i>台と大会の名前</h2>
       <div class="two"><label class="f"><span>試合ID（台ごとの名前）</span><input id="match" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40"></label><label class="f"><span>台の呼び名（履歴に出ます）</span><input id="label" type="text" maxlength="16" autocomplete="off" placeholder="Table 1"></label></div>
       <small class="n">試合IDは、半角の英字・数字・ハイフン。操作する画面と表示する画面は、同じ試合IDでつながります。台が2つあるときは、台ごとに別の試合IDにします。</small>
-      <label class="f"><span>表示名（大会名）</span><input id="title" type="text" maxlength="24" autocomplete="off"></label>
+      <label class="f"><span>表示名（大会名）</span><input id="title" type="text" maxlength="60" autocomplete="off"><small class="n">「｜」で区切ると、うしろの部分は配信の帯で小さな2行目になります。</small></label>
     </section>
     <section class="box"><h2><i>4</i>対戦する選手</h2>
       <p id="rsNote"></p>
@@ -165,7 +165,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
       <div class="two"><label class="f"><span>選手Aの名前</span><input id="n0" type="text" maxlength="16" autocomplete="off"></label><label class="f"><span>選手Bの名前</span><input id="n1" type="text" maxlength="16" autocomplete="off"></label></div>
       <div class="f" id="fH"><span id="lH">試合点数（持ち点）</span><div class="two"><input id="h0" type="number" inputmode="numeric" min="0" max="999" aria-label="選手Aの持ち点"><input id="h1" type="number" inputmode="numeric" min="0" max="999" aria-label="選手Bの持ち点"></div>
         <div class="seg" id="quick"><button type="button" data-h="8">8点</button><button type="button" data-h="9">9点</button><button type="button" data-h="10">10点</button></div><small>0にすると、あがりの判定をしません。</small></div>
-      <label class="f"><span>回戦</span><select id="round"><option value="">表示しない</option><option>予選リーグ</option><option>1回戦</option><option>2回戦</option><option>3回戦</option><option>敗者1回戦</option><option>敗者2回戦</option><option>敗者3回戦</option><option>準々決勝</option><option>準決勝</option><option>3位決定戦</option><option>決勝</option></select></label>
+      <label class="f"><span>回戦</span><select id="round"><option value="">表示しない</option><option>ゼッケン決定戦</option><option>予選リーグ</option><option>1回戦</option><option>2回戦</option><option>3回戦</option><option>敗者1回戦</option><option>敗者2回戦</option><option>敗者3回戦</option><option>準々決勝</option><option>準決勝</option><option>3位決定戦</option><option>決勝</option></select></label>
       <button class="go b" type="button" id="send">この対戦を、台の操作画面へ送る</button>
       <small class="n">台の操作画面がすでにひらいているときに使います。台が空いていればすぐに切り替わり、試合の途中なら、台の画面に「切り替えますか」と出ます。設定（打切りやクロック）を変えたときは、下のボタンでアドレスを出し直してください。</small>
     </section>
@@ -282,8 +282,8 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
 
   /* =================== 2: table set-up =================== */
   var PRE = [
-    { id: 'queenL', b: '12/5 女王杯 ① 予選リーグ（ゼッケン決定戦）', s: '7点・裏撞きあり・25キュー（届かなければ両者負け）・相手レフリー・クロックなし', c: { ctl: 'pad', mode: '3c', h: [7, 7], back: 1, limit: 25, end: 'both', clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Queen Cup 2026-2027' } },
-    { id: 'queenF', b: '12/5 女王杯 ② 決勝トーナメント', s: '10点・裏撞きなし・25キュー打切り・同点はサドンデス・相手レフリー・クロックなし', c: { ctl: 'pad', mode: '3c', h: [10, 10], back: 0, limit: 25, end: 'sd', clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Queen Cup 2026-2027' } },
+    { id: 'queenL', b: '第5回 女王杯（Pre Queen Cup 2026-2027）① ゼッケン決定戦', s: '12/5 Billiards E-place｜3名リーグ・7点・裏撞きあり・25キュー（届かなければ両者負け）・相手審判・クロックなし', c: { round: 'ゼッケン決定戦', ctl: 'pad', mode: '3c', h: [7, 7], back: 1, limit: 25, end: 'both', clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯' } },
+    { id: 'queenF', b: '第5回 女王杯（Pre Queen Cup 2026-2027）② 決勝シングルトーナメント戦', s: '12/5 Billiards E-place｜ノックアウト方式・10点・裏撞きなし・25キュー打切り・同点はサドンデス・相手審判・クロックなし', c: { round: '', ctl: 'pad', mode: '3c', h: [10, 10], back: 0, limit: 25, end: 'sd', clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯' } },
     { id: 'official', b: '3C 公式戦（専属審判・クロックあり）', s: '持ち点制・40秒・タイムアウト3枚・審判がスマホで操作', c: { ctl: 'phone', mode: '3c', h: [30, 30], back: 1, limit: 0, clk: 40, warn: 1, to: 3, stats: 1, brk: 'alt', lay: 'top', match: '', label: '', title: '3-CUSHION' } },
     { id: 'house', b: '3C ハウス・段位戦', s: 'ハンデ持ち点・40秒・タイムアウト2枚・打切りあり', c: { ctl: 'pad', mode: '3c', h: [20, 15], back: 1, limit: 35, clk: 40, warn: 1, to: 2, stats: 1, brk: 'alt', lay: 'monitor', match: '', label: '', title: '3-CUSHION' } },
     { id: 'pocket', b: 'ポケット（9ボール・10ボール）', s: 'セット先取・ブレイクの表示・35秒・エクステンション1回', c: { ctl: 'pad', mode: 'pocket', h: [5, 5], back: 0, limit: 0, clk: 35, warn: 1, to: 1, stats: 0, brk: 'alt', lay: 'monitor', match: '', label: '', title: '9-BALL' } },
@@ -293,7 +293,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   function rnd() { var s = 't-', a = 'abcdefghjkmnpqrstuvwxyz23456789'; for (var i = 0; i < 6; i++) s += a.charAt(Math.floor(Math.random() * a.length)); return s; }
   function clean(m) { return String(m || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40); }
   $('pre').innerHTML = PRE.map(function (p) { return '<button type="button" data-p="' + p.id + '" aria-pressed="false"><b>' + p.b + '</b><span>' + p.s + '</span></button>'; }).join('');
-  function pick(id) { var p = PRE.filter(function (x) { return x.id === id; })[0]; pre = id; C = JSON.parse(JSON.stringify(p.c)); if (!C.end) C.end = 'pts'; if (!C.match) C.match = rnd(); $('h0').value = C.h[0]; $('h1').value = C.h[1]; $('limit').value = C.limit || ''; $('match').value = C.match; $('label').value = C.label || ''; $('title').value = C.title; $('out').hidden = true; drawSet(); }
+  function pick(id) { var p = PRE.filter(function (x) { return x.id === id; })[0]; pre = id; C = JSON.parse(JSON.stringify(p.c)); if (!C.end) C.end = 'pts'; if (!C.match) C.match = rnd(); $('h0').value = C.h[0]; $('h1').value = C.h[1]; $('limit').value = C.limit || ''; $('match').value = C.match; $('label').value = C.label || ''; $('title').value = C.title; if (p.c.round != null) $('round').value = p.c.round; $('out').hidden = true; drawSet(); }
   function drawSet() {
     $$('#pre button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === pre); });
     $$('.seg[data-k]').forEach(function (g) { var k = g.getAttribute('data-k'); [].forEach.call(g.children, function (b) { b.setAttribute('aria-pressed', String(C[k]) === b.getAttribute('data-v')); }); });
@@ -330,7 +330,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   $('issue').addEventListener('click', function () {
     var m = clean($('match').value) || rnd(); $('match').value = m; watch(m, $('label').value.trim());
     var h = hs(), pk = C.mode === 'pocket';
-    var cfg = { id: Date.now().toString(36), mode: C.mode, limit: pk ? 0 : C.limit | 0, back: !pk && !!C.back, end: pk || !C.limit ? 'pts' : C.end || 'pts', clk: C.clk | 0, warn: !!C.warn, to: C.clk ? C.to | 0 : 0, stats: !pk && !!C.stats, brk: C.brk, h: h, title: $('title').value.trim().slice(0, 24) };
+    var cfg = { id: Date.now().toString(36), mode: C.mode, limit: pk ? 0 : C.limit | 0, back: !pk && !!C.back, end: pk || !C.limit ? 'pts' : C.end || 'pts', clk: C.clk | 0, warn: !!C.warn, to: C.clk ? C.to | 0 : 0, stats: !pk && !!C.stats, brk: C.brk, h: h, title: $('title').value.trim().slice(0, 60) };
     var n = [$('n0').value.trim().slice(0, 16), $('n1').value.trim().slice(0, 16)]; if (n[0] || n[1]) cfg.n = n; if ($('round').value) cfg.round = $('round').value;
     var base = location.origin, e = encodeURIComponent(m);
     var uC = base + '/event-score-pad?match=' + e + '&cfg=' + b64(cfg), uM = base + '/event-score-obs?match=' + e + '&layout=monitor', uT = base + '/event-score-obs?match=' + e, uB = uT + '&pos=bl';
