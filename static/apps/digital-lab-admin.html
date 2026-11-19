@@ -233,7 +233,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   <div id="t4" class="w" style="padding:0" hidden>
     <section class="box"><h2>組分け（ゼッケン決定戦のリーグ）</h2>
       <p>①で「受付」にした選手を、くじ引きで組に分けます（受付した人が3人に満たないときは、名簿の全員）。組の中は総当たりです。</p>
-      <div class="two"><label class="f"><span>1組の人数</span><select id="gSize"><option value="3">3人</option><option value="4">4人</option><option value="5">5人</option></select></label><label class="f"><span>試合に使う台の数</span><select id="tN"><option value="1">1台</option><option value="2">2台</option><option value="3">3台</option><option value="4" selected>4台</option><option value="5">5台</option><option value="6">6台</option></select></label></div>
+      <div class="two"><label class="f"><span>1組の人数</span><select id="gSize"><option value="3">3人</option><option value="4">4人</option><option value="5">5人</option></select></label><label class="f"><span>試合に使う台の数</span><select id="tN"><option value="1">1台</option><option value="2">2台</option><option value="3">3台</option><option value="4" selected>4台</option><option value="5">5台</option></select></label></div>
       <label class="f"><span>①番台（配信・タブレットあり）の試合ID</span><select id="tTable"></select></label>
       <button class="go" type="button" id="tNew">組分けを作る（くじ引き）</button>
       <small class="n">対戦の下の ①②③④ を押すと、その台に試合が入ります。①番台（配信）は iPad に名前が入り、終わると結果が自動で入ります。②番台からは、勝った選手が持ってきたメモを見て「結果を入れる」で入れてください。順位表・アベレージ・ゼッケン・トーナメント表は自動で書き換わります。どちらの結果も、③の履歴と BG賞・HR賞に入ります。組分けと結果は、この端末のこのブラウザの中だけに保存されます。</small>
@@ -462,8 +462,8 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
      Stage 1: round-robin groups that decide the seeding numbers. Stage 2: single-elimination bracket seeded from stage 1.
      A result reaches a fixture in two ways: from a table's scoreboard (matched by the two names) or typed in from a paper sheet.
      Either way the game is one line of the history (H), so the awards count it; a fixture only points at that line by its gid. */
-  var TK = 'vibes-lab-tour', T = load(TK, null), tEdit = '', CN = ['①', '②', '③', '④', '⑤', '⑥'];
-  try { var tn0 = +localStorage.getItem('vibes-lab-tables'); if (tn0 >= 1 && tn0 <= 6) $('tN').value = tn0; } catch (e) {}
+  var TK = 'vibes-lab-tour', T = load(TK, null), tEdit = '', CN = ['①', '②', '③', '④', '⑤'];
+  try { var tn0 = +localStorage.getItem('vibes-lab-tables'); if (tn0 >= 1 && tn0 <= 5) $('tN').value = tn0; } catch (e) {}
   $('tN').addEventListener('change', function () { try { localStorage.setItem('vibes-lab-tables', $('tN').value); } catch (e) {} drawTour(); });
   function busy() { var o = {}; if (T && T.on) Object.keys(T.on).forEach(function (k) { o[T.on[k]] = k; }); return o; }
   if (T && (!T.P || !Array.isArray(T.G))) T = null;
