@@ -228,6 +228,24 @@ body.easy .n2 .side .who{min-height:12vh}body.easy .n2 .score{font-size:min(50vh
 .n3 .runb b{font-size:5vh}.n4 .runb b{font-size:4vh}.n3 .runb small,.n4 .runb small{font-size:1.4vh}
 body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy .n2 .side .name{font-size:4.8vh}
 .n2 .foot:has(.tos[hidden]){grid-template-columns:1fr}
+/* live camera in the middle (2 players, this device only; set in 各種設定 or 設定) */
+.camb{display:none}
+@media (min-width:761px){
+body.cam .main.n2{grid-template-columns:1fr minmax(24vw,30vw) 1fr}
+body.cam .n2 .mid{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr) auto}
+body.cam .n2 .camb{display:block;grid-column:1/-1;position:relative;overflow:hidden;border-radius:2vh;background:#000;min-height:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+body.cam .n2 .camb video{position:absolute;left:50%;top:50%;object-fit:cover;background:#000}
+body.cam .n2 .camb.fit video{object-fit:contain}
+body.cam .n2 .camb .cmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:1.4vh 1vw;font-size:2vh;font-weight:700;line-height:1.7;color:var(--chalk)}
+body.cam .n2 .camb .cbt{position:absolute;left:0;right:0;bottom:.8vh;display:flex;justify-content:center;gap:.5vw;opacity:0;transition:opacity .2s}
+body.cam .n2 .camb:hover .cbt,body.cam .n2 .camb.show .cbt,body.touch.cam .n2 .camb .cbt{opacity:1}
+body.cam .n2 .camb .cbt button{font:700 1.7vh var(--jp);color:#fff;background:rgba(23,26,34,.78);border:1px solid rgba(255,255,255,.3);border-radius:1vh;padding:.7vh .8vw;cursor:pointer}
+body.cam .n2 .time,body.cam .n2 .inn{padding:.8vh .4vw}
+body.cam .n2 .time b{font-size:min(6.4vh,3.6vw)!important}body.cam .n2 .time b.long{font-size:min(5vh,2.6vw)!important}body.cam .n2 .time #runS{min-height:0;margin-top:.2vh;font-size:1.6vh}
+body.cam .n2 .inn b{font-size:min(9vh,5vw)!important;line-height:1}
+body.cam .n2 .score{font-size:min(31vh,21vw)}body.cam .n2 .score.d3{font-size:min(27vh,14vw)}
+body.easy.cam .n2 .inn{grid-column:1/-1}
+}
 @media (prefers-reduced-motion:reduce){.side,.segs i{transition:none}}
 @media (max-width:760px){
   html,body{overflow:auto}.board{height:auto;min-height:100vh}
@@ -248,6 +266,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   </div>
   <div class="main" id="main">
     <div class="mid" id="mid">
+      <div class="camb" id="camb"><video id="camV" autoplay muted playsinline></video><div class="cmsg" id="camM" hidden></div><div class="cbt"><button type="button" id="camR">向き</button><button type="button" id="camF">全体／拡大</button><button type="button" id="camS" hidden>切替</button><button type="button" id="camX">反転</button></div></div>
       <div class="box time"><small>TIME</small><b class="num" id="gt">0:00</b><small id="runS"></small></div>
       <div class="box inn"><small>INNING</small><b class="num" id="inn">1</b><small id="lim"></small></div>
     </div>
@@ -282,6 +301,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
       <div class="f" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="bPr2" style="width:100%">練習タイマーを開く</button></div>
       <div class="f"><label for="fe">裏撞き（全員が撞いてから終了）</label><select id="fe"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fz">イージーモード（点数・イニング・名前・ハイランだけ）</label><select id="fz"><option value="0">なし</option><option value="1">あり</option></select></div>
+      <div class="f"><label for="fcam">カメラ映像（まん中に表示・2人のとき）</label><select id="fcam"><option value="0">なし</option><option value="1">あり</option></select></div>
       <div class="f"><label for="fv">音声コール（点数を読み上げ）</label><select id="fv"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fvd">音声コールを出す場所</label><select id="fvd"><option value="both">モニターとタブレット</option><option value="pc">モニターだけ</option><option value="tab">タブレットだけ</option></select></div>
       <div class="f"><label for="ften">残り10秒の音声（読み上げ）</label><select id="ften"><option value="1">あり</option><option value="0">なし</option></select></div>
@@ -512,6 +532,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
     for (var q = 0; q < 4; q++) { $('fn' + q).value = S.cfg.n[q] || 'PLAYER ' + (q + 1); $('fg' + q).value = S.cfg.g[q] || S.cfg.g[0]; }
     $('fnp').value = NP(); $('fnp').disabled = !fresh(); $('fto').value = S.cfg.to; setRows();
     $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1; $('fvd').value = S.cfg.vdev || 'both'; $('ften').value = S.cfg.ten === 0 ? 0 : 1; $('fcl').value = S.cfg.clang || 'en'; $('fcv').value = S.cfg.cvo === 'm' ? 'm' : 'f';
+    $('fcam').value = camPref() ? 1 : 0;
     $('setL').hidden = false; $('fn0').focus(); $('fn0').select();
   }
   function setRows() { var n = +$('fnp').value; for (var q = 0; q < 4; q++) Array.prototype.forEach.call(document.querySelectorAll('.pf' + q), function (e) { e.hidden = q >= n; }); }
@@ -521,7 +542,7 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
       var nn = fresh() ? +$('fnp').value : NP(), oldTo = S.cfg.to; if (nn !== NP()) setN(nn);
       for (var q = 0; q < nn; q++) { S.cfg.n[q] = $('fn' + q).value.trim() || 'PLAYER ' + (q + 1); S.cfg.g[q] = num('fg' + q, 1, 999, 25); }
       S.cfg.to = num('fto', 0, 9, 3); if (S.cfg.to !== oldTo) S.to = S.to.map(function (v) { return Math.max(0, v + S.cfg.to - oldTo); }); S.cfg.lim = num('fl', 0, 999, 0); S.cfg.t = num('ft', 0, 180, 40); S.cfg.pm = num('fp', 1, 60, 5);
-      S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value; S.cfg.easy = +$('fz').value; S.cfg.voice = +$('fv').value; S.cfg.vdev = $('fvd').value; S.cfg.ten = +$('ften').value; S.cfg.clang = $('fcl').value; S.cfg.cvo = $('fcv').value; prefSave();
+      S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value; S.cfg.easy = +$('fz').value; S.cfg.voice = +$('fv').value; S.cfg.vdev = $('fvd').value; S.cfg.ten = +$('ften').value; S.cfg.clang = $('fcl').value; S.cfg.cvo = $('fcv').value; prefSave(); camPref(+$('fcam').value);
       remember();
       for (var p = 0; p < NP(); p++) if (S.sc[p] > S.cfg.g[p]) S.cfg.g[p] = S.sc[p];
       if (S.run > room()) S.run = Math.max(0, room());
@@ -1018,6 +1039,36 @@ body.easy .runb b{font-size:9vh}body.easy .runb small{font-size:2.2vh}body.easy 
   var qg = /[?&]g=(band|three)/.exec(location.search); if (qg && (S.cfg.game || 'three') !== qg[1]) { var cg = S.cfg; cg.game = qg[1]; S = def(cg); hist = []; S.ready = !cg.n.every(isDefName); }
   if (S.cfg.game === 'band') { $('ttl').textContent = (TB ? 'TABLE ' + TB + ' · ' : '') + 'BAND GAME'; document.title = 'バンド デジタルカウント｜VIBES BILLIARDS'; }
   if (!MIR) { menuInit(); tourInit(); }
+  /* ---- live camera in the middle of the board ----
+     A setting of this device only (vibes-count-prefs.cam): the picture of a webcam, or of OBS's virtual camera, between the two players.
+     Nothing is recorded and nothing leaves the device. Mirrors (tablets showing the board) never start a camera. */
+  function camPref(v) { var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } if (v == null) return !!o.cam; o.cam = v ? 1 : 0; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} camSync(); }
+  var camSt = null, camBusy = false, camDevs = [], camI = 0, camP = {}; try { camP = JSON.parse(localStorage.getItem('vibes-3c-cam') || '{}') || {}; } catch (e) { camP = {}; }
+  function camSave() { try { localStorage.setItem('vibes-3c-cam', JSON.stringify(camP)); } catch (e) {} }
+  function camFit() { var b = $('camb'), v = $('camV'), r = (camP.rot || 0) % 360, up = r % 180 !== 0, W = b.clientWidth, H = b.clientHeight; v.style.width = (up ? H : W) + 'px'; v.style.height = (up ? W : H) + 'px'; v.style.transform = 'translate(-50%,-50%) rotate(' + r + 'deg)' + (camP.flip ? ' scaleX(-1)' : ''); b.classList.toggle('fit', !!camP.fit); }
+  function camMsg(t) { $('camM').textContent = t || ''; $('camM').hidden = !t; }
+  function camWhy(e) { var n = e && e.name; if (n === 'NotAllowedError' || n === 'SecurityError') return 'カメラの使用が許可されていません。アドレスバーの左のマークから「カメラ」を「許可」にしてください。'; if (n === 'NotReadableError' || n === 'TrackStartError' || n === 'AbortError') return 'カメラをほかのアプリが使っています。そのアプリを閉じるか、OBS の「仮想カメラ」を使ってください。'; if (n === 'NotFoundError' || n === 'DevicesNotFoundError') return 'カメラが見つかりません。カメラをつないでください。'; return 'カメラを始められませんでした（' + (n || '理由不明') + '）'; }
+  function camStop() { if (camSt) camSt.getTracks().forEach(function (t) { t.stop(); }); camSt = null; $('camV').srcObject = null; }
+  function camStart(id, plain) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return camMsg('このブラウザではカメラを使えません。');
+    camBusy = true; camStop(); var want = plain ? {} : { width: { ideal: 1280 }, height: { ideal: 720 } }; if (id) want.deviceId = { exact: id };
+    navigator.mediaDevices.getUserMedia({ video: plain && !id ? true : want, audio: false }).then(function (s) {
+      camBusy = false; if (!document.body.classList.contains('cam')) { s.getTracks().forEach(function (t) { t.stop(); }); return; }
+      camSt = s; $('camV').srcObject = s; camMsg(''); camFit(); var tr = s.getVideoTracks()[0]; tr.onended = function () { camStop(); camMsg('カメラが外れました。つなぎ直すと、自動でもどります。'); };
+      navigator.mediaDevices.enumerateDevices().then(function (l) { camDevs = l.filter(function (d) { return d.kind === 'videoinput'; }); var cur = tr.getSettings().deviceId; camI = Math.max(0, camDevs.map(function (d) { return d.deviceId; }).indexOf(cur)); camP.id = cur; camSave(); $('camS').hidden = camDevs.length < 2; }).catch(function () {});
+    }).catch(function (e) {
+      var n = e && e.name; if (id) return camStart('', plain); if (!plain && n !== 'NotAllowedError' && n !== 'SecurityError' && n !== 'NotFoundError') return camStart('', true);
+      camBusy = false; camMsg(camWhy(e));
+    });
+  }
+  function camSync() { var on = !MIR && camPref() && NP() === 2; if (document.body.classList.contains('cam') !== on) { document.body.classList.toggle('cam', on); if (!on) { camStop(); camMsg(''); } } if (on) { camFit(); if (!camSt && !camBusy) camStart(camP.id); } }
+  $('camR').onclick = function () { camP.rot = ((camP.rot || 0) + 90) % 360; camSave(); camFit(); };
+  $('camF').onclick = function () { camP.fit = !camP.fit; camSave(); camFit(); };
+  $('camX').onclick = function () { camP.flip = !camP.flip; camSave(); camFit(); };
+  $('camS').onclick = function () { if (camDevs.length < 2) return; camI = (camI + 1) % camDevs.length; camStart(camDevs[camI].deviceId); };
+  $('camb').addEventListener('pointermove', function () { var b = $('camb'); b.classList.add('show'); clearTimeout(camFit.t); camFit.t = setTimeout(function () { b.classList.remove('show'); }, 4000); });
+  addEventListener('resize', function () { if (document.body.classList.contains('cam')) camFit(); });
+  setInterval(camSync, 3000); setTimeout(camSync, 300);
   render(); setInterval(drawTime, 500); if (MIR) mirInit(); else if (S.over) showWin(); else if (S.cfg.n.every(isDefName) && fresh()) wzOpen(0);
 })();
 </script>
