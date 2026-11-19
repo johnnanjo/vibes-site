@@ -1077,7 +1077,12 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     if (m.k === 'cam') { camLive = false; return camAsk(); }
     if (m.id !== camId) return;
     if (m.k === 'offer' && m.sdp) { camPcStop(); var pc = camPc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-      pc.ontrack = function (e) { if (pc !== camPc) return; $('camV').srcObject = e.streams[0] || new MediaStream([e.track]); try { $('camV').play().catch(function () {}); } catch (x) {} camLive = true; camMsg(''); $('camQ').hidden = true; camFit(); };
+      /* the track arrives as soon as the two sides have agreed, before any picture flows: keep telling what is happening until frames really arrive */
+      pc.ontrack = function (e) { if (pc !== camPc) return; var v = $('camV'); v.srcObject = e.streams[0] || new MediaStream([e.track]); try { v.play().catch(function () {}); } catch (x) {} camLive = true; $('camQ').hidden = true; camMsg('映像をつないでいます…'); camFit();
+        var t0 = Date.now(), iv = setInterval(function () { if (pc !== camPc) return clearInterval(iv); if (v.videoWidth > 0 && v.readyState >= 2) { clearInterval(iv); return camMsg(''); }
+          var st = pc.iceConnectionState, sec = Math.round((Date.now() - t0) / 1000);
+          if (st === 'connected' || st === 'completed') camMsg(sec > 6 ? 'つながりましたが、映像がとどいていません。送る側のページを前に出して、カメラの映像が出ているか確かめてください。' : '映像をつないでいます…');
+          else if (sec > 10) camMsg('2台がつながりません（' + st + '）。送る側とこのパソコンが、同じ Wi-Fi・同じルーターにつながっているか確かめてください。'); }, 1000); };
       pc.onicecandidate = function (e) { if (e.candidate) camSendR({ type: 'rtc', k: 'ice', id: camId, from: 'v', c: e.candidate }); };
       pc.onconnectionstatechange = function () { if (pc !== camPc) return; var st = pc.connectionState; if (st === 'failed' || st === 'disconnected' || st === 'closed') { camPcStop(); $('camV').srcObject = null; camMsg('映像が切れました。撮影する端末の画面がひらいているか確かめてください。'); } };
       pc.setRemoteDescription(m.sdp).then(function () { return pc.createAnswer(); }).then(function (a) { return pc.setLocalDescription(a); }).then(function () { camSendR({ type: 'rtc', k: 'answer', id: camId, sdp: pc.localDescription }); }).catch(function () {}); }
