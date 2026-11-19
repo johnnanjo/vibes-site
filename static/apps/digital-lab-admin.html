@@ -101,6 +101,9 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
 .mx .mt{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;color:#B9C4D6;font-weight:800}
 .mx .ops{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mx .ops .sm{min-height:46px;font-size:14px}
 .mx .ed{display:grid;gap:8px}
+.mx .tbn{display:grid;grid-template-columns:repeat(auto-fit,minmax(52px,1fr));gap:6px}.mx .tbn .sm{min-height:46px;font-size:16px;padding:0}.mx .tbn .sm:disabled{opacity:.3}
+.mx.on{border-left:6px solid #FFD700}
+.tbx{background:#0B192C;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0;border:2px solid #2B4A7A}.tbx.on{border-color:#FFD700}.tbx b{font-size:15px;font-weight:900}.tbx span{font-size:14.5px;font-weight:900;overflow-wrap:anywhere;line-height:1.45}.tbx small{font-size:12px;color:#B9C4D6;font-weight:700}
 .gh{font-size:16px;font-weight:900;color:#FFD700;margin:4px 0 0}
 .st{overflow-x:auto}.st table{width:100%;border-collapse:collapse;min-width:520px}
 .st th{font-size:11px;color:#B9C4D6;font-weight:800;padding:4px;text-align:right;white-space:nowrap}.st th:nth-child(2){text-align:left}
@@ -230,10 +233,12 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   <div id="t4" class="w" style="padding:0" hidden>
     <section class="box"><h2>組分け（ゼッケン決定戦のリーグ）</h2>
       <p>①で「受付」にした選手を、くじ引きで組に分けます（受付した人が3人に満たないときは、名簿の全員）。組の中は総当たりです。</p>
-      <div class="two"><label class="f"><span>1組の人数</span><select id="gSize"><option value="3">3人</option><option value="4">4人</option><option value="5">5人</option></select></label><label class="f"><span>対戦を送る台</span><select id="tTable"></select></label></div>
+      <div class="two"><label class="f"><span>1組の人数</span><select id="gSize"><option value="3">3人</option><option value="4">4人</option><option value="5">5人</option></select></label><label class="f"><span>試合に使う台の数</span><select id="tN"><option value="1">1台</option><option value="2">2台</option><option value="3">3台</option><option value="4" selected>4台</option><option value="5">5台</option><option value="6">6台</option></select></label></div>
+      <label class="f"><span>①番台（配信・タブレットあり）の試合ID</span><select id="tTable"></select></label>
       <button class="go" type="button" id="tNew">組分けを作る（くじ引き）</button>
-      <small class="n">配信の台は「台へ送る」で iPad に名前を入れると、終わったときに結果が自動で入ります。ほかの台は、紙のスコアを見て「結果を入れる」で入れてください。どちらの結果も、③の履歴と BG賞・HR賞に入ります。組分けと結果は、この端末のこのブラウザの中だけに保存されます。</small>
+      <small class="n">対戦の下の ①②③④ を押すと、その台に試合が入ります。①番台（配信）は iPad に名前が入り、終わると結果が自動で入ります。②番台からは、勝った選手が持ってきたメモを見て「結果を入れる」で入れてください。順位表・アベレージ・ゼッケン・トーナメント表は自動で書き換わります。どちらの結果も、③の履歴と BG賞・HR賞に入ります。組分けと結果は、この端末のこのブラウザの中だけに保存されます。</small>
     </section>
+    <section class="box" id="tBoard" hidden><h2>台の状況</h2><div id="tbs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px"></div><small class="n" id="tLeft"></small></section>
     <div id="tour" style="display:flex;flex-direction:column;gap:16px"></div>
   </div>
 </div>
@@ -457,7 +462,10 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
      Stage 1: round-robin groups that decide the seeding numbers. Stage 2: single-elimination bracket seeded from stage 1.
      A result reaches a fixture in two ways: from a table's scoreboard (matched by the two names) or typed in from a paper sheet.
      Either way the game is one line of the history (H), so the awards count it; a fixture only points at that line by its gid. */
-  var TK = 'vibes-lab-tour', T = load(TK, null), tEdit = '';
+  var TK = 'vibes-lab-tour', T = load(TK, null), tEdit = '', CN = ['①', '②', '③', '④', '⑤', '⑥'];
+  try { var tn0 = +localStorage.getItem('vibes-lab-tables'); if (tn0 >= 1 && tn0 <= 6) $('tN').value = tn0; } catch (e) {}
+  $('tN').addEventListener('change', function () { try { localStorage.setItem('vibes-lab-tables', $('tN').value); } catch (e) {} drawTour(); });
+  function busy() { var o = {}; if (T && T.on) Object.keys(T.on).forEach(function (k) { o[T.on[k]] = k; }); return o; }
   if (T && (!T.P || !Array.isArray(T.G))) T = null;
   function tSave() { keep(TK, T); }
   var nk = function (x) { return String(x).replace(/\s/g, ''); };
@@ -504,23 +512,29 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
       var sw = nk(pn(m.a)) !== a, o = function (v) { return sw ? [v[1], v[0]] : [v[0], v[1]]; };
       T.res[m.key] = { a: m.a, b: m.b, s: o(h.s), in: o(h.in), hr: o(h.hr), w: h.w < 0 ? h.w : sw ? 1 - h.w : h.w, why: h.why || '', gid: h.gid }; used[h.gid] = 1; ch = true;
     });
+    /* a fixture that has its result, or no longer exists, frees its table */
+    if (T.on) { var live = {}; allM().forEach(function (m) { if (!resOf(m)) live[m.key] = 1; }); Object.keys(T.on).forEach(function (k) { if (!live[k]) { delete T.on[k]; ch = true; } }); }
     if (ch) tSave();
   }
   function mHtml(m) {
     var x = resOf(m), A = esc(pn(m.a)), B = esc(pn(m.b)), h = '';
     if (m.bye) return '<div class="mx dn"><div class="mt"><span>' + m.round + '</span><span>不戦勝</span></div><div class="vs"><span class="wn">' + esc(pn(m.a || m.b)) + '</span><em></em><span></span></div></div>';
     if (!m.a || !m.b) return '<div class="mx wt"><div class="mt"><span>' + m.round + '</span><span>前の試合が終わると決まります</span></div><div class="vs"><span>' + (m.a ? A : '（未定）') + '</span><em>対</em><span>' + (m.b ? B : '（未定）') + '</span></div></div>';
-    h += '<div class="mx' + (x ? ' dn' : '') + '"><div class="mt"><span>' + m.round + '</span>' + (x ? '<span>' + (x.w === -2 ? '両者負け' : x.w === -1 ? '引き分け' : '勝者 ' + esc(pn(x.w ? m.b : m.a))) + (x.why === 'sd' ? '（サドンデス）' : x.why === 'limit' ? '（打切り）' : '') + '</span><span>' + x.in[0] + (x.in[0] !== x.in[1] ? '／' + x.in[1] : '') + ' イニング</span>' : T.sent && T.sent[m.key] ? '<span>台へ送りました</span>' : '') + '</div>';
+    var onT = !x && T.on && T.on[m.key];
+    h += '<div class="mx' + (x ? ' dn' : onT ? ' on' : '') + '"><div class="mt"><span>' + m.round + '</span>' + (x ? '<span>' + (x.w === -2 ? '両者負け' : x.w === -1 ? '引き分け' : '勝者 ' + esc(pn(x.w ? m.b : m.a))) + (x.why === 'sd' ? '（サドンデス）' : x.why === 'limit' ? '（打切り）' : '') + '</span><span>' + x.in[0] + (x.in[0] !== x.in[1] ? '／' + x.in[1] : '') + ' イニング</span>' : onT ? '<span style="color:#FFD700">' + CN[onT - 1] + '番台で試合中' + (onT === 1 ? '（配信）' : '') + '</span>' : '') + '</div>';
     h += '<div class="vs"><span' + (x && x.w === 0 ? ' class="wn"' : '') + '>' + A + '</span><em>' + (x ? x.s[0] + ' − ' + x.s[1] : '対') + '</em><span' + (x && x.w === 1 ? ' class="wn"' : '') + '>' + B + '</span></div>';
     if (tEdit === m.key) h += '<div class="ed"><div class="two"><input data-r="s0" type="number" inputmode="numeric" placeholder="' + A + ' の得点" aria-label="' + A + ' の得点"><input data-r="s1" type="number" inputmode="numeric" placeholder="' + B + ' の得点" aria-label="' + B + ' の得点"></div><div class="two"><input data-r="i0" type="number" inputmode="numeric" placeholder="' + A + ' のイニング" aria-label="' + A + ' のイニング"><input data-r="i1" type="number" inputmode="numeric" placeholder="' + B + ' のイニング" aria-label="' + B + ' のイニング"></div><div class="two"><input data-r="h0" type="number" inputmode="numeric" placeholder="' + A + ' のハイラン" aria-label="' + A + ' のハイラン"><input data-r="h1" type="number" inputmode="numeric" placeholder="' + B + ' のハイラン" aria-label="' + B + ' のハイラン"></div><select data-r="w" aria-label="勝敗"><option value="">勝敗をえらぶ</option><option value="0">勝者：' + A + '</option><option value="1">勝者：' + B + '</option>' + (m.key.charAt(0) === 'L' ? '<option value="-1">引き分け</option><option value="-2">両者負け（打切りで届かず）</option>' : '') + '</select><div class="ops"><button class="sm q" type="button" data-a="cancel">やめる</button><button class="sm" type="button" data-a="save" data-k="' + m.key + '" style="background:#38BDF8;color:#0B192C">この結果を入れる</button></div></div>';
-    else h += '<div class="ops">' + (x ? '<span></span><button class="sm dg" type="button" data-a="clear" data-k="' + m.key + '">結果を消す</button>' : '<button class="sm" type="button" data-a="send" data-k="' + m.key + '">台へ送る</button><button class="sm q" type="button" data-a="edit" data-k="' + m.key + '">結果を入れる</button>') + '</div>';
+    else h += '<div class="ops">' + (x ? '<span></span><button class="sm dg" type="button" data-a="clear" data-k="' + m.key + '">結果を消す</button>' : (onT ? '<button class="sm q" type="button" data-a="off" data-k="' + m.key + '">台から外す</button>' : '<span></span>') + '<button class="sm' + (onT ? '' : ' q') + '" type="button" data-a="edit" data-k="' + m.key + '">結果を入れる</button>') + '</div>';
+    if (!x && !onT && tEdit !== m.key) { var bz = busy(), nT = +$('tN').value || 4, bt = ''; for (var t = 1; t <= nT; t++) bt += '<button class="sm" type="button" data-a="tb" data-t="' + t + '" data-k="' + m.key + '"' + (bz[t] ? ' disabled' : '') + ' aria-label="' + t + '番台に入れる">' + CN[t - 1] + '</button>'; h += '<div class="tbn">' + bt + '</div>'; }
     return h + '</div>';
   }
   function drawTour() {
     var tb = $('tTable'), cur = tb.value, ms = ROOMS.map(function (r) { return r.m; }), dm = clean($('match').value); if (dm && ms.indexOf(dm) < 0) ms.unshift(dm);
     tb.innerHTML = ms.map(function (m) { return '<option value="' + esc(m) + '">' + esc(labelOf(m) === m ? m : labelOf(m) + '（' + m + '）') + '</option>'; }).join('') || '<option value="">（②でアドレスを出すと選べます）</option>'; if (cur && ms.indexOf(cur) >= 0) tb.value = cur;
-    if (!T) { $('tour').innerHTML = ''; return; }
-    tourSync(); var h = '', L = lgList(), done = L.filter(resOf).length;
+    if (!T) { $('tour').innerHTML = ''; $('tBoard').hidden = true; return; }
+    tourSync();
+    var bz0 = busy(), AM = allM(), nT0 = +$('tN').value || 4, bh = ''; for (var ti = 1; ti <= nT0; ti++) { var fm = bz0[ti] ? AM.filter(function (m) { return m.key === bz0[ti]; })[0] : null; bh += '<div class="tbx' + (fm ? ' on' : '') + '"><b>' + CN[ti - 1] + '番台' + (ti === 1 ? '（配信）' : '') + '</b>' + (fm ? '<span>' + esc(pn(fm.a)) + '　対　' + esc(pn(fm.b)) + '</span><small>' + fm.round + (fm.key.charAt(0) === 'L' ? '・' + LN(fm.g) + '組' : '') + '</small>' : '<small>空いています</small>') + '</div>'; }
+    $('tbs').innerHTML = bh; $('tBoard').hidden = false; var open0 = AM.filter(function (m) { return !resOf(m); }).length; $('tLeft').textContent = '残りの試合：' + open0 + '（うち台に入っているのは ' + Object.keys(bz0).length + '）'; var h = '', L = lgList(), done = L.filter(resOf).length;
     T.G.forEach(function (g, gi) {
       h += '<section class="box"><h2>' + LN(gi) + '組　<span style="font-size:13px;color:#B9C4D6">' + g.length + '人</span></h2><div class="st"><table><tr><th>順位</th><th>選手</th><th>勝</th><th>分</th><th>負</th><th>勝ち点</th><th>得点</th><th>イニング</th><th>アベレージ</th><th>ハイラン</th></tr>' + stand(gi).map(function (r) { var q = T.P[r.id] || {}; return '<tr><td>' + r.rk + '</td><td>' + esc(q.n) + (q.shop ? '<small style="display:block;font-size:11.5px;font-weight:700;color:#B9C4D6">' + esc(q.shop) + '</small>' : '') + '</td><td>' + r.w + '</td><td>' + r.d + '</td><td>' + r.l + '</td><td>' + r.pts + '</td><td>' + r.s + '</td><td>' + r.in + '</td><td>' + a3(r.s, r.in) + '</td><td>' + r.hr + '</td></tr>'; }).join('') + '</table></div>' + L.filter(function (m) { return m.g === gi; }).map(mHtml).join('') + '</section>';
     });
@@ -537,12 +551,16 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     var b = e.target.closest('[data-a]'); if (!b || !T) return; var a = b.dataset.a, k = b.dataset.k, m = k ? allM().filter(function (x) { return x.key === k; })[0] : null;
     if (a === 'edit') { tEdit = k; drawTour(); var f = $('tour').querySelector('[data-r="s0"]'); if (f) f.focus(); }
     else if (a === 'cancel') { tEdit = ''; drawTour(); }
-    else if (a === 'send' && m) { var t = clean($('tTable').value); if (!t) { toast('②でアドレスを出してから送ってください'); return; } watch(t, ''); sendAssign(t, [pn(m.a).slice(0, 16), pn(m.b).slice(0, 16)], m.round.slice(0, 12)); T.sent = T.sent || {}; T.sent[k] = t; tSave(); drawTour(); }
+    else if (a === 'tb' && m) { var no = +b.dataset.t; if (busy()[no]) { toast(CN[no - 1] + '番台は試合中です'); return; }
+      var clash = allM().filter(function (x) { return T.on && T.on[x.key] && x.key !== k && (x.a === m.a || x.b === m.a || x.a === m.b || x.b === m.b); })[0]; if (clash) { var who = clash.a === m.a || clash.b === m.a ? m.a : m.b; toast(pn(who) + ' は、いま ' + CN[T.on[clash.key] - 1] + '番台で試合中です'); return; }
+      if (no === 1) { var t = clean($('tTable').value); if (!t) { toast('②でアドレスを出してから、①番台に入れてください'); return; } watch(t, ''); sendAssign(t, [pn(m.a).slice(0, 16), pn(m.b).slice(0, 16)], m.round.slice(0, 12)); }
+      T.on = T.on || {}; T.on[k] = no; tSave(); drawTour(); if (no !== 1) toast(CN[no - 1] + '番台：' + pn(m.a) + ' 対 ' + pn(m.b)); }
+    else if (a === 'off' && m) { if (T.on) delete T.on[k]; tSave(); drawTour(); }
     else if (a === 'save' && m) {
       var box = b.closest('.mx'), g = function (r) { return Math.max(0, parseInt(box.querySelector('[data-r="' + r + '"]').value, 10) || 0); }, w = box.querySelector('[data-r="w"]').value;
       if (w === '') { toast('勝敗をえらんでください'); return; } if (!g('i0') && !g('i1')) { toast('イニングを入れてください'); return; }
       var i0 = g('i0') || g('i1'), i1 = g('i1') || g('i0');
-      H.push({ gid: 'm' + rid(), t: Date.now(), m: '', table: '紙のスコア', title: '', round: m.round, mode: '3c', n: [pn(m.a), pn(m.b)], shop: [shopOf(pn(m.a)), shopOf(pn(m.b))], h: hs(), s: [g('s0'), g('s1')], in: [i0, i1], hr: [g('h0'), g('h1')], w: +w, why: +w === -2 ? 'limit' : '', manual: true });
+      H.push({ gid: 'm' + rid(), t: Date.now(), m: '', table: T.on && T.on[m.key] ? T.on[m.key] + '番台' : 'メモ用紙', title: '', round: m.round, mode: '3c', n: [pn(m.a), pn(m.b)], shop: [shopOf(pn(m.a)), shopOf(pn(m.b))], h: hs(), s: [g('s0'), g('s1')], in: [i0, i1], hr: [g('h0'), g('h1')], w: +w, why: +w === -2 ? 'limit' : '', manual: true });
       tEdit = ''; keep(HK, H); drawHist(); toast('結果を入れました');
     }
     else if (a === 'clear' && m) { var x = resOf(m); if (!x) return; confirmDo('この結果を消しますか？', '③の履歴と、BG賞・HR賞の順位からも消えます。', function () { H = H.filter(function (q) { return q.gid !== x.gid; }); DEL.push(x.gid); DEL = DEL.slice(-300); keep(HK, H); keep(DK, DEL); drawHist(); }); }
