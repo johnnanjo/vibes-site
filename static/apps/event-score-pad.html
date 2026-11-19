@@ -179,8 +179,8 @@ button:active{transform:scale(.97)}
   function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
   function qs(k) { var m = new RegExp('[?&]' + k + '=([^&#]+)').exec(location.search); return m ? decodeURIComponent(m[1]) : ''; }
   var match = clean(qs('match')) || 'test';
-  var CFG0 = { id: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt' };
-  function cfgOf(o) { var c = {}, k; for (k in CFG0) c[k] = CFG0[k]; if (o) { c.id = String(o.id || ''); if (/^(3c|pocket|free)$/.test(o.mode)) c.mode = o.mode; c.limit = Math.max(0, Math.min(200, o.limit | 0)); c.back = !!o.back; c.clk = [0, 30, 35, 40].indexOf(o.clk | 0) >= 0 ? o.clk | 0 : 0; c.warn = o.warn !== false; c.to = Math.max(0, Math.min(3, o.to | 0)); c.stats = o.stats !== false; if (/^(alt|win|manual)$/.test(o.brk)) c.brk = o.brk; } return c; }
+  var CFG0 = { id: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: 'pts' };   /* end = what the inning cap decides: pts = more points wins (level = draw), both = neither reached the target, both lose, sd = level scores go to sudden death */
+  function cfgOf(o) { var c = {}, k; for (k in CFG0) c[k] = CFG0[k]; if (o) { c.id = String(o.id || ''); if (/^(3c|pocket|free)$/.test(o.mode)) c.mode = o.mode; c.limit = Math.max(0, Math.min(200, o.limit | 0)); c.back = !!o.back; c.clk = [0, 30, 35, 40].indexOf(o.clk | 0) >= 0 ? o.clk | 0 : 0; c.warn = o.warn !== false; c.to = Math.max(0, Math.min(3, o.to | 0)); c.stats = o.stats !== false; if (/^(alt|win|manual)$/.test(o.brk)) c.brk = o.brk; if (/^(pts|both|sd)$/.test(o.end)) c.end = o.end; } return c; }
   var custom = false, KEY = 'vibes-event-score:' + match, LKEY = 'vibes-event-log:' + match, S = null, ws = null, tries = 0, timer = null, LOG = [], PEND = null;
   function gid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   try { LOG = JSON.parse(localStorage.getItem(LKEY) || '[]') || []; if (!Array.isArray(LOG)) LOG = []; } catch (e) { LOG = []; }
@@ -221,6 +221,7 @@ button:active{transform:scale(.97)}
   function unfinish() { LOG = LOG.filter(function (r) { return r.gid !== S.gid; }); logSave(); S.over = null; }
   /* called after a point is added by player i */
   function check(i) {
+    if (S.sd) return finish(i, 'sd');   /* sudden death: the first point decides */
     if (!reached(i)) return;
     if (P() || !S.cfg.back) return finish(i, 'target');
     if (i === 1) return finish(reached(0) ? -1 : 1, 'target');   /* the second player ends the inning: nothing left to answer */
@@ -232,7 +233,11 @@ button:active{transform:scale(.97)}
     if (S.turn === 0) { S.turn = 1; if (reached(0) && S.cfg.back) S.rep = true; }
     else {
       if (S.rep) return finish(reached(1) ? -1 : 0, 'target');
-      if (S.cfg.limit && S.inn >= S.cfg.limit) return finish(S.p[0].s > S.p[1].s ? 0 : S.p[1].s > S.p[0].s ? 1 : -1, 'limit');
+      if (S.cfg.limit && S.inn >= S.cfg.limit && !S.sd) {
+        if (S.cfg.end === 'both') return finish(-2, 'limit');
+        if (S.cfg.end === 'sd' && S.p[0].s === S.p[1].s) S.sd = true;   /* play goes on from the balls as they lie */
+        else return finish(S.p[0].s > S.p[1].s ? 0 : S.p[1].s > S.p[0].s ? 1 : -1, 'limit');
+      }
       S.turn = 0; S.inn = Math.min(999, S.inn + 1);
     }
     ckSet(S.cfg.clk * 1000, !!S.cfg.clk);
@@ -247,7 +252,7 @@ button:active{transform:scale(.97)}
       check(i);
     } else if (S.rep && !reached(0)) S.rep = false;
   }
-  function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.ck = null; S.gid = gid(); }
+  function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.sd = false; S.ck = null; S.gid = gid(); }
   /* ---- drawing: every element marked data-o="key" gets the text for that key (both layouts at once) ---- */
   function put(k, v) { $$('[data-o="' + k + '"]').forEach(function (e) { if (e.textContent !== String(v)) e.textContent = v; }); }
   function show(sel, on) { $$(sel).forEach(function (e) { e.hidden = !on; }); }
@@ -265,11 +270,11 @@ button:active{transform:scale(.97)}
     });
     put('hl', pk ? '先取' : '持ち点'); $$('[data-run]').forEach(function (e) { e.hidden = pk; }); put('ttl', S.title + (S.round ? '　' + S.round : ''));
     put('mode', pk ? 'ポケット（セット先取）' : c.mode === 'free' ? 'フリープレイ' : 'スリークッション' + (c.back ? '・裏撞きあり' : ''));
-    var rem = c.limit ? Math.max(0, c.limit - S.inn) : 0, last = c.limit && S.inn >= c.limit;
-    $$('[data-o="lim"]').forEach(function (e) { e.hidden = !c.limit || pk; e.className = last ? 'hot' : ''; e.textContent = '打切り ' + c.limit + ' キュー｜' + (last ? '最終キュー' : '残り ' + rem); });
-    put('lims', c.limit && !pk ? (last ? '最終キュー' : '残り ' + rem) : '');
+    var rem = c.limit ? Math.max(0, c.limit - S.inn) : 0, last = c.limit && S.inn >= c.limit && !S.sd;
+    $$('[data-o="lim"]').forEach(function (e) { e.hidden = !c.limit || pk; e.className = last ? 'hot' : ''; e.className = last || S.sd ? 'hot' : ''; e.textContent = S.sd ? 'サドンデス（先に1点で勝ち）' : '打切り ' + c.limit + ' キュー｜' + (last ? '最終キュー' : '残り ' + rem); });
+    put('lims', S.sd ? 'サドンデス' : c.limit && !pk ? (last ? '最終キュー' : '残り ' + rem) : '');
     $$('[data-o="ckc"]').forEach(function (e) { e.hidden = !c.clk; e.textContent = 'クロック ' + c.clk + '秒'; });
-    var ban = S.over ? '' : S.rep ? '裏撞き：' + S.p[1].n + ' の番です。撞き終わったら「交代」で試合終了。' : (!pk && c.back && reached(0) && S.turn === 0) ? S.p[0].n + ' があがり。「交代」を押して、' + S.p[1].n + ' の裏撞きへ。' : last && !pk ? '最終キューです（打切り ' + c.limit + '）。' + (S.turn === 1 ? '撞き終わったら「交代」で試合終了。' : '') : '';
+    var ban = S.over ? '' : S.sd ? 'サドンデス：' + cur.n + ' の番です。先に1点を取ったほうが勝ち（球はそのままの配置で続けます）。' : S.rep ? '裏撞き：' + S.p[1].n + ' の番です。撞き終わったら「交代」で試合終了。' : (!pk && c.back && reached(0) && S.turn === 0) ? S.p[0].n + ' があがり。「交代」を押して、' + S.p[1].n + ' の裏撞きへ。' : last && !pk ? '最終キューです（打切り ' + c.limit + '）。' + (S.turn === 1 ? (c.end === 'both' ? '撞き終わったら「交代」。どちらも届かなければ両者負けです。' : c.end === 'sd' ? '撞き終わったら「交代」。同点ならサドンデスに入ります。' : '撞き終わったら「交代」で試合終了。') : '') : '';
     $$('[data-o="ban"]').forEach(function (e) { e.hidden = !ban; e.textContent = ban; });
     var sr = $('sRound'), known = [].some.call(sr.options, function (o) { return o.value !== '*' && (o.value || o.text) === S.round || (o.value === '' && !S.round); });
     if (S.round && !known) custom = true; sr.value = custom ? '*' : S.round; $('iRound').hidden = !custom; if (custom && document.activeElement !== $('iRound')) $('iRound').value = S.round;
@@ -282,8 +287,8 @@ button:active{transform:scale(.97)}
     /* result */
     var f = $('fin'); f.hidden = !S.over;
     if (S.over) {
-      var w = S.over.w; put('win', w < 0 ? '引き分け' : '勝者　' + S.p[w].n);
-      put('why', S.over.why === 'limit' ? '打切り ' + c.limit + ' キューに達したため、試合終了です。' : pk ? '' : c.back ? '裏撞きまで終わりました。' : '');
+      var w = S.over.w; put('win', w === -2 ? '両者負け' : w < 0 ? '引き分け' : '勝者　' + S.p[w].n);
+      put('why', S.over.why === 'sd' ? 'サドンデスで決着しました。' : w === -2 ? '打切り ' + c.limit + ' キューで、どちらも試合点数に届きませんでした。' : S.over.why === 'limit' ? '打切り ' + c.limit + ' キューに達したため、試合終了です。' : pk ? '' : c.back ? '裏撞きまで終わりました。' : '');
       $('resT').innerHTML = '<tr><th></th><th>' + (pk ? 'セット' : '得点') + '</th>' + (pk ? '' : '<th>イニング</th><th>アベレージ</th><th>ハイラン</th>') + '</tr>' + [0, 1].map(function (i) { var p = S.p[i]; return '<tr' + (w === i ? ' class="w"' : '') + '><td></td><td>' + p.s + '</td>' + (pk ? '' : '<td>' + inns(i) + '</td><td>' + avg(i) + '</td><td>' + p.hr + '</td>') + '</tr>'; }).join('');
       [].forEach.call($('resT').querySelectorAll('td:first-child'), function (td, i) { td.textContent = S.p[i].n; });
     }

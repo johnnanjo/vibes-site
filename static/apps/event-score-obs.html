@@ -137,8 +137,8 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
     $('tt').textContent = m.title || 'Queen Cup 2026-2027'; $('rd').textContent = m.round || ''; $('rd').hidden = !m.round;
     $('inl').textContent = pk ? 'RACK' : 'INN'; $('inn').textContent = pk ? (m.p[0].s | 0) + (m.p[1].s | 0) + 1 : m.inn;
     /* inning as "12 / 35" when the match has a cap; the badge lights only for the moments that matter: the last inning, and the second player's reply after the first has reached the target */
-    var lim = g.limit | 0, le = $('lim'), of = $('of'); of.hidden = !lim || pk; of.textContent = '/ ' + lim;
-    var p0 = m.p[0], up = !pk && g.back && p0.h > 0 && p0.s >= p0.h, st = m.over ? '' : m.rep ? '裏撞き' : up && m.turn === 0 ? '裏撞きへ' : lim && !pk && m.inn >= lim ? '最終キュー' : '';
+    var lim = g.limit | 0, le = $('lim'), of = $('of'); of.hidden = !lim || pk || !!m.sd; of.textContent = '/ ' + lim;
+    var p0 = m.p[0], up = !pk && g.back && p0.h > 0 && p0.s >= p0.h, st = m.over ? '' : m.sd ? 'サドンデス' : m.rep ? '裏撞き' : up && m.turn === 0 ? '裏撞きへ' : lim && !pk && m.inn >= lim ? '最終キュー' : '';
     le.hidden = !st; le.textContent = st;
     [['A', 0], ['B', 1]].forEach(function (x) {
       var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('x' + x[0]).textContent = p.hr | 0; $('xw' + x[0]).hidden = !stats;
@@ -150,9 +150,9 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
     CK = g.clk && m.ck ? { left: +m.ck.left || 0, run: !!m.ck.run && live !== false, at: Date.now() } : g.clk ? { left: g.clk * 1000, run: false, at: Date.now() } : null; $('ck').classList.toggle('use', !!g.clk); c.classList.toggle('hasck', !!g.clk); tick();
     var f = $('fin'); f.hidden = !(m.over && showRes);
     if (m.over) {
-      var w = m.over.w; $('fw').textContent = w < 0 ? '引き分け' : '勝者　' + m.p[w].n;
+      var w = m.over.w; $('fw').textContent = w === -2 ? '両者負け' : w < 0 ? '引き分け' : '勝者　' + m.p[w].n;
       $('ft').innerHTML = '<tr><th></th><th>' + (pk ? 'セット' : '得点') + '</th>' + (pk ? '' : '<th>イニング</th><th>アベレージ</th><th>ハイラン</th>') + '</tr>' + [0, 1].map(function (i) { var p = m.p[i]; return '<tr' + (w === i ? ' class="win"' : '') + '><td>' + esc(p.n) + '</td><td>' + (p.s | 0) + '</td>' + (pk ? '' : '<td>' + (p.in | 0) + '</td><td>' + esc(p.avg || '-') + '</td><td>' + (p.hr | 0) + '</td>') + '</tr>'; }).join('');
-      $('fy').textContent = m.over.why === 'limit' ? '打切り ' + lim + ' キュー' : '';
+      $('fy').textContent = m.over.why === 'sd' ? 'サドンデスで決着' : m.over.why === 'limit' ? '打切り ' + lim + ' キュー' + (w === -2 ? '（どちらも試合点数に届かず）' : '') : '';
     }
     c.hidden = false; $('msg').hidden = true; try { localStorage.setItem(KEY, JSON.stringify(m)); } catch (e) {}
   }

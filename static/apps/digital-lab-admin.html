@@ -146,6 +146,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
       <div class="f"><span>種目</span><div class="seg" data-k="mode"><button type="button" data-v="3c">スリークッション</button><button type="button" data-v="pocket">ポケット</button><button type="button" data-v="free">フリープレイ</button></div></div>
       <div class="f" data-3c><span>裏撞き（先攻があがったあと、後攻がもう1回撞く）</span><div class="seg" data-k="back"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
       <div class="f" data-3c><span>打切りキュー数（イニングの上限）</span><div class="seg" data-k="limit"><button type="button" data-v="0">なし</button><button type="button" data-v="20">20</button><button type="button" data-v="25">25</button><button type="button" data-v="30">30</button><button type="button" data-v="35">35</button></div><input id="limit" type="number" inputmode="numeric" min="0" max="200" aria-label="打切りキュー数を数字で入れる"><small>ほかの数字は、上のらんに直接入れます。残りのキュー数が画面に出て、上限で試合終了になります。</small></div>
+      <div class="f" data-3c><span>打切りになったときの決め方</span><div class="seg" data-k="end"><button type="button" data-v="pts">点の多いほうが勝ち<br>（同点は引き分け）</button><button type="button" data-v="both">両者負け<br>（予選リーグ）</button><button type="button" data-v="sd">同点はサドンデス<br>（決勝）</button></div></div>
       <div class="f"><span>ショットクロック</span><div class="seg" data-k="clk"><button type="button" data-v="0">なし</button><button type="button" data-v="30">30秒</button><button type="button" data-v="35">35秒</button><button type="button" data-v="40">40秒</button></div></div>
       <div class="f" data-clk><span>残り10秒の警告（音と点滅）</span><div class="seg" data-k="warn"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
       <div class="f" data-clk><span id="lTo">タイムアウトの枚数（1人あたり）</span><div class="seg" data-k="to"><button type="button" data-v="0">0</button><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button></div></div>
@@ -281,8 +282,8 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
 
   /* =================== 2: table set-up =================== */
   var PRE = [
-    { id: 'queen', b: '12/5 女王杯（Pre Queen Cup）', s: 'スクラッチ 8〜10点・相手レフリー・クロックなし・打切りあり・裏撞きあり', c: { ctl: 'pad', mode: '3c', h: [10, 10], back: 1, limit: 30, clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Queen Cup 2026-2027' } },
-    { id: 'queenw', b: 'W3C クイーンカップ（40秒クロックあり）', s: '持ち点25点・40秒・タイムアウト（延長）2回・打切り35・裏撞きあり', c: { ctl: 'pad', mode: '3c', h: [25, 25], back: 1, limit: 35, clk: 40, warn: 1, to: 2, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'W3C PRE QUEEN CUP 2026' } },
+    { id: 'queenL', b: '12/5 女王杯 ① 予選リーグ（ゼッケン決定戦）', s: '7点・裏撞きあり・25キュー（届かなければ両者負け）・相手レフリー・クロックなし', c: { ctl: 'pad', mode: '3c', h: [7, 7], back: 1, limit: 25, end: 'both', clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Queen Cup 2026-2027' } },
+    { id: 'queenF', b: '12/5 女王杯 ② 決勝トーナメント', s: '10点・裏撞きなし・25キュー打切り・同点はサドンデス・相手レフリー・クロックなし', c: { ctl: 'pad', mode: '3c', h: [10, 10], back: 0, limit: 25, end: 'sd', clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Queen Cup 2026-2027' } },
     { id: 'official', b: '3C 公式戦（専属審判・クロックあり）', s: '持ち点制・40秒・タイムアウト3枚・審判がスマホで操作', c: { ctl: 'phone', mode: '3c', h: [30, 30], back: 1, limit: 0, clk: 40, warn: 1, to: 3, stats: 1, brk: 'alt', lay: 'top', match: '', label: '', title: '3-CUSHION' } },
     { id: 'house', b: '3C ハウス・段位戦', s: 'ハンデ持ち点・40秒・タイムアウト2枚・打切りあり', c: { ctl: 'pad', mode: '3c', h: [20, 15], back: 1, limit: 35, clk: 40, warn: 1, to: 2, stats: 1, brk: 'alt', lay: 'monitor', match: '', label: '', title: '3-CUSHION' } },
     { id: 'pocket', b: 'ポケット（9ボール・10ボール）', s: 'セット先取・ブレイクの表示・35秒・エクステンション1回', c: { ctl: 'pad', mode: 'pocket', h: [5, 5], back: 0, limit: 0, clk: 35, warn: 1, to: 1, stats: 0, brk: 'alt', lay: 'monitor', match: '', label: '', title: '9-BALL' } },
@@ -292,7 +293,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   function rnd() { var s = 't-', a = 'abcdefghjkmnpqrstuvwxyz23456789'; for (var i = 0; i < 6; i++) s += a.charAt(Math.floor(Math.random() * a.length)); return s; }
   function clean(m) { return String(m || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40); }
   $('pre').innerHTML = PRE.map(function (p) { return '<button type="button" data-p="' + p.id + '" aria-pressed="false"><b>' + p.b + '</b><span>' + p.s + '</span></button>'; }).join('');
-  function pick(id) { var p = PRE.filter(function (x) { return x.id === id; })[0]; pre = id; C = JSON.parse(JSON.stringify(p.c)); if (!C.match) C.match = rnd(); $('h0').value = C.h[0]; $('h1').value = C.h[1]; $('limit').value = C.limit || ''; $('match').value = C.match; $('label').value = C.label || ''; $('title').value = C.title; $('out').hidden = true; drawSet(); }
+  function pick(id) { var p = PRE.filter(function (x) { return x.id === id; })[0]; pre = id; C = JSON.parse(JSON.stringify(p.c)); if (!C.end) C.end = 'pts'; if (!C.match) C.match = rnd(); $('h0').value = C.h[0]; $('h1').value = C.h[1]; $('limit').value = C.limit || ''; $('match').value = C.match; $('label').value = C.label || ''; $('title').value = C.title; $('out').hidden = true; drawSet(); }
   function drawSet() {
     $$('#pre button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === pre); });
     $$('.seg[data-k]').forEach(function (g) { var k = g.getAttribute('data-k'); [].forEach.call(g.children, function (b) { b.setAttribute('aria-pressed', String(C[k]) === b.getAttribute('data-v')); }); });
@@ -312,7 +313,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     var b = e.target.closest('button'); if (!b) return;
     if (b.dataset.p) return pick(b.dataset.p);
     var g = b.closest('.seg[data-k]');
-    if (g) { var k = g.getAttribute('data-k'), v = b.getAttribute('data-v'); C[k] = /^(ctl|mode|brk|lay)$/.test(k) ? v : +v; if (k === 'limit') $('limit').value = +v || ''; if (k === 'mode' && v === 'pocket') { C.stats = 0; C.back = 0; C.limit = 0; $('limit').value = ''; } $('out').hidden = true; drawSet(); return; }
+    if (g) { var k = g.getAttribute('data-k'), v = b.getAttribute('data-v'); C[k] = /^(ctl|mode|brk|lay|end)$/.test(k) ? v : +v; if (k === 'limit') $('limit').value = +v || ''; if (k === 'mode' && v === 'pocket') { C.stats = 0; C.back = 0; C.limit = 0; $('limit').value = ''; } $('out').hidden = true; drawSet(); return; }
     var o = b.closest('.seg[data-opt]'); if (o) { [].forEach.call(o.children, function (x) { x.setAttribute('aria-pressed', x === b); }); drawHist(); return; }
     if (b.dataset.h) { $('h0').value = b.dataset.h; $('h1').value = b.dataset.h; $('out').hidden = true; drawSet(); return; }
     if (b.dataset.cp) {
@@ -329,7 +330,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   $('issue').addEventListener('click', function () {
     var m = clean($('match').value) || rnd(); $('match').value = m; watch(m, $('label').value.trim());
     var h = hs(), pk = C.mode === 'pocket';
-    var cfg = { id: Date.now().toString(36), mode: C.mode, limit: pk ? 0 : C.limit | 0, back: !pk && !!C.back, clk: C.clk | 0, warn: !!C.warn, to: C.clk ? C.to | 0 : 0, stats: !pk && !!C.stats, brk: C.brk, h: h, title: $('title').value.trim().slice(0, 24) };
+    var cfg = { id: Date.now().toString(36), mode: C.mode, limit: pk ? 0 : C.limit | 0, back: !pk && !!C.back, end: pk || !C.limit ? 'pts' : C.end || 'pts', clk: C.clk | 0, warn: !!C.warn, to: C.clk ? C.to | 0 : 0, stats: !pk && !!C.stats, brk: C.brk, h: h, title: $('title').value.trim().slice(0, 24) };
     var n = [$('n0').value.trim().slice(0, 16), $('n1').value.trim().slice(0, 16)]; if (n[0] || n[1]) cfg.n = n; if ($('round').value) cfg.round = $('round').value;
     var base = location.origin, e = encodeURIComponent(m);
     var uC = base + '/event-score-pad?match=' + e + '&cfg=' + b64(cfg), uM = base + '/event-score-obs?match=' + e + '&layout=monitor', uT = base + '/event-score-obs?match=' + e, uB = uT + '&pos=bl';
@@ -340,7 +341,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     $('pC').textContent = phone ? '審判のスマホのカメラで、このQRコードを読み取ります。スマホは縦向きで使います。' : 'タブレットのカメラで、このQRコードを読み取ります。タブレットは横向きで使います。';
     $('lD').textContent = C.lay === 'monitor' ? '表示する画面（会場のモニター用）' : '表示する画面（配信・OBS用・' + (C.lay === 'bottom' ? '下' : '上') + 'の帯）';
     $('sum').innerHTML = ['試合ID：' + m + ($('label').value.trim() ? '（' + $('label').value.trim() + '）' : ''), '種目：' + (pk ? 'ポケット（' + h[0] + '−' + h[1] + ' セット先取）' : C.mode === 'free' ? 'フリープレイ' : 'スリークッション（' + (h[0] || h[1] ? h[0] + '点−' + h[1] + '点' : '点数の上限なし') + '）'),
-      pk ? 'ブレイク：' + { alt: '交互', win: '勝った人', manual: '手で切り替え' }[C.brk] : '裏撞き：' + (cfg.back ? 'あり' : 'なし') + '　／　打切り：' + (cfg.limit ? cfg.limit + ' キュー' : 'なし'),
+      pk ? 'ブレイク：' + { alt: '交互', win: '勝った人', manual: '手で切り替え' }[C.brk] : '裏撞き：' + (cfg.back ? 'あり' : 'なし') + '　／　打切り：' + (cfg.limit ? cfg.limit + ' キュー（' + { pts: '点の多いほうが勝ち', both: '届かなければ両者負け', sd: '同点はサドンデス' }[cfg.end] + '）' : 'なし'),
       'ショットクロック：' + (cfg.clk ? cfg.clk + '秒' + '　／　' + (pk ? 'エクステンション ' : 'タイムアウト ') + cfg.to + (pk ? '回' : '枚') + '　／　警告 ' + (cfg.warn ? 'あり' : 'なし') : 'なし'),
       pk ? '' : 'アベレージ・ハイラン：' + (cfg.stats ? '出す' : '出さない')].filter(Boolean).map(esc).join('<br>');
     var st = [];
@@ -398,7 +399,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     var a = H.slice().sort(function (x, y) { return y.t - x.t; }); $('hN').textContent = a.length ? a.length + '試合' : '';
     $('hist').innerHTML = a.length ? a.map(function (r) {
       var pk = r.mode === 'pocket';
-      return '<div class="hc"><div class="mt"><span>' + hm(r.t) + '</span><span>' + esc(r.table || r.m) + '</span>' + (r.round ? '<span>' + esc(r.round) + '</span>' : '') + '<span>' + (r.w < 0 ? '引き分け' : '勝者 ' + esc(r.n[r.w])) + (r.why === 'limit' ? '（打切り）' : '') + '</span>' + (r.manual ? '<span>手で追加</span>' : '') + '</div><table><tr><th></th><th>' + (pk ? 'セット' : '得点') + '</th>' + (pk ? '' : '<th>イニング</th><th>AVG</th><th>HR</th>') + '</tr>' + [0, 1].map(function (i) { return '<tr' + (r.w === i ? ' class="wn"' : '') + '><td>' + esc(r.n[i]) + (r.shop && r.shop[i] ? '<small>' + esc(r.shop[i]) + '</small>' : '') + '</td><td>' + r.s[i] + '</td>' + (pk ? '' : '<td>' + r.in[i] + '</td><td>' + a3(r.s[i], r.in[i]) + '</td><td>' + r.hr[i] + '</td>') + '</tr>'; }).join('') + '</table><button class="sm dg" type="button" data-del="' + esc(r.gid) + '" style="min-height:44px;align-self:flex-end">この結果を消す</button></div>';
+      return '<div class="hc"><div class="mt"><span>' + hm(r.t) + '</span><span>' + esc(r.table || r.m) + '</span>' + (r.round ? '<span>' + esc(r.round) + '</span>' : '') + '<span>' + (r.w === -2 ? '両者負け' : r.w < 0 ? '引き分け' : '勝者 ' + esc(r.n[r.w])) + (r.why === 'sd' ? '（サドンデス）' : r.why === 'limit' ? '（打切り）' : '') + '</span>' + (r.manual ? '<span>手で追加</span>' : '') + '</div><table><tr><th></th><th>' + (pk ? 'セット' : '得点') + '</th>' + (pk ? '' : '<th>イニング</th><th>AVG</th><th>HR</th>') + '</tr>' + [0, 1].map(function (i) { return '<tr' + (r.w === i ? ' class="wn"' : '') + '><td>' + esc(r.n[i]) + (r.shop && r.shop[i] ? '<small>' + esc(r.shop[i]) + '</small>' : '') + '</td><td>' + r.s[i] + '</td>' + (pk ? '' : '<td>' + r.in[i] + '</td><td>' + a3(r.s[i], r.in[i]) + '</td><td>' + r.hr[i] + '</td>') + '</tr>'; }).join('') + '</table><button class="sm dg" type="button" data-del="' + esc(r.gid) + '" style="min-height:44px;align-self:flex-end">この結果を消す</button></div>';
     }).join('') : '<div class="none">まだ終わった試合がありません。台で試合が終わると、ここに自動で入ります。</div>';
     /* awards: three-cushion games only, one line per player (the best one) */
     var ent = []; H.forEach(function (r) { if (r.mode === 'pocket') return; [0, 1].forEach(function (i) { if (r.in[i] > 0 || r.hr[i] > 0) ent.push({ n: r.n[i], shop: r.shop ? r.shop[i] : '', s: r.s[i], in: r.in[i], avg: av(r.s[i], r.in[i]), hr: r.hr[i], won: r.w === i, opp: r.n[i ? 0 : 1], round: r.round, t: r.t }); }); });
@@ -421,11 +422,11 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   });
   $('hCsv').addEventListener('click', function () {
     var d = function (t) { var x = new Date(t), z = function (n) { return (n < 10 ? '0' : '') + n; }; return x.getFullYear() + '-' + z(x.getMonth() + 1) + '-' + z(x.getDate()) + ' ' + z(x.getHours()) + ':' + z(x.getMinutes()); };
-    csv('vibes-results-' + stamp() + '.csv', [['日時', 'テーブル', '回戦', '選手A', '所属A', '持ち点A', '得点A', 'イニングA', 'AVG_A', 'HR_A', '選手B', '所属B', '持ち点B', '得点B', 'イニングB', 'AVG_B', 'HR_B', '勝者', '終わり方']].concat(H.slice().sort(function (x, y) { return x.t - y.t; }).map(function (r) { var o = [d(r.t), r.table || r.m, r.round]; [0, 1].forEach(function (i) { o.push(r.n[i], r.shop ? r.shop[i] : '', r.h[i] || '', r.s[i], r.in[i], a3(r.s[i], r.in[i]), r.hr[i]); }); o.push(r.w < 0 ? '引き分け' : r.n[r.w], r.why === 'limit' ? '打切り' : r.manual ? '手で追加' : 'あがり'); return o; })));
+    csv('vibes-results-' + stamp() + '.csv', [['日時', 'テーブル', '回戦', '選手A', '所属A', '持ち点A', '得点A', 'イニングA', 'AVG_A', 'HR_A', '選手B', '所属B', '持ち点B', '得点B', 'イニングB', 'AVG_B', 'HR_B', '勝者', '終わり方']].concat(H.slice().sort(function (x, y) { return x.t - y.t; }).map(function (r) { var o = [d(r.t), r.table || r.m, r.round]; [0, 1].forEach(function (i) { o.push(r.n[i], r.shop ? r.shop[i] : '', r.h[i] || '', r.s[i], r.in[i], a3(r.s[i], r.in[i]), r.hr[i]); }); o.push(r.w === -2 ? '両者負け' : r.w < 0 ? '引き分け' : r.n[r.w], r.why === 'sd' ? 'サドンデス' : r.why === 'limit' ? '打切り' : r.manual ? '手で追加' : 'あがり'); return o; })));
   });
 
   function start() {
-    drawRoster(); pick('queen'); rosterSelects(); drawRooms(); drawHist(); ROOMS.forEach(function (r) { open(r.m); });
+    drawRoster(); pick('queenL'); rosterSelects(); drawRooms(); drawHist(); ROOMS.forEach(function (r) { open(r.m); });
     var t = 1; try { t = +sessionStorage.getItem('vibes-lab-tab') || 1; } catch (e) {} tab(t);
     window.addEventListener('online', function () { ROOMS.forEach(function (r) { open(r.m); }); });
     document.addEventListener('visibilitychange', function () { if (!document.hidden) ROOMS.forEach(function (r) { open(r.m); }); });
