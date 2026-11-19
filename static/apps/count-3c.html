@@ -464,14 +464,17 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     rdDraw(); drawTime(); drawTimer(); save(); if (typeof rmPush === 'function') rmPush();
   }
   function drawTimer() {
-    var T = S.cfg.t || 1, v = tOn ? Math.max(0, Math.ceil(tLeft)) : S.cfg.t;
+    var T = S.cfg.t || 1, v = tOn ? Math.max(0, Math.ceil(tLeft)) : (tHold > 0 ? Math.ceil(tHold) : S.cfg.t);
     $('tm').textContent = v;
     var sg = $('segs');
     if (sg.children.length !== (S.cfg.t || 0)) { sg.textContent = ''; for (var i = 0; i < (S.cfg.t || 0); i++) { var el = document.createElement('i'); el.style.background = 'hsl(' + Math.round(i / Math.max(1, T - 1) * 125) + ',78%,46%)'; sg.appendChild(el); } }
     for (var j = 0; j < sg.children.length; j++) sg.children[j].classList.toggle('off', j >= v);
     $('tbox').classList.toggle('warn', tOn && tLeft <= 10 && tLeft > 0); $('tbox').classList.toggle('over', tOn && tLeft <= 0);
   }
-  function tStop() { tOn = false; clearInterval(tId); tId = null; drawTimer(); }
+  /* the * key stops the clock where it is (the seconds stay on the screen) and starts it again from there; a point, a change of player or anything else that stops the clock puts it back to the full time */
+  var tHold = 0;
+  function tStop(keep) { if (!keep) tHold = 0; tOn = false; clearInterval(tId); tId = null; drawTimer(); }
+  function tStar() { if (tOn) { tHold = Math.max(0, tLeft); tStop(true); } else { if (tHold > 0) tRem = tHold; tStart(); } }
   function tStart() {
     if (!S.cfg.t || S.over) return; begin(); tStop(); tOn = true; tLeft = tRem || S.cfg.t; tRem = 0; var last = Date.now(), warned = false, done = false;
     tId = setInterval(function () { var n = Date.now(); tLeft -= (n - last) / 1000; last = n; if (!warned && tLeft <= 10) { warned = true; beep(880, 160); if (S.cfg.ten !== 0 && S.cfg.voice !== 0 && S.cfg.vdev !== 'tab' && S.cfg.t > 10) speak(TEN[cl()], cl(), TEN.en); } if (!done && tLeft <= 0) { if (S.cfg.to && S.to[S.turn] > 0) { snap(); S.to[S.turn]--; beep(660, 350); toast('タイムアウトを使いました：' + S.cfg.n[S.turn]); render(); tStart(); return; } done = true; beep(330, 900); } drawTimer(); }, 100);
@@ -898,7 +901,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     if (c === 'undo') { undo(); return; }
     if (!$('winL').hidden) return;
     if (c === 'add') add(1); else if (c === 'sub') add(-1); else if (c === 'commit') commit();
-    else if (c === 'clock') { if (tOn) tStop(); else tStart(); rmPush(); }
+    else if (c === 'clock') { tStar(); rmPush(); }
     else if (c === 'set' && typeof m.v === 'number') { S.run = Math.max(0, Math.min(room(), m.v | 0)); S.typed = false; render(); }
   }
   function qrSvg(code) { try { var q = qrcode(0, 'M'); q.addData('https://vibesbilliards.com/pages/count-remote/?r=' + code); q.make(); return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { return ''; } }
@@ -976,7 +979,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     else if (k === '-' || k === 'ArrowDown') add(-1);
     else if (k === 'Enter' || k === ' ') commit();
     else if (k === 'Backspace') undo();
-    else if (k === '*') { if (tOn) tStop(); else tStart(); }
+    else if (k === '*') tStar();
     else if (k === '/') openSet();
     else if (k === '.' || k === 'Delete' || k === ',') { var n = Date.now(); if (n - dotAt < 1500) { dotAt = 0; newGame(true); wzOpen(0); } else { dotAt = n; toast('もう一度 . を押すと新しい試合です'); } }
     else if (k === 'f' || k === 'F') goFull();
