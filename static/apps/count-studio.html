@@ -358,21 +358,35 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
   }
   addEventListener('resize', function () { fit(); fit(); });
   function camStop() { recStop(); if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; v.srcObject = null; camUi(false); }
-  function camStart(id) {
+  /* Why the camera did not start, in words the shop can act on. The first try asks for 1280x720; if the camera refuses that, a plain request follows. */
+  function camWhy(e) {
+    var n = e && e.name;
+    if (n === 'NotAllowedError' || n === 'SecurityError') return 'カメラの使用が許可されていません。アドレスバーの左のマークから「カメラ」を「許可」にして、もう一度押してください。';
+    if (n === 'NotReadableError' || n === 'TrackStartError' || n === 'AbortError') return 'カメラをほかのアプリが使っているようです。「カメラ」アプリ・Zoom・OBS などを閉じてから、もう一度押してください。';
+    if (n === 'NotFoundError' || n === 'DevicesNotFoundError') return 'カメラが見つかりません。Webカメラをつないで、もう一度押してください。';
+    return 'カメラを始められませんでした（' + (n || '理由不明') + '）。カメラをさし直して、もう一度押してください。';
+  }
+  function camStart(id, plain) {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { $('offT').textContent = 'このブラウザではカメラを使えません。Chrome か Edge でひらいてください。'; return; }
-    var want = { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }; if (id) want.deviceId = { exact: id };
-    recStop(); if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
-    navigator.mediaDevices.getUserMedia({ video: want, audio: false }).then(function (s) {
+    var want = plain ? {} : { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }; if (id) want.deviceId = { exact: id };
+    recStop(); if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); stream = null;
+    navigator.mediaDevices.getUserMedia({ video: plain && !id ? true : want, audio: false }).then(function (s) {
       stream = s; v.srcObject = s; var tr = s.getVideoTracks()[0];
       tr.onended = function () { camStop(); toast('カメラが外れました'); };
-      return navigator.mediaDevices.enumerateDevices().then(function (l) {
+      try { v.play().catch(function () {}); } catch (e) {}
+      camUi(true);
+      /* from here on the picture is running: a problem with the camera list or with recording must not take it away */
+      navigator.mediaDevices.enumerateDevices().then(function (l) {
         devs = l.filter(function (d) { return d.kind === 'videoinput'; });
         var cur = tr.getSettings().deviceId; devI = Math.max(0, devs.findIndex(function (d) { return d.deviceId === cur; }));
-        prefs.id = cur; savePrefs(); $('bSw').hidden = devs.length < 2; camUi(true); recStart();
-      });
+        prefs.id = cur; savePrefs(); $('bSw').hidden = devs.length < 2;
+      }).catch(function () {});
+      try { recStart(); } catch (e) { $('recT').textContent = '録画は使えません'; }
     }).catch(function (e) {
-      if (id) return camStart(); /* remembered camera is gone: take any */
-      camUi(false); $('offT').textContent = e && e.name === 'NotAllowedError' ? 'カメラの使用が許可されていません。アドレスバーのカメラのマークから「許可」にして、もう一度押してください。' : 'カメラが見つかりません。Webカメラをつないで、もう一度押してください。';
+      var n = e && e.name;
+      if (id) return camStart('', plain); /* remembered camera is gone: take any */
+      if (!plain && n !== 'NotAllowedError' && n !== 'SecurityError' && n !== 'NotFoundError') return camStart('', true); /* the camera may not offer 1280x720: ask without a size */
+      camUi(false); $('offT').textContent = camWhy(e);
     });
   }
   $('bCam').onclick = function () { camStart(prefs.id); };
