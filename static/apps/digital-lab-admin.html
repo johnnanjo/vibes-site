@@ -233,6 +233,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   <div id="t4" class="w" style="padding:0" hidden>
     <section class="box"><h2>組分け（ゼッケン決定戦のリーグ）</h2>
       <p>①で「受付」にした選手を、くじ引きで組に分けます（受付した人が3人に満たないときは、名簿の全員）。組の中は総当たりです。</p>
+      <p>くじ引きのきまり：<b style="color:#fff">同じ所属店の選手は、同じ組に入れません。持ち点（ハンデ）は、どの組も平均が近くなるように分けます。</b>きまりを守る範囲で、押すたびに組み合わせが変わります。①の名簿に「所属店」と「持ち点」を入れておいてください。</p>
       <div class="two"><label class="f"><span>1組の人数</span><select id="gSize"><option value="3">3人</option><option value="4">4人</option><option value="5">5人</option></select></label><label class="f"><span>試合に使う台の数</span><select id="tN"><option value="1">1台</option><option value="2">2台</option><option value="3">3台</option><option value="4" selected>4台</option><option value="5">5台</option></select></label></div>
       <label class="f"><span>①番台（配信・タブレットあり）の試合ID</span><select id="tTable"></select></label>
       <button class="go" type="button" id="tNew">組分けを作る（くじ引き）</button>
@@ -483,10 +484,29 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   function tMake() {
     var pool = R.filter(function (x) { return x.in; }); if (pool.length < 3) pool = R.slice();
     if (pool.length < 3) { toast('選手が3人以上必要です（①で登録してください）'); return; }
-    var size = +$('gSize').value || 3, ng = Math.ceil(pool.length / size), G = [], i; for (i = 0; i < ng; i++) G.push([]);
-    shuffle(pool.map(function (x) { return x.id; })).forEach(function (id, k) { G[k % ng].push(id); });
-    T = { P: {}, G: G, res: {}, seed: null, t: Date.now() }; pool.forEach(function (x) { T.P[x.id] = { n: x.name, shop: x.shop || '' }; });
-    tEdit = ''; tSave(); drawTour(); toast(pool.length + '人を ' + ng + '組に分けました');
+    var size = +$('gSize').value || 3, ng = Math.ceil(pool.length / size), best = null, sk = function (x) { return nk(x.shop || '').toLowerCase(); };
+    /* The draw: players are taken strongest first, one "row" of ng at a time, each row spread over all groups (so group sizes differ by one at most).
+       Inside a row a player goes to the group that has nobody from the same shop and the lowest handicap total so far.
+       Many random draws are tried; the one with the fewest shop clashes, then the most even handicap averages, is kept. */
+    for (var tr = 0; tr < 400; tr++) {
+      var ord = shuffle(pool.slice()).sort(function (x, y) { return (y.h | 0) - (x.h | 0); }), G = [], sum = [], clash = 0, i;
+      for (i = 0; i < ng; i++) { G.push([]); sum.push(0); }
+      for (var r0 = 0; r0 < ord.length; r0 += ng) {
+        var free = {}; for (i = 0; i < ng; i++) free[i] = 1;
+        shuffle(ord.slice(r0, r0 + ng)).forEach(function (pl) {
+          var c = Object.keys(free).map(Number), ok = c.filter(function (g) { return !sk(pl) || !G[g].some(function (q) { return sk(q) === sk(pl); }); });
+          if (!ok.length) { ok = c; clash++; }
+          var lo = Math.min.apply(null, ok.map(function (g) { return sum[g]; })), pick = shuffle(ok.filter(function (g) { return sum[g] === lo; }))[0];
+          G[pick].push(pl); sum[pick] += pl.h | 0; delete free[pick];
+        });
+      }
+      var avs = G.map(function (g, k) { return sum[k] / g.length; }), spread = Math.max.apply(null, avs) - Math.min.apply(null, avs), score = clash * 1000 + spread;
+      if (!best || score < best.score) best = { G: G, score: score, clash: clash, spread: spread };
+      if (!clash && spread < 0.01) break;
+    }
+    T = { P: {}, G: best.G.map(function (g) { return shuffle(g.map(function (x) { return x.id; })); }), res: {}, seed: null, t: Date.now() }; pool.forEach(function (x) { T.P[x.id] = { n: x.name, shop: x.shop || '', h: x.h | 0 }; });
+    tEdit = ''; tSave(); drawTour();
+    toast(pool.length + '人を ' + ng + '組に分けました' + (best.clash ? '（同じ所属が重なった組が ' + best.clash + 'か所あります。人数の都合で避けられませんでした）' : '（同じ所属の重なりなし）'));
   }
   $('tNew').addEventListener('click', function () { if (T) confirmDo('組分けを作り直しますか？', 'いまの組分け・対戦表・トーナメント表が消えます（③の履歴は残ります）。', tMake); else tMake(); });
   function lgList() { var o = []; T.G.forEach(function (g, gi) { for (var i = 0; i < g.length; i++) for (var j = i + 1; j < g.length; j++) o.push({ key: 'L' + gi + ':' + g[i] + ':' + g[j], a: g[i], b: g[j], g: gi, round: 'ゼッケン決定戦' }); }); return o; }
@@ -544,7 +564,8 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     var bz0 = busy(), AM = allM(), nT0 = +$('tN').value || 4, bh = ''; for (var ti = 1; ti <= nT0; ti++) { var fm = bz0[ti] ? AM.filter(function (m) { return m.key === bz0[ti]; })[0] : null; bh += '<div class="tbx' + (fm ? ' on' : '') + '"><b>' + CN[ti - 1] + '番台' + (ti === 1 ? '（配信）' : '') + '</b>' + (fm ? '<span>' + esc(pn(fm.a)) + '　対　' + esc(pn(fm.b)) + '</span><small>' + fm.round + (fm.key.charAt(0) === 'L' ? '・' + LN(fm.g) + '組' : '') + '</small>' : '<small>空いています</small>') + '</div>'; }
     $('tbs').innerHTML = bh; $('tBoard').hidden = false; var open0 = AM.filter(function (m) { return !resOf(m); }).length; $('tLeft').textContent = '残りの試合：' + open0 + '（うち台に入っているのは ' + Object.keys(bz0).length + '）'; var h = '', L = lgList(), done = L.filter(resOf).length;
     T.G.forEach(function (g, gi) {
-      h += '<section class="box"><h2>' + LN(gi) + '組　<span style="font-size:13px;color:#B9C4D6">' + g.length + '人</span></h2><div class="st"><table><tr><th>順位</th><th>選手</th><th>勝</th><th>分</th><th>負</th><th>勝ち点</th><th>得点</th><th>イニング</th><th>アベレージ</th><th>ハイラン</th></tr>' + stand(gi).map(function (r) { var q = T.P[r.id] || {}; return '<tr><td>' + r.rk + '</td><td>' + esc(q.n) + (q.shop ? '<small style="display:block;font-size:11.5px;font-weight:700;color:#B9C4D6">' + esc(q.shop) + '</small>' : '') + '</td><td>' + r.w + '</td><td>' + r.d + '</td><td>' + r.l + '</td><td>' + r.pts + '</td><td>' + r.s + '</td><td>' + r.in + '</td><td>' + a3(r.s, r.in) + '</td><td>' + r.hr + '</td></tr>'; }).join('') + '</table></div>' + L.filter(function (m) { return m.g === gi; }).map(mHtml).join('') + '</section>';
+      var hv = g.map(function (id) { return (T.P[id] || {}).h | 0; }), hsum = hv.reduce(function (a, b) { return a + b; }, 0), shops = g.map(function (id) { return nk((T.P[id] || {}).shop || '').toLowerCase(); }).filter(Boolean), dup = shops.some(function (x, k) { return shops.indexOf(x) !== k; });
+      h += '<section class="box"><h2>' + LN(gi) + '組　<span style="font-size:13px;color:#B9C4D6">' + g.length + '人' + (hsum ? '・持ち点の平均 ' + (hsum / g.length).toFixed(1) + '（' + hv.join('・') + '）' : '') + '</span>' + (dup ? '<span style="font-size:12px;background:#FF6B6B;color:#0B192C;border-radius:8px;padding:2px 8px">同じ所属あり</span>' : '') + '</h2><div class="st"><table><tr><th>順位</th><th>選手</th><th>勝</th><th>分</th><th>負</th><th>勝ち点</th><th>得点</th><th>イニング</th><th>アベレージ</th><th>ハイラン</th></tr>' + stand(gi).map(function (r) { var q = T.P[r.id] || {}; return '<tr><td>' + r.rk + '</td><td>' + esc(q.n) + (q.shop ? '<small style="display:block;font-size:11.5px;font-weight:700;color:#B9C4D6">' + esc(q.shop) + '</small>' : '') + '</td><td>' + r.w + '</td><td>' + r.d + '</td><td>' + r.l + '</td><td>' + r.pts + '</td><td>' + r.s + '</td><td>' + r.in + '</td><td>' + a3(r.s, r.in) + '</td><td>' + r.hr + '</td></tr>'; }).join('') + '</table></div>' + L.filter(function (m) { return m.g === gi; }).map(mHtml).join('') + '</section>';
     });
     h += '<section class="box"><h2>ゼッケン（リーグの結果で決まる番号）</h2><p>リーグ戦 ' + done + ' ／ ' + L.length + ' 試合が終わりました。順番は、組の中の順位 → 勝ち点 → アベレージ → ハイラン です（勝ち＝2、引き分け＝1、負け・両者負け＝0）。</p><div class="st"><table><tr><th>番号</th><th>選手</th><th>組</th><th>組の順位</th><th>勝ち点</th><th>アベレージ</th><th>ハイラン</th></tr>' + seedOrder().map(function (r, k) { return '<tr><td>' + (k + 1) + '</td><td>' + esc(pn(r.id)) + '</td><td>' + LN(r.g) + '</td><td>' + r.rk + '</td><td>' + r.pts + '</td><td>' + a3(r.s, r.in) + '</td><td>' + r.hr + '</td></tr>'; }).join('') + '</table></div><div class="two"><button class="sm q" type="button" data-a="csv">順位とゼッケンをCSVで保存</button><button class="' + (T.seed ? 'sm dg' : 'sm') + '" type="button" data-a="' + (T.seed ? 'unseed' : 'seed') + '">' + (T.seed ? 'トーナメント表を作り直す' : 'この番号で、決勝トーナメント表を作る') + '</button></div>' + (lgDone() || T.seed ? '' : '<small class="n">リーグ戦がぜんぶ終わってから作るのがおすすめです（途中で作ると、その時点の順位で番号が決まります）。</small>') + '</section>';
     if (T.seed) {
