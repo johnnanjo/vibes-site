@@ -89,6 +89,8 @@ body.clear,body.clear html{background:transparent}
       }).join('');
     }
     $('pg').hidden = false; $('msg').hidden = true; try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+    /* inside the stream overlay: tell it there is a table worth showing */
+    if (window.parent !== window && ((d.groups && d.groups.length) || (d.rounds && d.rounds.length))) { try { window.parent.postMessage({ vibesBoard: 1 }, location.origin); } catch (e) {} }
   }
   function connect() {
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + room(match + '-board') + '?role=remote'); } catch (e) { return; }

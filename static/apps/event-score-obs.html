@@ -95,6 +95,8 @@ body.mon .sp small{font-size:2.6vh}body.mon .sp img{height:8vh}
 body.mon #fin{width:94vw;border-width:.8vh;border-radius:4vh;padding:4vh 3vw;gap:2.6vh}
 body.mon #fin .t{font-size:4vh}body.mon #fin .w{font-size:8.5vh;border-radius:2.4vh;padding:1.4vh 2vw}
 body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw}body.mon #fin td:first-child{font-size:6.4vh;max-width:40vw}body.mon #fin .y{font-size:3vh}
+/* standings / bracket shown over the whole picture between games */
+#bd{position:fixed;inset:0;width:100vw;height:100vh;border:0;z-index:8;background:#0B192C}
 #msg{position:fixed;left:40px;top:40px;background:#0B192C;color:#fff;font-weight:800;font-size:22px;line-height:1.7;padding:16px 20px;border-radius:14px;max-width:900px}
 </style>
 </head>
@@ -108,6 +110,7 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
   <div class="sp" id="sp" hidden><small>協賛</small></div>
 </div>
 <div id="fin" hidden><div class="t">試合終了</div><div class="w" id="fw"></div><table id="ft"></table><div class="y" id="fy"></div></div>
+<iframe id="bd" title="リーグ表・トーナメント表" hidden></iframe>
 <div id="msg" hidden></div>
 <script>
 (function () {
@@ -130,6 +133,13 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
   /* sponsors' logos shown with the score, per event (the match id may carry a suffix such as w3c-1205-t2). Files are the ones the organiser supplied. */
   var SPONSORS = { 'w3c-1205': [['/img/event/w3c-1205/sp-3seconds.png', '3seconds'], ['/img/event/w3c-1205/sp-labeaute.png', 'La Beaute']] };
   Object.keys(SPONSORS).forEach(function (k) { if (match === k || match.indexOf(k + '-') === 0) { SPONSORS[k].forEach(function (s) { var i = new Image(); i.src = s[0]; i.alt = s[1]; $('sp').appendChild(i); }); $('sp').hidden = /[?&]sponsor=0/.test(q); } });
+  /* Between games the stream shows the organiser's tables (event-board): the result panel first, then the standings or the bracket,
+     until the next game starts at this table. &board=0 turns this off, &boardwait=<seconds> sets how long the result stays (default 10).
+     The board page says when it has something to show; without that (no draw made yet) nothing covers the picture. */
+  var BOARD = !/[?&]board=0/.test(q) && lay !== 'monitor', BWAIT = Math.max(0, Math.min(120, parseFloat((/[?&]boardwait=([0-9.]+)/.exec(q) || [])[1]))), bdReady = false, bdTimer = null, bdOn = false, bdDue = false;
+  if (isNaN(BWAIT)) BWAIT = 10;
+  if (BOARD && match) { $('bd').src = '/event-board/?match=' + encodeURIComponent(match.replace(/-t\d+$/, '')); window.addEventListener('message', function (e) { if (e.data && e.data.vibesBoard) { bdReady = true; if (bdOn && bdDue) $('bd').hidden = false; } }); }
+  function boardShow(on) { if (!BOARD) return; if (on === bdOn) return; bdOn = on; bdDue = false; clearTimeout(bdTimer); if (!on) { $('bd').hidden = true; return; } bdTimer = setTimeout(function () { bdDue = true; if (bdOn && bdReady) $('bd').hidden = false; }, (showRes ? BWAIT : 3) * 1000); }
   var KEY = 'vibes-event-obs:' + match, ws = null, tries = 0, timer = null, last = 0, CK = null;
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function draw(m, live) {
@@ -155,6 +165,7 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
       $('ft').innerHTML = '<tr><th></th><th>' + (pk ? 'セット' : '得点') + '</th>' + (pk ? '' : '<th>イニング</th><th>アベレージ</th><th>ハイラン</th>') + '</tr>' + [0, 1].map(function (i) { var p = m.p[i]; return '<tr' + (w === i ? ' class="win"' : '') + '><td>' + esc(p.n) + '</td><td>' + (p.s | 0) + '</td>' + (pk ? '' : '<td>' + (p.in | 0) + '</td><td>' + esc(p.avg || '-') + '</td><td>' + (p.hr | 0) + '</td>') + '</tr>'; }).join('');
       $('fy').textContent = m.over.why === 'sd' ? 'サドンデスで決着' : m.over.why === 'limit' ? '打切り ' + lim + ' キュー' + (w === -2 ? '（どちらも試合点数に届かず）' : '') : '';
     }
+    boardShow(!!m.over && live !== false);
     c.hidden = false; $('msg').hidden = true; try { localStorage.setItem(KEY, JSON.stringify(m)); } catch (e) {}
   }
   function tick() { var e = $('ck'); if (!CK) { e.textContent = ''; return; } var l = Math.max(0, CK.run ? CK.left - (Date.now() - CK.at) : CK.left); e.textContent = Math.ceil(l / 1000); e.classList.toggle('warn', CK.run && l <= 10000); e.classList.toggle('stop', !CK.run); }
