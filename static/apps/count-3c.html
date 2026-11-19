@@ -301,7 +301,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
       <div class="f" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="bPr2" style="width:100%">練習タイマーを開く</button></div>
       <div class="f"><label for="fe">裏撞き（全員が撞いてから終了）</label><select id="fe"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fz">イージーモード（点数・イニング・名前・ハイランだけ）</label><select id="fz"><option value="0">なし</option><option value="1">あり</option></select></div>
-      <div class="f"><label for="fcam">カメラ映像（まん中に表示・2人のとき）</label><select id="fcam"><option value="0">なし</option><option value="1">あり</option></select></div>
+      <div class="f"><label for="fcam">カメラ映像（まん中に表示・2人のとき）</label><select id="fcam"><option value="0">なし</option><option value="1">この端末のカメラ</option><option value="2">別の端末から受け取る</option></select></div>
       <div class="f"><label for="fv">音声コール（点数を読み上げ）</label><select id="fv"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fvd">音声コールを出す場所</label><select id="fvd"><option value="both">モニターとタブレット</option><option value="pc">モニターだけ</option><option value="tab">タブレットだけ</option></select></div>
       <div class="f"><label for="ften">残り10秒の音声（読み上げ）</label><select id="ften"><option value="1">あり</option><option value="0">なし</option></select></div>
@@ -532,7 +532,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     for (var q = 0; q < 4; q++) { $('fn' + q).value = S.cfg.n[q] || 'PLAYER ' + (q + 1); $('fg' + q).value = S.cfg.g[q] || S.cfg.g[0]; }
     $('fnp').value = NP(); $('fnp').disabled = !fresh(); $('fto').value = S.cfg.to; setRows();
     $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1; $('fvd').value = S.cfg.vdev || 'both'; $('ften').value = S.cfg.ten === 0 ? 0 : 1; $('fcl').value = S.cfg.clang || 'en'; $('fcv').value = S.cfg.cvo === 'm' ? 'm' : 'f';
-    $('fcam').value = camPref() ? 1 : 0;
+    $('fcam').value = camPref();
     $('setL').hidden = false; $('fn0').focus(); $('fn0').select();
   }
   function setRows() { var n = +$('fnp').value; for (var q = 0; q < 4; q++) Array.prototype.forEach.call(document.querySelectorAll('.pf' + q), function (e) { e.hidden = q >= n; }); }
@@ -847,7 +847,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   function tourInit() { try { var p = JSON.parse(localStorage.getItem(TPK) || 'null'); localStorage.removeItem(TPK); if (p && p.m && Date.now() - p.at < 30000) tourHandle(p.m); } catch (e) {} }
   function goHome() { location.href = U_HOME + (TB ? '?t=' + TB : ''); }
   function rmHandle(m) {
-    if (m.type === 'rtc') return;
+    if (m.type === 'rtc') { if (typeof camRtc === 'function') camRtc(m); return; }
     if (m.type === 'ctl' || m.type === 'cmd' || m.type === 'key' || m.type === 'setup') { try { sessionStorage.setItem('vibes-remote-seen', '1'); } catch (e) {} }
     if (m.type === 'hello') { tSent = -9; rmPush(); return roPush(); }
     if (m.type === 'ctl') { toast('スマホがつながりました'); return; }
@@ -1042,7 +1042,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   /* ---- live camera in the middle of the board ----
      A setting of this device only (vibes-count-prefs.cam): the picture of a webcam, or of OBS's virtual camera, between the two players.
      Nothing is recorded and nothing leaves the device. Mirrors (tablets showing the board) never start a camera. */
-  function camPref(v) { var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } if (v == null) return !!o.cam; o.cam = v ? 1 : 0; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} camSync(); }
+  function camPref(v) { var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } if (v == null) return o.cam === 2 ? 2 : o.cam ? 1 : 0; o.cam = v === 2 ? 2 : v ? 1 : 0; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} camSync(); }
   var camSt = null, camBusy = false, camDevs = [], camI = 0, camP = {}; try { camP = JSON.parse(localStorage.getItem('vibes-3c-cam') || '{}') || {}; } catch (e) { camP = {}; }
   function camSave() { try { localStorage.setItem('vibes-3c-cam', JSON.stringify(camP)); } catch (e) {} }
   function camFit() { var b = $('camb'), v = $('camV'), r = (camP.rot || 0) % 360, up = r % 180 !== 0, W = b.clientWidth, H = b.clientHeight; v.style.width = (up ? H : W) + 'px'; v.style.height = (up ? W : H) + 'px'; v.style.transform = 'translate(-50%,-50%) rotate(' + r + 'deg)' + (camP.flip ? ' scaleX(-1)' : ''); b.classList.toggle('fit', !!camP.fit); }
@@ -1061,7 +1061,28 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
       camBusy = false; camMsg(camWhy(e));
     });
   }
-  function camSync() { var on = !MIR && camPref() && NP() === 2; if (document.body.classList.contains('cam') !== on) { document.body.classList.toggle('cam', on); if (!on) { camStop(); camMsg(''); } } if (on) { camFit(); if (!camSt && !camBusy) camStart(camP.id); } }
+  /* mode 2: the picture comes from another device (the 撮影カメラ page, /pages/count-cam/?r=<this board's number>) over WebRTC; this board asks for it through its own room, as the count-live page does */
+  var camPc = null, camId = Math.random().toString(36).slice(2, 10), camLive = false, camMode = 0, camAskT = 0;
+  function camSendR(o) { if (rws && rws.readyState === 1) { try { rws.send(JSON.stringify(o)); return true; } catch (e) {} } return false; }
+  function camAsk() { if (camLive) return; if (!rm || !rm.on || !rws || rws.readyState !== 1) return camMsg('リモコンの番号がオフです。上の「リモコン」を押して、オンにしてください。'); camSendR({ type: 'rtc', k: 'want', id: camId }); if (!camPc) camMsg('映像を待っています。撮影する端末で vibesbilliards.com/pages/count-cam をひらき、番号 ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + ' を入れて「カメラを始める」を押してください。'); }
+  function camPcStop() { if (camPc) { try { camPc.close(); } catch (e) {} } camPc = null; camLive = false; }
+  function camRtc(m) {
+    if (camMode !== 2 || !window.RTCPeerConnection) return;
+    if (m.k === 'cam') { camLive = false; return camAsk(); }
+    if (m.id !== camId) return;
+    if (m.k === 'offer' && m.sdp) { camPcStop(); var pc = camPc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+      pc.ontrack = function (e) { if (pc !== camPc) return; $('camV').srcObject = e.streams[0] || new MediaStream([e.track]); try { $('camV').play().catch(function () {}); } catch (x) {} camLive = true; camMsg(''); camFit(); };
+      pc.onicecandidate = function (e) { if (e.candidate) camSendR({ type: 'rtc', k: 'ice', id: camId, from: 'v', c: e.candidate }); };
+      pc.onconnectionstatechange = function () { if (pc !== camPc) return; var st = pc.connectionState; if (st === 'failed' || st === 'disconnected' || st === 'closed') { camPcStop(); $('camV').srcObject = null; camMsg('映像が切れました。撮影する端末の画面がひらいているか確かめてください。'); } };
+      pc.setRemoteDescription(m.sdp).then(function () { return pc.createAnswer(); }).then(function (a) { return pc.setLocalDescription(a); }).then(function () { camSendR({ type: 'rtc', k: 'answer', id: camId, sdp: pc.localDescription }); }).catch(function () {}); }
+    else if (m.k === 'ice' && m.from === 'c' && m.c && camPc) camPc.addIceCandidate(m.c).catch(function () {});
+  }
+  function camSync() { var md = !MIR && NP() === 2 ? camPref() : 0, on = md > 0;
+    if (md !== camMode) { camStop(); camPcStop(); camMsg(''); camMode = md; $('camS').hidden = true; }
+    if (document.body.classList.contains('cam') !== on) document.body.classList.toggle('cam', on);
+    if (!on) return; camFit();
+    if (md === 1) { if (!camSt && !camBusy) camStart(camP.id); }
+    else if (!camLive && Date.now() - camAskT > 4500) { camAskT = Date.now(); camAsk(); } }
   $('camR').onclick = function () { camP.rot = ((camP.rot || 0) + 90) % 360; camSave(); camFit(); };
   $('camF').onclick = function () { camP.fit = !camP.fit; camSave(); camFit(); };
   $('camX').onclick = function () { camP.flip = !camP.flip; camSave(); camFit(); };

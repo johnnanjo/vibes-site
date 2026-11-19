@@ -123,6 +123,7 @@ video{display:none}
   function inning(m) { if (!m) return ''; if (m.inn && m.sc) return String(m.inn[m.turn] + (m.over ? 0 : 1)); return String(m.mid || ''); }
 
   /* ---- drawing: camera frame + score bar ---- */
+  var NOBAR = /[?&]bar=0/.test(location.search); /* picture only: for the scoreboard that shows this camera between the two players */
   var PC = ['#FFFFFF', '#F2C200', '#E5484D', '#35C486'];
   function fit(t, w, px, wt) { cx.font = wt + ' ' + px + 'px "Noto Sans JP", sans-serif'; while (cx.measureText(t).width > w && px > 10) { px -= 1; cx.font = wt + ' ' + px + 'px "Noto Sans JP", sans-serif'; } return px; }
   function drawBar() {
@@ -152,7 +153,7 @@ video{display:none}
     if (!stream) return;
     if (vd.videoWidth && (cv.width !== vd.videoWidth || cv.height !== vd.videoHeight) && !rec) { cv.width = vd.videoWidth; cv.height = vd.videoHeight; }
     try { cx.drawImage(vd, 0, 0, cv.width, cv.height); } catch (e) {}
-    drawBar();
+    if (!NOBAR) drawBar();
     if (rec) { var s = Math.floor((Date.now() - recAt) / 1000); $('bdgT').textContent = '録画中 ' + Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2) + '　' + (recBytes / 1048576).toFixed(0) + 'MB'; }
     if (document.hidden) return;
     if (vd.requestVideoFrameCallback) vd.requestVideoFrameCallback(frame); else requestAnimationFrame(frame);
