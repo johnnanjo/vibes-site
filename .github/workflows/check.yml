@@ -1,0 +1,21 @@
+name: Check build
+# Pull requests (from any AI or person) must build before they are merged. Nothing is published from here.
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node build.mjs
+      - run: node scripts/lab-positions.mjs --check
+      - name: No built files or secrets in the change
+        run: |
+          if git ls-files | grep -E '^dist/' ; then echo "dist/ must not be committed"; exit 1; fi
+          if git ls-files | grep -E '(^|/)\.env' ; then echo ".env files must not be committed"; exit 1; fi

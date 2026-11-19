@@ -2,6 +2,8 @@
 
 日本のビリヤード大会・試合結果・ビリヤード場のポータル。Shopifyから移転した静的サイト。
 
+AI 共通の進め方は `AGENTS.md`（ChatGPT / Codex もここを読む。決まりの正本はこの `CLAUDE.md` のまま）、作業の引きつぎは `HANDOFF.md`（はじめに読み、終わりに書く）。2026-11-20 運営者「Claude と ChatGPT の両方で運用・管理・制作ができるように」。Claude 以外の AI はプルリクエストで出し、`.github/workflows/check.yml` がビルドを確かめる。
+
 ## Build
 - `node build.mjs` → `dist/`（依存パッケージなし。Node 18+）
 - 公開：GitHub Pages（`.github/workflows/pages.yml`、mainへのpushで自動）。Cloudflare Worker `vibes-site1` はプレビュー（ドメイン移管後に本番へ）
