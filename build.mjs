@@ -474,6 +474,7 @@ ${o.extra || ''}<section class="sec"><div class="sec-h"><h2>${o.h2}</h2></div><d
   /* event scoreboard (hidden pages, opened only by address): tablet input + OBS overlay, kept apart by ?match=<id>; realtime through the scoreboard relay */
   put('/event-score-pad', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-score-pad.html'), 'utf8') });
   put('/event-score-obs', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-score-obs.html'), 'utf8') });
+  put('/event-board', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-board.html'), 'utf8') });
   /* organiser's control panel for the event scoreboard (hidden page, simple 4-digit lock) */
   put('/pages/digital-lab-admin', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/digital-lab-admin.html'), 'utf8') });
   /* player feature page (stand-alone poster design, its own colours: yellow / black / white) */
@@ -608,7 +609,7 @@ const urls = [];
 for (const [url, v] of out) {
   const html = v.raw ?? v.html;
   write(DIST, url, html); n++;
-  if (url !== '/404.html' && !/^\/pages\/count(-3c|-remote|-pocket|-cam|-live|-tour|-overlay|-studio)?$/.test(url) && url !== '/pages/digilab-intro' && !/^\/event-score-/.test(url) && url !== '/pages/digital-lab-admin') urls.push(url); /* count-3c: in private testing, not listed */
+  if (url !== '/404.html' && !/^\/pages\/count(-3c|-remote|-pocket|-cam|-live|-tour|-overlay|-studio)?$/.test(url) && url !== '/pages/digilab-intro' && !/^\/event-(score-|board)/.test(url) && url !== '/pages/digital-lab-admin') urls.push(url); /* count-3c: in private testing, not listed */
   for (const [code, , prefix] of LANGS.slice(1)) { write(DIST, prefix + (url === '/' ? '/' : url), localize(html, code, prefix)); n++; }
 }
 const sm = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${SITE}${encodeURI(decodeURI(u))}</loc></url>`).join('\n')}\n</urlset>`;

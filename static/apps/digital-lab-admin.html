@@ -240,6 +240,14 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     </section>
     <section class="box" id="tBoard" hidden><h2>台の状況</h2><div id="tbs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px"></div><small class="n" id="tLeft"></small></section>
     <div id="tour" style="display:flex;flex-direction:column;gap:16px"></div>
+    <section class="box" id="bdBox" hidden><h2>映像・会場に出す（リーグ表・トーナメント表）</h2>
+      <p>下のアドレスをひらいた画面に、この④の表がそのまま出ます。結果を入れるたびに、自動で書き換わります。</p>
+      <div class="f"><span>配信（OBS）用：トーナメント表ができるまではリーグ表、できたあとはトーナメント表</span><code class="url" id="bdU"></code><button class="cp" type="button" data-bd="bdU">アドレスをコピー</button></div>
+      <details><summary>リーグ表だけ・トーナメント表だけのアドレス</summary><div style="display:flex;flex-direction:column;gap:10px;padding-bottom:12px">
+        <div class="f"><span>リーグ表だけ</span><code class="url" id="bdL"></code><button class="cp" type="button" data-bd="bdL">アドレスをコピー</button></div>
+        <div class="f"><span>トーナメント表だけ</span><code class="url" id="bdB"></code><button class="cp" type="button" data-bd="bdB">アドレスをコピー</button></div></div></details>
+      <small class="n">OBS では、新しい「シーン」を作り、「ソース」の ＋ →「ブラウザ」にこのアドレスを入れて、幅 1920・高さ 1080 にします。試合の合間にこのシーンへ切り替えると、表が配信に出ます。会場のモニターやタブレットでひらいても同じ表が出ます。この④の画面をひらいている間だけ、表が新しくなります。</small>
+    </section>
   </div>
 </div>
 <div class="cf" id="cf" hidden><div><b id="cfT"></b><p id="cfP"></p><div class="two"><button class="sm q" type="button" id="cfNo">やめる</button><button class="sm dg" type="button" id="cfOk">消す</button></div></div></div>
@@ -531,7 +539,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   function drawTour() {
     var tb = $('tTable'), cur = tb.value, ms = ROOMS.map(function (r) { return r.m; }), dm = clean($('match').value); if (dm && ms.indexOf(dm) < 0) ms.unshift(dm);
     tb.innerHTML = ms.map(function (m) { return '<option value="' + esc(m) + '">' + esc(labelOf(m) === m ? m : labelOf(m) + '（' + m + '）') + '</option>'; }).join('') || '<option value="">（②でアドレスを出すと選べます）</option>'; if (cur && ms.indexOf(cur) >= 0) tb.value = cur;
-    if (!T) { $('tour').innerHTML = ''; $('tBoard').hidden = true; return; }
+    if (!T) { $('tour').innerHTML = ''; $('tBoard').hidden = true; $('bdBox').hidden = true; return; }
     tourSync();
     var bz0 = busy(), AM = allM(), nT0 = +$('tN').value || 4, bh = ''; for (var ti = 1; ti <= nT0; ti++) { var fm = bz0[ti] ? AM.filter(function (m) { return m.key === bz0[ti]; })[0] : null; bh += '<div class="tbx' + (fm ? ' on' : '') + '"><b>' + CN[ti - 1] + '番台' + (ti === 1 ? '（配信）' : '') + '</b>' + (fm ? '<span>' + esc(pn(fm.a)) + '　対　' + esc(pn(fm.b)) + '</span><small>' + fm.round + (fm.key.charAt(0) === 'L' ? '・' + LN(fm.g) + '組' : '') + '</small>' : '<small>空いています</small>') + '</div>'; }
     $('tbs').innerHTML = bh; $('tBoard').hidden = false; var open0 = AM.filter(function (m) { return !resOf(m); }).length; $('tLeft').textContent = '残りの試合：' + open0 + '（うち台に入っているのは ' + Object.keys(bz0).length + '）'; var h = '', L = lgList(), done = L.filter(resOf).length;
@@ -545,7 +553,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
       for (var r = 0; r < fRounds(); r++) h += '<div class="gh">' + fName(r) + '</div>' + F.filter(function (m) { return m.r === r; }).map(mHtml).join('');
       h += '</section>';
     }
-    $('tour').innerHTML = h;
+    $('tour').innerHTML = h; bdPush();
   }
   $('tour').addEventListener('click', function (e) {
     var b = e.target.closest('[data-a]'); if (!b || !T) return; var a = b.dataset.a, k = b.dataset.k, m = k ? allM().filter(function (x) { return x.key === k; })[0] : null;
@@ -568,6 +576,31 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     else if (a === 'unseed') confirmDo('トーナメント表を作り直しますか？', 'いまのリーグ順位で番号を決め直します。入れた結果は③の履歴に残り、同じ対戦には自動で入り直します。', function () { T.seed = null; tSave(); drawTour(); });
     else if (a === 'csv') { var rows = [['ゼッケン', '選手', '所属', '組', '組の順位', '勝', '分', '負', '勝ち点', '得点', 'イニング', 'アベレージ', 'ハイラン']]; seedOrder().forEach(function (r, i) { rows.push([i + 1, pn(r.id), (T.P[r.id] || {}).shop || '', LN(r.g), r.rk, r.w, r.d, r.l, r.pts, r.s, r.in, a3(r.s, r.in), r.hr]); }); csv('vibes-league-' + stamp() + '.csv', rows); }
   });
+
+  /* ---- the same tables, sent to the stream / a screen in the room (event-board) through the relay ---- */
+  var BD = { ws: null, id: '', tries: 0, timer: 0, t: 0 };
+  function bdId() { return clean($('tTable').value) || clean($('match').value) || 'w3c-1205'; }
+  function bdState() {
+    var o = { type: 'state', board: 1, m: bdId(), title: $('title').value.trim().slice(0, 60), t: Date.now(), groups: [], rounds: [], champ: '' }; if (!T) return o;
+    T.G.forEach(function (g, gi) { o.groups.push({ name: LN(gi), rows: stand(gi).map(function (r) { return { rk: r.rk, n: pn(r.id), w: r.w, d: r.d, l: r.l, pts: r.pts, avg: a3(r.s, r.in), hr: r.hr }; }) }); });
+    if (T.seed) { var F = fList(); for (var r = 0; r < fRounds(); r++) o.rounds.push({ name: fName(r), ms: F.filter(function (m) { return m.r === r; }).map(function (m) { var x = m.a && m.b ? resOf(m) : null; return { a: m.a ? pn(m.a) : '', b: m.b ? pn(m.b) : '', bye: m.bye ? 1 : 0, sa: x ? x.s[0] : '', sb: x ? x.s[1] : '', w: x ? x.w : null, t: !x && T.on && T.on[m.key] ? T.on[m.key] : 0 }; }) }); var c = fW(fRounds() - 1, 0); o.champ = c ? pn(c) : ''; }
+    return o;
+  }
+  function bdSend() { if (BD.ws && BD.ws.readyState === 1) { try { BD.ws.send(JSON.stringify(bdState())); } catch (e) {} } }
+  function bdOpen() {
+    var id = bdId(); if (BD.ws && BD.ws.readyState <= 1 && BD.id === id) return; if (BD.ws) { try { BD.ws.onclose = null; BD.ws.close(); } catch (e) {} }
+    BD.id = id; try { BD.ws = new WebSocket('wss://' + WSH + '/api/count/' + room(id + '-board') + '?role=display'); } catch (e) { return; }
+    var w = BD.ws, ping; w.onopen = function () { BD.tries = 0; bdSend(); ping = setInterval(function () { if (w.readyState === 1) w.send('ping'); }, 25000); };
+    w.onmessage = function (ev) { if (ev.data !== 'pong') bdSend(); };
+    w.onclose = function () { clearInterval(ping); clearTimeout(BD.timer); BD.timer = setTimeout(bdOpen, Math.min(8000, 500 * Math.pow(2, BD.tries++))); };
+    w.onerror = function () { try { w.close(); } catch (e) {} };
+  }
+  function bdPush() {
+    $('bdBox').hidden = !T; if (!T) return; var base = 'https://vibesbilliards.com/event-board?match=' + bdId();
+    $('bdU').textContent = base; $('bdL').textContent = base + '&view=league'; $('bdB').textContent = base + '&view=bracket';
+    bdOpen(); clearTimeout(BD.t); BD.t = setTimeout(bdSend, 250);
+  }
+  $('bdBox').addEventListener('click', function (e) { var b = e.target.closest('[data-bd]'); if (!b) return; var t = $(b.dataset.bd).textContent; (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { toast('コピーしました'); }, function () { toast('コピーできませんでした。アドレスを長押しして選んでください'); }); });
 
   function start() {
     drawRoster(); pick('queenL'); rosterSelects(); drawRooms(); drawHist(); ROOMS.forEach(function (r) { open(r.m); });
