@@ -1,0 +1,132 @@
+name: Auto AI Worker
+
+on:
+  push:
+    branches: [main]
+    paths: ['AI_INBOX.md']
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'autoはClaude優先。GPTタグは常にOpenAI。'
+        type: choice
+        default: auto
+        options: [auto, anthropic, openai]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-inbox-main
+  cancel-in-progress: false
+
+jobs:
+  implement:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      ready: ${{ steps.draft.outputs.ready }}
+      base_sha: ${{ steps.tasks.outputs.base_sha }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: 受付と重複PRを確認
+        id: tasks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/auto-ai-worker.mjs prepare
+      - name: タスクごとにClaudeまたはOpenAI APIで変更を作成
+        if: steps.tasks.outputs.run == 'true'
+        timeout-minutes: 25
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_WORKER_PROVIDER: ${{ inputs.provider || vars.AI_WORKER_PROVIDER || 'auto' }}
+          AI_WORKER_CLAUDE_MODEL: ${{ vars.AI_WORKER_CLAUDE_MODEL }}
+          AI_WORKER_OPENAI_MODEL: ${{ vars.AI_WORKER_OPENAI_MODEL || 'gpt-4o' }}
+        # AIが提案したコードを、このAPIキーのあるジョブでは実行しない。
+        run: node scripts/ai-worker.js
+      - name: 検証前の変更を保存
+        if: steps.tasks.outputs.run == 'true'
+        id: draft
+        run: node "$RUNNER_TEMP/auto-ai-worker/worker.mjs" export-draft
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: steps.draft.outputs.ready == 'true'
+        with:
+          name: ai-draft-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/auto-ai-worker/draft.patch
+            ${{ runner.temp }}/auto-ai-worker/draft.json
+            ${{ runner.temp }}/auto-ai-worker/request.json
+            ${{ runner.temp }}/auto-ai-worker/result.json
+          if-no-files-found: error
+          retention-days: 7
+
+  validate:
+    needs: implement
+    if: needs.implement.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.proposal.outputs.changed }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.implement.outputs.base_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: ai-draft-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/auto-ai-worker
+      - name: APIキーなしで検証し完了チェックと実行ログを更新
+        id: proposal
+        run: node scripts/auto-ai-worker.mjs validate-draft
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: steps.proposal.outputs.changed == 'true'
+        with:
+          name: ai-proposal-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/auto-ai-worker/proposal.patch
+            ${{ runner.temp }}/auto-ai-worker/proposal.json
+            ${{ runner.temp }}/auto-ai-worker/pr-body.md
+          if-no-files-found: error
+          retention-days: 7
+
+  open-pr:
+    needs: [implement, validate]
+    if: needs.validate.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.implement.outputs.base_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: ai-proposal-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/auto-ai-worker
+      - name: 専用ブランチへpushしPRを作成
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # 差分適用後のコードやテストは、書込みトークンを持つジョブでは実行しない。
+        run: node scripts/auto-ai-worker.mjs publish
