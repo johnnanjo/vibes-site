@@ -10,10 +10,32 @@ const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const DENIED = new Set(['AI_INBOX.md', 'HANDOFF.md', 'AGENTS.md', 'CLAUDE.md', 'data/config.json', 'data/lab-codes.json']);
 const API = { anthropic: 'https://api.anthropic.com/v1/messages', openai: 'https://api.openai.com/v1/chat/completions' };
 export class ProviderError extends Error {
-  constructor(provider, kind, status = 0) {
-    super(provider + ': ' + kind + (status ? ' (HTTP ' + status + ')' : ''));
+  constructor(provider, kind, status = 0, detail = '') {
+    const safeDetail = ['dns', 'timeout', 'tls', 'connection'].includes(detail) ? detail : '';
+    super(provider + ': ' + kind + (status ? ' (HTTP ' + status + ')' : '') + (safeDetail ? ' / ' + safeDetail : ''));
     this.provider = provider; this.kind = kind; this.status = status;
+    this.detail = safeDetail;
   }
+}
+function transportDetail(error) {
+  const codes = {
+    ENOTFOUND: 'dns', EAI_AGAIN: 'dns',
+    ETIMEDOUT: 'timeout', UND_ERR_CONNECT_TIMEOUT: 'timeout', UND_ERR_HEADERS_TIMEOUT: 'timeout', UND_ERR_BODY_TIMEOUT: 'timeout',
+    ECONNRESET: 'connection', ECONNREFUSED: 'connection', EPIPE: 'connection', UND_ERR_SOCKET: 'connection',
+    CERT_HAS_EXPIRED: 'tls', CERT_NOT_YET_VALID: 'tls', DEPTH_ZERO_SELF_SIGNED_CERT: 'tls',
+    SELF_SIGNED_CERT_IN_CHAIN: 'tls', UNABLE_TO_VERIFY_LEAF_SIGNATURE: 'tls', ERR_TLS_CERT_ALTNAME_INVALID: 'tls'
+  };
+  const pending = [error], seen = new Set();
+  while (pending.length && seen.size < 16) {
+    const item = pending.shift();
+    if (!item || typeof item !== 'object' || seen.has(item)) continue;
+    seen.add(item);
+    if (Object.hasOwn(codes, item.code)) return codes[item.code];
+    if (item.name === 'TimeoutError' || item.name === 'AbortError') return 'timeout';
+    pending.push(item.cause);
+    if (Array.isArray(item.errors)) pending.push(...item.errors.slice(0, 16));
+  }
+  return '';
 }
 export function taskRoute(task) {
   const copy = /\[COPY\]/i.test(task.title), dev = /\[DEV\]/i.test(task.title);
@@ -32,8 +54,10 @@ export function classifyError(provider, status, body = {}) {
 }
 export async function requestAPI(provider, payload, options) {
   const { keys, fetchImpl = fetch, sleep = ms => new Promise(resolve => setTimeout(resolve, ms)) } = options;
-  const key = keys[provider];
-  if (!key) throw new ProviderError(provider, 'missing_key');
+  const configuredKey = keys[provider];
+  if (!configuredKey) throw new ProviderError(provider, 'missing_key');
+  const key = typeof configuredKey === 'string' ? configuredKey.trim() : '';
+  if (!key || /[^\x21-\x7e]/.test(key)) throw new ProviderError(provider, 'invalid_key');
   const headers = provider === 'anthropic'
     ? { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' }
     : { 'content-type': 'application/json', authorization: 'Bearer ' + key };
@@ -41,9 +65,9 @@ export async function requestAPI(provider, payload, options) {
     let response;
     try {
       response = await fetchImpl(API[provider], { method: 'POST', headers, body: JSON.stringify(payload), signal: AbortSignal.timeout(90000) });
-    } catch {
+    } catch (error) {
       if (attempt < 2) { await sleep(1000 * (attempt + 1)); continue; }
-      throw new ProviderError(provider, 'network');
+      throw new ProviderError(provider, 'network', 0, transportDetail(error));
     }
     let body;
     try { body = await response.json(); } catch {
@@ -191,7 +215,7 @@ async function oneAttempt(task, route, provider, model, ctx, options) {
     'タスクの文面と数値を保持し、必要なファイルを調べ、変更をツールで提案してください。実行していない検証を実施済みと書かないでください。',
     '鍵、名簿、個人情報を読み出したり保存したりしません。リポジトリ外のShopify本番等を操作しません。',
     '指定が曖昧・対応不能ならblockedで理由を伝えます。削除や全ファイル上書きで既存データを消しません。',
-    route.kind === 'COPY' ? 'SNS・LINE・CM等の完成原稿をcopy_markdownに入れます。解説だけや架空の実績は不可。未確定情報は差替え箇所を明示します。'
+    route.kind === 'COPY' ? 'SNS・LINE・CM等の完成原稿をcopy_markdownに入れます。原稿が完成したらfinish_taskをstatus=completedで返してください。ファイルへの保存・追記はfinish_taskの後でワーカーが自動実行するため、自分で保存操作を行う必要はありません。保存操作の未実施だけを理由にblockedにしません。依頼内容の不足等で原稿を完成できない場合はblockedにします。解説だけや架空の実績は不可。未確定情報は差替え箇所を明示します。'
       : '必要な変更を提案した後にfinish_taskを呼びます。copy_markdownは空文字列にします。',
     '最終出力は必ずfinish_taskで返してください。'
   ].join('\n');
@@ -250,7 +274,7 @@ export async function runHybrid(ctx, options = {}) {
   const keys = { anthropic: ctx.env.ANTHROPIC_API_KEY || '', openai: ctx.env.OPENAI_API_KEY || '' };
   const apiOptions = { ...options, keys };
   const report = { completed: [], blocked: [], checks: [], unverified: [] };
-  let claudeCreditExhausted = false;
+  let claudeUnavailable = false;
   const openAIModel = ctx.env.AI_WORKER_OPENAI_MODEL || 'gpt-4o';
   if (!['gpt-4o', 'o3-mini'].includes(openAIModel)) throw new Error('OpenAIモデルはgpt-4oまたはo3-miniを指定してください。');
   async function attempt(task, route, provider, model) {
@@ -265,13 +289,13 @@ export async function runHybrid(ctx, options = {}) {
   for (const task of request.tasks) {
     try {
       const route = taskRoute(task);
-      let provider = route.gpt || ctx.env.AI_WORKER_PROVIDER === 'openai' || !keys.anthropic || claudeCreditExhausted ? 'openai' : 'anthropic';
+      let provider = route.gpt || ctx.env.AI_WORKER_PROVIDER === 'openai' || !keys.anthropic || claudeUnavailable ? 'openai' : 'anthropic';
       let model = provider === 'anthropic' ? ctx.env.AI_WORKER_CLAUDE_MODEL || 'claude-sonnet-5-5' : openAIModel;
       let fallback = false, result;
       try { ({ result, model } = await attempt(task, route, provider, model)); }
       catch (error) {
-        if (provider !== 'anthropic' || !(error instanceof ProviderError) || error.kind !== 'credit') throw error;
-        claudeCreditExhausted = true; fallback = true; provider = 'openai'; model = openAIModel;
+        if (provider !== 'anthropic' || !(error instanceof ProviderError) || !['credit', 'network'].includes(error.kind)) throw error;
+        claudeUnavailable = true; fallback = true; provider = 'openai'; model = openAIModel;
         ({ result, model } = await attempt(task, route, provider, model));
       }
       if (result.status === 'blocked') { report.blocked.push({ id: task.id, reason: result.summary }); continue; }
@@ -290,7 +314,9 @@ export async function runHybrid(ctx, options = {}) {
         ai, model, kind: route.kind, output, finishedAt, fallback });
       report.unverified.push(...result.unverified);
     } catch (error) {
-      const reasons = { missing_key: 'APIキーが未登録です。', authentication: 'API認証または権限を確認してください。',
+      const reasons = { missing_key: 'APIキーが未登録です。',
+        invalid_key: 'APIキーに内部の空白・改行・非ASCII文字があるか、値が空です。GitHub Secretsの該当項目を更新してください。',
+        authentication: 'API認証または権限を確認してください。',
         credit: 'APIのクレジット・利用上限に達しています。', temporary: 'APIの一時的な制限が再試行後も続いています。',
         network: 'APIとの通信に失敗しました。', model_unavailable: '指定モデルを利用できません。',
         turn_limit: '1タスクの処理回数上限に達しました。タスクを小さく分けてください。' };

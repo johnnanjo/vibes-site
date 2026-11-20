@@ -49,8 +49,8 @@ AI 共通の進め方は `AGENTS.md`（ChatGPT / Codex もここを読む。決�
 ## AI_INBOX の自動実装（2026-11-20 運営者指定）
 - 初回の受付ファイルは運営者指定の「# VIBES AI INBOX」「## 待機中タスク」「## 完了済みログ」。受付は [DEV]「VIBES DIGITAL LABにW3C Queen Cupモード（持ち点25点・エクステンション2回）を追加」と [COPY]「E-placeの15秒CM用キャッチコピー3案を作成」の2件。ここへの登録は未実装の受付であり、完了済みの意味ではない。W3Cの25点・2回は今回指定された新モードの要件として扱い、既存の予選・決勝の形式を上書きしない。
 - ルートの AI_INBOX.md の行頭「- [ ]」が受付タスク。main への同ファイルの push で .github/workflows/auto-ai-worker.yml が起動する。コード枠の中の例は受付に含めない。CLAUDE.md → HANDOFF.md → AGENTS.md の順に読む。
-- 1回の受付分をタスク単位で処理する。scripts/ai-worker.js がAPIのツール呼出しでリポジトリ内のテキスト変更を作る。行頭のタグは [DEV] またはタグなし＝コード編集、[COPY]＝完成原稿を docs/ai-outputs/copy-YYYYMMDD.md へ追記、[GPT]＝最初からOpenAI。[GPT]はほかのタグと併用でき、[COPY]と[DEV]は併用しない。日付は日本時間。Shopify本番等のリポジトリ外は操作しない。
-- ANTHROPIC_API_KEY と OPENAI_API_KEY はGitHub Secretsだけを参照する。標準はClaude API優先、Claudeのキーがない場合はOpenAI。Claudeのクレジット・利用上限エラーでは、そのタスクの途中変更を破棄してOpenAIへ切り替える。[GPT]は常にOpenAI。認証不良は未完了、通常の429や一時障害は同じAPIで最大2回再試行する。切替先のキー・利用枠がなければ完了扱いにしない。
+- 1回の受付分をタスク単位で処理する。scripts/ai-worker.js がAPIのツール呼出しでリポジトリ内のテキスト変更を作る。行頭のタグは [DEV] またはタグなし＝コード編集、[COPY]＝完成原稿を docs/ai-outputs/copy-YYYYMMDD.md へ追記、[GPT]＝最初からOpenAI。[GPT]はほかのタグと併用でき、[COPY]と[DEV]は併用しない。日付は日本時間。[COPY]の原稿はfinish_taskのcopy_markdownに返す。完成原稿ができればcompletedとし、保存はワーカーが実行するため未保存だけを理由にblockedにしない。Shopify本番等のリポジトリ外は操作しない。
+- ANTHROPIC_API_KEY と OPENAI_API_KEY はGitHub Secretsだけを参照する。標準はClaude API優先、Claudeのキーがない場合はOpenAI。Claudeのクレジット・利用上限エラー、または計3回の通信試行後も続く接続障害では、そのタスクの途中変更を破棄してOpenAIへ切り替える。[GPT]は常にOpenAI。キーの前後の空白は除去し、内部の空白・改行・非ASCII文字は送信前に検出する。キー形式の不備と認証不良は未完了、通常の429や一時障害は同じAPIで最大2回再試行する。通信失敗の診断はDNS・タイムアウト・TLS・接続の固定分類だけを記録し、例外の原文やキー値は残さない。切替先のキー・利用枠がなければ完了扱いにしない。
 - 標準モデルはClaude claude-sonnet-5-5とOpenAI gpt-4o。Repository variables の AI_WORKER_CLAUDE_MODEL / AI_WORKER_OPENAI_MODEL で指定可。OpenAIはgpt-4o / o3-miniに対応し、o3-miniがモデル未提供の404の場合はgpt-4oで再処理する。AI実行は25分・1タスク最大40応答。金額上限は設けていないためAPIの利用枠は運営者が管理する。
 - API実行→APIキーなしの独立検証→PR作成の3ジョブ。APIキーを持つ間は生成コードを実行しない。AIにGitHub書込み用トークンを渡さず、書込みジョブでは生成コードを実行しない。
 - 実装と共通チェックに通ったものだけPR側で「- [x]」へ変更し、AI_INBOX.md末尾の完了済みログへ実行日時・使用AI・モデルを記録する。不明点・未完了はそのまま残して理由を日本語で記載する。
