@@ -308,7 +308,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
       <div class="f"><label for="fvd">音声コールを出す場所</label><select id="fvd"><option value="both">モニターとタブレット</option><option value="pc">モニターだけ</option><option value="tab">タブレットだけ</option></select></div>
       <div class="f"><label for="ften">残り10秒の音声（読み上げ）</label><select id="ften"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="fcl">読み上げの言葉</label><select id="fcl"><option value="en">英語</option><option value="ja">日本語</option><option value="es">スペイン語</option><option value="fr">フランス語</option><option value="it">イタリア語</option><option value="ko">韓国語</option></select></div>
-      <div class="f"><label for="fcv">声</label><select id="fcv"><option value="f">女性</option><option value="m">男性</option></select></div>
+      <div class="f"><label for="fcv">声</label><select id="fcv" aria-describedby="voiceHelp"><option value="f">女性</option><option value="calm">落ち着いた女性</option><option value="m">男性</option></select><p id="voiceHelp">落ち着いた女性は、端末の女性音声を低め・ゆっくりに調整します。</p><button type="button" class="btn" id="bVoiceTest">声を試す</button></div>
       <div class="f"><label for="fs">音（残り10秒・時間切れ）</label><select id="fs"><option value="1">あり</option><option value="0">なし</option></select></div>
     </div>
     <datalist id="roster"></datalist>
@@ -374,8 +374,9 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     var best = function (a) { return a.filter(function (v) { return String(v.lang).replace('_', '-').toLowerCase() === VL[lang].toLowerCase(); })[0] || a[0]; }, want = vs.filter(function (v) { return vSex(v) === g; });
     if (want.length) return { v: best(want) }; var loc = vs.filter(function (v) { return v.localService !== false && !/google/i.test(v.name || ''); }), v0 = best(loc.length ? loc : vs), s0 = vSex(v0); return { v: v0, sh: s0 !== g ? (g === 'm' ? .5 : s0 ? 1.45 : 0) : 0 }; }
   try { if (window.speechSynthesis) { speechSynthesis.getVoices(); speechSynthesis.addEventListener('voiceschanged', function () { speechSynthesis.getVoices(); }); } } catch (e) {}
-  function vSpeak(t, lang, g, fb) { try { var ss = window.speechSynthesis; if (!ss) return; lang = VL[lang] ? lang : 'en'; g = g === 'm' ? 'm' : 'f'; var r = vPick(ss, lang, g); if (r.none && lang !== 'en' && fb) { t = fb; lang = 'en'; r = vPick(ss, 'en', g); }
-    var u = new SpeechSynthesisUtterance(String(t)); u.lang = VL[lang]; if (r.v) u.voice = r.v; u.rate = r.sh && r.sh < 1 ? .92 : 1; u.pitch = r.sh || 1; if (ss.speaking || ss.pending) ss.cancel(); ss.speak(u); } catch (e) {} }
+  function voiceMode(g) { return /^(f|m|calm)$/.test(g || '') ? g : 'f'; }
+  function vSpeak(t, lang, g, fb) { try { var ss = window.speechSynthesis; if (!ss) return; var calm = voiceMode(g) === 'calm'; lang = VL[lang] ? lang : 'en'; g = g === 'm' ? 'm' : 'f'; var r = vPick(ss, lang, g); if (r.none && lang !== 'en' && fb) { t = fb; lang = 'en'; r = vPick(ss, 'en', g); }
+    var u = new SpeechSynthesisUtterance(String(t)); u.lang = VL[lang]; if (r.v) u.voice = r.v; u.rate = lang === 'en' || calm ? .8 : r.sh && r.sh < 1 ? .92 : 1; u.pitch = (r.sh || 1) * (calm ? .92 : 1); if (ss.speaking || ss.pending) ss.cancel(); ss.speak(u); } catch (e) {} }
 
   /* 2026-11: time-outs are off unless the shop turns them on in the settings (one-time change of the saved default) */
   try { var pd = JSON.parse(localStorage.getItem('vibes-count-prefs') || 'null') || {}; if (!pd.d2) { pd.to = 0; pd.d2 = 1; localStorage.setItem('vibes-count-prefs', JSON.stringify(pd)); } } catch (e) {}
@@ -484,9 +485,16 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   /* a point is called once per inning: after a correction (-1, back) the same numbers are not called again */
   var sdK = '', sdM = 0, fresh1 = function (run0, run1) { var k = S.turn + ':' + S.inn[S.turn].length; if (k !== sdK) { sdK = k; sdM = run0; } if (run1 > sdM) { sdM = run1; return true; } return false; };
   function add(n) { if (S.over) return; begin(); var r0 = S.run, v = Math.max(0, Math.min(room(), S.run + n)); if (v === S.run) { if (n > 0) toast('持ち点に届きました。Enter で確定します'); return; } S.run = v; S.typed = false; if (n > 0 && S.cfg.t && !S.cfg.easy) tStart(); else tKick(); render(); if (n > 0 && fresh1(r0, S.run)) callOut(); }
+  /* Spoken run totals: the traditional counter through ten, then ordinary Japanese numbers. */
+  function countJa(n) {
+    n = Math.max(0, Math.min(999, Math.floor(+n || 0)));
+    if (n <= 10) return ['ゼロ', 'ひとつ', 'ふたつ', 'みっつ', 'よっつ', 'いつつ', 'むっつ', 'ななつ', 'やっつ', 'ここのつ', 'とぉー'][n];
+    var d = ['', 'いち', 'に', 'さん', 'よん', 'ご', 'ろく', 'なな', 'はち', 'きゅう'], h = ['', 'ひゃく', 'にひゃく', 'さんびゃく', 'よんひゃく', 'ごひゃく', 'ろっぴゃく', 'ななひゃく', 'はっぴゃく', 'きゅうひゃく'], ten = Math.floor(n % 100 / 10);
+    return h[Math.floor(n / 100)] + (ten ? (ten === 1 ? '' : d[ten]) + 'じゅう' : '') + d[n % 10];
+  }
   /* referee-style call in English: "two points", then "three more" / "two more" / "one more" near the target */
   function callText(run, left, l) { l = l || 'en'; var m = left >= 1 && left <= 3 ? left : 0;
-    if (l === 'ja') return run + '点' + (m ? '、あと' + m + '点' : '');
+    if (l === 'ja') return countJa(run) + (m ? '、あと' + countJa(m) : '');
     if (l === 'es') return run + (run === 1 ? ' punto' : ' puntos') + (m ? (m === 1 ? ', falta 1' : ', faltan ' + m) : '');
     if (l === 'fr') return run + (run === 1 ? ' point' : ' points') + (m ? ', encore ' + m : '');
     if (l === 'it') return run + (run === 1 ? ' punto' : ' punti') + (m ? ', ancora ' + m : '');
@@ -494,7 +502,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     var more = { 3: 'three more', 2: 'two more', 1: 'one more' }[left]; return NW(run) + (run === 1 ? ' point' : ' points') + (more ? ', ' + more : ''); }
   var TEN = { en: 'ten seconds', ja: '残り10秒', es: 'diez segundos', fr: 'dix secondes', it: 'dieci secondi', ko: '10초 남았습니다' }, cl = function () { return VL[S.cfg.clang] ? S.cfg.clang : 'en'; };
   var NW = function (n) { var a = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'], t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']; return n < 20 ? a[n] : n < 100 ? t[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '') : String(n); };
-  function speak(t, lang, fb) { vSpeak(t, lang || 'en', S.cfg.cvo === 'm' ? 'm' : 'f', fb); }
+  function speak(t, lang, fb) { vSpeak(t, lang || 'en', voiceMode(S.cfg.cvo), fb); }
   function callOut() { if (S.cfg.voice === 0 || S.cfg.vdev === 'tab' || S.over || S.run < 1) return; var lf = S.cfg.g[S.turn] - S.sc[S.turn] - S.run; speak(callText(S.run, lf, cl()), cl(), callText(S.run, lf)); }
   function digit(d) { if (S.over) return; begin(); var v = S.typed ? S.run * 10 + d : d; if (v > room()) v = d > room() ? room() : d; S.run = v; S.typed = true; render(); }
   function finish() { S.over = true; S.t1 = Date.now(); if (!S.cfg.mode && S.tour) tdAdd(); tStop(); render(); showWin(); if (typeof rmPush === 'function') rmPush(); if (S.cfg.voice !== 0 && S.cfg.vdev !== 'tab') setTimeout(function () { if (S.over && winSay()) speak(winSay(), cl(), winSay('en')); }, 400); }
@@ -507,7 +515,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     else S.turn = p + 1;
     tKick(); render(); if (S.cfg.vdev !== 'tab') { chime(); if (S.cfg.voice !== 0) setTimeout(function () { speak(gotSay(p), cl(), gotSay(p, 'en')); }, 350); }
   }
-  var GOT = { en: function (n) { return 'you got ' + (n ? NW(n) + (n === 1 ? ' point' : ' points') : 'no points'); }, ja: function (n) { return n ? n + '点です' : 'なし'; },
+  var GOT = { en: function (n) { return 'you got ' + (n ? NW(n) + (n === 1 ? ' point' : ' points') : 'no points'); }, ja: function (n) { return n ? countJa(n) : 'なし'; },
     es: function (n) { return n ? 'Has conseguido ' + n + (n === 1 ? ' punto' : ' puntos') : 'No has conseguido puntos'; }, fr: function (n) { return n ? 'Vous avez marqué ' + n + (n === 1 ? ' point' : ' points') : "Vous n'avez marqué aucun point"; },
     it: function (n) { return n ? 'Hai fatto ' + n + (n === 1 ? ' punto' : ' punti') : 'Non hai fatto punti'; }, ko: function (n) { return n ? n + '점을 획득했습니다' : '득점이 없습니다'; } };
   var gotText = function (n, l) { return (GOT[l || S.cfg.clang] || GOT.en)(n); };
@@ -536,7 +544,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   function openSet() {
     for (var q = 0; q < 4; q++) { $('fn' + q).value = S.cfg.n[q] || 'PLAYER ' + (q + 1); $('fg' + q).value = S.cfg.g[q] || S.cfg.g[0]; }
     $('fnp').value = NP(); $('fnp').disabled = !fresh(); $('fto').value = S.cfg.to; setRows();
-    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1; $('fvd').value = S.cfg.vdev || 'both'; $('ften').value = S.cfg.ten === 0 ? 0 : 1; $('fcl').value = S.cfg.clang || 'en'; $('fcv').value = S.cfg.cvo === 'm' ? 'm' : 'f';
+    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1; $('fvd').value = S.cfg.vdev || 'both'; $('ften').value = S.cfg.ten === 0 ? 0 : 1; $('fcl').value = S.cfg.clang || 'en'; $('fcv').value = voiceMode(S.cfg.cvo);
     $('fcam').value = camPref();
     $('setL').hidden = false; $('fn0').focus(); $('fn0').select();
   }
@@ -557,7 +565,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   function cfSchema() { var c = S.cfg, yn = [[1, 'あり'], [0, 'なし']]; return [
     { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 't', l: '残り秒数（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
     { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
-    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'ten', l: '残り10秒の音声（読み上げ）', t: 's', o: yn, v: c.ten === 0 ? 0 : 1 }, { k: 'clang', l: '読み上げの言葉', t: 's', o: [['en', '英語'], ['ja', '日本語'], ['es', 'スペイン語'], ['fr', 'フランス語'], ['it', 'イタリア語'], ['ko', '韓国語']], v: c.clang || 'en' }, { k: 'cvo', l: '声', t: 's', o: [['f', '女性'], ['m', '男性']], v: c.cvo === 'm' ? 'm' : 'f' }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
+    { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'ten', l: '残り10秒の音声（読み上げ）', t: 's', o: yn, v: c.ten === 0 ? 0 : 1 }, { k: 'clang', l: '読み上げの言葉', t: 's', o: [['en', '英語'], ['ja', '日本語'], ['es', 'スペイン語'], ['fr', 'フランス語'], ['it', 'イタリア語'], ['ko', '韓国語']], v: c.clang || 'en' }, { k: 'cvo', l: '声', t: 's', o: [['f', '女性'], ['calm', '落ち着いた女性'], ['m', '男性']], v: voiceMode(c.cvo) }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
   function cfApply(v) {
     var oldTo = S.cfg.to;
     cfSchema().forEach(function (f) { if (!(f.k in v)) return; var x = v[f.k];
@@ -784,6 +792,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   function prClose() { prStop(); $('prL').hidden = true; render(); }
   function goFull() { var d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(function () {}); }
 
+  $('bVoiceTest').onclick = function () { var l = $('fcl').value, en = 'One point. Two points. Three points. Ten points. Eleven points.'; vSpeak(l === 'ja' ? [1, 2, 3, 4, 10, 11].map(countJa).join('。') + '。' : l === 'en' ? en : callText(2, 0, l), l, voiceMode($('fcv').value), en); };
   $('setF').addEventListener('submit', function (e) { e.preventDefault(); closeSet(true); });
   $('fnp').addEventListener('change', setRows);
   [0, 1, 2, 3].forEach(function (p) { $('fn' + p).addEventListener('input', function () { var v = this.value.trim(); if (roster[v]) $('fg' + p).value = roster[v]; }); });
@@ -800,7 +809,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   var RMK = 'vibes-remote-display' + (TB ? '-t' + TB : ''), U_HOME = '/pages/count/', rm = null, rws = null, rTry = 0, rPing = null;
   try { rm = JSON.parse(localStorage.getItem(RMK) || 'null'); } catch (e) { rm = null; }
-  function rmState() { var N3 = NP(); return JSON.stringify({ type: 'state', vdev: S.cfg.vdev || 'both', il: S.inn, shop: (function () { try { return (JSON.parse(localStorage.getItem('vibes-count-prefs') || '{}') || {}).shop || ''; } catch (e) { return ''; } })(), voice: S.cfg.voice === 0 ? 0 : 1, va: navigator.userActivation ? (navigator.userActivation.hasBeenActive ? 1 : 0) : 1, pz: !!S.pz, tl: tOn ? Math.max(0, tLeft) : -1, gt: gtText(), resH: ['得点', 'イニング', 'ハイラン', 'アベレージ'], res: S.cfg.n.map(function (x, i) { return [x + ' (' + S.cfg.g[i] + ')', S.sc[i] + ' / ' + S.cfg.g[i], S.inn[i].length, hi(i), avg(i)]; }), kind: N3 > 2 ? 'pocket' : '3c', su: { min: 2, max: 4, t: '持ち点', d: 25 }, title: S.cfg.game === 'band' ? 'バンド' : 'スリークッション', lab: S.cfg.n.map(function (x, i) { return x + ' (' + S.cfg.g[i] + ')'; }), score: S.cfg.n.map(function (x, i) { return String(S.sc[i] + (i === S.turn && !S.over ? S.run : 0)); }), midL: 'INNING', mid: $('inn').textContent, info: S.run && !S.over ? 'この回 ' + S.run + '点' : '', keys: [['+', '1点'], ['-', '1点へらす'], ['Enter', '交代'], ['BackSpace', '戻る']], win: S.over ? $('wName').textContent : '', cf: cfSchema(), table: TB, tour: !S.cfg.mode && S.tour ? S.tour.id : '', td: tdGet(), rdy: !!S.ready, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
+  function rmState() { var N3 = NP(); return JSON.stringify({ type: 'state', vdev: S.cfg.vdev || 'both', cvo: voiceMode(S.cfg.cvo), clang: S.cfg.clang || 'en', il: S.inn, shop: (function () { try { return (JSON.parse(localStorage.getItem('vibes-count-prefs') || '{}') || {}).shop || ''; } catch (e) { return ''; } })(), voice: S.cfg.voice === 0 ? 0 : 1, va: navigator.userActivation ? (navigator.userActivation.hasBeenActive ? 1 : 0) : 1, pz: !!S.pz, tl: tOn ? Math.max(0, tLeft) : -1, gt: gtText(), resH: ['得点', 'イニング', 'ハイラン', 'アベレージ'], res: S.cfg.n.map(function (x, i) { return [x + ' (' + S.cfg.g[i] + ')', S.sc[i] + ' / ' + S.cfg.g[i], S.inn[i].length, hi(i), avg(i)]; }), kind: N3 > 2 ? 'pocket' : '3c', su: { min: 2, max: 4, t: '持ち点', d: 25 }, title: S.cfg.game === 'band' ? 'バンド' : 'スリークッション', lab: S.cfg.n.map(function (x, i) { return x + ' (' + S.cfg.g[i] + ')'; }), score: S.cfg.n.map(function (x, i) { return String(S.sc[i] + (i === S.turn && !S.over ? S.run : 0)); }), midL: 'INNING', mid: $('inn').textContent, info: S.run && !S.over ? 'この回 ' + S.run + '点' : '', keys: [['+', '1点'], ['-', '1点へらす'], ['Enter', '交代'], ['BackSpace', '戻る']], win: S.over ? $('wName').textContent : '', cf: cfSchema(), table: TB, tour: !S.cfg.mode && S.tour ? S.tour.id : '', td: tdGet(), rdy: !!S.ready, n: S.cfg.n, g: S.cfg.g, sc: S.sc, run: S.run, turn: S.turn, over: S.over, inn: S.inn.map(function (a) { return a.length; }), hr: S.cfg.n.map(function (x, i) { return hi(i); }), av: S.cfg.n.map(function (x, i) { return avg(i); }), last: S.inn.map(function (a) { return a.slice(-12); }), to: S.to, gt: gtText(), t: S.cfg.t, tOn: tOn, pr: !$('prL').hidden, pm: S.cfg.pm, wz: !!W, rd: !!S.ready && !S.over }); }
   function rmPush() { if (rws && rws.readyState === 1) { try { rws.send(rmState()); var fs = JSON.stringify({ type: 'full', va: navigator.userActivation ? (navigator.userActivation.hasBeenActive ? 1 : 0) : 1, now: Date.now(), tl: tOn ? Math.max(0, tLeft) : -1, s: S }); if (fs.length < 15500) rws.send(fs); } catch (e) {} } }
   function rmStatus() { var on = rws && rws.readyState === 1; $('rmS').textContent = rm && rm.on ? (on ? 'つながっています' : '接続しています…') : '切'; $('bRm').textContent = rm && rm.on ? 'リモコン ' + rm.code.slice(0, 3) + ' ' + rm.code.slice(3) + (on ? '' : ' …') : 'リモコン'; }
   function rmConnect() {
@@ -813,11 +822,11 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     rmStatus();
   }
   var PFK = 'vibes-count-prefs', PFL = ['lim', 't', 'to', 'pm', 'eq', 'snd', 'easy', 'voice', 'ten'];
-  function prefSave() { if (S.cfg.mode) return; var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } PFL.forEach(function (k) { o[k] = k === 'voice' || k === 'ten' ? (S.cfg[k] === 0 ? 0 : 1) : +S.cfg[k] || 0; }); o.vdev = S.cfg.vdev || 'both'; o.clang = S.cfg.clang || 'en'; o.cvo = S.cfg.cvo === 'm' ? 'm' : 'f'; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
+  function prefSave() { if (S.cfg.mode) return; var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } PFL.forEach(function (k) { o[k] = k === 'voice' || k === 'ten' ? (S.cfg[k] === 0 ? 0 : 1) : +S.cfg[k] || 0; }); o.vdev = S.cfg.vdev || 'both'; o.clang = S.cfg.clang || 'en'; o.cvo = voiceMode(S.cfg.cvo); try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
   function menuInit() {
     var q = /[?&]n=(new|again)/.exec(location.search); if (!q) return;
     var c = S.cfg, pf = null; try { pf = JSON.parse(localStorage.getItem(PFK) || 'null'); } catch (e) {}
-    if (pf) (c.mode ? ['t', 'to', 'pm', 'snd'] : PFL).forEach(function (k) { if (typeof pf[k] === 'number') c[k] = pf[k]; }); if (pf && !c.mode && /^(both|pc|tab)$/.test(pf.vdev || '')) c.vdev = pf.vdev; if (pf && !c.mode && VL[pf.clang]) c.clang = pf.clang; if (pf && !c.mode && /^(f|m)$/.test(pf.cvo || '')) c.cvo = pf.cvo;
+    if (pf) (c.mode ? ['t', 'to', 'pm', 'snd'] : PFL).forEach(function (k) { if (typeof pf[k] === 'number') c[k] = pf[k]; }); if (pf && !c.mode && /^(both|pc|tab)$/.test(pf.vdev || '')) c.vdev = pf.vdev; if (pf && !c.mode && VL[pf.clang]) c.clang = pf.clang; if (pf && !c.mode && /^(f|m|calm)$/.test(pf.cvo || '')) c.cvo = pf.cvo;
     if (q[1] === 'new') c.n = c.n.map(function (x, i) { return 'PLAYER ' + (i + 1); });
     S = def(c); hist = []; S.ready = !c.n.every(isDefName);
     try { history.replaceState(null, '', location.pathname + location.search.replace(/([?&])n=(new|again)(&|$)/, '$1').replace(/[?&]$/, '')); } catch (e) {}
@@ -990,7 +999,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   var KOK = /^([0-9+\-*]|Enter|Backspace)$/, endAt = 0, mva = 1, unl = false;
   /* iPad and phones only play sound that was started by a touch: wake the audio and the voice on the first touch so later calls (change sound, "you got …", "ten seconds") can be heard */
   ['pointerdown', 'touchend'].forEach(function (ev) { document.addEventListener(ev, function () { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch (e) {} if (!unl) { unl = true; try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; window.speechSynthesis.speak(u); } catch (e) {} } if (MIR) { try { parent.mirUnlock(); } catch (e) {} } }, true); });
-  var psay = function (t, lang, fb) { var g = S.cfg.cvo === 'm' ? 'm' : 'f'; try { if (parent !== window && parent.mirSay) return parent.mirSay(t, lang || 'en', g, fb); } catch (e) {} vSpeak(t, lang || 'en', g, fb); }, pchime = function () { try { if (parent !== window && parent.mirChime) return parent.mirChime(); } catch (e) {} chime(); };
+  var psay = function (t, lang, fb) { var g = voiceMode(S.cfg.cvo); try { if (parent !== window && parent.mirSay) return parent.mirSay(t, lang || 'en', g, fb); } catch (e) {} vSpeak(t, lang || 'en', g, fb); }, pchime = function () { try { if (parent !== window && parent.mirChime) return parent.mirChime(); } catch (e) {} chime(); };
   (function () { var ks = document.querySelector('.board .keys'), row = el('div', 'krow'), tk = el('div', 'keys tk'); tk.id = 'tk'; ks.parentNode.insertBefore(row, ks); row.appendChild(ks); row.appendChild(tk); ks.style.marginTop = '';
     var a = el('span', '', '一時停止'); a.id = 'tkPz'; a.setAttribute('role', 'button'); var b = el('span', '', '試合終了'); b.id = 'tkEnd'; b.setAttribute('role', 'button'); tk.appendChild(a); tk.appendChild(b); })();
   if (MIR || (window.matchMedia && matchMedia('(pointer:coarse)').matches)) document.body.classList.add('touch');
