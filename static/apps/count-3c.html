@@ -105,6 +105,22 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .opt small{margin-left:auto;font-size:2.4vh;color:var(--sub);font-weight:700;white-space:nowrap}
 .wz .keys{margin-top:1.8vh;font-size:2.1vh}
 .wz .note{color:var(--sub);font-size:2.2vh;margin:1vh 0 0}
+/* Keep the selected player visible throughout name search and handicap entry. */
+#wzPanel.player-entry{border:clamp(3px,.5vh,6px) solid var(--entry-color);background:linear-gradient(135deg,color-mix(in srgb,var(--entry-color) 9%,var(--night2)),var(--night2) 65%)}
+#wzPanel.player-entry h2{flex-wrap:wrap;gap:.7vh 1.2vw;padding:1.6vh 1.5vw;border-radius:1.4vh;background:var(--entry-bg);color:var(--night)}
+#wzPanel .entry-ball{width:clamp(38px,6vh,72px);height:clamp(38px,6vh,72px);background:radial-gradient(circle at 30% 25%,#fff,var(--entry-color) 55%);border:2px solid rgba(23,26,34,.28);box-shadow:inset -.5vh -.6vh .8vh rgba(0,0,0,.2),0 .3vh .7vh rgba(0,0,0,.16);flex:none}
+#wzPanel .entry-heading{flex:1;font-size:clamp(26px,4.8vh,58px);line-height:1.2;font-weight:900}
+#wzPanel .entry-count{font-size:clamp(14px,2.2vh,24px);font-weight:900;white-space:nowrap}
+#wzPanel.player-entry h2 small{flex-basis:100%;margin:0;color:var(--night);font-size:clamp(14px,2vh,22px);line-height:1.5}
+.entry-progress{display:grid;grid-template-columns:repeat(var(--entry-players),minmax(0,1fr));gap:.8vw;list-style:none;margin:0 0 1.5vh;padding:0}
+.entry-progress li{display:flex;align-items:center;gap:.6vw;min-width:0;border:2px solid var(--line);border-radius:1vh;padding:.7vh .8vw;background:var(--night);font-size:clamp(14px,1.9vh,22px);font-weight:900}
+.entry-progress li[aria-current="step"]{border-color:var(--entry-color);background:color-mix(in srgb,var(--entry-color) 12%,var(--night))}
+.entry-progress i{width:1em;height:1em;border-radius:50%;flex:none}
+.entry-progress .entry-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.entry-progress .entry-state{margin-left:auto;flex:none;color:var(--sub);font-size:clamp(14px,1.7vh,20px)}
+.entry-progress li[aria-current="step"] .entry-state{color:var(--chalk)}
+#wzPanel.player-entry .opt kbd{background:var(--entry-color)}
+@media(max-width:760px){#wzPanel .entry-heading{font-size:clamp(24px,6vw,38px)}#wzPanel .entry-count{font-size:14px}.entry-progress{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.entry-progress li{flex-wrap:wrap;padding:7px}.entry-progress .entry-state{width:100%;padding-left:1.6em}#wzPanel .opts:not(.c3) .opt{font-size:clamp(18px,4.5vw,28px)}}
 .toast{position:fixed;left:50%;bottom:9vh;transform:translateX(-50%);background:var(--chalk);color:var(--night);font-weight:900;font-size:2.4vh;border-radius:999px;padding:1vh 2vw;z-index:6}
 /* ---- v2 finish: cloth, light and depth. Colors stay on the brand tokens. ---- */
 html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;background:radial-gradient(120% 80% at 50% 0%,#1F2330 0%,#171A22 55%,#101218 100%) fixed}
@@ -327,7 +343,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   </div>
 </div>
 <div class="over-l" id="wzL" hidden>
-  <div class="panel wz" role="dialog" aria-label="Player entry"><h2 id="wzH"></h2><div id="wzB"></div><div class="keys" id="wzK"></div></div>
+  <div class="panel wz" id="wzPanel" role="dialog" aria-labelledby="wzH"><h2 id="wzH"></h2><ol class="entry-progress" id="wzPlayers" aria-label="選手設定の進み具合" hidden></ol><div id="wzB"></div><div class="keys" id="wzK"></div></div>
 </div>
 <div class="over-l" id="rmL" hidden>
   <div class="panel wz" role="dialog" aria-label="Remote control">
@@ -666,17 +682,32 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   }
   function wzDraw() {
     var h = $('wzH'), b = $('wzB'); h.textContent = ''; b.textContent = '';
+    var panel = $('wzPanel'), progress = $('wzPlayers');
+    panel.classList.toggle('player-entry', W.step !== 'count'); progress.textContent = ''; progress.hidden = W.step === 'count';
     if (W.step === 'count') {
       h.appendChild(document.createTextNode('人数を選ぶ'));
       var bx = el('div', 'opts c3');
       [2, 3, 4].forEach(function (n) { var o = el('div', 'opt' + (n === NP() ? ' sel' : '')); o.appendChild(el('kbd', '', String(n))); o.appendChild(el('span', '', n + '人')); bx.appendChild(o); });
       b.appendChild(bx); keysHelp([['2-4', '選ぶ'], ['Enter', NP() + '人のまま'], ['BackSpace', 'メニューにもどる']]); return;
     }
-    var dot = el('i'); dot.style.background = PCOL[W.p]; h.appendChild(dot);
-    h.appendChild(document.createTextNode('選手' + (W.p + 1) + '（' + PCN[W.p] + '）'));
+    panel.style.setProperty('--entry-color', PCOL[W.p]);
+    panel.style.setProperty('--entry-bg', ['#F3F4EF', '#F2C200', '#FFB8BA', '#9EE9C8'][W.p]);
+    panel.style.setProperty('--entry-players', NP());
+    var dot = el('i', 'entry-ball'); dot.setAttribute('aria-hidden', 'true'); h.appendChild(dot);
+    h.appendChild(el('span', 'entry-heading', '選手' + (W.p + 1) + ' ／ ' + PCN[W.p] + '球'));
+    h.appendChild(el('span', 'entry-count', (W.p + 1) + '人目 / ' + NP() + '人'));
+    for (var pi = 0; pi < NP(); pi++) {
+      var item = el('li'), ball = el('i'), done = W.done[pi], registered = !isDefName(S.cfg.n[pi]);
+      ball.style.background = PCOL[pi]; ball.setAttribute('aria-hidden', 'true'); item.appendChild(ball);
+      item.appendChild(el('span', 'entry-label', '選手' + (pi + 1) + ' ' + PCN[pi] + '球'));
+      item.appendChild(el('span', 'entry-state', pi === W.p ? '選択中' : done ? '設定済み' : registered ? '登録済み' : '未選択'));
+      if (pi === W.p) item.setAttribute('aria-current', 'step');
+      if (done || registered) item.title = done ? done.name + ' (' + done.g + '点)' : S.cfg.n[pi] + ' (' + S.cfg.g[pi] + '点)';
+      progress.appendChild(item);
+    }
     var cur = S.cfg.n[W.p], isDef = isDefName(cur);
     if (W.step === 'mode') {
-      h.appendChild(el('small', '', isDef ? '' : '今：' + cur + ' (' + S.cfg.g[W.p] + ')'));
+      h.appendChild(el('small', '', ['白い球', '黄色い球', '赤い球', '緑色の球'][W.p] + 'を使う選手を選んでください。' + (isDef ? '' : ' 現在：' + cur + ' (' + S.cfg.g[W.p] + '点)')));
       var box = el('div', 'opts');
       [['1', '登録した選手をさがす', players.length + '人'], ['2', '新しい選手を登録', ''], ['3', 'ゲスト（名前なし）', ''], ['4', '持ち点でさがす', '']].forEach(function (a) { var o = el('div', 'opt'); o.appendChild(el('kbd', '', a[0])); o.appendChild(el('span', '', a[1])); if (a[2]) o.appendChild(el('small', '', a[2])); box.appendChild(o); });
       b.appendChild(box);
