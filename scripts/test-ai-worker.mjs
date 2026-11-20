@@ -169,6 +169,98 @@ test('a temporary gateway failure with an HTML body can recover on retry', async
       : response(200, { ok: true }) });
   assert.equal(calls, 2); assert.equal(result.ok, true);
 });
+test('clipboard whitespace around API keys is removed before building authentication headers', async () => {
+  for (const provider of ['anthropic', 'openai']) {
+    let calls = 0;
+    await requestAPI(provider, {}, { keys: { [provider]: ' \nunit-copy-key\r\n ' }, fetchImpl: async (_url, init) => {
+      calls++;
+      const headers = new Headers(init.headers);
+      assert.equal(headers.get(provider === 'anthropic' ? 'x-api-key' : 'authorization'),
+        provider === 'anthropic' ? 'unit-copy-key' : 'Bearer unit-copy-key');
+      return response(200, { ok: true });
+    } });
+    assert.equal(calls, 1);
+  }
+});
+test('invalid key characters are diagnosed before fetch without printing the key value', async () => {
+  assert.throws(() => new Headers({ 'x-api-key': '貼付け文字' }), TypeError);
+  for (const key of ['unit\nsecond-line', 'unit key', '貼付け文字', ' \n ']) {
+    let calls = 0;
+    await assert.rejects(requestAPI('anthropic', {}, { keys: { anthropic: key }, fetchImpl: async () => { calls++; } }), error => {
+      assert.equal(error.kind, 'invalid_key');
+      assert.equal(error.message, 'anthropic: invalid_key');
+      return true;
+    });
+    assert.equal(calls, 0);
+  }
+});
+test('failed network retries report only fixed DNS, timeout, TLS or connection categories', async () => {
+  for (const [code, detail] of [['ENOTFOUND', 'dns'], ['UND_ERR_CONNECT_TIMEOUT', 'timeout'],
+    ['CERT_HAS_EXPIRED', 'tls'], ['ECONNRESET', 'connection']]) {
+    let calls = 0;
+    const cause = Object.assign(new Error('private-header-canary'), { code });
+    await assert.rejects(requestAPI('anthropic', {}, { keys: { anthropic: 'unit-only' }, sleep: async () => {},
+      fetchImpl: async () => { calls++; throw new TypeError('private-key-canary', { cause: new AggregateError([cause]) }); } }), error => {
+      assert.equal(error.kind, 'network'); assert.equal(error.detail, detail);
+      assert.doesNotMatch(error.message, /private|canary/);
+      return true;
+    });
+    assert.equal(calls, 3);
+  }
+  await assert.rejects(requestAPI('openai', {}, { keys: { openai: 'unit-only' }, sleep: async () => {},
+    fetchImpl: async () => { throw new DOMException('private-timeout-canary', 'TimeoutError'); } }),
+  error => error.kind === 'network' && error.detail === 'timeout' && !error.message.includes('canary'));
+});
+test('persistent Claude connection failure discards its partial draft and continues on OpenAI', async () => {
+  const ctx = fixture(['[DEV] 変更', '[COPY] 告知']);
+  try {
+    let claude = 0, openai = 0;
+    const report = await runHybrid(ctx, options(async url => {
+      if (providerOf(url) === 'anthropic') {
+        if (++claude === 1) return tool('anthropic', 'write_file', { path: 'demo.js', content: 'unfinished Claude draft' });
+        throw new TypeError('private-network-canary', { cause: Object.assign(new Error(), { code: 'ECONNRESET' }) });
+      }
+      const count = openai++;
+      if (count === 0) return tool('openai', 'write_file', { path: 'demo.js', content: 'export const recoveredByGPT=true;\n' });
+      if (count === 1) return finish('openai');
+      return finish('openai', '接続障害後の完成原稿');
+    }));
+    assert.equal(claude, 4); assert.equal(openai, 3);
+    assert.equal(report.completed.length, 2); assert.equal(report.blocked.length, 0);
+    assert.equal(report.completed[0].fallback, true);
+    assert(report.completed.every(task => task.ai === 'ChatGPT'));
+    assert.match(fs.readFileSync(path.join(ctx.repo, 'demo.js'), 'utf8'), /recoveredByGPT/);
+    assert.doesNotMatch(fs.readFileSync(path.join(ctx.repo, 'demo.js'), 'utf8'), /unfinished/);
+    assert.doesNotMatch(JSON.stringify(report), /private-network-canary/);
+  } finally { ctx.cleanup(); }
+});
+test('unusable key format stays pending without silently switching AI providers', async () => {
+  const ctx = fixture(['[COPY] 告知']);
+  try {
+    ctx.env.ANTHROPIC_API_KEY = '貼付け文字';
+    let calls = 0;
+    const report = await runHybrid(ctx, options(async () => { calls++; throw new Error('must not call API'); }));
+    assert.equal(calls, 0); assert.equal(report.completed.length, 0);
+    assert.match(report.blocked[0].reason, /invalid_key/);
+    assert.doesNotMatch(report.blocked[0].reason, /貼付け文字/);
+    assert.match(fs.readFileSync(path.join(ctx.repo, 'AI_INBOX.md'), 'utf8'), /- \[ \]/);
+  } finally { ctx.cleanup(); }
+});
+test('failure of both providers keeps tasks pending and preserves safe transport diagnostics', async () => {
+  const ctx = fixture(['[COPY] 告知']);
+  try {
+    const providers = [];
+    const report = await runHybrid(ctx, options(async url => {
+      providers.push(providerOf(url));
+      throw new TypeError('private-credential-canary', { cause: Object.assign(new Error(), { code: 'ENOTFOUND' }) });
+    }));
+    assert.deepEqual(providers, ['anthropic', 'anthropic', 'anthropic', 'openai', 'openai', 'openai']);
+    assert.equal(report.completed.length, 0); assert.equal(report.blocked.length, 1);
+    assert.match(report.blocked[0].reason, /openai: network \/ dns/);
+    assert.doesNotMatch(JSON.stringify(report), /private-credential-canary/);
+    assert.equal(fs.existsSync(path.join(ctx.repo, 'docs/ai-outputs/copy-20261120.md')), false);
+  } finally { ctx.cleanup(); }
+});
 test('o3-mini uses reasoning-compatible parameters and falls back to GPT-4o when unavailable', async () => {
   const ctx = fixture(['[GPT] [COPY] 告知']);
   try {
