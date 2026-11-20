@@ -46,6 +46,17 @@ AI 共通の進め方は `AGENTS.md`（ChatGPT / Codex もここを読む。決�
 旧Shopifyと同じURLを維持（/pages/…, /blogs/…/…, /products/vibes-carbon-shaft）。大会 `/pages/tournament/<handle>`、店 `/pages/shop/<handle>`、選手 `/pages/player/<名前>`。
 多言語は `/en /ko /zh /vi` に同じページ＋`static/i18n` の辞書翻訳。
 
+## AI_INBOX の自動実装（2026-11-20 運営者指定）
+- 初回の受付ファイルは運営者指定の「# VIBES AI INBOX」「## 待機中タスク」「## 完了済みログ」。受付は [DEV]「VIBES DIGITAL LABにW3C Queen Cupモード（持ち点25点・エクステンション2回）を追加」と [COPY]「E-placeの15秒CM用キャッチコピー3案を作成」の2件。ここへの登録は未実装の受付であり、完了済みの意味ではない。W3Cの25点・2回は今回指定された新モードの要件として扱い、既存の予選・決勝の形式を上書きしない。
+- ルートの AI_INBOX.md の行頭「- [ ]」が受付タスク。main への同ファイルの push で .github/workflows/auto-ai-worker.yml が起動する。コード枠の中の例は受付に含めない。CLAUDE.md → HANDOFF.md → AGENTS.md の順に読む。
+- 1回の受付分をタスク単位で処理する。scripts/ai-worker.js がAPIのツール呼出しでリポジトリ内のテキスト変更を作る。行頭のタグは [DEV] またはタグなし＝コード編集、[COPY]＝完成原稿を docs/ai-outputs/copy-YYYYMMDD.md へ追記、[GPT]＝最初からOpenAI。[GPT]はほかのタグと併用でき、[COPY]と[DEV]は併用しない。日付は日本時間。Shopify本番等のリポジトリ外は操作しない。
+- ANTHROPIC_API_KEY と OPENAI_API_KEY はGitHub Secretsだけを参照する。標準はClaude API優先、Claudeのキーがない場合はOpenAI。Claudeのクレジット・利用上限エラーでは、そのタスクの途中変更を破棄してOpenAIへ切り替える。[GPT]は常にOpenAI。認証不良は未完了、通常の429や一時障害は同じAPIで最大2回再試行する。切替先のキー・利用枠がなければ完了扱いにしない。
+- 標準モデルはClaude claude-sonnet-5-5とOpenAI gpt-4o。Repository variables の AI_WORKER_CLAUDE_MODEL / AI_WORKER_OPENAI_MODEL で指定可。OpenAIはgpt-4o / o3-miniに対応し、o3-miniがモデル未提供の404の場合はgpt-4oで再処理する。AI実行は25分・1タスク最大40応答。金額上限は設けていないためAPIの利用枠は運営者が管理する。
+- API実行→APIキーなしの独立検証→PR作成の3ジョブ。APIキーを持つ間は生成コードを実行しない。AIにGitHub書込み用トークンを渡さず、書込みジョブでは生成コードを実行しない。
+- 実装と共通チェックに通ったものだけPR側で「- [x]」へ変更し、AI_INBOX.md末尾の完了済みログへ実行日時・使用AI・モデルを記録する。不明点・未完了はそのまま残して理由を日本語で記載する。
+- ai-auto/update-日時-実行番号-再実行番号 のブランチにPRを作る。自動マージ、mainへの直接コミット、公開操作は行わず、運営者の確認後に反映する。未完了のタスクがあればドラフトPR。同時に開く自動PRは1件まで、他の作業中の札がある場合は待機する。
+- チェック更新・共通検証・差分保存・PR作成は scripts/auto-ai-worker.mjs が担当する。APIの実呼出しなしの回帰確認は node scripts/test-auto-ai-worker.mjs と node scripts/test-ai-worker.mjs。実機未確認の範囲をPRとHANDOFF.mdに残す。
+
 ## Rules
 - 公式戦とハウストーナメントは常に分けて表示する
 - 連盟の月例会（タイトルに「月例会」）は「公式戦」と表記しない。バッジは「月例会」。記事タイトルの先頭の【公式戦】はビルド時に外す（月例会も載るため）

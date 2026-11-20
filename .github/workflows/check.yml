@@ -14,6 +14,8 @@ jobs:
         with:
           node-version: 20
       - run: node build.mjs
+      - run: node scripts/test-auto-ai-worker.mjs
+      - run: node scripts/test-ai-worker.mjs
       - run: node scripts/lab-positions.mjs --check
       - name: No built files or secrets in the change
         run: |
