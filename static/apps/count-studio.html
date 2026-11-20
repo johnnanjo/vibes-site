@@ -8,6 +8,7 @@
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://vibesbilliards.com/pages/count-studio">
 <link rel="icon" href="/img/favicon-64.png">
+<link rel="stylesheet" href="/css/queen-cup.css">
 <meta name="theme-color" content="#0E0F12">
 <style>
 /* Studio monitor: one screen = live camera in the middle, a player on each side, shot clock below. Matte black + VIBES yellow.
@@ -109,12 +110,26 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
 #rm .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}#rm .g3 button{min-height:60px;font-size:15px;border-radius:14px}#rm .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}#rm .g2 button{min-height:52px;font-size:15px;border-radius:14px}
 #rm .nx{min-height:84px;font-size:30px;background:var(--w)}
 #rm .ss{min-height:64px;font-size:18px;border:2px solid var(--y);background:transparent;border-radius:14px}
+body.queen .hd{flex-wrap:wrap}
+.hd .queen-heading{flex:1 1 100%;justify-content:space-between;padding:1vh 1vw;background:#171A22;font-size:2.2vh}
+.queen-heading>b{background:#C0FC09;color:#171A22;padding:.5em .7em;border-radius:.5em}
+.queen-heading .queen-badges{font-size:1.5vh}
+.pl .queen-extensions{grid-column:1/-1}
+.queen #ck.warn{box-shadow:inset 0 0 0 3px #E5484D}
+.bx .queen-limit{font-size:2.2vh;display:flex;align-items:center;gap:12px}
+.queen-limit input{min-height:48px;width:6em;padding:8px;background:#0E0F12;color:#F3F4EF;font:inherit;border:2px solid #3A3E4A;border-radius:10px}
+.event-view .pl input{border-color:transparent;opacity:1;-webkit-text-fill-color:currentColor}
+.event-view .pl .bt,.event-view .ft .un,.event-view .ft .nx,.event-view .ck button{display:none}
+.event-view .ft{grid-template-columns:minmax(0,1fr) auto}
+.event-view .pl .queen-extensions{display:grid}
+.event-view .pl .queen-extensions button{cursor:default}
 </style>
 </head>
 <body>
 <!-- monitor -->
 <div id="app" hidden>
   <header class="hd">
+    <div class="queen-heading" id="queenHeading" hidden><b>W3C PRE QUEEN CUP 2026</b><span id="queenInning">INN 1 / 35</span><span class="queen-badges"><span id="queenFinal" hidden>FINAL INNING<small>最終イニング</small></span><span id="queenEqual" hidden>EQUALIZING INNING<small>後攻ラストチャンス</small></span></span></div>
     <a href="/pages/count" aria-label="ホームへ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 L12 3 L21 11 M6 9.5 V20 H18 V9.5"/></svg>ホーム</a>
     <div class="tm"><small>経過時間</small><span class="num" id="el">00:00:00</span></div>
     <div class="st"><small>セット</small><span class="num" id="sets">0 − 0</span></div>
@@ -131,6 +146,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
       <label class="h">持ち点<input data-f="h" inputmode="numeric" maxlength="3" aria-label="選手Aの持ち点"></label>
       <div class="sc num" data-o="sc">0</div>
       <div class="sub"><span>アベレージ<b class="num" data-o="avg">0.000</b></span><span>連続得点<b class="num" data-o="run">0</b></span><span>ハイラン<b class="num" data-o="hr">0</b></span></div>
+      <div class="queen-extensions" data-queen-ext hidden><button type="button" data-a="ext" data-slot="0" data-player="0" aria-label="選手AのEXT 1を使う。40秒延長">EXT 1</button><button type="button" data-a="ext" data-slot="1" data-player="0" aria-label="選手AのEXT 2を使う。40秒延長">EXT 2</button></div>
       <div class="bt"><button type="button" class="pt" data-a="plus">＋1点</button><button type="button" class="mi" data-a="minus" aria-label="1点もどす">−1</button><div class="b2"><button type="button" class="ss" data-a="shot"><i></i>スーパーショット</button><button type="button" class="to" data-a="to">タイムアウト <span data-o="to">2</span></button></div></div>
     </section>
     <section class="cam" aria-label="カメラの映像">
@@ -152,6 +168,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
       <label class="h">持ち点<input data-f="h" inputmode="numeric" maxlength="3" aria-label="選手Bの持ち点"></label>
       <div class="sc num" data-o="sc">0</div>
       <div class="sub"><span>アベレージ<b class="num" data-o="avg">0.000</b></span><span>連続得点<b class="num" data-o="run">0</b></span><span>ハイラン<b class="num" data-o="hr">0</b></span></div>
+      <div class="queen-extensions" data-queen-ext hidden><button type="button" data-a="ext" data-slot="0" data-player="1" aria-label="選手BのEXT 1を使う。40秒延長">EXT 1</button><button type="button" data-a="ext" data-slot="1" data-player="1" aria-label="選手BのEXT 2を使う。40秒延長">EXT 2</button></div>
       <div class="bt"><button type="button" class="pt" data-a="plus">＋1点</button><button type="button" class="mi" data-a="minus" aria-label="1点もどす">−1</button><div class="b2"><button type="button" class="ss" data-a="shot"><i></i>スーパーショット</button><button type="button" class="to" data-a="to">タイムアウト <span data-o="to">2</span></button></div></div>
     </section>
   </main>
@@ -166,7 +183,10 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
 <!-- menu -->
 <div class="ov" id="oMenu" hidden><div class="bx" role="dialog" aria-label="メニュー">
   <h2>メニュー</h2>
-  <p>スマホをリモコンにする：スマホのカメラで読み取ってください。モニターにさわらずに、点数・交代・スーパーショットを操作できます。</p>
+  <div class="row"><button type="button" class="y" id="queenPreset">W3C QUEEN CUP</button><button type="button" id="queenStandard">通常の設定</button></div>
+  <p id="queenPresetHint">試合前に選ぶと、25点・35イニング・40秒・EXT各2回になります。</p>
+  <label class="queen-limit" id="queenLimitWrap" hidden>上限イニング<input id="queenLimit" type="number" inputmode="numeric" min="1" max="200" value="35"></label>
+  <p id="remoteHint">スマホをリモコンにする：スマホのカメラで読み取ってください。モニターにさわらずに、点数・交代・スーパーショットを操作できます。</p>
   <div class="qr" id="qr"></div>
   <p>ショットクロックの秒数</p>
   <div class="row" id="ckSel"><button type="button" data-v="0">使わない</button><button type="button" data-v="30">30秒</button><button type="button" data-v="35">35秒</button><button type="button" data-v="40">40秒</button></div>
@@ -204,11 +224,13 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
 </div>
 
 <script src="/js/qr.js"></script>
+<script src="/js/queen-cup.js"></script>
 <script>
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var QC = window.VibesQueenCup;
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   var q = new URLSearchParams(location.search), RC = (q.get('r') || '').replace(/\D/g, '');
   var tT; function toast(t) { var e = $('toast'); e.textContent = t; e.hidden = false; clearTimeout(tT); tT = setTimeout(function () { e.hidden = true; }, 2600); }
@@ -243,79 +265,188 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff;
 
   /* ================= monitor ================= */
   $('app').hidden = false;
-  var KEY = 'vibes-studio-v1', S;
-  function blank() { return { n: ['選手A', '選手B'], h: [25, 25], sc: [0, 0], hr: [0, 0], run: 0, turn: 0, inn: 1, sets: [0, 0], len: 40, left: 40, ckOn: false, t0: 0, tEnd: 0, over: -1, toMax: 2, to: [2, 2] }; }
+  var eventMatch = String(q.get('match') || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+  var KEY = eventMatch ? 'vibes-studio-event:' + eventMatch : 'vibes-studio-v1', S;
+  document.body.classList.toggle('event-view', !!eventMatch);
+  function blank() { return { n: ['選手A', '選手B'], h: [25, 25], sc: [0, 0], hr: [0, 0], run: 0, turn: 0, inn: 1, sets: [0, 0], len: 40, left: 40, ckOn: false, t0: 0, tEnd: 0, over: -1, toMax: 2, to: [2, 2], preset: '', limit: 0, rep: false, ext: [0, 0] }; }
   try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
   if (!S || !Array.isArray(S.sc)) S = blank(); else { var d0 = blank(); for (var k0 in d0) if (S[k0] == null) S[k0] = d0[k0]; S.ckOn = false; }
   var code; try { code = localStorage.getItem('vibes-studio-room'); } catch (e) {}
   if (!/^\d{6}$/.test(code || '')) { code = String(100000 + Math.floor(Math.random() * 900000)); try { localStorage.setItem('vibes-studio-room', code); } catch (e) {} }
+  if (eventMatch) {
+    var hash = 2166136261;
+    for (var hi = 0; hi < eventMatch.length; hi++) { hash ^= eventMatch.charCodeAt(hi); hash = Math.imul(hash, 16777619) >>> 0; }
+    code = String(100000 + (hash % 900000));
+  }
   var ckT = 0; /* wall time of the last clock update */
   function store() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
-  var link = sock(code, 'display', function (m) {
+  var link = sock(code, eventMatch ? 'remote' : 'display', function (m) {
+    if (eventMatch) { takeEvent(m); return; }
     if (m.type === 'hello' || m.type === 'ctl') return push();
     if (m.type === 'key') return key(m.k);
     if (m.type === 'cmd') { if (m.c === 'shot') shot(S.turn); else if (m.c === 'clock') ckReset(true); else if (m.c === 'pause') ckPause(); else if (m.c === 'undo') undo(); else if (m.c === 'to') timeout(S.turn); }
   }, function (on) { if (on) push(); });
-  function push() { link.send({ type: 'studio', n: S.n, sc: S.sc, turn: S.turn, inn: S.inn, len: S.len, left: S.left, over: S.over }); }
+  function push() { if (eventMatch) return; link.send({ type: 'studio', n: S.n, sc: S.sc, turn: S.turn, inn: S.inn, len: S.len, left: S.left, over: S.over }); }
+  function takeEvent(message) {
+    if (message.type !== 'state' || message.m !== eventMatch || !message.p || message.p.length !== 2) return;
+    var config = message.cfg || {};
+    S.n = message.p.map(function (p) { return String(p.n); });
+    S.h = message.p.map(function (p) { return p.h | 0; });
+    S.sc = message.p.map(function (p) { return p.s | 0; });
+    S.hr = message.p.map(function (p) { return p.hr | 0; });
+    S.turn = message.turn === 1 ? 1 : 0;
+    S.inn = message.inn | 0;
+    S.run = message.p[S.turn].run | 0;
+    S.preset = QC.active(config) ? QC.id : '';
+    S.limit = config.limit | 0;
+    S.rep = !!message.rep;
+    S.toMax = config.to | 0;
+    S.to = message.p.map(function (p) { return Math.max(0, S.toMax - (p.to | 0)); });
+    S.ext = message.p.map(QC.usedMask);
+    S.len = config.clk | 0;
+    S.left = message.ck ? Math.max(0, (+message.ck.left || 0) / 1000) : S.len;
+    S.ckOn = !!(message.ck && message.ck.run);
+    ckT = Date.now();
+    S.over = message.over ? (message.over.w === -2 ? 3 : message.over.w < 0 ? 2 : message.over.w) : -1;
+    store(); draw();
+  }
+  function queenState() {
+    return { cfg: { preset: S.preset, limit: S.limit, back: true }, inn: S.inn,
+      p: [{ h: S.h[0], s: S.sc[0] }, { h: S.h[1], s: S.sc[1] }], over: S.over >= 0 };
+  }
   function two(x) { return (x < 10 ? '0' : '') + x; }
   function draw() {
+    var queen = QC.active(S), badges = QC.status(queenState());
+    document.body.classList.toggle('queen', queen);
+    $('queenHeading').hidden = !queen;
+    $('queenInning').textContent = 'INN ' + S.inn + ' / ' + S.limit;
+    $('queenFinal').hidden = !badges.final; $('queenEqual').hidden = !badges.equalizing;
+    $('queenLimitWrap').hidden = !queen;
+    if (document.activeElement !== $('queenLimit')) $('queenLimit').value = S.limit || 35;
+    $('queenLimit').disabled = !!eventMatch || !studioIdle();
+    $('queenPreset').disabled = !!eventMatch || !studioIdle();
+    $('queenStandard').disabled = !!eventMatch || !studioIdle();
+    $('queenPreset').setAttribute('aria-pressed', String(queen));
+    $('queenPresetHint').textContent = eventMatch ? 'タブレットの操作画面と同期しています。スコアとルールの操作はタブレットで行います。' : !studioIdle() ? '専用モードと上限イニングは、次の試合へ進んでから設定してください。' : '25点・35イニング・40秒・EXT各2回。持ち点と上限イニングを変更できます。';
+    $$('[data-queen-ext]').forEach(function (e) { e.hidden = !queen; });
+    $$('[data-a="ext"]').forEach(function (button) {
+      var player = +button.dataset.player, used = !!(S.ext[player] & (1 << +button.dataset.slot));
+      button.classList.toggle('used', used); button.setAttribute('aria-pressed', String(used));
+      button.disabled = !!eventMatch || used || S.turn !== player || S.over >= 0 || S.sc[player] >= S.h[player];
+    });
+    ['mNew', 'mSets'].forEach(function (id) { $(id).disabled = !!eventMatch; });
     $$('.pl').forEach(function (el) {
       var i = +el.dataset.p; el.classList.toggle('on', S.turn === i && S.over < 0);
-      var f = el.querySelector('[data-f="n"]'); if (document.activeElement !== f) f.value = S.n[i];
-      var g = el.querySelector('[data-f="h"]'); if (document.activeElement !== g) g.value = S.h[i];
+      var f = el.querySelector('[data-f="n"]'); if (document.activeElement !== f) f.value = S.n[i]; f.disabled = !!eventMatch;
+      var g = el.querySelector('[data-f="h"]'); if (document.activeElement !== g) g.value = S.h[i]; g.disabled = !!eventMatch;
       el.querySelector('[data-o="sc"]').textContent = S.sc[i];
       el.querySelector('[data-o="run"]').textContent = S.turn === i ? S.run : 0;
       el.querySelector('[data-o="hr"]').textContent = S.hr[i];
       var ni = i === 0 ? S.inn : (S.turn === 1 || S.over >= 0 ? S.inn : S.inn - 1);
       el.querySelector('[data-o="avg"]').textContent = (ni > 0 ? S.sc[i] / ni : 0).toFixed(3);
-      el.querySelector('[data-o="to"]').textContent = S.to[i]; el.querySelector('[data-a="to"]').disabled = !(S.len && S.to[i] > 0 && S.turn === i && S.over < 0); el.querySelector('[data-a="to"]').hidden = !S.toMax;
+      el.querySelector('[data-o="to"]').textContent = S.to[i]; el.querySelector('[data-a="to"]').disabled = !(S.len && S.to[i] > 0 && S.turn === i && S.over < 0); el.querySelector('[data-a="to"]').hidden = queen || !S.toMax;
     });
     $('inn').textContent = S.inn; $('sets').textContent = S.sets[0] + ' − ' + S.sets[1];
     drawCk();
     $('oWin').hidden = S.over < 0;
-    if (S.over >= 0) { $('wN').textContent = S.n[S.over]; $('wT').textContent = S.sc[0] + ' − ' + S.sc[1] + '　／　' + S.inn + ' イニング'; }
-    $$('#ckSel button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.v === S.len)); });
-    $$('#toSel button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.v === S.toMax)); });
+    $('wU').hidden = !!eventMatch; $('wNx').hidden = !!eventMatch;
+    if (S.over >= 0) { $('wN').textContent = S.over === 3 ? '両者負け' : S.over === 2 ? '引き分け' : S.n[S.over]; $('wT').textContent = S.sc[0] + ' − ' + S.sc[1] + '　／　' + S.inn + ' イニング'; }
+    $$('#ckSel button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.v === S.len)); b.disabled = !!eventMatch || (queen && b.dataset.v !== '30' && b.dataset.v !== '40'); });
+    $$('#toSel button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.v === S.toMax)); b.disabled = !!eventMatch || queen; });
     $('bUn').disabled = !hist.length; $('bUn').style.opacity = hist.length ? '' : '.35';
   }
   function drawCk() {
     var c = $('ck'); c.style.visibility = S.len ? '' : 'hidden';
     $('ckN').textContent = Math.ceil(S.left); $('ckG').style.width = (S.len ? Math.max(0, Math.min(100, S.left / S.len * 100)) : 0) + '%';
-    c.classList.toggle('warn', S.len > 0 && S.left <= 10); c.classList.toggle('zero', S.len > 0 && S.left <= 0);
+    c.classList.toggle('warn', S.len > 0 && (QC.active(S) ? S.left < 10 : S.left <= 10));
+    document.body.classList.toggle('clock-warning', QC.active(S) && S.ckOn && S.left < 10); c.classList.toggle('zero', S.len > 0 && S.left <= 0);
     $('ckP').textContent = S.ckOn ? '止める' : '動かす';
   }
   /* every scoring action can be taken back, one step at a time (kept for this sitting only) */
   var hist = [];
   function snap() { hist.push(JSON.stringify(S)); if (hist.length > 40) hist.shift(); }
-  function undo() { if (!hist.length) return; S = JSON.parse(hist.pop()); S.ckOn = false; ckT = Date.now(); save(); toast('1つ前にもどしました'); }
-  function timeout(i) { if (S.over >= 0 || i !== S.turn || !S.len || S.to[i] <= 0) return; snap(); S.to[i]--; S.left += S.len; S.ckOn = true; ckT = Date.now(); save(); toast(S.n[i] + ' のタイムアウト（残り ' + S.to[i] + '回）'); }
+  function undo() { if (eventMatch || !hist.length) return; S = JSON.parse(hist.pop()); S.ckOn = false; ckT = Date.now(); save(); toast('1つ前にもどしました'); }
+  function timeout(i, slot) {
+    if (eventMatch || S.over >= 0 || i !== S.turn || !S.len || S.to[i] <= 0) return;
+    if (QC.active(S) && S.h[i] > 0 && S.sc[i] >= S.h[i]) return;
+    var running = S.ckOn;
+    if (QC.active(S)) {
+      if (slot == null) slot = S.ext[i] & 1 ? 1 : 0;
+      if (slot !== 0 && slot !== 1 || S.ext[i] & (1 << slot)) return;
+      snap(); S.ext[i] |= 1 << slot;
+    } else snap();
+    S.to[i]--; S.left += QC.active(S) ? 40 : S.len;
+    S.ckOn = QC.active(S) ? running : true; ckT = Date.now(); save();
+    toast(S.n[i] + ' の' + (QC.active(S) ? 'EXT' : 'タイムアウト') + '（残り ' + S.to[i] + '回）');
+  }
+
   function save() { store(); draw(); push(); }
   function begin() { if (!S.t0) S.t0 = Date.now(); }
-  function ckReset(run) { S.left = S.len; S.ckOn = !!(run && S.len && S.over < 0); ckT = Date.now(); save(); }
-  function ckPause() { if (!S.len) return; S.ckOn = !S.ckOn && S.left > 0 && S.over < 0; ckT = Date.now(); save(); }
+  function ckReset(run) { if (eventMatch) return; S.left = S.len; S.ckOn = !!(run && S.len && S.over < 0); ckT = Date.now(); save(); }
+  function ckPause() { if (eventMatch || !S.len) return; S.ckOn = !S.ckOn && S.left > 0 && S.over < 0; ckT = Date.now(); save(); }
   function plus(i) {
-    if (S.over >= 0) return;
+    if (eventMatch || S.over >= 0 || (QC.active(S) && S.h[i] > 0 && S.sc[i] >= S.h[i])) return;
     if (i !== S.turn) return toast('いまは ' + S.n[S.turn] + ' の番です。番を変えるときは「交代」');
     snap(); begin(); S.sc[i]++; S.run++; if (S.run > S.hr[i]) S.hr[i] = S.run;
-    if (S.h[i] > 0 && S.sc[i] >= S.h[i]) { S.over = i; S.ckOn = false; S.tEnd = Date.now(); return save(); }
+    if (S.h[i] > 0 && S.sc[i] >= S.h[i]) {
+      if (QC.active(S) && i === 0) { S.ckOn = false; return save(); }
+      return finish(QC.active(S) && S.sc[0] >= S.h[0] ? 2 : i);
+    }
     ckReset(true);
   }
-  function minus(i) { if (S.over >= 0 || i !== S.turn || S.sc[i] <= 0) return; snap(); S.sc[i]--; if (S.run > 0) S.run--; save(); }
-  function next() { if (S.over >= 0) return; snap(); begin(); if (S.turn === 1) S.inn++; S.turn = 1 - S.turn; S.run = 0; ckReset(true); }
+  function minus(i) { if (eventMatch || S.over >= 0 || i !== S.turn || S.sc[i] <= 0) return; snap(); S.sc[i]--; if (S.run > 0) S.run--; save(); }
+  function finish(winner) { S.over = winner; S.ckOn = false; S.tEnd = Date.now(); save(); }
+  function next() {
+    if (eventMatch || S.over >= 0) return;
+    snap(); begin();
+    if (QC.active(S) && S.turn === 1) {
+      if (S.rep || (S.h[0] > 0 && S.sc[0] >= S.h[0])) return finish(S.sc[1] >= S.h[1] ? 2 : 0);
+      if (S.limit && S.inn >= S.limit) return finish(S.sc[0] === S.sc[1] ? 2 : S.sc[0] > S.sc[1] ? 0 : 1);
+    }
+    if (QC.active(S) && S.turn === 0) S.rep = S.h[0] > 0 && S.sc[0] >= S.h[0];
+    if (S.turn === 1) S.inn++;
+    S.turn = 1 - S.turn; S.run = 0; ckReset(true);
+  }
+  function studioIdle() {
+    return S.over >= 0 || (S.sc[0] === 0 && S.sc[1] === 0 && S.inn === 1 && S.turn === 0 &&
+      !S.ckOn && S.to[0] === S.toMax && S.to[1] === S.toMax && !S.ext[0] && !S.ext[1]);
+  }
+
   function key(k) { if (k === '+') plus(S.turn); else if (k === '-') minus(S.turn); else if (k === 'Enter') next(); }
-  function newGame(keepSets) { var o = S, b = blank(); b.n = o.n; b.h = o.h; b.len = o.len; b.left = o.len; b.sets = keepSets ? o.sets : [0, 0]; b.toMax = o.toMax; b.to = [o.toMax, o.toMax]; S = b; hist = []; save(); }
+  function newGame(keepSets) { var o = S, b = blank(); b.n = o.n; b.h = o.h; b.len = o.len; b.left = o.len; b.sets = keepSets ? o.sets : [0, 0]; b.toMax = o.toMax; b.to = [o.toMax, o.toMax]; b.preset = o.preset; b.limit = o.limit; S = b; hist = []; save(); }
   $$('.pl').forEach(function (el) {
     var i = +el.dataset.p;
     el.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var a = b.dataset.a; if (a === 'plus') plus(i); else if (a === 'minus') minus(i); else if (a === 'shot') shot(i); else if (a === 'to') timeout(i); });
     el.querySelector('[data-f="n"]').addEventListener('change', function () { S.n[i] = this.value.trim().slice(0, 16) || (i ? '選手B' : '選手A'); save(); });
-    el.querySelector('[data-f="h"]').addEventListener('change', function () { S.h[i] = Math.max(0, Math.min(999, parseInt(this.value, 10) || 0)); save(); });
+    el.querySelector('[data-f="h"]').addEventListener('change', function () { S.h[i] = Math.max(QC.active(S) ? 1 : 0, Math.min(999, parseInt(this.value, 10) || 0)); save(); });
+  });
+  $$('[data-a="ext"]').forEach(function (button) {
+    button.addEventListener('click', function () { timeout(+button.dataset.player, +button.dataset.slot); });
+  });
+  $('queenPreset').onclick = function () {
+    if (eventMatch || !studioIdle()) return;
+    var config = QC.preset();
+    S.preset = config.preset; S.limit = config.limit; S.h = config.h;
+    S.len = config.clk; S.toMax = config.to; newGame(true);
+    $('oMenu').hidden = true; toast('W3C QUEEN CUP MODE を設定しました');
+  };
+  $('queenStandard').onclick = function () {
+    if (eventMatch || !studioIdle()) return;
+    S.preset = ''; S.limit = 0; newGame(true);
+    $('oMenu').hidden = true; toast('通常の設定に戻しました');
+  };
+  $('queenLimit').addEventListener('change', function () {
+    if (eventMatch || !studioIdle()) return;
+    S.limit = Math.max(1, Math.min(200, parseInt(this.value, 10) || 35)); save();
   });
   $('bNx').onclick = next; $('ckR').onclick = function () { ckReset(true); }; $('ckP').onclick = ckPause;
-  $('wU').onclick = function () { if (hist.length) return undo(); var i = S.over; S.over = -1; S.sc[i]--; if (S.run > 0) S.run--; save(); };
+  $('wU').onclick = function () { if (eventMatch) return; if (hist.length) return undo(); var i = S.over; S.over = -1; if (i < 2) { S.sc[i] = Math.max(0, S.sc[i] - 1); if (S.run > 0) S.run--; } save(); };
   $('bUn').onclick = undo;
-  $('toSel').onclick = function (e) { var b = e.target.closest('button'); if (!b) return; S.toMax = +b.dataset.v; S.to = [S.toMax, S.toMax]; save(); };
-  $('wNx').onclick = function () { S.sets[S.over]++; newGame(true); };
+  $('toSel').onclick = function (e) { if (eventMatch || QC.active(S)) return; var b = e.target.closest('button'); if (!b) return; S.toMax = +b.dataset.v; S.to = [S.toMax, S.toMax]; save(); };
+  $('wNx').onclick = function () { if (S.over < 2) S.sets[S.over]++; newGame(true); };
   $('bMenu').onclick = function () {
+    $('qr').hidden = !!eventMatch;
+    if (eventMatch) $('remoteHint').textContent = '試合ID ' + eventMatch + ' を表示中。スコアはタブレットの操作画面で操作してください。';
     try { var qq = qrcode(0, 'M'); qq.addData(location.origin + location.pathname + '?r=' + code); qq.make(); $('qr').innerHTML = qq.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { $('qr').textContent = ''; }
     $('oMenu').hidden = false;
   };

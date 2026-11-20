@@ -6,6 +6,7 @@
 <title>スコア操作｜VIBES DIGITAL LAB</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/img/favicon-64.png">
+<link rel="stylesheet" href="/css/queen-cup.css">
 <style>
 /* Event scoreboard, operating side. Hidden page: opened only by its address (issued by /pages/digital-lab-admin).
    ?match=<id> keeps each table's score apart. ?cfg=<settings> (from the admin page) is taken in once per issue.
@@ -85,6 +86,16 @@ button:active{transform:scale(.97)}
 .win{font-size:max(18px,4.2vmin);font-weight:900;color:#0B192C;background:#FFD700;border-radius:1.6vmin;padding:1.2vmin}
 /* ---- phone in one hand (portrait) ---- */
 #ph{display:none}
+.queen .info{flex-wrap:wrap;overflow:visible}
+.queen .info .queen-badges{background:transparent;padding:0;font-size:1.6vh}
+.queen .info .queen-badges>span{background:#C0FC09;color:#171A22;border-radius:.6em;padding:.45em .75em}
+.queen-extensions{margin-top:.6vh}
+.ckp .queen-meter{width:100%;height:1vh}
+.setup-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left}
+.setup-fields label{display:flex;flex-direction:column;gap:6px;font-size:max(14px,2vmin)}
+.setup-fields input,.setup-fields select{min-height:48px;min-width:0;padding:10px;border:2px solid #2B4A7A;border-radius:10px;background:#0B192C;color:#fff;font:inherit;user-select:text;-webkit-user-select:text}
+.dlg button[aria-pressed="true"]{box-shadow:inset 0 0 0 3px #C0FC09}
+.dlg button:disabled{opacity:.4}
 @media (orientation:portrait){
   #app{display:none}
   html,body{overflow:auto}
@@ -127,30 +138,32 @@ button:active{transform:scale(.97)}
     <label class="mt"><small>表示名</small><input data-f="title" autocomplete="off" maxlength="60" aria-label="配信に出すタイトル" id="iTitle"></label>
     <label class="mt"><small>回戦</small><select id="sRound" aria-label="いま何回戦か"><option value="">表示しない</option><option>ゼッケン決定戦</option><option>予選リーグ</option><option>1回戦</option><option>2回戦</option><option>3回戦</option><option>敗者1回戦</option><option>敗者2回戦</option><option>敗者3回戦</option><option>準々決勝</option><option>準決勝</option><option>3位決定戦</option><option>決勝</option><option value="*">その他（入力する）</option></select><input id="iRound" maxlength="12" autocomplete="off" aria-label="回戦を入力" hidden></label>
     <div class="st" data-st><i></i><span data-o="st">つないでいます</span></div>
+    <button class="tb" type="button" data-act="setup">試合設定</button>
     <button class="tb dg" type="button" data-act="reset">リセット</button>
   </div>
-  <div class="info"><span data-o="mode"></span><span data-o="lim" hidden></span><span data-o="ckc" hidden></span><span class="ban" data-o="ban" hidden></span></div>
+  <div class="info"><span data-o="mode"></span><span data-o="lim" hidden></span><span data-o="ckc" hidden></span><span class="queen-badges" data-queen-badges hidden><span data-queen-final hidden>FINAL INNING<small>最終イニング</small></span><span data-queen-equal hidden>EQUALIZING INNING<small>後攻ラストチャンス</small></span></span><span class="ban" data-o="ban" hidden></span></div>
   <div class="main">
     <section class="pl a" data-pl="0"><div class="hd"><span class="ball" style="--b:#E9EEF5"></span><input class="nm" data-f="n0" maxlength="16" autocomplete="off" aria-label="選手A（白球）の名前"><label class="hc">（<input data-f="h0" inputmode="numeric" maxlength="3" aria-label="選手Aの試合点数">）</label><span class="run" data-run><small>連続得点</small><b data-o="run0">0</b></span></div>
-      <div class="sc"><b data-o="s0">0</b><span class="rm" data-o="r0"></span><div class="stt" data-stats><span>ハイラン<em data-o="x0">0</em></span><span>アベレージ<em data-o="v0">-</em></span></div><div class="rowb"><button class="tn" type="button" data-turn="0" data-o="tn0">この選手の番にする</button><button class="tob" type="button" data-to="0" hidden></button></div></div>
+      <div class="sc"><b data-o="s0">0</b><span class="rm" data-o="r0"></span><div class="stt" data-stats><span>ハイラン<em data-o="x0">0</em></span><span>アベレージ<em data-o="v0">-</em></span></div><div class="rowb"><button class="tn" type="button" data-turn="0" data-o="tn0">この選手の番にする</button><button class="tob" type="button" data-to="0" hidden></button></div><div class="queen-extensions" data-queen-ext hidden><button type="button" data-ext="0,0" aria-label="選手AのEXT 1を使う。40秒延長">EXT 1</button><button type="button" data-ext="0,1" aria-label="選手AのEXT 2を使う。40秒延長">EXT 2</button></div></div>
       <div class="bt"><button class="mn" type="button" data-add="0,-1" aria-label="選手Aの得点を1点へらす">−1</button><button class="pp" type="button" data-add="0,1" aria-label="選手Aに1点入れる">+1</button></div></section>
     <div class="mid">
       <div class="inn" data-inns><small>イニング</small><b data-o="inn">1</b><div><button type="button" data-inn="-1" aria-label="イニングを1つ戻す">−1</button><button type="button" data-inn="1" aria-label="イニングを1つ進める">+1</button></div></div>
-      <div class="ckp" data-ck hidden><small>ショットクロック</small><b data-o="ck">40</b><div><button class="go" type="button" data-act="ckgo" data-o="ckb">スタート</button><button type="button" data-act="ckre">戻す</button></div></div>
+      <div class="ckp" data-ck hidden><small>ショットクロック</small><b data-o="ck">40</b><span class="queen-meter" data-queen-meter hidden><i data-queen-gauge></i></span><div><button class="go" type="button" data-act="ckgo" data-o="ckb">スタート</button><button type="button" data-act="ckre">戻す</button></div></div>
       <button class="nx" type="button" data-act="next"><span data-o="nxl">交代</span><small data-o="nxt"></small></button>
     </div>
     <section class="pl b" data-pl="1"><div class="hd"><span class="ball" style="--b:#FFD700"></span><input class="nm" data-f="n1" maxlength="16" autocomplete="off" aria-label="選手B（黄球）の名前"><label class="hc">（<input data-f="h1" inputmode="numeric" maxlength="3" aria-label="選手Bの試合点数">）</label><span class="run" data-run><small>連続得点</small><b data-o="run1">0</b></span></div>
-      <div class="sc"><b data-o="s1">0</b><span class="rm" data-o="r1"></span><div class="stt" data-stats><span>ハイラン<em data-o="x1">0</em></span><span>アベレージ<em data-o="v1">-</em></span></div><div class="rowb"><button class="tn" type="button" data-turn="1" data-o="tn1">この選手の番にする</button><button class="tob" type="button" data-to="1" hidden></button></div></div>
+      <div class="sc"><b data-o="s1">0</b><span class="rm" data-o="r1"></span><div class="stt" data-stats><span>ハイラン<em data-o="x1">0</em></span><span>アベレージ<em data-o="v1">-</em></span></div><div class="rowb"><button class="tn" type="button" data-turn="1" data-o="tn1">この選手の番にする</button><button class="tob" type="button" data-to="1" hidden></button></div><div class="queen-extensions" data-queen-ext hidden><button type="button" data-ext="1,0" aria-label="選手BのEXT 1を使う。40秒延長">EXT 1</button><button type="button" data-ext="1,1" aria-label="選手BのEXT 2を使う。40秒延長">EXT 2</button></div></div>
       <div class="bt"><button class="mn" type="button" data-add="1,-1" aria-label="選手Bの得点を1点へらす">−1</button><button class="pp" type="button" data-add="1,1" aria-label="選手Bに1点入れる">+1</button></div></section>
   </div>
 </div>
 <!-- phone, portrait -->
 <div id="ph">
-  <div class="ph-top"><b data-o="ttl"></b><div class="st" data-st><i></i><span data-o="st">つないでいます</span></div></div>
+  <div class="ph-top"><b data-o="ttl"></b><button class="tb" type="button" data-act="setup">試合設定</button><div class="st" data-st><i></i><span data-o="st">つないでいます</span></div></div>
+  <div class="queen-badges" data-queen-badges hidden><span data-queen-final hidden>FINAL INNING<small>最終イニング</small></span><span data-queen-equal hidden>EQUALIZING INNING<small>後攻ラストチャンス</small></span></div>
   <div class="ph-sc">
-    <div class="ph-p a" data-pl="0"><span data-o="n0"></span><b data-o="s0">0</b><small data-o="m0"></small></div>
+    <div class="ph-p a" data-pl="0"><span data-o="n0"></span><b data-o="s0">0</b><small data-o="m0"></small><div class="queen-extensions" data-queen-ext hidden><button type="button" data-ext="0,0" aria-label="選手AのEXT 1を使う。40秒延長">EXT 1</button><button type="button" data-ext="0,1" aria-label="選手AのEXT 2を使う。40秒延長">EXT 2</button></div></div>
     <div class="ph-in"><span data-o="innl">イニング</span><b data-o="inn">1</b><span data-o="lims"></span><span class="ck" data-o="ck" data-ck hidden></span></div>
-    <div class="ph-p b" data-pl="1"><span data-o="n1"></span><b data-o="s1">0</b><small data-o="m1"></small></div>
+    <div class="ph-p b" data-pl="1"><span data-o="n1"></span><b data-o="s1">0</b><small data-o="m1"></small><div class="queen-extensions" data-queen-ext hidden><button type="button" data-ext="1,0" aria-label="選手BのEXT 1を使う。40秒延長">EXT 1</button><button type="button" data-ext="1,1" aria-label="選手BのEXT 2を使う。40秒延長">EXT 2</button></div></div>
   </div>
   <div class="ph-ban" data-o="ban" hidden></div>
   <button class="ph-b ph-plus" type="button" data-add="t,1" data-o="plus">+1<small data-o="plusn"></small></button>
@@ -169,18 +182,54 @@ button:active{transform:scale(.97)}
 <div class="dlg" id="dlg" hidden><div><b class="h">スコアとイニングを、0に戻しますか？</b><p>選手の名前と持ち点は残ります。配信とモニターの画面も、すぐに0になります。</p><nav><button class="no" type="button" data-act="dno">やめる</button><button class="ok" type="button" data-act="dok">0に戻す</button></nav></div></div>
 <div class="dlg" id="asg" hidden><div><b class="h">運営本部から、次の対戦が届きました</b><div class="win" id="asgT"></div><p>切り替えると、いまのスコアは0に戻ります。試合の途中なら「あとで」を押してください。</p><nav><button class="no" type="button" data-act="asgno">あとで（いまの試合を続ける）</button><button class="ye" type="button" data-act="asgok">この対戦に切り替える</button></nav></div></div>
 <div class="dlg" id="fin" hidden><div><b class="h">試合終了</b><div class="win" data-o="win"></div><table class="res" id="resT"></table><p data-o="why"></p><nav><button class="no" type="button" data-act="undo">結果を取り消して、試合に戻る</button><button class="ye" type="button" data-act="newgame">次の試合へ（0に戻す）</button></nav></div></div>
+<div class="dlg" id="setup" hidden><div role="dialog" aria-modal="true" aria-label="試合開始前の設定">
+  <b class="h">試合開始前の設定</b>
+  <nav><button class="ye" type="button" data-preset="w3c-queen">W3C QUEEN CUP</button><button class="no" type="button" data-preset="standard">通常の設定</button></nav>
+  <p id="setupHint"></p>
+  <div class="setup-fields">
+    <label>選手Aの持ち点<input id="setupH0" type="number" inputmode="numeric" min="0" max="999"></label>
+    <label>選手Bの持ち点<input id="setupH1" type="number" inputmode="numeric" min="0" max="999"></label>
+    <label>上限イニング<input id="setupLimit" type="number" inputmode="numeric" min="0" max="200"></label>
+    <label>ショットクロック<select id="setupClock"><option value="0">なし</option><option value="30">30秒</option><option value="35">35秒</option><option value="40">40秒</option></select></label>
+  </div>
+  <nav><button class="no" type="button" data-act="setupclose">とじる</button><button class="ye" type="button" id="setupApply" data-act="setupapply">設定を適用する</button></nav>
+</div></div>
+<script src="/js/queen-cup.js"></script>
 <script>
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); }, $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
+  var QC = window.VibesQueenCup;
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   function clean(m) { return String(m || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40); }
   /* the relay's rooms are 6-digit numbers: the match id is turned into one (same rule on the display page) */
   function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
   function qs(k) { var m = new RegExp('[?&]' + k + '=([^&#]+)').exec(location.search); return m ? decodeURIComponent(m[1]) : ''; }
   var match = clean(qs('match')) || 'test';
-  var CFG0 = { id: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: 'pts' };   /* end = what the inning cap decides: pts = more points wins (level = draw), both = neither reached the target, both lose, sd = level scores go to sudden death */
-  function cfgOf(o) { var c = {}, k; for (k in CFG0) c[k] = CFG0[k]; if (o) { c.id = String(o.id || ''); if (/^(3c|pocket|free)$/.test(o.mode)) c.mode = o.mode; c.limit = Math.max(0, Math.min(200, o.limit | 0)); c.back = !!o.back; c.clk = [0, 30, 35, 40].indexOf(o.clk | 0) >= 0 ? o.clk | 0 : 0; c.warn = o.warn !== false; c.to = Math.max(0, Math.min(3, o.to | 0)); c.stats = o.stats !== false; if (/^(alt|win|manual)$/.test(o.brk)) c.brk = o.brk; if (/^(pts|both|sd)$/.test(o.end)) c.end = o.end; } return c; }
+  var CFG0 = { id: '', preset: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: 'pts' };   /* end = what the inning cap decides: pts = more points wins (level = draw), both = neither reached the target, both lose, sd = level scores go to sudden death */
+  function cfgOf(o) {
+    var c = {}, k;
+    for (k in CFG0) c[k] = CFG0[k];
+    if (!o) return c;
+    c.id = String(o.id || '');
+    c.preset = QC.active(o) ? QC.id : '';
+    if (/^(3c|pocket|free)$/.test(o.mode)) c.mode = o.mode;
+    c.limit = Math.max(0, Math.min(200, o.limit | 0));
+    c.back = !!o.back;
+    c.clk = [0, 30, 35, 40].indexOf(o.clk | 0) >= 0 ? o.clk | 0 : 0;
+    c.warn = o.warn !== false;
+    c.to = Math.max(0, Math.min(3, o.to | 0));
+    c.stats = o.stats !== false;
+    if (/^(alt|win|manual)$/.test(o.brk)) c.brk = o.brk;
+    if (/^(pts|both|sd)$/.test(o.end)) c.end = o.end;
+    if (QC.active(c)) {
+      c.mode = '3c'; c.back = true; c.end = 'pts';
+      c.limit = c.limit || 35; c.clk = c.clk === 30 ? 30 : 40;
+      c.to = 2; c.warn = true;
+    }
+    return c;
+  }
+
   var custom = false, KEY = 'vibes-event-score:' + match, LKEY = 'vibes-event-log:' + match, S = null, ws = null, tries = 0, timer = null, LOG = [], PEND = null;
   function gid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   try { LOG = JSON.parse(localStorage.getItem(LKEY) || '[]') || []; if (!Array.isArray(LOG)) LOG = []; } catch (e) { LOG = []; }
@@ -225,14 +274,15 @@ button:active{transform:scale(.97)}
     if (!reached(i)) return;
     if (P() || !S.cfg.back) return finish(i, 'target');
     if (i === 1) return finish(reached(0) ? -1 : 1, 'target');   /* the second player ends the inning: nothing left to answer */
-    /* the first player is out: the second player still has the answering visit (ura-tsuki); "交代" starts it */
+    /* The first player's answering visit starts with 交代. Stop their clock meanwhile. */
+    if (QC.active(S.cfg)) ckSet(ckLeft(), false);
   }
   function next() {
     if (S.over) return; endRun();
     if (P()) { S.turn = S.turn ? 0 : 1; ckSet(S.cfg.clk * 1000, false); return; }
     if (S.turn === 0) { S.turn = 1; if (reached(0) && S.cfg.back) S.rep = true; }
     else {
-      if (S.rep) return finish(reached(1) ? -1 : 0, 'target');
+      if (S.rep || (QC.active(S.cfg) && S.cfg.back && reached(0))) return finish(reached(1) ? -1 : 0, 'target');
       if (S.cfg.limit && S.inn >= S.cfg.limit && !S.sd) {
         if (S.cfg.end === 'both') return finish(-2, 'limit');
         if (S.cfg.end === 'sd' && S.p[0].s === S.p[1].s) S.sd = true;   /* play goes on from the balls as they lie */
@@ -243,7 +293,7 @@ button:active{transform:scale(.97)}
     ckSet(S.cfg.clk * 1000, !!S.cfg.clk);
   }
   function add(i, d) {
-    if (S.over && d > 0) return; var p = S.p[i], was = p.s; p.s = Math.max(0, Math.min(999, p.s + d));
+    if (d > 0 && (S.over || (QC.active(S.cfg) && reached(i)))) return; var p = S.p[i], was = p.s; p.s = Math.max(0, Math.min(999, p.s + d));
     if (p.s === was) return;
     p.run = Math.max(0, p.run + d); p.hr = Math.max(p.hb | 0, p.run);   /* hb = high run before this visit, so a mistaken +1 taken back with −1 leaves no wrong high run */
     if (d > 0) {
@@ -252,12 +302,24 @@ button:active{transform:scale(.97)}
       check(i);
     } else if (S.rep && !reached(0)) S.rep = false;
   }
-  function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.sd = false; S.ck = null; S.gid = gid(); }
+  function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; p.ext = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.sd = false; S.ck = null; S.gid = gid(); }
   /* ---- drawing: every element marked data-o="key" gets the text for that key (both layouts at once) ---- */
   function put(k, v) { $$('[data-o="' + k + '"]').forEach(function (e) { if (e.textContent !== String(v)) e.textContent = v; }); }
   function show(sel, on) { $$(sel).forEach(function (e) { e.hidden = !on; }); }
   function draw() {
     var c = S.cfg, pk = P(), cur = S.p[S.turn], oth = S.p[S.turn ? 0 : 1];
+    var queen = QC.active(c), badges = QC.status(S);
+    document.body.classList.toggle('queen', queen);
+    show('[data-queen-badges],[data-queen-ext],[data-queen-meter]', queen);
+    show('[data-queen-final]', badges.final);
+    show('[data-queen-equal]', badges.equalizing);
+    $$('[data-ext]').forEach(function (button) {
+      var parts = button.dataset.ext.split(','), player = +parts[0], slot = +parts[1];
+      var used = !!(QC.usedMask(S.p[player]) & (1 << slot));
+      button.classList.toggle('used', used);
+      button.setAttribute('aria-pressed', String(used));
+      button.disabled = used || S.turn !== player || !!S.over || reached(player);
+    });
     $('iMatch').value = match;
     $$('[data-f]').forEach(function (el) { if (document.activeElement === el) return; var f = el.getAttribute('data-f'), v = f === 'title' ? S.title : f.charAt(0) === 'n' ? S.p[+f.charAt(1)].n : (S.p[+f.charAt(1)].h || ''); if (el.value !== String(v)) el.value = v; });
     [0, 1].forEach(function (i) {
@@ -266,10 +328,10 @@ button:active{transform:scale(.97)}
       put('m' + i, (p.h > 0 ? (pk ? p.h + ' 先取' : '持ち点 ' + p.h) : '') + (c.stats && !pk ? '　HR ' + p.hr : ''));
       $$('[data-pl="' + i + '"]').forEach(function (e) { e.classList.toggle('on', S.turn === i); });
       put('tn' + i, pk ? 'ブレイクにする' : 'この選手の番にする');
-      $$('[data-to="' + i + '"]').forEach(function (b) { b.hidden = !(c.to > 0 && c.clk > 0); b.disabled = S.turn !== i || p.to >= c.to || !!S.over; var lf = Math.max(0, c.to - p.to); b.textContent = (pk ? 'エクステンション' : 'タイムアウト') + ' ' + new Array(lf + 1).join('●') + new Array(Math.min(c.to, p.to) + 1).join('○') + ' 残り' + lf; });
+      $$('[data-to="' + i + '"]').forEach(function (b) { b.hidden = queen || !(c.to > 0 && c.clk > 0); b.disabled = S.turn !== i || p.to >= c.to || !!S.over; var lf = Math.max(0, c.to - p.to); b.textContent = (pk ? 'エクステンション' : 'タイムアウト') + ' ' + new Array(lf + 1).join('●') + new Array(Math.min(c.to, p.to) + 1).join('○') + ' 残り' + lf; });
     });
     put('hl', pk ? '先取' : '持ち点'); $$('[data-run]').forEach(function (e) { e.hidden = pk; }); put('ttl', S.title.split('｜')[0] + (S.round ? '　' + S.round : ''));
-    put('mode', pk ? 'ポケット（セット先取）' : c.mode === 'free' ? 'フリープレイ' : 'スリークッション' + (c.back ? '・裏撞きあり' : ''));
+    put('mode', queen ? 'W3C QUEEN CUP MODE' : pk ? 'ポケット（セット先取）' : c.mode === 'free' ? 'フリープレイ' : 'スリークッション' + (c.back ? '・裏撞きあり' : ''));
     var rem = c.limit ? Math.max(0, c.limit - S.inn) : 0, last = c.limit && S.inn >= c.limit && !S.sd;
     $$('[data-o="lim"]').forEach(function (e) { e.hidden = !c.limit || pk; e.className = last ? 'hot' : ''; e.className = last || S.sd ? 'hot' : ''; e.textContent = S.sd ? 'サドンデス（先に1点で勝ち）' : '打切り ' + c.limit + ' キュー｜' + (last ? '最終キュー' : '残り ' + rem); });
     put('lims', S.sd ? 'サドンデス' : c.limit && !pk ? (last ? '最終キュー' : '残り ' + rem) : '');
@@ -281,7 +343,7 @@ button:active{transform:scale(.97)}
     put('inn', pk ? S.p[0].s + S.p[1].s + 1 : S.inn); put('innl', pk ? 'ラック' : 'イニング');
     put('nxl', pk ? 'ブレイク交代' : (S.rep || (last && S.turn === 1)) ? '交代（試合終了）' : '交代'); put('nxt', pk ? 'いまのブレイク：' + cur.n : '次は ' + oth.n);
     put('plusn', cur.n + ' に1' + (pk ? 'セット' : '点')); $$('[data-o="plus"]').forEach(function (e) { e.classList.toggle('b', S.turn === 1); });
-    $$('[data-o="tot"]').forEach(function (b) { b.hidden = !(c.to > 0 && c.clk > 0); b.disabled = cur.to >= c.to || !!S.over; b.innerHTML = (pk ? 'エクステンション' : 'タイムアウト') + '<br>残り ' + Math.max(0, c.to - cur.to); });
+    $$('[data-o="tot"]').forEach(function (b) { b.hidden = queen || !(c.to > 0 && c.clk > 0); b.disabled = cur.to >= c.to || !!S.over; b.innerHTML = (pk ? 'エクステンション' : 'タイムアウト') + '<br>残り ' + Math.max(0, c.to - cur.to); });
     show('[data-stats]', c.stats && !pk); show('[data-inns]', !pk); show('[data-ck]', !!c.clk);
     tick(true);
     /* result */
@@ -294,8 +356,10 @@ button:active{transform:scale(.97)}
     }
   }
   function tick(force) {
-    if (!S.cfg.clk) return; var l = ckLeft(), sec = Math.ceil(l / 1000), run = !!(S.ck && S.ck.run), warn = run && l <= 10000;
+    if (!S.cfg.clk) { document.body.classList.remove('clock-warning'); return; } var l = ckLeft(), sec = Math.ceil(l / 1000), run = !!(S.ck && S.ck.run), warn = run && (QC.active(S.cfg) ? l < 10000 : l <= 10000);
     put('ck', sec); put('ckb', run ? 'ストップ' : 'スタート');
+    document.body.classList.toggle('clock-warning', QC.active(S.cfg) && warn);
+    $$('[data-queen-gauge]').forEach(function (e) { e.style.width = Math.min(100, l / (S.cfg.clk * 1000) * 100) + '%'; });
     $$('.ckp,.ph-in .ck').forEach(function (e) { e.classList.toggle('warn', warn); });
     if (run && !force) { if (sec <= 10 && sec < lastBeep && sec > 0) { lastBeep = sec; beep(880, 0.08); } if (l <= 0 && lastBeep > 0) { lastBeep = 0; beep(440, 0.9); S.ck = { left: 0, run: false, t: Date.now() }; save(); } }
   }
@@ -322,16 +386,68 @@ button:active{transform:scale(.97)}
     w.onerror = go; w.onclose = go; setTimeout(go, 1500);
   }
   /* the next pairing sent from the organiser's panel: taken at once when the table is idle (0-0 in the first inning, or a finished game); otherwise the operator decides */
-  function idle() { return !!S.over || (S.p[0].s === 0 && S.p[1].s === 0 && S.inn === 1 && S.turn === 0); }
+  function idle() {
+    return !!S.over || (S.p[0].s === 0 && S.p[1].s === 0 && S.inn === 1 && S.turn === 0 &&
+      !(S.ck && S.ck.run) && S.p.every(function (p) { return !p.to && !QC.usedMask(p); }));
+  }
   function applyAssign(a) {
     newGame(); [0, 1].forEach(function (i) { if (a.n && a.n[i]) S.p[i].n = String(a.n[i]).slice(0, 16); if (a.h && a.h[i] != null && a.h[i] !== '') S.p[i].h = Math.max(0, Math.min(999, a.h[i] | 0)); });
     if (a.round != null) { S.round = String(a.round).slice(0, 12); custom = false; } PEND = null; $('asg').hidden = true; save();
   }
   function assign(a) { if (idle()) return applyAssign(a); PEND = a; $('asgT').textContent = (a.n ? a.n[0] + '　対　' + a.n[1] : '') + (a.round ? '（' + a.round + '）' : ''); $('asg').hidden = false; }
+  var setupConfig = null;
+  function setupFields(config, targets) {
+    setupConfig = cfgOf(config);
+    var queen = QC.active(setupConfig), ready = idle();
+    $('setupH0').value = targets[0]; $('setupH1').value = targets[1];
+    $('setupLimit').value = setupConfig.limit;
+    $('setupLimit').min = queen ? '1' : '0';
+    $('setupClock').value = setupConfig.clk;
+    [].forEach.call($('setupClock').options, function (option) {
+      option.disabled = queen && option.value !== '30' && option.value !== '40';
+    });
+    $$('[data-preset]').forEach(function (button) {
+      button.setAttribute('aria-pressed', String(queen === (button.dataset.preset === QC.id)));
+      button.disabled = !ready;
+    });
+    $('setupApply').disabled = !ready;
+    $('setupHint').textContent = !ready ? '試合中です。次の試合へ進んでから設定してください。' : queen ? '25点・35イニング・40秒が既定です。EXTは1人2回、1回につき40秒延長します。' : 'この試合の設定を適用します。上限イニングの0は制限なしです。';
+  }
+  function openSetup() {
+    setupFields(S.cfg, [S.p[0].h, S.p[1].h]);
+    $('setup').hidden = false;
+  }
+  function choosePreset(id) {
+    if (!idle()) return;
+    var config = id === QC.id ? QC.preset() : cfgOf(S.cfg);
+    if (id !== QC.id) config.preset = '';
+    setupFields(config, id === QC.id ? config.h : [S.p[0].h, S.p[1].h]);
+  }
+  function applySetup() {
+    if (!idle() || !setupConfig) return;
+    setupConfig.limit = parseInt($('setupLimit').value, 10) || 0;
+    setupConfig.clk = +$('setupClock').value;
+    S.cfg = cfgOf(setupConfig);
+    [0, 1].forEach(function (i) {
+      S.p[i].h = Math.max(QC.active(S.cfg) ? 1 : 0, Math.min(999, parseInt($('setupH' + i).value, 10) || 0));
+      S.p[i].to = 0; S.p[i].ext = 0;
+    });
+    if (QC.active(S.cfg)) S.title = QC.title;
+    newGame(); $('setup').hidden = true; save();
+  }
   /* ---- actions ---- */
   document.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b || b.disabled) return; var d = b.dataset, who = function (v) { return v === 't' ? S.turn : +v; };
-    if (d.add) { var a = d.add.split(','); add(who(a[0]), +a[1]); save(); }
+    if (d.preset) choosePreset(d.preset);
+    else if (d.act === 'setup') openSetup();
+    else if (d.act === 'setupclose') $('setup').hidden = true;
+    else if (d.act === 'setupapply') applySetup();
+    else if (d.ext) {
+      var ex = d.ext.split(','), player = +ex[0], slot = +ex[1];
+      if (!QC.active(S.cfg) || S.over || player !== S.turn || reached(player) || !QC.extend(S.p[player], slot)) return;
+      ckSet(ckLeft() + 40000, S.ck ? S.ck.run : false); save();
+    }
+    else if (d.add) { var a = d.add.split(','); add(who(a[0]), +a[1]); save(); }
     else if (d.inn) { if (S.over) return; S.inn = Math.max(1, Math.min(999, S.inn + (+d.inn))); save(); }
     else if (d.turn) { if (S.over) return; if (S.turn !== +d.turn) { endRun(); S.rep = false; } S.turn = +d.turn; save(); }
     else if (d.to) { var i = who(d.to), p = S.p[i]; if (S.over || i !== S.turn || p.to >= S.cfg.to || !S.cfg.clk) return; p.to++; ckSet(ckLeft() + S.cfg.clk * 1000, S.ck ? S.ck.run : false); save(); }
@@ -349,7 +465,7 @@ button:active{transform:scale(.97)}
     var el = e.target, f = el.getAttribute && el.getAttribute('data-f'); if (!f) return; var v = el.value;
     if (f === 'title') S.title = v.slice(0, 60) || 'Pre Queen Cup 2026-2027';
     else if (f.charAt(0) === 'n') S.p[+f.charAt(1)].n = v.slice(0, 16) || (f === 'n0' ? 'PLAYER A' : 'PLAYER B');
-    else S.p[+f.charAt(1)].h = Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0);
+    else S.p[+f.charAt(1)].h = Math.max(QC.active(S.cfg) ? 1 : 0, Math.min(999, parseInt(String(v).replace(/[^0-9]/g, ''), 10) || 0));
     store(); push(); draw();
   });
   document.addEventListener('focusout', function (e) { if (e.target.getAttribute && e.target.getAttribute('data-f')) setTimeout(draw, 0); });

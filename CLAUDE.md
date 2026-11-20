@@ -42,6 +42,13 @@ AI 共通の進め方は `AGENTS.md`（ChatGPT / Codex もここを読む。決�
 - トップの天気（`static/js/home.js`）：1番目 Open-Meteo、応答がなければ2番目 MET Norway（api.met.no。2026-10 から Open-Meteo の無料APIが毎日のように止まるため 2026-11-18 に追加。出典の表示は取れたほうの名前に変わる）。地域ごとに30分キャッシュ（`localStorage` の `vb_wx_c:<緯度,経度>`）、どちらも失敗なら1日以内の前回分を表示→それもなければ天気のカードを黙って隠す（エラー文は出さない）。地域の選択は `vb_wx`
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック。`youtubeLive` に YouTube チャンネルのURLを入れると `/live`（VIBES LIVE の入口）のボタンが有効になる（空なら「準備中」）。`homeWinners` が true のときだけ、トップに「◯月の優勝者」を出す（2026-11-16 から一時的に閉鎖中＝false）
 
+## W3C QUEEN CUP 専用モード（2026-11-20 運営者指定）
+- 今回の追加指定は `W3C QUEEN CUP MODE`。プリセットのボタンは `W3C QUEEN CUP`、表示タイトルのバッジは `W3C PRE QUEEN CUP 2026`。専用モードの中では、運営者が指定した `FINAL INNING（最終イニング）`・`EQUALIZING INNING（後攻ラストチャンス）`・`EXT` の英語併記を使う。
+- 既定は選手ごとに25点、上限35イニング、裏撞きあり、40秒、EXTは1人2回。持ち点・上限イニングは画面で変更でき、クロックは30秒／40秒。EXTはクロックが30秒でも必ず40秒を加算する。使用済みの2つのボタンは個別に消灯し、試合ごとの使用状態を保存・配信する。
+- 先攻が持ち点に達したら後攻ラストチャンスの状態をすぐ表示し、「交代」で後攻の攻撃へ進む。上限イニングでは先攻・後攻とも攻撃でき、後攻の攻撃後に打ち切る。既存の持ち点制の判定に合わせ、両者あがり・打切り時の同点は引き分け。
+- 専用モードは大会用の操作画面・OBS（帯／カード）・会場モニターで同期する。スタジオモニターの `?match=<試合ID>` は大会操作画面のスコアを見るだけのモード（カメラ・リプレイはそのモニターの端末で操作）。単独のスタジオモニターでもメニューから選べる。既存の7点／10点の女王杯形式とは別の追加プリセットとして扱う。
+- 共通の設定・状態は `static/js/queen-cup.js`、専用の見た目は `static/css/queen-cup.css`。実機の確認が済むまでNEWSでは告知しない。
+
 ## URL
 旧Shopifyと同じURLを維持（/pages/…, /blogs/…/…, /products/vibes-carbon-shaft）。大会 `/pages/tournament/<handle>`、店 `/pages/shop/<handle>`、選手 `/pages/player/<名前>`。
 多言語は `/en /ko /zh /vi` に同じページ＋`static/i18n` の辞書翻訳。
