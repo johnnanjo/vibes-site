@@ -108,6 +108,16 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--chalk);font-f
 .toast{position:fixed;left:50%;bottom:9vh;transform:translateX(-50%);background:var(--chalk);color:var(--night);font-weight:900;font-size:2.4vh;border-radius:999px;padding:1vh 2vw;z-index:6}
 /* ---- v2 finish: cloth, light and depth. Colors stay on the brand tokens. ---- */
 html,body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;background:radial-gradient(120% 80% at 50% 0%,#1F2330 0%,#171A22 55%,#101218 100%) fixed}
+.top #bMatchRec.rec-on{background:var(--red);color:var(--chalk)}
+.top #bMatchRec.rec-error{border-color:var(--red);color:var(--chalk)}
+.match-rec{width:min(94vw,920px);max-height:88vh;overflow:auto}
+.match-rec p,.match-rec li{font-size:max(16px,2vh);line-height:1.65;overflow-wrap:anywhere}
+.match-rec h3{font-size:max(18px,2.3vh)}
+.match-rec .rec-note{color:var(--sub)}
+.match-rec .acts{flex-wrap:wrap}
+.match-rec button{font-size:max(16px,2vh)}
+.match-rec button:disabled{opacity:.45;cursor:default}
+.match-rec #matchRecStatus{padding:1vh 1vw;background:var(--night);border-radius:1vh}
 .top .ttl{letter-spacing:.24em;font-size:1.9vh}
 .top button,.top #bHelp{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.16);letter-spacing:.08em;font-size:1.6vh;transition:background .15s,border-color .15s}
 .top button:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.34)}
@@ -264,7 +274,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   <div class="top">
     <a href="/pages/count/" id="aHome" aria-label="メニューにもどる"><img src="/img/vibes-logo-t.png" alt="VIBES BILLIARDS"></a>
     <span class="ttl" id="ttl">3-CUSHION SCOREBOARD</span>
-    <span style="display:flex;gap:.8vw"><button type="button" id="bHome">メニュー</button><button type="button" id="bRm">リモコン</button><button type="button" id="bKey" hidden>キー設定 (K)</button><button type="button" id="bPz">一時停止</button><button type="button" id="bPl">選手</button><button type="button" id="bPr">練習時間 (P)</button><button type="button" id="bSet">設定 (/)</button><button type="button" id="bFull">全画面 (F)</button></span>
+    <span style="display:flex;gap:.8vw"><button type="button" id="bHome">メニュー</button><button type="button" id="bRm">リモコン</button><button type="button" id="bKey" hidden>キー設定 (K)</button><button type="button" id="bPz">一時停止</button><button type="button" id="bPl">選手</button><button type="button" id="bPr">練習時間 (P)</button><button type="button" id="bMatchRec" aria-controls="matchRecL">録画：切</button><button type="button" id="bSet">設定 (/)</button><button type="button" id="bFull">全画面 (F)</button></span>
   </div>
   <div class="main" id="main">
     <div class="mid" id="mid">
@@ -317,6 +327,20 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   </form>
 </div>
 
+<div class="over-l" id="matchRecL" hidden>
+  <section class="panel match-rec" role="dialog" aria-modal="true" aria-labelledby="matchRecTitle">
+    <h2 id="matchRecTitle">試合の自動録画</h2>
+    <p>固定したカメラの映像を、試合ごとにこのPCへ保存します。画面を開いたら保存先を一度選んでください。</p>
+    <p><b>試合開始で録画、試合終了で自動保存。</b>練習・選手登録中は録画せず、裏撞きが終わるまで録画を続けます。試合の一時停止中も録画は続きます。</p>
+    <p>録画するのは中央のカメラ映像です（音声なし）。この端末のカメラ・OBS仮想カメラ・受信したスマホ映像に対応します。</p>
+    <p>保存先：<b id="matchRecFolder">未選択</b></p>
+    <p id="matchRecStatus" role="status" aria-live="polite">自動録画は切になっています。</p>
+    <div class="acts"><button type="button" class="btn go" id="matchRecArm">保存先を選んで自動録画を入れる</button><button type="button" class="btn" id="matchRecOff" disabled>自動録画を切る</button></div>
+    <p class="rec-note">途中で有効にした場合は、その時点からの録画です。カメラの接続が切れた場合は途中まで保存し、映像が戻ると続きのファイルを作ります。保存が終わるまで、この画面を閉じずにお使いください。</p>
+    <div id="matchRecRecent" hidden><h3>この画面で保存した動画</h3><ul id="matchRecFiles"></ul></div>
+    <div class="acts"><button type="button" class="btn" id="matchRecClose">閉じる (Esc)</button></div>
+  </section>
+</div>
 <button type="button" id="pzB" hidden>一時停止中<small>押すと再開（Enter）</small></button>
 <div class="over-l" id="winL" hidden>
   <div class="panel win" role="dialog" aria-label="Game over">
@@ -362,6 +386,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
 
 <script src="/js/qr.js"></script>
 <script src="/js/names.js"></script>
+<script src="/js/match-recorder.js"></script>
 <script>
 (function () {
   var MIR = /[?&]mir=1/.test(location.search);
@@ -385,7 +410,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   var PCOL = ['#FFFFFF', '#F2C200', '#E5484D', '#35C486'], PCN = ['白', '黄', '赤', '緑'];
   var isDefName = function (v) { return /^PLAYER [1-4]$/.test(v || ''); };
   var def = function (c) { c = c || { n: ['PLAYER 1', 'PLAYER 2'], g: [25, 25], lim: 0, t: 40, eq: 1, snd: 1, pm: 5, to: 0 }; var N = c.n.length, z = function (f) { var a = []; for (var i = 0; i < N; i++) a.push(f()); return a; };
-    return { cfg: c, sc: z(function () { return 0; }), inn: z(function () { return []; }), to: z(function () { return c.to; }), run: 0, typed: false, turn: 0, over: false, t0: 0, t1: 0, ready: false }; };
+    return { cfg: c, sc: z(function () { return 0; }), inn: z(function () { return []; }), to: z(function () { return c.to; }), run: 0, typed: false, turn: 0, over: false, t0: 0, t1: 0, ready: false, recordId: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10) }; };
   var NP = function () { return S.cfg.n.length; };
   var fresh = function () { return !S.run && !S.over && S.inn.every(function (a) { return !a.length; }); };
   function setN(n) { n = Math.max(2, Math.min(4, n)); var c = S.cfg; while (c.n.length < n) { c.n.push('PLAYER ' + (c.n.length + 1)); c.g.push(c.g[0] || 25); } c.n.length = n; c.g.length = n; var h = hist; S = def(c); hist = h; }
@@ -441,7 +466,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   function rdStart() { if (!S.ready) return; S.ready = false; begin(); render(); }
   function gtText() { if (!S.t0) return '0:00'; var v = Math.max(0, Math.floor(((S.over && S.t1 ? S.t1 : S.pz || Date.now()) - S.t0) / 1000)), h = Math.floor(v / 3600), m = Math.floor(v % 3600 / 60), x = v % 60, z = function (n) { return (n < 10 ? '0' : '') + n; }; return h ? h + ':' + z(m) + ':' + z(x) : m + ':' + z(x); }
   function drawTime() { var t = gtText(), e = $('gt'); if (e.textContent !== t) { e.textContent = t; e.classList.toggle('long', t.length > 5); } }
-  var begin = function () { if (!S.t0) S.t0 = Date.now(); };
+  var begin = function () { if (!S.t0) S.t0 = Date.now(); matchRecSync(); };
   function render() {
     var N = NP(); if (built !== N) build();
     for (var p = 0; p < N; p++) {
@@ -461,7 +486,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     $('inn').textContent = S.inn[S.turn].length + (S.over ? 0 : 1);
     $('lim').textContent = S.cfg.lim ? '制限 ' + S.cfg.lim : '';
     $('tbox').hidden = !S.cfg.t;
-    rdDraw(); drawTime(); drawTimer(); save(); if (typeof rmPush === 'function') rmPush();
+    rdDraw(); drawTime(); drawTimer(); save(); if (typeof rmPush === 'function') rmPush(); matchRecSync();
   }
   function drawTimer() {
     var T = S.cfg.t || 1, v = tOn ? Math.max(0, Math.ceil(tLeft)) : (tHold > 0 ? Math.ceil(tHold) : S.cfg.t);
@@ -940,6 +965,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   $('bKey').onclick = kmOpen;
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!$('matchRecL').hidden) { if (e.key === 'Escape') { e.preventDefault(); matchRecClose(); } return; }
     if (KM) { e.preventDefault(); kmKey(e); return; }
     if (!$('rmL').hidden) { if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); $('rmL').hidden = true; } return; }
     if (TB) {
@@ -956,6 +982,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     onKey(e.key, e);
   });
   function onKey(k, e) {
+    if (!$('matchRecL').hidden) return;
     if (S.pz && !S.over) { if (k === 'Enter') { if (e && e.preventDefault) e.preventDefault(); pzOff(); } return; }
     if (!$('setL').hidden) { if (k === 'Escape') { e.preventDefault(); closeSet(false); } else if (k === '/' && e.target.type === 'number') e.preventDefault(); return; }
     if (W) { if (wzKey(k)) e.preventDefault(); return; }
@@ -1044,9 +1071,45 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   var qg = /[?&]g=(band|three)/.exec(location.search); if (qg && (S.cfg.game || 'three') !== qg[1]) { var cg = S.cfg; cg.game = qg[1]; S = def(cg); hist = []; S.ready = !cg.n.every(isDefName); }
   if (S.cfg.game === 'band') { $('ttl').textContent = (TB ? 'TABLE ' + TB + ' · ' : '') + 'BAND GAME'; document.title = 'バンド デジタルカウント｜VIBES BILLIARDS'; }
   if (!MIR) { menuInit(); tourInit(); }
+  /* ---- full-match automatic recording (the monitor's PC only) ---- */
+  var matchRecorder = null;
+  function matchRecDraw(info) {
+    var label = info.phase === 'recording' ? '録画中 ' + Math.floor(info.seconds / 60) + ':' + String(info.seconds % 60).padStart(2, '0') :
+      info.phase === 'saving' ? '録画：保存中' : info.phase === 'starting' ? '録画：開始中' : info.phase === 'error' ? '録画：要確認' : info.enabled ? '録画：待機' : '録画：切';
+    $('bMatchRec').textContent = label;
+    $('bMatchRec').classList.toggle('rec-on', info.phase === 'recording');
+    $('bMatchRec').classList.toggle('rec-error', info.phase === 'error');
+    $('matchRecFolder').textContent = info.folder || '未選択';
+    $('matchRecStatus').textContent = info.supported ? (info.message || '自動録画は切になっています。') : '自動保存はPC版ChromeまたはEdgeで使ってください。';
+    $('matchRecArm').disabled = !info.supported || info.busy || info.selecting;
+    $('matchRecOff').disabled = !info.enabled || info.selecting;
+  }
+  function matchRecSync() {
+    if (!matchRecorder || MIR) return;
+    var video = $('camV'), stream = video.readyState >= 2 && video.videoWidth ? video.srcObject : null;
+    var game = window.VibesMatchRecorder.gameOf(S, stream, MIR); game.table = TB;
+    matchRecorder.update(game); matchRecDraw(matchRecorder.info());
+  }
+  function matchRecClose() { $('matchRecL').hidden = true; $('bMatchRec').focus(); }
+  if (!MIR && window.VibesMatchRecorder) {
+    matchRecorder = window.VibesMatchRecorder.create({ onChange: matchRecDraw, onSaved: function (file) {
+      var row = document.createElement('li'); row.textContent = file.name + '（' + (file.bytes / 1048576).toFixed(1) + ' MB' + (file.partial ? '・一部録画' : '') + '）';
+      $('matchRecFiles').prepend(row);
+      while ($('matchRecFiles').children.length > 8) $('matchRecFiles').lastChild.remove();
+      $('matchRecRecent').hidden = false;
+    } });
+    $('bMatchRec').onclick = function () { matchRecDraw(matchRecorder.info()); $('matchRecL').hidden = false; $('matchRecClose').focus(); };
+    $('matchRecClose').onclick = matchRecClose;
+    $('matchRecArm').onclick = function () { matchRecSync(); matchRecorder.arm(); };
+    $('matchRecOff').onclick = function () { matchRecorder.disable(); };
+    window.addEventListener('beforeunload', function (e) { if (matchRecorder.info().busy) { e.preventDefault(); e.returnValue = ''; } });
+    setInterval(matchRecSync, 500); matchRecSync();
+  } else $('bMatchRec').hidden = true;
+
   /* ---- live camera in the middle of the board ----
      A setting of this device only (vibes-count-prefs.cam): the picture of a webcam, or of OBS's virtual camera, between the two players.
-     Nothing is recorded and nothing leaves the device. Mirrors (tablets showing the board) never start a camera. */
+     Recording is opt-in through the controller above; files stay in the chosen PC folder.
+     Mirrors (tablets showing the board) never start a camera. */
   function camPref(v) { var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } if (v == null) return o.cam === 2 || o.cam === 3 ? o.cam : o.cam ? 1 : 0; o.cam = v === 2 || v === 3 ? v : v ? 1 : 0; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} camSync(); }
   var camSt = null, camBusy = false, camDevs = [], camI = 0, camP = {}; try { camP = JSON.parse(localStorage.getItem('vibes-3c-cam') || '{}') || {}; } catch (e) { camP = {}; }
   function camSave() { try { localStorage.setItem('vibes-3c-cam', JSON.stringify(camP)); } catch (e) {} }
