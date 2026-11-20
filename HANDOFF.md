@@ -39,6 +39,12 @@ AI どうし・AI と運営者のあいだの引きつぎ用です。**作業の
 - 古い資料（運営マニュアル・図解ガイド・ご承諾のお願い）を、いまの形式と正式な大会名に合わせるか
 
 ## 記録（新しいものを上に）
+### 2026-11-20 — AI_INBOX 自動実装
+- 実装と共通チェック成功: 0件。未完了: 2件。
+- 実施した共通チェック: node build.mjs / node scripts/lab-positions.mjs --check / node scripts/test-auto-ai-worker.mjs / node scripts/test-ai-worker.mjs / git diff --check。
+- 実機・本番で未確認: 実機操作と本番公開は未確認です。
+- 変更はPRで運営者確認後に反映。mainへの直接コミット・公開操作は行っていません。
+
 ### 2026-11-20 — GitHubへの登録とPR #1提出（ChatGPT / Codex）
 - 接続済みChromeのjohnnanjoアカウントで認証を確認し、codex/auto-ai-worker-20261120 ブランチにAI_INBOX・ワークフロー・実行スクリプト・回帰テスト・共通ルールをコミット。PR #1を作成した： https://github.com/johnnanjo/vibes-site/pull/1 。mainにはマージしていない。
 - 指定のAI_INBOX本文は変更せず、待機中の2件を未処理のまま登録。実装8ファイルはgit fetch後にローカルの検証済み内容とのバイト一致を確認。引きつぎ帳もこのコミットで更新する。
