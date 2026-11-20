@@ -29,16 +29,10 @@
 #dcR li i.ok{background:var(--line2);color:var(--night)}
 #dcR li i.buy{background:var(--night);color:var(--chalk)}
 #dcR li small{display:block;color:var(--sub);font-size:13px}
-#dcR .fee{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
-#dcR .fee b{font-family:var(--disp);font-size:44px;line-height:1}
-#dcR .fee span{font-size:14px;font-weight:700}
-#dcR table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
-#dcR td{padding:7px 0;border-top:1px solid var(--line2)}
-#dcR td:last-child{text-align:right;font-weight:700;white-space:nowrap}
 #dcR .act{display:flex;flex-wrap:wrap;gap:8px}
 #dcR .note{font-size:13px;color:var(--sub);margin:0}
 </style>
-<div class="band" style="background:var(--night)"><div class="wrap band-in"><p class="crumb"><a href="/" style="color:#fff">トップ</a>　<a href="/pages/digital-lab" style="color:#fff">DIGITAL LAB</a></p><div class="ph" style="padding-top:0"><h1>DIGITAL LAB 導入診断</h1><p style="color:#fff;opacity:.85">お店にあるものを選ぶだけ。今のままで使えるか、買い足すもの、毎月の費用のめやすが分かります。1分で終わります。</p></div></div></div>
+<div class="band" style="background:var(--night)"><div class="wrap band-in"><p class="crumb"><a href="/" style="color:#fff">トップ</a>　<a href="/pages/digital-lab" style="color:#fff">DIGITAL LAB</a></p><div class="ph" style="padding-top:0"><h1>DIGITAL LAB 導入診断</h1><p style="color:#fff;opacity:.85">お店にあるものを選ぶだけ。今のままで使えるか、買い足す機材、設定のお手伝いの方法が分かります。1分で終わります。</p></div></div></div>
 <main class="wrap"><section class="sec">
 <form class="dc" id="dcF" novalidate>
 <fieldset><legend><i>1</i>スリークッションの台は何台ですか</legend><span class="hint">DIGITAL LAB を使いたい台の数です。</span>
@@ -53,7 +47,7 @@
 <div class="op"><label><input type="radio" name="tab" value="yes"><span>ある</span></label><label><input type="radio" name="tab" value="no"><span>ない</span></label></div></fieldset>
 <fieldset><legend><i>6</i>テンキーはありますか</legend><span class="hint">数字だけの小さなキーボードです。点数を入れるのに使います。</span>
 <div class="op"><label><input type="radio" name="key" value="yes"><span>台数ぶんある</span></label><label><input type="radio" name="key" value="no"><span>ない・足りない</span></label></div></fieldset>
-<fieldset><legend><i>7</i>スタジオモニターを使いたいですか</legend><span class="hint">台のライブ映像と点数を1画面に出し、直前のプレーをその場でリプレイできる機能です（別料金）。</span>
+<fieldset><legend><i>7</i>スタジオモニターを使いたいですか</legend><span class="hint">台のライブ映像と点数を1画面に出し、直前のプレーをその場でリプレイできる機能です。</span>
 <div class="op"><label><input type="radio" name="st" value="no"><span>使わない</span></label><label><input type="radio" name="st" value="one"><span>1台で使いたい</span></label><label><input type="radio" name="st" value="all"><span>全部の台で使いたい</span></label></div></fieldset>
 <fieldset><legend><i>8</i>お店はどちらですか</legend><span class="hint">設定のお手伝いの方法が変わります。</span>
 <div class="op"><label><input type="radio" name="area" value="tokyo"><span>東京都内</span></label><label><input type="radio" name="area" value="other"><span>東京都以外</span></label></div></fieldset>
@@ -67,7 +61,6 @@
   var $ = function (i) { return document.getElementById(i); }, F = $('dcF'), n = 2;
   var Q = [['net', 2], ['mon', 3], ['pc', 4], ['tab', 5], ['key', 6], ['st', 7], ['area', 8]];
   function val(k) { var e = F.querySelector('input[name="' + k + '"]:checked'); return e ? e.value : ''; }
-  function yen(v) { return String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   F.addEventListener('click', function (e) { var b = e.target.closest('[data-n]'); if (!b) return; n = Math.max(1, Math.min(20, n + (+b.getAttribute('data-n')))); $('dcN').textContent = n; });
   F.addEventListener('submit', function (e) {
@@ -100,19 +93,15 @@
     if (a.net === 'no') { head = 'まず、インターネットの用意が必要です'; body = '回線を用意できれば、DIGITAL LAB を使えます。ほかに必要なものは、下の一覧をごらんください。'; }
     else if (!buy) { head = '今あるもので、すぐに使えます'; body = '買い足すものはありません。お申し込みから使えるまで、約1週間です。'; }
     else { head = '下のものを用意すれば使えます'; body = '「用意が必要です」と出たもの（' + buy + 'つ）をそろえてください。どれを買えばよいか分からないときは、公式LINE でご相談ください。'; }
-    /* fee (all excluding tax) */
-    var base = 10000, extra = Math.max(0, n - 4) * 3000, sfee = st * 2000, total = base + extra + sfee;
-    var rows = '<tr><td>月額使用料（4台まで）</td><td>10,000円</td></tr>' + (extra ? '<tr><td>5台目から（' + (n - 4) + '台 × 3,000円）</td><td>' + yen(extra) + '円</td></tr>' : '') + (sfee ? '<tr><td>スタジオモニター（' + st + '台 × 2,000円）</td><td>' + yen(sfee) + '円</td></tr>' : '') + '<tr><td>初期導入費</td><td>0円</td></tr><tr><td>カスタマイズ</td><td>月額に含みます</td></tr>';
-    var sup = a.area === 'tokyo' ? '東京都内のお店は、訪問して設定をお手伝いします（無料）。土日は、リモートでのご案内になることがあります。' : '東京都以外のお店は、リモート（公式LINE・ビデオ通話など）で設定をご案内します。';
+    var sup = a.area === 'tokyo' ? '東京都内のお店は、訪問して設定をお手伝いします。土日は、リモートでのご案内になることがあります。' : '東京都以外のお店は、リモート（公式LINE・ビデオ通話など）で設定をご案内します。';
     var L = { net: { wifi: 'Wi-Fi あり', lan: '有線のみ', no: 'なし' }, mon: { all: '台数ぶんあり', some: '一部あり', no: 'なし' }, pc: { all: '台数ぶんあり', some: '一部あり', no: 'なし' }, tab: { yes: 'あり', no: 'なし' }, key: { yes: 'あり', no: 'なし・不足' }, st: { no: '使わない', one: '1台', all: '全部の台' }, area: { tokyo: '東京都内', other: '東京都以外' } };
-    var msg = '【デジラボ相談】導入診断の結果\n店名：\n台数（キャロム）：' + n + '台\nインターネット：' + L.net[a.net] + '\nモニター：' + L.mon[a.mon] + '\nパソコン：' + L.pc[a.pc] + '\nタブレット：' + L.tab[a.tab] + '\nテンキー：' + L.key[a.key] + '\nスタジオモニター：' + L.st[a.st] + '\n地域：' + L.area[a.area] + '\n月額のめやす：' + yen(total) + '円（税別）\nご要望：';
+    var msg = '【デジラボ相談】導入診断の結果\n店名：\n台数（キャロム）：' + n + '台\nインターネット：' + L.net[a.net] + '\nモニター：' + L.mon[a.mon] + '\nパソコン：' + L.pc[a.pc] + '\nタブレット：' + L.tab[a.tab] + '\nテンキー：' + L.key[a.key] + '\nスタジオモニター：' + L.st[a.st] + '\n地域：' + L.area[a.area] + '\nご要望：';
     var R = $('dcR');
     R.innerHTML = '<div class="v"><span class="k">診断の結果（' + n + '台）</span><b>' + head + '</b><p>' + body + '</p></div>'
       + '<div class="bx"><h3>用意するもの</h3><ul>' + items.join('') + '</ul></div>'
-      + '<div class="bx"><h3>毎月の費用のめやす</h3><div class="fee"><b>' + yen(total) + '</b><span>円／月（税別）</span></div><table>' + rows + '</table><p class="note" style="margin-top:10px">最初の1ヶ月は無料でお試しいただけます。お試しのあと、続けてご利用の場合は半年間のご契約になります。' + (n >= 10 ? ' 10台以上のお店は、進め方をご相談させてください。' : '') + '</p></div>'
       + '<div class="bx"><h3>設定のお手伝い</h3><p style="margin:0;font-size:15px;line-height:1.8">' + sup + '</p></div>'
       + '<div class="bx"><h3>この結果で相談する</h3><div class="act"><a class="btn btn-sm" style="background:#06C755;color:#fff" target="_blank" rel="noopener" href="https://line.me/R/oaMessage/%40361mehjz/?' + encodeURIComponent(msg) + '">公式LINE に結果を送る</a><a class="btn btn-sm" style="background:var(--night);color:var(--chalk)" href="/pages/contact?about=digital-lab">フォームで相談する</a><a class="btn btn-sm" style="background:var(--chalk);color:var(--night);border:1px solid var(--line)" href="/pages/digital-lab">紹介ページへ戻る</a></div><p class="note" style="margin-top:10px">公式LINE のボタンを押すと、診断の結果が入ったメッセージの下書きがひらきます。店名とご要望を書きたして送ってください。</p></div>'
-      + '<p class="note">この診断はめやすです。機材の型や回線の強さによって、変わることがあります。金額はすべて税別です。</p>';
+      + '<p class="note">この診断はめやすです。機材の型や回線の強さによって、変わることがあります。</p>';
     R.hidden = false; R.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 })();
