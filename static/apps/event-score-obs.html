@@ -6,6 +6,7 @@
 <title>スコア表示｜VIBES DIGITAL LAB</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/img/favicon-64.png">
+<link rel="stylesheet" href="/css/queen-cup.css">
 <style>
 /* Event scoreboard, showing side (no controls). ?match=<id> the same id as /event-score-pad.
    Default: one wide band across the top of the picture for OBS (browser source 1920x1080, transparent ground).  ?pos=bl band at the bottom.
@@ -98,13 +99,30 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
 /* standings / bracket shown over the whole picture between games */
 #bd{position:fixed;inset:0;width:100vw;height:100vh;border:0;z-index:8;background:#0B192C}
 #msg{position:fixed;left:40px;top:40px;background:#0B192C;color:#fff;font-weight:800;font-size:22px;line-height:1.7;padding:16px 20px;border-radius:14px;max-width:900px}
+.ck{position:relative}.ck b{font:inherit}
+.ck .queen-meter{position:absolute;left:8%;bottom:5px;width:84%;height:5px}
+body.queen .hd{background:#171A22}
+body.queen #tt{display:inline-block;background:#C0FC09;color:#171A22;border-radius:6px;padding:6px 10px;font-size:21px;letter-spacing:.02em}
+body.queen .hd .tw{gap:5px}
+body.queen .queen-badges{font-size:14px;letter-spacing:0}
+body.queen.bar #card{height:112px}
+body.queen.bar .hd{max-width:520px;padding:8px 14px}
+body.queen.bar .in{padding:0 14px;gap:8px}
+body.queen.bar .rw{gap:7px;padding-right:12px}
+body.queen.bar .rw .n{font-size:26px}
+body.queen .rw .o{align-items:center;font-weight:900;font-size:13px}
+body.queen .rw .o::before{content:'EXT';margin-right:3px}
+body.queen.mon .hd .tw{flex-direction:column;align-items:flex-start}
+body.queen.mon #tt{font-size:3.5vh}
+body.queen.mon .queen-badges{font-size:1.8vh}
+body.queen.mon .rw .o{font-size:2.4vh}
 </style>
 </head>
 <body>
 <div id="card" hidden>
-  <div class="hd"><span class="tw"><span id="tt">Pre Queen Cup 2026-2027</span><small id="ts" hidden></small></span><span id="rd" hidden></span></div>
+  <div class="hd"><span class="tw"><span id="tt">Pre Queen Cup 2026-2027</span><small id="ts" hidden></small><span class="queen-badges" id="queenBadges" hidden><span id="queenFinal" hidden>FINAL INNING<small>最終イニング</small></span><span id="queenEqual" hidden>EQUALIZING INNING<small>後攻ラストチャンス</small></span></span></span><span id="rd" hidden></span></div>
   <div class="in"><small id="inl">INN</small><span class="ic"><span class="iv"><b id="inn">1</b><span id="of" hidden></span></span><em id="lim" hidden></em></span></div>
-  <div class="ck" id="ck"></div>
+  <div class="ck" id="ck"><b id="ckNumber"></b><span class="queen-meter" id="queenMeter" hidden><i id="queenGauge"></i></span></div>
   <div class="rw a" id="rA"><i></i><span class="n"><span class="d"></span><span id="nA">PLAYER A</span></span><span class="h" id="hA"></span><span class="o" id="oA"></span><span class="x" id="xwA">HR<b id="xA">0</b></span><span class="s" id="sA">0</span></div>
   <div class="rw b" id="rB"><i></i><span class="n"><span class="d"></span><span id="nB">PLAYER B</span></span><span class="h" id="hB"></span><span class="o" id="oB"></span><span class="x" id="xwB">HR<b id="xB">0</b></span><span class="s" id="sB">0</span></div>
   <div class="sp" id="sp" hidden><small>協賛</small></div>
@@ -112,10 +130,12 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
 <div id="fin" hidden><div class="t">試合終了</div><div class="w" id="fw"></div><table id="ft"></table><div class="y" id="fy"></div></div>
 <iframe id="bd" title="リーグ表・トーナメント表" hidden></iframe>
 <div id="msg" hidden></div>
+<script src="/js/queen-cup.js"></script>
 <script>
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); }, q = location.search;
+  var QC = window.VibesQueenCup, queen = false, clockLength = 0;
   var WSH = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
   function clean(m) { return String(m || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40); }
   function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
@@ -145,7 +165,15 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
   function draw(m, live) {
     if (!m || m.type !== 'state' || !m.p || m.p.length !== 2 || (m.m && m.m !== match)) return;
     var g = m.cfg || {}, pk = g.mode === 'pocket', stats = g.stats !== false && !pk;
+    queen = QC.active(g); clockLength = g.clk | 0;
+    document.body.classList.toggle('queen', queen);
+    var badges = QC.status(m);
+    $('queenBadges').hidden = !queen;
+    $('queenFinal').hidden = !badges.final;
+    $('queenEqual').hidden = !badges.equalizing;
+    $('queenMeter').hidden = !queen;
     var tp = String(m.title || 'Pre Queen Cup 2026-2027').split('｜'); $('tt').textContent = tp[0]; $('ts').textContent = tp[1] || ''; $('ts').hidden = !tp[1]; $('rd').textContent = m.round || ''; $('rd').hidden = !m.round;
+    if (queen) $('tt').textContent = QC.title;
     $('inl').textContent = pk ? 'RACK' : 'INN'; $('inn').textContent = pk ? (m.p[0].s | 0) + (m.p[1].s | 0) + 1 : m.inn;
     /* inning as "12 / 35" when the match has a cap; the badge lights only for the moments that matter: the last inning, and the second player's reply after the first has reached the target */
     var lim = g.limit | 0, le = $('lim'), of = $('of'); of.hidden = !lim || pk || !!m.sd; of.textContent = '/ ' + lim;
@@ -154,7 +182,13 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
     [['A', 0], ['B', 1]].forEach(function (x) {
       var p = m.p[x[1]]; $('n' + x[0]).textContent = p.n; $('s' + x[0]).textContent = p.s; $('h' + x[0]).textContent = p.h > 0 ? '(' + p.h + ')' : ''; $('x' + x[0]).textContent = p.hr | 0; $('xw' + x[0]).hidden = !stats;
       $('r' + x[0]).classList.toggle('on', m.turn === x[1] && !m.over);
-      var o = '', n = g.clk ? g.to | 0 : 0; for (var k = 0; k < n; k++) o += '<u' + (k < (p.to | 0) ? ' class="used"' : '') + '></u>'; $('o' + x[0]).innerHTML = o;
+      var o = '', n = g.clk ? g.to | 0 : 0;
+      for (var k = 0; k < n; k++) {
+        var used = queen ? !!(QC.usedMask(p) & (1 << k)) : k < (p.to | 0);
+        o += '<u' + (used ? ' class="used"' : '') + '></u>';
+      }
+      $('o' + x[0]).innerHTML = o;
+      $('o' + x[0]).setAttribute('aria-label', (queen ? 'EXT ' : 'タイムアウト ') + Math.max(0, n - (p.to | 0)) + '回残り');
     });
     c.classList.toggle('turn', !m.over);
     /* shot clock: counted here from the moment the message arrived, so the two devices' clocks need not agree */
@@ -168,7 +202,16 @@ body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw
     boardShow(!!m.over && live !== false);
     c.hidden = false; $('msg').hidden = true; try { localStorage.setItem(KEY, JSON.stringify(m)); } catch (e) {}
   }
-  function tick() { var e = $('ck'); if (!CK) { e.textContent = ''; return; } var l = Math.max(0, CK.run ? CK.left - (Date.now() - CK.at) : CK.left); e.textContent = Math.ceil(l / 1000); e.classList.toggle('warn', CK.run && l <= 10000); e.classList.toggle('stop', !CK.run); }
+  function tick() {
+    var e = $('ck');
+    if (!CK) { $('ckNumber').textContent = ''; document.body.classList.remove('clock-warning'); return; }
+    var l = Math.max(0, CK.run ? CK.left - (Date.now() - CK.at) : CK.left);
+    var warn = CK.run && (queen ? l < 10000 : l <= 10000);
+    $('ckNumber').textContent = Math.ceil(l / 1000);
+    $('queenGauge').style.width = (clockLength ? Math.min(100, l / (clockLength * 1000) * 100) : 0) + '%';
+    e.classList.toggle('warn', warn); e.classList.toggle('stop', !CK.run);
+    document.body.classList.toggle('clock-warning', queen && warn);
+  }
   setInterval(tick, 200);
   function connect() {
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=remote'); } catch (e) { return; }

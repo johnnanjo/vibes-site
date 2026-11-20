@@ -196,6 +196,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
         <p>会場のモニター用（全画面）</p><code class="url" id="uM"></code><button class="cp" type="button" data-cp="uM">コピー</button>
         <p>配信（OBS）用・上の帯</p><code class="url" id="uT"></code><button class="cp" type="button" data-cp="uT">コピー</button>
         <p>配信（OBS）用・下の帯</p><code class="url" id="uB"></code><button class="cp" type="button" data-cp="uB">コピー</button>
+        <p>スタジオモニター（操作画面と同期・カメラはこの端末）</p><code class="url" id="uS"></code><button class="cp" type="button" data-cp="uS">コピー</button>
         <p>会場のモニター用のQRコード（モニターにつないだ端末で読み取る）</p><div class="qr" id="qM"></div>
       </div></details>
       <div class="f"><span>つなぎ方</span><ol id="steps"></ol></div>
@@ -255,6 +256,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
 <div class="cf" id="cf" hidden><div><b id="cfT"></b><p id="cfP"></p><div class="two"><button class="sm q" type="button" id="cfNo">やめる</button><button class="sm dg" type="button" id="cfOk">消す</button></div></div></div>
 <div class="toast" id="toast" hidden></div>
 <script src="/js/qr.js"></script>
+<script src="/js/queen-cup.js"></script>
 <script>
 (function () {
   'use strict';
@@ -320,12 +322,12 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   $('pClr').addEventListener('click', function () { confirmDo('名簿をすべて消しますか？', R.length + '人ぶんの名簿と受付の記録が消えます。元には戻せません。', function () { R = []; saveR(); }); });
 
   /* =================== 2: table set-up =================== */
+  var QC = window.VibesQueenCup;
   var PRE = [
+    { id: 'w3c-queen', b: 'W3C QUEEN CUP', s: '25点・35イニング・裏撞きあり・40秒（30秒に変更可）・EXT各2回（1回につき40秒延長）', c: Object.assign(QC.preset(), { ctl: 'pad', lay: 'top', match: 'w3c-1205', label: 'Table 1', round: '' }) },
     { id: 'queenL', b: '第5回 女王杯（Pre Queen Cup 2026-2027）① ゼッケン決定戦', s: '12/5 Billiards E-place｜3名リーグ・7点・裏撞きあり・25キュー（届かなければ両者負け）・相手審判・クロックなし', c: { round: 'ゼッケン決定戦', ctl: 'pad', mode: '3c', h: [7, 7], back: 1, limit: 25, end: 'both', clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯' } },
     { id: 'queenF', b: '第5回 女王杯（Pre Queen Cup 2026-2027）② 決勝シングルトーナメント戦', s: '12/5 Billiards E-place｜ノックアウト方式・10点・裏撞きなし・25キュー打切り・同点はサドンデス・相手審判・クロックなし', c: { round: '', ctl: 'pad', mode: '3c', h: [10, 10], back: 0, limit: 25, end: 'sd', clk: 0, warn: 1, to: 0, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-1205', label: 'Table 1', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯' } },
-    { id: 'w3cQueen', b: 'W3C Queen Cupモード', s: '持ち点25点・エクステンション2回', c: { ctl: 'pad', mode: '3c', h: [25, 25], back: 0, limit: 0, clk: 40, warn: 1, to: 2, stats: 1, brk: 'alt', lay: 'top', match: 'w3c-queen', label: 'Table 1', title: 'W3C Queen Cup | 持ち点25点・エクステンション2回' } },
     { id: 'official', b: '3C 公式戦（専属審判・クロックあり）', s: '持ち点制・40秒・タイムアウト3枚・審判がスマホで操作', c: { ctl: 'phone', mode: '3c', h: [30, 30], back: 1, limit: 0, clk: 40, warn: 1, to: 3, stats: 1, brk: 'alt', lay: 'top', match: '', label: '', title: '3-CUSHION' } },
-
     { id: 'house', b: '3C ハウス・段位戦', s: 'ハンデ持ち点・40秒・タイムアウト2枚・打切りあり', c: { ctl: 'pad', mode: '3c', h: [20, 15], back: 1, limit: 35, clk: 40, warn: 1, to: 2, stats: 1, brk: 'alt', lay: 'monitor', match: '', label: '', title: '3-CUSHION' } },
     { id: 'pocket', b: 'ポケット（9ボール・10ボール）', s: 'セット先取・ブレイクの表示・35秒・エクステンション1回', c: { ctl: 'pad', mode: 'pocket', h: [5, 5], back: 0, limit: 0, clk: 35, warn: 1, to: 1, stats: 0, brk: 'alt', lay: 'monitor', match: '', label: '', title: '9-BALL' } },
     { id: 'free', b: 'お店のフリープレイ', s: '得点とイニングだけ・クロックなし・制限なし', c: { ctl: 'pad', mode: 'free', h: [0, 0], back: 0, limit: 0, clk: 0, warn: 0, to: 0, stats: 0, brk: 'alt', lay: 'monitor', match: '', label: '', title: 'VIBES BILLIARDS' } }
@@ -339,8 +341,18 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     $$('#pre button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === pre); });
     $$('.seg[data-k]').forEach(function (g) { var k = g.getAttribute('data-k'); [].forEach.call(g.children, function (b) { b.setAttribute('aria-pressed', String(C[k]) === b.getAttribute('data-v')); }); });
     var pk = C.mode === 'pocket', fr = C.mode === 'free';
+    var queen = QC.active(C);
+    $$('.seg[data-k]').forEach(function (group) {
+      var key = group.getAttribute('data-k');
+      var locked = { mode: ['3c'], back: ['1'], end: ['pts'], clk: ['30', '40'], to: ['2'], warn: ['1'] };
+      [].forEach.call(group.children, function (button) {
+        button.disabled = queen && !!locked[key] && locked[key].indexOf(button.getAttribute('data-v')) < 0;
+      });
+    });
+    $('limit').min = queen ? '1' : '0';
+
     $$('[data-3c]').forEach(function (e) { e.hidden = pk; }); $$('[data-pk]').forEach(function (e) { e.hidden = !pk; }); $$('[data-clk]').forEach(function (e) { e.hidden = !C.clk; });
-    $('lH').textContent = pk ? '先取するセット数（A・B）' : '試合点数（持ち点）（A・B）'; $('quick').hidden = pk || fr; $('lTo').textContent = pk ? 'エクステンションの回数（1人あたり）' : 'タイムアウトの枚数（1人あたり）';
+    $('lH').textContent = pk ? '先取するセット数（A・B）' : '試合点数（持ち点）（A・B）'; $('quick').hidden = pk || fr; $('lTo').textContent = queen ? 'EXTの回数（1人2回・各40秒延長）' : pk ? 'エクステンションの回数（1人あたり）' : 'タイムアウトの枚数（1人あたり）';
     $$('#quick button').forEach(function (b) { b.setAttribute('aria-pressed', $('h0').value === b.getAttribute('data-h') && $('h1').value === b.getAttribute('data-h')); });
   }
   /* players from the list: those who have checked in (everyone, while nobody has) */
@@ -363,7 +375,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, sel); else sel();
     }
   });
-  $('limit').addEventListener('input', function () { C.limit = Math.max(0, Math.min(200, parseInt($('limit').value, 10) || 0)); $('out').hidden = true; drawSet(); });
+  $('limit').addEventListener('input', function () { C.limit = Math.max(QC.active(C) ? 1 : 0, Math.min(200, parseInt($('limit').value, 10) || 0)); $('out').hidden = true; drawSet(); });
   ['h0', 'h1', 'match', 'title', 'n0', 'n1', 'label'].forEach(function (id) { $(id).addEventListener('input', function () { $('out').hidden = true; if (id.charAt(0) === 'h') drawSet(); }); });
   function hs() { return [0, 1].map(function (i) { return Math.max(0, Math.min(999, parseInt($('h' + i).value, 10) || 0)); }); }
   function b64(o) { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
@@ -371,11 +383,12 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
   $('issue').addEventListener('click', function () {
     var m = clean($('match').value) || rnd(); $('match').value = m; watch(m, $('label').value.trim());
     var h = hs(), pk = C.mode === 'pocket';
-    var cfg = { id: Date.now().toString(36), mode: C.mode, limit: pk ? 0 : C.limit | 0, back: !pk && !!C.back, end: pk || !C.limit ? 'pts' : C.end || 'pts', clk: C.clk | 0, warn: !!C.warn, to: C.clk ? C.to | 0 : 0, stats: !pk && !!C.stats, brk: C.brk, h: h, title: $('title').value.trim().slice(0, 60) };
+    var cfg = { id: Date.now().toString(36), preset: QC.active(C) ? QC.id : '', mode: C.mode, limit: pk ? 0 : C.limit | 0, back: !pk && !!C.back, end: pk || !C.limit ? 'pts' : C.end || 'pts', clk: C.clk | 0, warn: !!C.warn, to: C.clk ? C.to | 0 : 0, stats: !pk && !!C.stats, brk: C.brk, h: h, title: $('title').value.trim().slice(0, 60) };
     var n = [$('n0').value.trim().slice(0, 16), $('n1').value.trim().slice(0, 16)]; if (n[0] || n[1]) cfg.n = n; if ($('round').value) cfg.round = $('round').value;
     var base = location.origin, e = encodeURIComponent(m);
     var uC = base + '/event-score-pad?match=' + e + '&cfg=' + b64(cfg), uM = base + '/event-score-obs?match=' + e + '&layout=monitor', uT = base + '/event-score-obs?match=' + e, uB = uT + '&pos=bl';
     var uD = C.lay === 'monitor' ? uM : C.lay === 'bottom' ? uB : uT, phone = C.ctl === 'phone';
+    $('uS').textContent = base + '/pages/count-studio/?match=' + e;
     $('uC').textContent = uC; $('uM').textContent = uM; $('uT').textContent = uT; $('uB').textContent = uB; $('uD').textContent = uD; $('aC').href = uC; $('aD').href = uD;
     qr('qC', uC); qr('qM', uM);
     $('lC').textContent = phone ? '操作する画面（審判のスマホ）' : '操作する画面（台のわきのタブレット）';
@@ -383,7 +396,7 @@ details>div{display:flex;flex-direction:column;gap:10px;padding:0 0 14px}
     $('lD').textContent = C.lay === 'monitor' ? '表示する画面（会場のモニター用）' : '表示する画面（配信・OBS用・' + (C.lay === 'bottom' ? '下' : '上') + 'の帯）';
     $('sum').innerHTML = ['試合ID：' + m + ($('label').value.trim() ? '（' + $('label').value.trim() + '）' : ''), '種目：' + (pk ? 'ポケット（' + h[0] + '−' + h[1] + ' セット先取）' : C.mode === 'free' ? 'フリープレイ' : 'スリークッション（' + (h[0] || h[1] ? h[0] + '点−' + h[1] + '点' : '点数の上限なし') + '）'),
       pk ? 'ブレイク：' + { alt: '交互', win: '勝った人', manual: '手で切り替え' }[C.brk] : '裏撞き：' + (cfg.back ? 'あり' : 'なし') + '　／　打切り：' + (cfg.limit ? cfg.limit + ' キュー（' + { pts: '点の多いほうが勝ち', both: '届かなければ両者負け', sd: '同点はサドンデス' }[cfg.end] + '）' : 'なし'),
-      'ショットクロック：' + (cfg.clk ? cfg.clk + '秒' + '　／　' + (pk ? 'エクステンション ' : 'タイムアウト ') + cfg.to + (pk ? '回' : '枚') + '　／　警告 ' + (cfg.warn ? 'あり' : 'なし') : 'なし'),
+      'ショットクロック：' + (cfg.clk ? cfg.clk + '秒' + '　／　' + (QC.active(C) ? 'EXT（各40秒延長） ' : pk ? 'エクステンション ' : 'タイムアウト ') + cfg.to + (QC.active(C) || pk ? '回' : '枚') + '　／　警告 ' + (cfg.warn ? 'あり' : 'なし') : 'なし'),
       pk ? '' : 'アベレージ・ハイラン：' + (cfg.stats ? '出す' : '出さない')].filter(Boolean).map(esc).join('<br>');
     var st = [];
     st.push(phone ? '審判のスマホで、上のQRコードを読み取ります。「つながっています」と出れば準備完了です。' : '台のわきのタブレットで、上のQRコードを読み取ります（または、アドレスを送ってひらきます）。横向きにして、「つながっています」と出れば準備完了です。');

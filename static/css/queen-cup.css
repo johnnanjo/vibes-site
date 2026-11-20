@@ -1,0 +1,29 @@
+/* The English labels and lime accents are specific to the W3C preset. */
+.queen-badges { display: flex; gap: .5em; align-items: center; flex-wrap: wrap; }
+.queen-badges > span {
+  display: inline-flex; flex-direction: column; gap: .15em;
+  padding: .45em .75em; border-radius: .6em;
+  background: #C0FC09; color: #171A22; font-weight: 900; line-height: 1.25;
+}
+.queen-badges small { font-size: max(12px, .8em); letter-spacing: 0; }
+.queen-extensions { display: grid; grid-template-columns: 1fr 1fr; gap: .5em; }
+.queen-extensions button {
+  min-width: 44px; min-height: 44px; border: 2px solid #C0FC09;
+  border-radius: .65em; background: #C0FC09; color: #171A22;
+  font-family: inherit; font-size: 16px; font-weight: 900; line-height: 1.25;
+  cursor: pointer; padding: .5em .7em;
+}
+.queen-extensions button.used { background: #262A35; border-color: #3A3F4C; color: #A3A8B5; }
+.queen-extensions button:disabled { cursor: default; }
+.queen-extensions button:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.queen-meter { display: block; width: 100%; height: 8px; background: #3A3F4C; border-radius: 6px; overflow: hidden; }
+.queen-meter i { display: block; height: 100%; width: 100%; background: #FFD700; }
+.queen .warn .queen-meter i { background: #E5484D; }
+body.queen.clock-warning::after {
+  content: ''; position: fixed; inset: 0; z-index: 8; pointer-events: none;
+  border: 6px solid #E5484D; animation: queen-clock-warning 1s ease-in-out infinite;
+}
+@keyframes queen-clock-warning { 50% { border-color: transparent; } }
+@media (prefers-reduced-motion: reduce) {
+  body.queen.clock-warning::after { animation: none; }
+}

@@ -42,6 +42,13 @@ AI 共通の進め方は `AGENTS.md`（ChatGPT / Codex もここを読む。決�
 - トップの天気（`static/js/home.js`）：1番目 Open-Meteo、応答がなければ2番目 MET Norway（api.met.no。2026-10 から Open-Meteo の無料APIが毎日のように止まるため 2026-11-18 に追加。出典の表示は取れたほうの名前に変わる）。地域ごとに30分キャッシュ（`localStorage` の `vb_wx_c:<緯度,経度>`）、どちらも失敗なら1日以内の前回分を表示→それもなければ天気のカードを黙って隠す（エラー文は出さない）。地域の選択は `vb_wx`
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック。`youtubeLive` に YouTube チャンネルのURLを入れると `/live`（VIBES LIVE の入口）のボタンが有効になる（空なら「準備中」）。`homeWinners` が true のときだけ、トップに「◯月の優勝者」を出す（2026-11-16 から一時的に閉鎖中＝false）
 
+## W3C QUEEN CUP 専用モード（2026-11-20 運営者指定）
+- 今回の追加指定は `W3C QUEEN CUP MODE`。プリセットのボタンは `W3C QUEEN CUP`、表示タイトルのバッジは `W3C PRE QUEEN CUP 2026`。専用モードの中では、運営者が指定した `FINAL INNING（最終イニング）`・`EQUALIZING INNING（後攻ラストチャンス）`・`EXT` の英語併記を使う。
+- 既定は選手ごとに25点、上限35イニング、裏撞きあり、40秒、EXTは1人2回。持ち点・上限イニングは画面で変更でき、クロックは30秒／40秒。EXTはクロックが30秒でも必ず40秒を加算する。使用済みの2つのボタンは個別に消灯し、試合ごとの使用状態を保存・配信する。
+- 先攻が持ち点に達したら後攻ラストチャンスの状態をすぐ表示し、「交代」で後攻の攻撃へ進む。上限イニングでは先攻・後攻とも攻撃でき、後攻の攻撃後に打ち切る。既存の持ち点制の判定に合わせ、両者あがり・打切り時の同点は引き分け。
+- 専用モードは大会用の操作画面・OBS（帯／カード）・会場モニターで同期する。スタジオモニターの `?match=<試合ID>` は大会操作画面のスコアを見るだけのモード（カメラ・リプレイはそのモニターの端末で操作）。単独のスタジオモニターでもメニューから選べる。既存の7点／10点の女王杯形式とは別の追加プリセットとして扱う。
+- 共通の設定・状態は `static/js/queen-cup.js`、専用の見た目は `static/css/queen-cup.css`。実機の確認が済むまでNEWSでは告知しない。
+
 ## URL
 旧Shopifyと同じURLを維持（/pages/…, /blogs/…/…, /products/vibes-carbon-shaft）。大会 `/pages/tournament/<handle>`、店 `/pages/shop/<handle>`、選手 `/pages/player/<名前>`。
 多言語は `/en /ko /zh /vi` に同じページ＋`static/i18n` の辞書翻訳。
@@ -49,8 +56,8 @@ AI 共通の進め方は `AGENTS.md`（ChatGPT / Codex もここを読む。決�
 ## AI_INBOX の自動実装（2026-11-20 運営者指定）
 - 初回の受付ファイルは運営者指定の「# VIBES AI INBOX」「## 待機中タスク」「## 完了済みログ」。受付は [DEV]「VIBES DIGITAL LABにW3C Queen Cupモード（持ち点25点・エクステンション2回）を追加」と [COPY]「E-placeの15秒CM用キャッチコピー3案を作成」の2件。ここへの登録は未実装の受付であり、完了済みの意味ではない。W3Cの25点・2回は今回指定された新モードの要件として扱い、既存の予選・決勝の形式を上書きしない。
 - ルートの AI_INBOX.md の行頭「- [ ]」が受付タスク。main への同ファイルの push で .github/workflows/auto-ai-worker.yml が起動する。コード枠の中の例は受付に含めない。CLAUDE.md → HANDOFF.md → AGENTS.md の順に読む。
-- 1回の受付分をタスク単位で処理する。scripts/ai-worker.js がAPIのツール呼出しでリポジトリ内のテキスト変更を作る。行頭のタグは [DEV] またはタグなし＝コード編集、[COPY]＝完成原稿を docs/ai-outputs/copy-YYYYMMDD.md へ追記、[GPT]＝最初からOpenAI。[GPT]はほかのタグと併用でき、[COPY]と[DEV]は併用しない。日付は日本時間。Shopify本番等のリポジトリ外は操作しない。
-- ANTHROPIC_API_KEY と OPENAI_API_KEY はGitHub Secretsだけを参照する。標準はClaude API優先、Claudeのキーがない場合はOpenAI。Claudeのクレジット・利用上限エラーでは、そのタスクの途中変更を破棄してOpenAIへ切り替える。[GPT]は常にOpenAI。認証不良は未完了、通常の429や一時障害は同じAPIで最大2回再試行する。切替先のキー・利用枠がなければ完了扱いにしない。
+- 1回の受付分をタスク単位で処理する。scripts/ai-worker.js がAPIのツール呼出しでリポジトリ内のテキスト変更を作る。行頭のタグは [DEV] またはタグなし＝コード編集、[COPY]＝完成原稿を docs/ai-outputs/copy-YYYYMMDD.md へ追記、[GPT]＝最初からOpenAI。[GPT]はほかのタグと併用でき、[COPY]と[DEV]は併用しない。日付は日本時間。[COPY]の原稿はfinish_taskのcopy_markdownに返す。完成原稿ができればcompletedとし、保存はワーカーが実行するため未保存だけを理由にblockedにしない。Shopify本番等のリポジトリ外は操作しない。
+- ANTHROPIC_API_KEY と OPENAI_API_KEY はGitHub Secretsだけを参照する。標準はClaude API優先、Claudeのキーがない場合はOpenAI。Claudeのクレジット・利用上限エラー、または計3回の通信試行後も続く接続障害では、そのタスクの途中変更を破棄してOpenAIへ切り替える。[GPT]は常にOpenAI。キーの前後の空白は除去し、内部の空白・改行・非ASCII文字は送信前に検出する。キー形式の不備と認証不良は未完了、通常の429や一時障害は同じAPIで最大2回再試行する。通信失敗の診断はDNS・タイムアウト・TLS・接続の固定分類だけを記録し、例外の原文やキー値は残さない。切替先のキー・利用枠がなければ完了扱いにしない。
 - 標準モデルはClaude claude-sonnet-5-5とOpenAI gpt-4o。Repository variables の AI_WORKER_CLAUDE_MODEL / AI_WORKER_OPENAI_MODEL で指定可。OpenAIはgpt-4o / o3-miniに対応し、o3-miniがモデル未提供の404の場合はgpt-4oで再処理する。AI実行は25分・1タスク最大40応答。金額上限は設けていないためAPIの利用枠は運営者が管理する。
 - API実行→APIキーなしの独立検証→PR作成の3ジョブ。APIキーを持つ間は生成コードを実行しない。AIにGitHub書込み用トークンを渡さず、書込みジョブでは生成コードを実行しない。
 - 実装と共通チェックに通ったものだけPR側で「- [x]」へ変更し、AI_INBOX.md末尾の完了済みログへ実行日時・使用AI・モデルを記録する。不明点・未完了はそのまま残して理由を日本語で記載する。
