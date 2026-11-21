@@ -125,7 +125,7 @@ function reloadEntry(env) {
 test('new-game menu replaces band with Pre Queen and preserves the regular 3C route', () => {
   const { context: p, address } = menuLaunch('prequeen-qual');
   assert.deepEqual(Array.from(p.MENU.carom.items, x => x.b), ['スリークッション', 'プレクイーン']);
-  assert.deepEqual(Array.from(p.MENU.prequeen.items, x => x.id), ['prequeen-qual', 'prequeen-final']);
+  assert.deepEqual(Array.from(p.MENU.prequeen.items, x => x.id), ['prequeen-qual', 'prequeen-final', 'prequeen-referee']);
   assert.equal(p.url('prequeen-w3c'), '');
   assert.equal(p.url('3c'), '/pages/count-3c/?g=three&n=new&t=2');
   assert.equal(address.pathname, '/event-score-pad/');
@@ -151,6 +151,15 @@ test('Pre Queen final launches with ten points and retains sudden death on a tie
   p.S.inn = 25; p.S.turn = 1; p.S.p[0].s = 8; p.S.p[1].s = 8; p.next();
   assert.equal(p.S.sd, true); assert.equal(p.S.over, null);
   p.add(0, 1); assert.equal(p.S.over.w, 0);
+});
+
+test('refereed championship has the final rules and ordinary matches stay touch-operated', () => {
+  const { context: p } = menuLaunch('prequeen-referee');
+  assert.equal(p.S.cfg.referee, true); assert.equal(p.S.round, '決勝');
+  assert.deepEqual(Array.from(p.S.p, x => x.h), [10, 10]);
+  assert.equal(p.S.cfg.limit, 25); assert.equal(p.S.cfg.back, false); assert.equal(p.S.cfg.end, 'sd');
+  assert.equal(menuLaunch('prequeen-final').context.S.cfg.referee, false);
+  assert.equal(menuLaunch('prequeen-qual').context.S.cfg.referee, false);
 });
 
 test('Pre Queen games use independent rooms and rereading their setup preserves the score', () => {
