@@ -4,9 +4,11 @@ import path from 'node:path';
 import os from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
 import {
   parseInbox, markCompleted, chooseProvider, validateReport, assertNoSecrets,
-  assertSafePaths, hasActiveWork, prepare, finalize, publish, runClaude, completionLog
+  assertSafePaths, hasActiveWork, prepare, finalize, publish, runClaude, completionLog,
+  inspectQueue, checkCredentials
 } from './auto-ai-worker.mjs';
 
 const handoff = '# HANDOFF\n\n## 作業中\n| だれが | 何を | 触るファイル | いつから |\n| --- | --- | --- | --- |\n| （なし） | | | |\n\n## 記録\n\n過去の記録\n';
@@ -19,6 +21,7 @@ function fixture(inbox = example) {
   fs.writeFileSync(path.join(repo, 'AI_INBOX.md'), inbox);
   fs.writeFileSync(path.join(repo, 'CLAUDE.md'), '# 正本\n指定文面と数値を変更しない。\n');
   fs.writeFileSync(path.join(repo, 'AGENTS.md'), '# 共通ルール\nブランチとPRで出す。\n');
+  fs.writeFileSync(path.join(repo, 'AI_RULES.md'), '# ブランド\nプレクイーン7点・10点とW3C25点を保持する。\n');
   fs.writeFileSync(path.join(repo, 'HANDOFF.md'), handoff);
   fs.writeFileSync(path.join(repo, '.gitignore'), 'dist/\n');
   fs.writeFileSync(path.join(repo, 'build.mjs'), 'console.log("fixture build passed");\n');
@@ -49,6 +52,52 @@ test('completion updates only the chosen checkbox and preserves CRLF', () => {
   const changed = markCompleted(inbox, [tasks[0].id]);
   assert.equal(changed, inbox.replace('- [ ] 表示', '- [x] 表示'));
   assert.throws(() => markCompleted(inbox, ['unknown']));
+});
+test('the mobile placeholder stays untouched while a real task is completed', () => {
+  const placeholder = '- [ ] （ここにスマホからタスクを追記）';
+  const ctx = fixture('# AI INBOX\n## タスク一覧\n' + placeholder + '\n');
+  try {
+    delete ctx.openPRs;
+    prepare(ctx);
+    assert.match(fs.readFileSync(ctx.env.GITHUB_OUTPUT, 'utf8'), /run=false/);
+    assert.equal(run(ctx.repo, 'status', '--porcelain'), '');
+    const inbox = fs.readFileSync(path.join(ctx.repo, 'AI_INBOX.md'), 'utf8') + '- [ ] 大会名の表示を直す\n';
+    const tasks = parseInbox(inbox);
+    assert.equal(tasks.length, 1);
+    const result = markCompleted(inbox, [tasks[0].id]);
+    assert(result.includes(placeholder));
+    assert(result.includes('- [x] 大会名の表示を直す'));
+  } finally { ctx.cleanup(); }
+});
+test('queue inspection lists unfinished tasks without PR access or repository changes', () => {
+  const ctx = fixture('# AI INBOX\n## タスク一覧\n- [ ] （ここにスマホからタスクを追記）\n- [ ] 表示を直す\n- [x] 完了した作業\n');
+  try {
+    delete ctx.openPRs;
+    const tasks = inspectQueue(ctx);
+    assert.equal(tasks.length, 1);
+    assert.match(fs.readFileSync(ctx.env.GITHUB_OUTPUT, 'utf8'), /pending=1/);
+    const log = fs.readFileSync(ctx.env.GITHUB_STEP_SUMMARY, 'utf8');
+    assert(log.includes('表示を直す')); assert(!log.includes('完了した作業'));
+    assert.equal(run(ctx.repo, 'status', '--porcelain'), '');
+    assert.equal(fs.existsSync(ctx.dir), false);
+  } finally { ctx.cleanup(); }
+});
+test('missing API keys exit successfully and configured-key checks never print their values', () => {
+  const ctx = fixture();
+  try {
+    delete ctx.env.ANTHROPIC_API_KEY; delete ctx.env.OPENAI_API_KEY;
+    const worker = fileURLToPath(new URL('./auto-ai-worker.mjs', import.meta.url));
+    const log = execFileSync(process.execPath, [worker, 'credentials'], { cwd: ctx.repo, env: ctx.env, encoding: 'utf8' });
+    assert.match(log, /未設定.*正常終了/);
+    assert.match(fs.readFileSync(ctx.env.GITHUB_OUTPUT, 'utf8'), /configured=false/);
+    for (const name of ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY']) {
+      ctx.env[name] = 'unit-private-value';
+      assert.equal(checkCredentials(ctx), true);
+      delete ctx.env[name];
+    }
+    assert(!fs.readFileSync(ctx.env.GITHUB_STEP_SUMMARY, 'utf8').includes('unit-private-value'));
+    assert.equal(run(ctx.repo, 'status', '--porcelain'), '');
+  } finally { ctx.cleanup(); }
 });
 test('provider selection prefers Claude, falls back to configured OpenAI, and requires a key', () => {
   assert.equal(chooseProvider('auto', true, true), 'anthropic');
@@ -121,6 +170,8 @@ test('rules are handed over in canonical order and task content is data, never s
     const prompt = fs.readFileSync(path.join(ctx.dir, 'prompt.txt'), 'utf8');
     assert(prompt.indexOf('----- CLAUDE.md') < prompt.indexOf('----- HANDOFF.md'));
     assert(prompt.indexOf('----- HANDOFF.md') < prompt.indexOf('----- AGENTS.md'));
+    assert(prompt.indexOf('----- AGENTS.md') < prompt.indexOf('----- AI_RULES.md'));
+    assert(prompt.includes('プレクイーン7点・10点とW3C25点を保持する。'));
     assert(prompt.includes('$(touch SHOULD_NOT_EXIST)'));
     assert.equal(fs.existsSync(path.join(ctx.repo, 'SHOULD_NOT_EXIST')), false);
     assert.match(fs.readFileSync(path.join(ctx.repo, 'HANDOFF.md'), 'utf8'), /GitHub Actions \/ AI worker/);

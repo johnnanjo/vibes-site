@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { assertNoSecrets, assertSafePaths, validateReport } from './auto-ai-worker.mjs';
 
 const sha = text => crypto.createHash('sha256').update(text).digest('hex');
-const DENIED = new Set(['AI_INBOX.md', 'HANDOFF.md', 'AGENTS.md', 'CLAUDE.md', 'data/config.json', 'data/lab-codes.json']);
+const DENIED = new Set(['AI_INBOX.md', 'HANDOFF.md', 'AGENTS.md', 'CLAUDE.md', 'AI_RULES.md', 'data/config.json', 'data/lab-codes.json']);
 const API = { anthropic: 'https://api.anthropic.com/v1/messages', openai: 'https://api.openai.com/v1/chat/completions' };
 export class ProviderError extends Error {
   constructor(provider, kind, status = 0, detail = '') {
@@ -204,7 +204,7 @@ function toolsFor(kind) {
 }
 async function oneAttempt(task, route, provider, model, ctx, options) {
   const draft = new Draft(ctx.repo, route.kind), tools = toolsFor(route.kind);
-  const rules = ['CLAUDE.md', 'HANDOFF.md', 'AGENTS.md'].map(file => {
+  const rules = ['CLAUDE.md', 'HANDOFF.md', 'AGENTS.md', 'AI_RULES.md'].map(file => {
     const text = fs.readFileSync(path.join(ctx.repo, file), 'utf8'); assertNoSecrets(text);
     return '----- ' + file + ' -----\n' + text;
   }).join('\n');

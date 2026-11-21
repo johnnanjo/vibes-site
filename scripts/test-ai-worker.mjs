@@ -15,6 +15,7 @@ function fixture(tasks) {
     'AI_INBOX.md': '# 受付\n\n## 未処理\n' + tasks.map(task => '- [ ] ' + task).join('\n') + '\n',
     'CLAUDE.md': '# 正本\n指定された数値と文面を保持します。\n',
     'AGENTS.md': '# 共通\nPRで反映する。\n',
+    'AI_RULES.md': '# ブランド\nプレクイーン7点・10点とW3C25点を保持する。\n',
     'HANDOFF.md': '# 引きつぎ\n\n## 作業中\n| だれが | 何を | 触るファイル | いつから |\n| --- | --- | --- | --- |\n| （なし） | | | |\n\n## 記録\n',
     '.gitignore': 'dist/\n',
     'build.mjs': 'import fs from "node:fs";fs.mkdirSync("dist",{recursive:true});fs.writeFileSync("dist/environment.json",JSON.stringify({anthropic:!!process.env.ANTHROPIC_API_KEY,openai:!!process.env.OPENAI_API_KEY}));'
@@ -59,6 +60,7 @@ test('Claude is preferred and receives the API authentication header', async () 
       assert.equal(providerOf(url), 'anthropic');
       assert.equal(typeof init.headers['x-api-key'], 'string');
       assert.equal(init.headers['anthropic-version'], '2023-06-01');
+      assert(JSON.parse(init.body).system.includes('プレクイーン7点・10点とW3C25点を保持する。'));
       return calls++ === 0 ? tool('anthropic', 'write_file', { path: 'demo.js', content: 'export const value=1;\n' }) : finish('anthropic');
     }));
     assert.equal(report.completed[0].ai, 'Claude');
@@ -283,6 +285,7 @@ test('draft tools reject outside paths, secrets, symlinks and COPY code edits', 
     const dev = new Draft(ctx.repo, 'DEV'), copy = new Draft(ctx.repo, 'COPY');
     assert.throws(() => dev.call('write_file', { path: '../outside.js', content: 'x' }));
     assert.throws(() => dev.call('write_file', { path: 'AI_INBOX.md', content: 'x' }));
+    assert.throws(() => dev.call('replace_text', { path: 'AI_RULES.md', old_text: '# ブランド', new_text: '# 変更' }));
     assert.throws(() => copy.call('write_file', { path: 'demo.js', content: 'x' }));
     fs.symlinkSync(os.tmpdir(), path.join(ctx.repo, 'linked'));
     assert.throws(() => dev.call('write_file', { path: 'linked/test.js', content: 'x' }));
