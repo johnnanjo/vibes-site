@@ -232,6 +232,7 @@ button:active{transform:scale(.97)}
   <nav><button class="no" type="button" data-pre="back" id="pgBack">メニューへ戻る</button><button class="pg-start" type="button" data-pre="bank" id="pgBank">バンキングへ</button><button class="no" type="button" data-pre="swap" id="pgSwap" hidden>先攻・後攻を入れ替える (/)</button><button class="pg-start" type="button" data-pre="start" id="pgStart" hidden>ゲーム開始 (Enter)</button></nav>
 </div></div>
 <script src="/js/queen-cup.js"></script>
+<script src="/js/count-menu.js"></script>
 <script>
 (function () {
   'use strict';
@@ -287,6 +288,8 @@ button:active{transform:scale(.97)}
   var fresh = !S; if (!S) S = blank();
   /* settings handed over by the admin page: taken in once per issue (its id), never touching the running score */
   var inCfg = null; try { var raw = qs('cfg'); if (raw) inCfg = JSON.parse(decodeURIComponent(escape(atob(raw.replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { inCfg = null; }
+  var replayRecord = window.VibesCountMenu ? window.VibesCountMenu.consume('prequeen', qs('rpt')) : null;
+  if (replayRecord) inCfg = Object.assign({}, replayRecord.cfg, { id: match, n: replayRecord.players });
   var entryLoading = !!(fresh && inCfg && inCfg.entry === 'prequeen');
   function takeCfg() {
     if (!inCfg || !inCfg.id || inCfg.id === S.cfg.id) return;
@@ -296,8 +299,10 @@ button:active{transform:scale(.97)}
     if (inCfg.n) [0, 1].forEach(function (i) { if (inCfg.n[i]) S.p[i].n = String(inCfg.n[i]).slice(0, 16); });
     if (typeof inCfg.round === 'string') S.round = inCfg.round.slice(0, 12);
     if (S.cfg.entry === 'prequeen' && !S.startedAt && S.inn === 1 && S.p.every(function (p) { return !p.s; })) prepReset();
+    if (replayRecord && S.prep) S.prep = { stage: 'bank', players: replayRecord.players.map(function (n, i) { return { key: 'recent-' + i, n: n }; }) };
     S.ck = null; S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
   }
+  if (replayRecord) { takeCfg(); fresh = false; entryLoading = false; }
   /* ---- shot clock: {left: ms, run: bool, t: when left was true}. The display pages count down by themselves from the last message ---- */
   function ckLeft() { if (!S.ck) return S.cfg.clk * 1000; return Math.max(0, S.ck.run ? S.ck.left - (Date.now() - S.ck.t) : S.ck.left); }
   function ckSet(left, run) { if (!S.cfg.clk) { S.ck = null; return; } S.ck = { left: left, run: !!run, t: Date.now() }; lastBeep = Math.ceil(left / 1000); }
@@ -367,7 +372,13 @@ button:active{transform:scale(.97)}
   }
   function prepBegin() {
     if (!prepActive() || S.prep.stage !== 'bank' || !prepPairReady()) return false;
-    S.prep = null; S.startedAt = Date.now(); S.turn = 0; ckSet(S.cfg.clk * 1000, !!S.cfg.clk); return true;
+    S.prep = null; S.startedAt = Date.now(); S.turn = 0; ckSet(S.cfg.clk * 1000, !!S.cfg.clk); rememberRecent(); return true;
+  }
+  function rememberRecent() {
+    var cm = window.VibesCountMenu; if (!cm || S.cfg.entry !== 'prequeen' || !S.startedAt || S.prep) return;
+    cm.record({ id: match + ':' + S.gid, at: S.startedAt, kind: 'prequeen', table: +qs('t') || 0,
+      title: 'プレクイーン・' + (S.cfg.back ? '予選リーグ' : '決勝トーナメント'), players: S.p.map(function (p) { return p.n; }),
+      cfg: Object.assign({}, S.cfg, { h: S.p.map(function (p) { return p.h; }), title: S.title, round: S.round }) });
   }
   function prepRoster() {
     var list = null;
@@ -621,7 +632,8 @@ button:active{transform:scale(.97)}
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { wake(); if (!ws || ws.readyState > 1) { clearTimeout(timer); connect(); } } });
   window.addEventListener('online', function () { if (!ws || ws.readyState > 1) { clearTimeout(timer); connect(); } });
   var wake = function () { try { if (navigator.wakeLock && document.visibilityState === 'visible') navigator.wakeLock.request('screen').catch(function () {}); } catch (e) {} };
-  draw(); wake(); start();
+  if (qs('rpt') && !replayRecord && fresh) { location.replace(countHome || '/pages/count/'); return; }
+  rememberRecent(); draw(); wake(); start();
 })();
 </script>
 </body>
