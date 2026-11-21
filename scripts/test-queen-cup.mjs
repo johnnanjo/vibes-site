@@ -32,7 +32,7 @@ function environment(query = '') {
         hidden: false, value: '', textContent: '', innerHTML: '', style: {}, options: [],
         classList: { toggle(key, on) { if (on) classes.add(key); else classes.delete(key); },
           remove(key) { classes.delete(key); }, contains(key) { return classes.has(key); } },
-        setAttribute() {}, addEventListener() {}, querySelectorAll() { return []; }
+        setAttribute() {}, addEventListener() {}, querySelectorAll() { return []; }, focus() {}
       });
     }
     return elements.get(id);
@@ -203,6 +203,42 @@ test('banking swaps the complete pair, then starts with white on the left and a 
   assert.equal(p.S.startedAt, 100000); assert.equal(p.S.turn, 0); assert.equal(p.S.inn, 1);
   assert.equal(p.prepSwap(), false); assert.equal(p.prepBegin(), false);
   p.add(0, 1); assert.equal(p.S.p[0].s, 1); assert.equal(p.S.p[1].s, 0);
+});
+
+test('picking the second name enables banking and Start on the same screen without a Next button', () => {
+  const env = menuLaunch('prequeen-qual'), p = env.context;
+  p.window.addEventListener = () => {};
+  p.window.matchMedia = () => ({ matches: false });
+  p.document.querySelector = selector => env.element(selector);
+  vm.runInContext(section(pad, '  var prepChoosing =', '  /* ---- actions ---- */'), p);
+  p.save = () => p.prepDraw();
+  const players = [{ key: 'a', n: 'テスト選手 A' }, { key: 'b', n: 'テスト選手 B' }];
+  p.prepList = players; p.prepChoosing = 0; p.prepClick({ prePick: '0' });
+  assert.equal(p.S.prep.stage, 'players'); assert.equal(env.element('pgStart').disabled, true);
+  p.prepClick({ pre: 'start' }); assert.equal(p.prepActive(), true);
+  p.prepList = players; p.prepChoosing = 1; p.prepClick({ prePick: '1' });
+  assert.equal(p.S.prep.stage, 'bank'); assert.equal(env.element('pgStart').disabled, false);
+  assert.equal(env.element('pgPlayers').hidden, false); assert.equal(env.element('pgSwap').hidden, false);
+  assert.equal(env.element('pgLabel0').textContent, '先攻・白球（左）');
+  assert.doesNotMatch(pad, /id="pgBank"|data-pre="bank"|バンキングへ/);
+  p.prepClick({ pre: 'swap' });
+  assert.equal(env.element('pgName0').textContent, 'テスト選手 B');
+  p.prepClick({ preChoose: '0' }); p.prepClick({ pre: 'back' });
+  assert.equal(p.S.prep.stage, 'bank'); assert.equal(env.element('pgName0').textContent, 'テスト選手 B');
+  p.prepClick({ pre: 'start' });
+  assert.equal(p.prepActive(), false); assert.equal(p.S.turn, 0);
+  assert.deepEqual(Array.from(p.S.p, x => x.s), [0, 0]);
+});
+
+test('older saved setups with both names can start without a retired banking button', () => {
+  const env = menuLaunch('prequeen-final'), p = env.context;
+  p.prepSelect(0, { key: 'a', n: 'テスト選手 A' }); p.prepSelect(1, { key: 'b', n: 'テスト選手 B' });
+  const reloaded = reloadEntry(env), r = reloaded.context;
+  r.window.addEventListener = () => {};
+  vm.runInContext(section(pad, '  var prepChoosing =', '  /* ---- actions ---- */'), r);
+  r.prepDraw();
+  assert.equal(r.S.prep.stage, 'bank'); assert.equal(reloaded.element('pgStart').disabled, false);
+  assert.equal(r.prepBegin(), true); assert.deepEqual(Array.from(r.S.p, x => x.h), [10, 10]);
 });
 
 test('reload preserves selected names, banking order and a started match', () => {
