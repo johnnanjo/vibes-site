@@ -474,6 +474,7 @@ ${o.extra || ''}<section class="sec"><div class="sec-h"><h2>${o.h2}</h2></div><d
   put('/pages/3c-note', page({ title: '3C NOTE｜スリークッションの練習記録・アベレージ管理', desc: 'スリークッションの練習ゲームを1ゲームずつ記録。点数とイニングを入れるだけで、通算アベレージ・直近のアベレージ・ハイラン・ベストゲームがグラフで見えます。無料・登録なし。', path: '/pages/3c-note', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-note.html'), 'utf8') }));
   /* event scoreboard (hidden pages, opened only by address): tablet input + OBS overlay, kept apart by ?match=<id>; realtime through the scoreboard relay */
   put('/event-score-pad', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-score-pad.html'), 'utf8') });
+  put('/event-score-referee', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-score-referee.html'), 'utf8') });
   put('/event-score-obs', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-score-obs.html'), 'utf8') });
   put('/event-board', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/event-board.html'), 'utf8') });
   /* organiser's control panel for the event scoreboard (hidden page, simple 4-digit lock) */

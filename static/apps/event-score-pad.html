@@ -121,6 +121,22 @@ button:active{transform:scale(.97)}
 .pg-list strong{display:block;font-size:20px}.pg-list small{display:block;font-size:14px;color:#B9C4D6;font-weight:500}
 .pg .pg-empty{padding:16px;background:#0B192C;border-radius:12px}
 .pg nav #pgStart{grid-column:1/-1}
+/* The venue stays view-only, including during connection loss and after the result. */
+#refShield{position:fixed;inset:0;z-index:18;touch-action:none}
+#refBanner{position:fixed;top:0;left:0;right:0;z-index:31;display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 18px;background:#171A22;color:#F3F4EF;font-size:18px;font-weight:900;min-height:54px;border-bottom:2px solid #C0FC09}
+#refBanner small{color:#B9C4D6;font-size:14px}
+#refPair{z-index:30;background:rgba(23,26,34,.96)}
+#refPair>div{background:#202633;border-color:#526179;max-width:900px;gap:14px}
+#refPair h1{margin:0;font-size:clamp(22px,3vw,34px)}
+#refPair p{font-size:18px;color:#F3F4EF}#refPair small{font-size:14px;color:#B9C4D6;line-height:1.5}
+#refQr{background:#fff;padding:14px;align-self:center;line-height:0;border-radius:10px}#refQr svg{display:block;width:min(32vh,290px);height:auto}
+#refNames{font-size:24px;font-weight:900}#refLink{display:none}
+.referee-display #app{padding-top:68px}.referee-display #ph{padding-top:70px}
+.referee-display .top button,.referee-display .bt,.referee-display .rowb,.referee-display .inn div,.referee-display .nx,.referee-display #fin nav{display:none}
+.referee-display .pl{grid-template-rows:auto minmax(0,1fr)}
+.referee-display .nm{border:0}.referee-display .top input,.referee-display .top select{border:0;background:transparent;color:#F3F4EF}
+.referee-display .hc input{border:0}.referee-display #fin{z-index:20;padding-top:70px}
+.referee-display #ph>button,.referee-display #ph>.ph-row,.referee-display #ph>details{display:none}
 @media(max-width:640px){.pg>div{gap:14px}.pg-head{flex-direction:column;align-items:flex-start;gap:12px}.pg-logo{width:180px}.pg-pair{grid-template-columns:1fr;gap:10px}.pg-player{min-height:96px;padding:16px;gap:8px}.pg-list{grid-template-columns:1fr 1fr}.pg nav{grid-template-columns:1fr}.pg-steps{gap:5px}.pg-steps li{padding:7px 9px}}
 @media (orientation:portrait){
   #app{display:none}
@@ -230,6 +246,17 @@ button:active{transform:scale(.97)}
   <section class="pg-roster" id="pgRoster" hidden aria-labelledby="pgPickTitle"><h2 id="pgPickTitle" tabindex="-1"></h2><label>名前・よみがなで検索<input id="pgSearch" type="search" autocomplete="off" placeholder="入力しなくても全員が表示されます"></label><p id="pgCount" aria-live="polite"></p><div class="pg-list" id="pgList"></div><p class="pg-empty" id="pgEmpty" hidden></p></section>
   <nav><button class="no" type="button" data-pre="back" id="pgBack">メニューへ戻る</button><button class="no" type="button" data-pre="swap" id="pgSwap" hidden>先攻・後攻を入れ替える (/)</button><button class="pg-start" type="button" data-pre="start" id="pgStart" disabled>ゲーム開始 (Enter)</button></nav>
 </div></div>
+<div id="refShield" hidden aria-hidden="true"></div>
+<div id="refBanner" hidden role="status"><span>審判あり｜表示専用</span><small id="refStatus">スマホの接続待ち</small></div>
+<div class="dlg" id="refPair" hidden><div role="dialog" aria-modal="true" aria-labelledby="refTitle">
+  <h1 id="refTitle">審判のスマホでQRコードを読み込む</h1>
+  <p id="refNames"></p><div id="refQr" aria-label="審判スマホ接続用QRコード"></div>
+  <p id="refHelp">スマホのカメラで読み取り、表示されたリンクを開いてください。</p>
+  <small>バンキング後の入れ替え・ゲーム開始・得点・交代は、すべて審判のスマホで操作します。<br>この画面はタッチしても反応しません。接続用QRは審判だけで共有してください。</small>
+  <a id="refLink" tabindex="-1" aria-hidden="true">審判用接続先</a>
+</div></div>
+<script src="/js/qr.js"></script>
+<script src="/js/event-referee.js"></script>
 <script src="/js/queen-cup.js"></script>
 <script src="/js/count-menu.js"></script>
 <script>
@@ -246,13 +273,14 @@ button:active{transform:scale(.97)}
   if (countHome) document.body.classList.add('from-count');
   $$('[data-count-home]').forEach(function (b) { b.hidden = !countHome; b.onclick = function () { location.href = countHome; }; });
   var match = clean(qs('match')) || 'test';
-  var CFG0 = { id: '', preset: '', entry: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: 'pts' };   /* end = what the inning cap decides: pts = more points wins (level = draw), both = neither reached the target, both lose, sd = level scores go to sudden death */
+  var CFG0 = { id: '', preset: '', entry: '', referee: false, mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: 'pts' };   /* end = what the inning cap decides: pts = more points wins (level = draw), both = neither reached the target, both lose, sd = level scores go to sudden death */
   function cfgOf(o) {
     var c = {}, k;
     for (k in CFG0) c[k] = CFG0[k];
     if (!o) return c;
     c.id = String(o.id || '');
     c.entry = o.entry === 'prequeen' ? 'prequeen' : '';
+    c.referee = c.entry === 'prequeen' && o.referee === true;
     c.preset = QC.active(o) ? QC.id : '';
     if (/^(3c|pocket|free)$/.test(o.mode)) c.mode = o.mode;
     c.limit = Math.max(0, Math.min(200, o.limit | 0));
@@ -352,6 +380,7 @@ button:active{transform:scale(.97)}
   }
   function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; p.ext = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.sd = false; S.ck = null; S.gid = gid(); prepReset(); }
   /* Pre Queen's setup belongs to this match and survives a reload, just like its score. */
+  function refereeLocked() { return !!(S && S.cfg.referee && (!S.prep || S.prep.stage === 'bank')); }
   function prepActive() { return S.cfg.entry === 'prequeen' && !!S.prep; }
   function prepBlocked() { return entryLoading || prepActive(); }
   function prepReset() { S.prep = S.cfg.entry === 'prequeen' ? { stage: 'players', players: [null, null] } : null; S.startedAt = 0; }
@@ -376,7 +405,7 @@ button:active{transform:scale(.97)}
   function rememberRecent() {
     var cm = window.VibesCountMenu; if (!cm || S.cfg.entry !== 'prequeen' || !S.startedAt || S.prep) return;
     cm.record({ id: match + ':' + S.gid, at: S.startedAt, kind: 'prequeen', table: +qs('t') || 0,
-      title: 'プレクイーン・' + (S.cfg.back ? '予選リーグ' : '決勝トーナメント'), players: S.p.map(function (p) { return p.n; }),
+      title: 'プレクイーン・' + (S.cfg.referee ? '優勝決定戦（審判あり）' : S.cfg.back ? '予選リーグ' : '決勝トーナメント'), players: S.p.map(function (p) { return p.n; }),
       cfg: Object.assign({}, S.cfg, { h: S.p.map(function (p) { return p.h; }), title: S.title, round: S.round }) });
   }
   function prepRoster() {
@@ -446,6 +475,7 @@ button:active{transform:scale(.97)}
       $('resT').innerHTML = '<tr><th></th><th>' + (pk ? 'セット' : '得点') + '</th>' + (pk ? '' : '<th>イニング</th><th>アベレージ</th><th>ハイラン</th>') + '</tr>' + [0, 1].map(function (i) { var p = S.p[i]; return '<tr' + (w === i ? ' class="w"' : '') + '><td></td><td>' + p.s + '</td>' + (pk ? '' : '<td>' + inns(i) + '</td><td>' + avg(i) + '</td><td>' + p.hr + '</td>') + '</tr>'; }).join('');
       [].forEach.call($('resT').querySelectorAll('td:first-child'), function (td, i) { td.textContent = S.p[i].n; });
     }
+    refereeDraw();
   }
   function tick(force) {
     if (!S.cfg.clk) { document.body.classList.remove('clock-warning'); return; } var l = ckLeft(), sec = Math.ceil(l / 1000), run = !!(S.ck && S.ck.run), warn = run && (QC.active(S.cfg) ? l < 10000 : l <= 10000);
@@ -465,7 +495,7 @@ button:active{transform:scale(.97)}
   function connect() {
     try { ws = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=display'); } catch (e) { status(false); return; }
     var ping; ws.onopen = function () { tries = 0; status(true); push(); ping = setInterval(function () { if (ws.readyState === 1) ws.send('ping'); }, 25000); };
-    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'hello') push(); else if (m.type === 'assign' && m.m === match) assign(m); };
+    ws.onmessage = function (ev) { if (ev.data === 'pong') return; var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.type === 'hello') push(); else if (m.type === 'referee-command' && refereeHost) refereeHost.receive(m).catch(function () { refereeError = '審判接続を復元できません。運営スタッフに確認してください。'; refereeDraw(); }); else if (m.type === 'assign' && m.m === match && !refereeLocked()) assign(m); };
     ws.onclose = function () { clearInterval(ping); status(false); clearTimeout(timer); timer = setTimeout(connect, Math.min(8000, 500 * Math.pow(2, tries++))); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
@@ -527,6 +557,55 @@ button:active{transform:scale(.97)}
     if (QC.active(S.cfg)) S.title = QC.title;
     newGame(); $('setup').hidden = true; save();
   }
+  /* ---- authenticated referee control: the venue remains the only score owner ---- */
+  var refereeHost = null, refereeError = '', refereeEnded = false;
+  function refereeView() {
+    return { title: S.title, round: '優勝決定戦', inn: S.inn, turn: S.turn, prep: S.prep ? S.prep.stage : '', over: S.over, ended: refereeEnded,
+      p: S.p.map(function (p, i) { return { n: p.n, h: p.h, s: p.s, hr: p.hr, avg: avg(i), in: Math.max(0, inns(i)) }; }),
+      limit: S.cfg.limit, back: S.cfg.back, sd: !!S.sd };
+  }
+  function refereeApply(op, arg) {
+    var i = arg.player, d = arg.delta, before;
+    if (op === 'swap') { if (!prepSwap()) return false; }
+    else if (op === 'start') { if (!prepBegin()) return false; }
+    else if (op === 'point') {
+      if (prepBlocked() || S.over || (i !== 0 && i !== 1) || (d !== 1 && d !== -1) || (d === 1 && i !== S.turn)) return false;
+      before = S.p[i].s; add(i, d); if (S.p[i].s === before) return false;
+    }
+    else if (op === 'next') { if (prepBlocked() || S.over) return false; next(); }
+    else if (op === 'undo') { if (!S.over) return false; unfinish(); }
+    else if (op === 'menu') {
+      if (!S.over || refereeEnded) return false;
+      refereeEnded = true;
+      setTimeout(function () { location.href = countHome || '/pages/count/'; }, 600);
+    }
+    else return false;
+    save(); return true;
+  }
+  function refereeDraw() {
+    var locked = refereeLocked(); document.body.classList.toggle('referee-display', locked);
+    $('refShield').hidden = !locked; $('refBanner').hidden = !locked;
+    ['app', 'ph', 'fin', 'setup', 'dlg', 'asg', 'pregame'].forEach(function (id) { $(id).inert = locked || ((id === 'app' || id === 'ph') && prepBlocked()); });
+    if (!locked) { $('refPair').hidden = true; return; }
+    $('pregame').hidden = true;
+    if (!refereeHost && !refereeError) {
+      try {
+        refereeHost = new window.VibesEventReferee.Host({ match: match, active: refereeLocked, view: refereeView, apply: refereeApply,
+          send: function (m) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); }, changed: refereeDraw });
+        var url = refereeHost.url(location.origin), qr = qrcode(0, 'M'); qr.addData(url); qr.make();
+        $('refQr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); $('refLink').href = url;
+      } catch (e) { refereeError = '安全な接続を準備できません。HTTPSで開き、端末の保存領域を確認してください。'; }
+    }
+    var online = !!(refereeHost && refereeHost.online() && ws && ws.readyState === 1);
+    $('refPair').hidden = online || refereeEnded;
+    $('refStatus').textContent = refereeEnded ? '操作終了' : online ? '審判スマホと接続中' : 'スマホの接続待ち・タッチ無効';
+    $('refNames').textContent = S.p[0].n + '　対　' + S.p[1].n;
+    $('refHelp').textContent = refereeError || (S.prep ? 'スマホのカメラで読み取り、表示されたリンクを開いてください。' : '接続が切れています。審判スマホでつなぎ直すか、QRをもう一度読み込んでください。点数は保持されています。');
+  }
+  setInterval(function () { if (S && S.cfg.referee) refereeDraw(); }, 1000);
+  ['click', 'pointerdown', 'touchstart', 'dblclick', 'contextmenu', 'keydown', 'beforeinput', 'input', 'change'].forEach(function (type) {
+    document.addEventListener(type, function (e) { if (refereeLocked()) { e.preventDefault(); e.stopImmediatePropagation(); } }, { capture: true, passive: false });
+  });
   /* ---- player list and banking screen (only the Pre Queen new-game entry) ---- */
   var prepChoosing = -1, prepList = [];
   function prepListDraw() {
@@ -551,8 +630,9 @@ button:active{transform:scale(.97)}
     var busy = entryLoading || !S.prep;
     /* An older saved setup may already have both names. It needs no extra Next action. */
     if (!busy && prepChoosing < 0 && S.prep.stage === 'players' && prepPairReady()) prepBank();
+    if (refereeLocked()) { layer.hidden = true; return; }
     var bank = !busy && S.prep.stage === 'bank', choosing = !busy && prepChoosing >= 0;
-    $('pgRule').textContent = busy ? 'プレクイーン' : (S.cfg.back ? '予選リーグ' : '決勝トーナメント') + '｜' + S.p[0].h + '点・' + S.cfg.limit + 'イニング';
+    $('pgRule').textContent = busy ? 'プレクイーン' : (S.cfg.referee ? '優勝決定戦（審判あり）' : S.cfg.back ? '予選リーグ' : '決勝トーナメント') + '｜' + S.p[0].h + '点・' + S.cfg.limit + 'イニング';
     $('pgTitle').textContent = busy ? '試合を準備しています' : bank ? 'バンキング・順番の確認' : '対戦する2人を選ぶ';
     $('pgHelp').textContent = busy ? '' : bank ? '台でバンキングをしてください。決まったら、先攻の選手が左になるよう入れ替えて「ゲーム開始」を押します。' : 'それぞれの名前ボタンを押すと、登録されている選手全員の一覧が開きます。';
     $('pgBusy').hidden = !busy; $('pgPlayers').hidden = busy || choosing; $('pgRoster').hidden = !choosing;
@@ -563,12 +643,12 @@ button:active{transform:scale(.97)}
     $('pgSwap').hidden = !bank || choosing; $('pgStart').hidden = busy || choosing; $('pgStart').disabled = !bank;
   }
   function prepClick(d) {
-    if (entryLoading || !prepActive()) return;
+    if (entryLoading || !prepActive() || refereeLocked()) return;
     if (d.preChoose != null) { S.prep.stage = 'players'; prepChoosing = +d.preChoose; $('pgSearch').value = ''; prepDraw(); $('pgPickTitle').focus(); }
     else if (d.prePick != null) {
       if (!prepSelect(prepChoosing, prepList[+d.prePick])) return;
       prepChoosing = -1; if (prepPairReady()) prepBank(); save();
-      (S.prep.stage === 'bank' ? $('pgStart') : document.querySelector('[data-pre-choose="' + (S.prep.players[0] ? 1 : 0) + '"]')).focus();
+      if (!refereeLocked()) (S.prep.stage === 'bank' ? $('pgStart') : document.querySelector('[data-pre-choose="' + (S.prep.players[0] ? 1 : 0) + '"]')).focus();
     }
     else if (d.pre === 'swap') { if (prepSwap()) { save(); $('pgStart').focus(); } }
     else if (d.pre === 'start') { if (prepBegin()) { save(); document.querySelector(window.matchMedia('(orientation:portrait)').matches ? '[data-add="t,1"]' : '[data-add="0,1"]').focus(); } }
@@ -581,6 +661,7 @@ button:active{transform:scale(.97)}
   window.addEventListener('storage', function (e) { if (prepActive() && (e.key === 'vibes-players-v3' || e.key === 'vibes-count-3c-players-v2')) prepDraw(); });
   /* ---- actions ---- */
   document.addEventListener('click', function (e) {
+    if (refereeLocked()) return;
     var b = e.target.closest('button'); if (!b || b.disabled) return; var d = b.dataset, who = function (v) { return v === 't' ? S.turn : +v; };
     if (d.pre || d.preChoose != null || d.prePick != null) return prepClick(d);
     if (prepBlocked()) return;
@@ -608,7 +689,7 @@ button:active{transform:scale(.97)}
     else if (d.act === 'asgok') { if (PEND) applyAssign(PEND); }
   });
   document.addEventListener('input', function (e) {
-    if (prepBlocked()) return;
+    if (prepBlocked() || refereeLocked()) return;
     var el = e.target, f = el.getAttribute && el.getAttribute('data-f'); if (!f) return; var v = el.value;
     if (f === 'title') S.title = v.slice(0, 60) || 'Pre Queen Cup 2026-2027';
     else if (f.charAt(0) === 'n') S.p[+f.charAt(1)].n = v.slice(0, 16) || (f === 'n0' ? 'PLAYER A' : 'PLAYER B');
@@ -617,6 +698,7 @@ button:active{transform:scale(.97)}
   });
   document.addEventListener('focusout', function (e) { if (e.target.getAttribute && e.target.getAttribute('data-f')) setTimeout(draw, 0); });
   document.addEventListener('keydown', function (e) {
+    if (refereeLocked()) return;
     if (prepBlocked()) {
       if (entryLoading || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
       if (e.key === '/') { e.preventDefault(); prepClick({ pre: 'swap' }); }

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>優勝決定戦・審判操作｜VIBES DIGITAL LAB</title>
+<link rel="icon" href="/img/favicon-64.png">
+<style>
+@font-face{font-family:VLNum;src:url(/fonts/vibes-num.woff2) format("woff2");font-display:swap}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;background:#171A22;color:#F3F4EF;font-family:"Noto Sans JP","Yu Gothic",system-ui,sans-serif;touch-action:manipulation}
+[hidden]{display:none!important}main{max-width:540px;margin:auto;padding:max(14px,env(safe-area-inset-top)) 14px max(22px,env(safe-area-inset-bottom));display:grid;gap:12px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px}h1{font-size:21px;margin:0}header small{display:block;font-size:12px;color:#B9C4D6;margin-top:4px}
+.tag{border:1px solid #526179;border-radius:9px;padding:8px;font-weight:900;font-size:12px;white-space:nowrap}
+#status{margin:0;padding:11px 12px;background:#252D3A;border-left:4px solid #9DA9BB;border-radius:10px;font-size:14px;font-weight:800;line-height:1.5}.connected #status{border-color:#C0FC09}
+#notice{margin:0;color:#F3F4EF;font-size:14px;line-height:1.5;padding:12px;border:1px solid #788CA7;border-radius:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}.player{background:#202633;border:3px solid #526179;border-radius:18px;min-width:0;padding:12px;display:flex;flex-direction:column;gap:8px;text-align:center}.player.active{border-color:#C0FC09;box-shadow:0 0 0 1px #C0FC09}
+.label{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:800}.ball{width:17px;height:17px;background:#F3F4EF;border-radius:50%;border:1px solid #A7B0BF}.yellow .ball{background:#FFD700;border-color:#FFD700}
+.player h2{margin:0;font-size:18px;line-height:1.4;overflow-wrap:anywhere}.player strong{font:400 68px/1 VLNum,system-ui,sans-serif}.yellow strong{color:#FFD700}.player small{font-size:12px;color:#B9C4D6;line-height:1.5}
+.actions{display:grid;gap:10px;margin-top:auto}button{appearance:none;min-height:60px;border:2px solid #526179;border-radius:14px;color:#F3F4EF;background:#252D3A;font:900 17px/1.4 inherit;cursor:pointer;font-family:inherit;font-weight:900;font-size:17px;padding:12px;touch-action:manipulation}
+button:disabled{opacity:.32;cursor:default}button:not(:disabled):active{transform:scale(.97)}button:focus-visible{outline:3px solid #F3F4EF;outline-offset:3px}.plus{font-size:26px;min-height:90px;background:#F3F4EF;color:#171A22;border:0}.yellow .plus{background:#FFD700}.minus{min-height:50px;font-size:15px}
+.primary{border:0;background:#C0FC09;color:#171A22;min-height:72px;font-size:23px;width:100%}.primary small{display:block;font-size:13px;font-weight:800;margin-top:3px}
+#bank,#playing,#result{display:grid;gap:12px}#bank p,#playing p{margin:0;font-size:15px;line-height:1.65}.rule{background:#202633;padding:10px;border-radius:10px;color:#B9C4D6;font-size:13px;text-align:center}.inning{display:flex;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:800}.inning b{font:400 36px/1 VLNum,system-ui,sans-serif}
+#winner{margin:0;padding:16px;background:#C0FC09;color:#171A22;border-radius:12px;font-size:22px;font-weight:900;line-height:1.5;text-align:center}#summary{margin:0;font-size:14px;line-height:1.8;white-space:pre-line}footer{font-size:12px;color:#B9C4D6;line-height:1.7}#again{min-height:44px;font-size:14px;width:100%}
+</style>
+</head>
+<body>
+<main>
+  <header><div><h1>優勝決定戦</h1><small>PRE QUEEN CUP｜審判操作</small></div><span class="tag">審判専用</span></header>
+  <p id="status" role="status">会場画面に接続しています…</p>
+  <p id="notice" role="alert" hidden></p>
+  <div class="pair" id="pair" hidden>
+    <section class="player" id="player0"><div class="label"><span class="ball"></span>白球・先攻</div><h2 id="name0"></h2><strong id="score0">0</strong><small id="stat0"></small><div class="actions" data-score-actions><button class="plus" data-op="point" data-player="0" data-delta="1" disabled>＋1 点</button><button class="minus" data-op="point" data-player="0" data-delta="-1" disabled>−1 点（訂正）</button></div></section>
+    <section class="player yellow" id="player1"><div class="label"><span class="ball"></span>黄球・後攻</div><h2 id="name1"></h2><strong id="score1">0</strong><small id="stat1"></small><div class="actions" data-score-actions><button class="plus" data-op="point" data-player="1" data-delta="1" disabled>＋1 点</button><button class="minus" data-op="point" data-player="1" data-delta="-1" disabled>−1 点（訂正）</button></div></section>
+  </div>
+  <section id="bank" hidden><p>台でバンキングをしてください。先攻が「白球」になるよう、必要なら入れ替えます。</p><button data-op="swap" disabled>先攻・後攻を入れ替える</button><button class="primary" data-op="start" disabled>ゲーム開始</button></section>
+  <section id="playing" hidden><div class="inning">イニング <b id="inning">1</b><span id="turn"></span></div><button class="primary" data-op="next" disabled>選手交代<small id="next"></small></button><p id="sudden" hidden>同点のためサドンデスです。先に1点を取った選手が勝ちます。</p></section>
+  <section id="result" hidden><p id="winner"></p><p id="summary"></p><button data-op="undo" disabled>結果を取り消す（訂正する）</button><button class="primary" data-op="menu" disabled>操作終了・メニューへ</button></section>
+  <div class="rule">10点先取／25イニング／裏撞きなし</div>
+  <button id="again" type="button" hidden>接続を確認する</button>
+  <footer>スマホでの操作は会場画面に反映されます。会場画面はタッチしても反応しません。通信が切れた場合、操作は停止し、点数は保持されます。</footer>
+</main>
+<script src="/js/event-referee.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); }, buttons = [].slice.call(document.querySelectorAll('[data-op]'));
+  var match = new URLSearchParams(location.search).get('match') || '', key = new URLSearchParams(location.hash.slice(1)).get('key') || '';
+  var RF = window.VibesEventReferee, auth, cid, seq = 0, rev = -1, view = null, owner = false, lastReply = 0, ws = null, retry = null, pending = null, error = '', ended = false, receiving = Promise.resolve();
+  function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
+  var sessionKey = 'vibes-referee-phone:' + match;
+  function keep() { sessionStorage.setItem(sessionKey, JSON.stringify({ client: cid, seq: seq, pending: pending })); }
+  function live() { return !!(owner && ws && ws.readyState === 1 && Date.now() - lastReply < 10000 && !ended); }
+  function draw() {
+    var ready = live(), bank = !!(view && view.prep), over = !!(view && view.over);
+    document.body.classList.toggle('connected', ready);
+    $('status').textContent = ended ? '操作を終了しました。ありがとうございました。' : !auth ? 'QRコードから接続してください' : pending ? '操作を確認しています…（連打せずお待ちください）' : ready ? '会場画面と接続中｜操作できます' : '操作停止中｜会場画面との接続を確認しています';
+    $('notice').hidden = !error; $('notice').textContent = error;
+    $('again').hidden = !auth || ready || ended;
+    $('pair').hidden = !view; $('bank').hidden = !view || !bank || ended; $('playing').hidden = !view || bank || over || ended; $('result').hidden = !over || ended;
+    [].forEach.call(document.querySelectorAll('[data-score-actions]'), function (e) { e.hidden = bank || over || ended; });
+    if (view) {
+      view.p.forEach(function (p, i) {
+        $('name' + i).textContent = p.n; $('score' + i).textContent = p.s;
+        $('stat' + i).textContent = '目標 ' + p.h + '点｜HR ' + p.hr + '｜AVG ' + p.avg;
+        $('player' + i).classList.toggle('active', !bank && !over && view.turn === i);
+      });
+      $('inning').textContent = view.inn; $('turn').textContent = (view.turn ? '黄球' : '白球') + 'の番';
+      $('next').textContent = '次は ' + view.p[1 - view.turn].n; $('sudden').hidden = !view.sd;
+      if (over) {
+        var w = view.over.w;
+        $('winner').textContent = w < 0 ? '引き分け' : '優勝　' + view.p[w].n;
+        $('summary').textContent = view.p.map(function (p) { return p.n + '：' + p.s + '点　HR ' + p.hr + '　AVG ' + p.avg; }).join('\n');
+      }
+    }
+    buttons.forEach(function (b) {
+      var op = b.dataset.op, allowed = op === 'swap' || op === 'start' ? bank : op === 'undo' || op === 'menu' ? over : !!view && !bank && !over;
+      if (op === 'point' && view) allowed = allowed && (+b.dataset.delta < 0 ? view.p[+b.dataset.player].s > 0 : +b.dataset.player === view.turn);
+      b.disabled = !ready || !!pending || !allowed;
+    });
+  }
+  function sendWire(message) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(message)); }
+  async function handshake(op) { if (!auth || !ws || ws.readyState !== 1 || ended) return; sendWire(await auth.sign({ type: 'referee-command', m: match, client: cid, seq: 0, op: op })); }
+  async function command(op, arg) {
+    if (!live() || pending || !view) return;
+    pending = { type: 'referee-command', m: match, client: cid, seq: ++seq, base: rev, op: op, arg: arg || {} }; error = ''; draw();
+    try { pending = await auth.sign(pending); keep(); sendWire(pending); } catch (e) { pending = null; owner = false; error = '操作を保存できません。端末の保存領域を確認し、QRを読み直してください。'; draw(); }
+  }
+  async function receive(m) {
+    if (!m || m.type !== 'referee-state' || m.m !== match || m.client !== cid || !(await auth.verify(m)) || !m.view || !Array.isArray(m.view.p) || m.view.p.length !== 2 || m.rev < rev) return;
+    rev = m.rev; view = m.view; owner = m.owner === true; lastReply = Date.now();
+    if (pending && m.ack >= pending.seq) { pending = null; keep(); }
+    error = m.ok ? '' : m.error;
+    if (view.ended) { ended = true; pending = null; keep(); if (ws) ws.close(); }
+    draw();
+  }
+  function connect() {
+    if (ended || !auth || (ws && ws.readyState < 2)) return;
+    clearTimeout(retry); owner = false; draw();
+    var host = /\.workers\.dev$/.test(location.host) ? location.host : 'vibes-site1.quiet-darkness-2185.workers.dev';
+    ws = new WebSocket('wss://' + host + '/api/count/' + room(match) + '?role=remote');
+    ws.onopen = function () { handshake('hello').catch(failed); };
+    ws.onmessage = function (e) { var m; try { m = JSON.parse(e.data); } catch (x) { return; } receiving = receiving.catch(function () {}).then(function () { return receive(m); }).catch(failed); };
+    ws.onerror = function () { ws.close(); };
+    ws.onclose = function () { owner = false; draw(); if (!ended) retry = setTimeout(connect, 1800); };
+  }
+  function failed() { error = '接続を確認できません。QRを読み直すか、運営スタッフに確認してください。'; owner = false; draw(); }
+  buttons.forEach(function (b) { b.addEventListener('click', function () { if (!b.disabled) command(b.dataset.op, b.dataset.op === 'point' ? { player: +b.dataset.player, delta: +b.dataset.delta } : {}); }); });
+  $('again').onclick = function () { if (ws && ws.readyState === 1) handshake('hello').catch(failed); else connect(); };
+  try {
+    if (!/^[a-z0-9_-]{1,40}$/.test(match)) throw new Error('invalid-match'); auth = RF.signer(key);
+    var saved = JSON.parse(sessionStorage.getItem(sessionKey) || 'null');
+    cid = saved && /^[a-f0-9]{64}$/.test(saved.client || '') ? saved.client : RF.random();
+    if (saved && Number.isSafeInteger(saved.seq) && saved.seq >= 0) { seq = saved.seq; pending = saved.pending || null; }
+    keep(); connect();
+    setInterval(function () { if (ws && ws.readyState === 1) { handshake(owner ? 'ping' : 'hello').catch(failed); if (pending && pending.sig) sendWire(pending); } draw(); }, 3000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) { connect(); handshake('hello').catch(failed); } });
+    window.addEventListener('online', connect);
+  } catch (e) { auth = null; error = '会場画面に表示された審判用QRコードを、スマホのカメラで読み込んでください。'; draw(); }
+})();
+</script>
+</body>
+</html>

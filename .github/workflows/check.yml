@@ -19,6 +19,7 @@ jobs:
       - run: node scripts/lab-positions.mjs --check
       - run: node scripts/test-queen-cup.mjs
       - run: node scripts/test-count-menu.mjs
+      - run: node scripts/test-event-referee.mjs
       - name: No built files or secrets in the change
         run: |
           if git ls-files | grep -E '^dist/' ; then echo "dist/ must not be committed"; exit 1; fi

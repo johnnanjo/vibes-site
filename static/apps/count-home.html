@@ -133,6 +133,13 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
 .ring.n2 .pq-mark img{display:block;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 0;filter:none}
 .tile .pq-mark{width:100%;margin:auto 0;flex:none}
 .ring.n2 .logo.prequeen-logo{width:27vw;padding:0}
+.ring.n3.match-menu .pq-mark img{display:block;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 0;filter:none}
+@media(min-width:761px){
+.ring.n3.match-menu .logo.prequeen-logo{width:min(30vw,340px);justify-self:center;padding:0}
+.ring.n3.match-menu .tile{padding:3vh 1.6vw;justify-content:center;overflow:hidden;gap:1.6vh}
+.ring.n3.match-menu .tile b{font-size:min(4.5vh,2.2vw);line-height:1.5;white-space:normal}
+.ring.n3.match-menu .tile span{font-size:2vh;line-height:1.6}
+}
 .prequeen-logo .pq-mark{width:100%}
 .ring.match-menu~.hq{display:none}
 .tile:disabled{opacity:.48;cursor:default;filter:saturate(.25)}.tile:disabled:hover{transform:none}
@@ -247,7 +254,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
     pick: { t: 'どちらで使いますか？', items: [{ id: 'ed-carom', b: 'キャロム', s: 'FOR CAROM', c: 'carom', d: 'スリークッション・プレクイーン' }, { id: 'ed-pocket', b: 'ポケット', s: 'FOR POCKET', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }] },
     top: { t: '', items: [] },
     carom: { t: 'ニューゲーム', back: 'top', items: [{ id: '3c', b: 'スリークッション', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }, { id: 'prequeen', b: 'プレクイーン', s: 'PRE QUEEN CUP', c: 'carom', d: '大会用・予選7点／決勝10点' }] },
-    prequeen: { t: 'プレクイーン', back: 'carom', items: [{ id: 'prequeen-qual', b: '予選リーグ', s: 'プレクイーン', c: 'carom', d: '7点・25イニング・裏撞きあり', go: 1 }, { id: 'prequeen-final', b: '決勝トーナメント', s: 'プレクイーン', c: 'carom', d: '10点・25イニング・裏撞きなし', go: 1 }] },
+    prequeen: { t: 'プレクイーン', back: 'carom', items: [{ id: 'prequeen-qual', b: '予選リーグ', s: 'プレクイーン', c: 'carom', d: '7点・25イニング・裏撞きあり', go: 1 }, { id: 'prequeen-final', b: '決勝トーナメント', s: 'プレクイーン', c: 'carom', d: '10点・25イニング・裏撞きなし', go: 1 }, { id: 'prequeen-referee', b: '優勝決定戦（審判あり）', s: 'プレクイーン', c: 'carom', d: '10点・スマホで審判操作・選手画面は表示専用', go: 1 }] },
     pocket: { t: 'ニューゲーム', back: 'top', items: [{ id: 'bowlard', b: 'ボーラード', s: 'POCKET', c: 'pocket', d: '1〜4人・ボウリングのスコア', go: 1 }, { id: 'nine', b: '9ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-9' }, { id: 'ten', b: '10ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-10' }] },
     nine: { t: '9ボール', back: 'pocket', items: [{ id: 'nine-set', b: 'セットマッチ', s: '9-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g59', b: '5-9', s: '9-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] },
     ten: { t: '10ボール', back: 'pocket', items: [{ id: 'ten-set', b: 'セットマッチ', s: '10-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g510', b: '5-10', s: '10-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] }
@@ -260,9 +267,10 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   var colOf = function (it) { return COL[KOL[it.id] || it.c]; };
   var lv = ED ? 'top' : 'pick', tiles = [], sel = -1;
   function prequeenUrl(id) {
-    if (!CM || !CM.preQueenOpen() || (id !== 'prequeen-qual' && id !== 'prequeen-final')) return '';
+    if (!CM || !CM.preQueenOpen() || (id !== 'prequeen-qual' && id !== 'prequeen-final' && id !== 'prequeen-referee')) return '';
     var qualifying = id === 'prequeen-qual';
     var cfg = { entry: 'prequeen', mode: '3c', h: qualifying ? [7, 7] : [10, 10], limit: 25, back: qualifying, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: qualifying ? 'both' : 'sd', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯', round: qualifying ? '予選リーグ' : '' };
+    if (id === 'prequeen-referee') { cfg.referee = true; cfg.round = '決勝'; }
     /* Each new game owns its room; refreshing the same address preserves its score. */
     var issue = 'pq-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     cfg.id = issue;
