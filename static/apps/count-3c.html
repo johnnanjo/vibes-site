@@ -298,6 +298,8 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
       <div class="f pf3"><label for="fn3">選手4（緑）の名前</label><input id="fn3" maxlength="14" autocomplete="off" list="roster"></div>
       <div class="f pf3"><label for="fg3">選手4の持ち点</label><input id="fg3" type="number" inputmode="numeric" min="1" max="999"></div>
       <div class="f"><label for="fl">イニング制限（0＝なし）</label><input id="fl" type="number" inputmode="numeric" min="0" max="999"></div>
+      <div class="f"><label for="fhf">引き分け判定のイニング（0＝なし）※このイニングまでに、だれも持ち点の50％に届かなければ引き分け</label><input id="fhf" type="number" inputmode="numeric" min="0" max="999"></div>
+      <div class="f"><label for="flc">ラストイニングの音声（制限の1つ前と最後のイニング）</label><select id="flc"><option value="1">あり</option><option value="0">なし</option></select></div>
       <div class="f"><label for="ft">残り秒数（0＝使わない）</label><input id="ft" type="number" inputmode="numeric" min="0" max="180"></div>
       <div class="f"><label for="fp">練習時間（分）</label><input id="fp" type="number" inputmode="numeric" min="1" max="60"></div>
       <div class="f" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="bPr2" style="width:100%">練習タイマーを開く</button></div>
@@ -500,8 +502,14 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     var more = { 3: 'three more', 2: 'two more', 1: 'one more' }[left]; return NW(run) + (run === 1 ? ' point' : ' points') + (more ? ', ' + more : ''); }
   var TEN = { en: 'ten seconds', ja: '残り10秒', es: 'diez segundos', fr: 'dix secondes', it: 'dieci secondi', ko: '10초 남았습니다' }, cl = function () { return VL[S.cfg.clang] ? S.cfg.clang : 'en'; };
   var NW = function (n) { var a = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'], t = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']; return n < 20 ? a[n] : n < 100 ? t[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '') : String(n); };
+  /* extra calls (2026-11-21). extSay: while the half-way check is still ahead and nobody has half of their target, "N more for the extension" from 3 points away.
+     lastSay: with an inning limit, "one before the last" when the inning before the last begins and "last inning" when the last begins. */
+  var EXT = { ja: function (n) { return 'あと' + n + '点で延長ゲーム'; }, en: function (n) { return NW(n) + ' more for the extension'; }, es: function (n) { return (n === 1 ? 'falta 1' : 'faltan ' + n) + ' para la prórroga'; }, fr: function (n) { return 'encore ' + n + ' pour la prolongation'; }, it: function (n) { return 'ancora ' + n + ' per il prolungamento'; }, ko: function (n) { return n + '점 더 얻으면 연장'; } },
+    LASTI = { ja: ['ラストイニング前', 'ラストイニング'], en: ['One inning before the last', 'Last inning'], es: ['Penúltima entrada', 'Última entrada'], fr: ['Avant-dernière reprise', 'Dernière reprise'], it: ['Penultima ripresa', 'Ultima ripresa'], ko: ['마지막 이닝 전', '마지막 이닝'] };
+  function extSay(p, tot, l) { var h = S.cfg.hfi | 0; if (S.cfg.mode || h < 1 || S.inn[p].length >= h) return ''; if (S.sc.some(function (v, i) { return (i === p ? tot : v) * 2 >= S.cfg.g[i]; })) return ''; var n = Math.ceil(S.cfg.g[p] / 2) - tot; return n >= 1 && n <= 3 ? (l === 'ja' || l === 'ko' ? '、' : ', ') + (EXT[l] || EXT.en)(n) : ''; }
+  function lastSay(p, l) { var L = S.cfg.lim | 0; if (S.cfg.mode || L < 1 || S.cfg.lastc === 0 || S.over || p !== NP() - 1) return ''; var nx = S.inn[p].length + 1, k = nx === L ? 1 : nx === L - 1 ? 0 : -1; return k < 0 ? '' : (l === 'ja' || l === 'ko' ? '。' : '. ') + (LASTI[l] || LASTI.en)[k]; }
   function speak(t, lang, fb) { vSpeak(t, lang || 'en', S.cfg.cvo === 'm' ? 'm' : 'f', fb); }
-  function callOut() { if (S.cfg.voice === 0 || S.cfg.vdev === 'tab' || S.over || S.run < 1) return; var lf = S.cfg.g[S.turn] - S.sc[S.turn] - S.run; speak(callText(S.run, lf, cl()), cl(), callText(S.run, lf)); }
+  function callOut() { if (S.cfg.voice === 0 || S.cfg.vdev === 'tab' || S.over || S.run < 1) return; var lf = S.cfg.g[S.turn] - S.sc[S.turn] - S.run; speak(callText(S.run, lf, cl()) + extSay(S.turn, S.sc[S.turn] + S.run, cl()), cl(), callText(S.run, lf) + extSay(S.turn, S.sc[S.turn] + S.run, 'en')); }
   function digit(d) { if (S.over) return; begin(); var v = S.typed ? S.run * 10 + d : d; if (v > room()) v = d > room() ? room() : d; S.run = v; S.typed = true; render(); }
   function finish() { S.over = true; S.t1 = Date.now(); if (!S.cfg.mode && S.tour) tdAdd(); tStop(); render(); showWin(); if (typeof rmPush === 'function') rmPush(); if (S.cfg.voice !== 0 && S.cfg.vdev !== 'tab') setTimeout(function () { if (S.over && winSay()) speak(winSay(), cl(), winSay('en')); }, 400); }
   function commit() {
@@ -509,7 +517,10 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     var p = S.turn, N = NP(); S.sc[p] += S.run; S.inn[p].push(S.run); S.run = 0; S.typed = false;
     var any = S.sc.some(function (v, i) { return v >= S.cfg.g[i]; });
     if (S.sc[p] >= S.cfg.g[p] && !S.cfg.eq) return finish();
-    if (p === N - 1) { if (any) return finish(); if (S.cfg.lim && S.inn[p].length >= S.cfg.lim) return finish(); S.turn = 0; }
+    if (p === N - 1) { if (any) return finish();
+      /* half-way check (2026-11-21): at the end of inning `hfi`, if nobody has half of their own target, the game ends as a draw */
+      if (!S.cfg.mode && (S.cfg.hfi | 0) > 0 && S.inn[p].length === (S.cfg.hfi | 0) && !S.sc.some(function (v, i) { return v * 2 >= S.cfg.g[i]; })) { S.hd = 1; return finish(); }
+      if (S.cfg.lim && S.inn[p].length >= S.cfg.lim) return finish(); S.turn = 0; }
     else S.turn = p + 1;
     tKick(); render(); if (S.cfg.vdev !== 'tab') { chime(); if (S.cfg.voice !== 0) setTimeout(function () { speak(gotSay(p), cl(), gotSay(p, 'en')); }, 350); }
   }
@@ -521,8 +532,8 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   var OUT1 = { en: 'First out. The opponent has the equalizing inning.', ja: 'いちあがり。裏撞きがあります。', es: 'Ha terminado primero. Hay contrasalida.', fr: 'Premier arrivé. Il y a une reprise égalisatrice.', it: "Ha chiuso per primo. L'avversario ha ancora un turno.", ko: '먼저 도달했습니다. 후구가 있습니다.' },
     DRAWT = { en: 'Draw', ja: 'ドロー', es: 'Empate', fr: 'Match nul', it: 'Pareggio', ko: '무승부' }, WINT = { en: 'Winner, ', ja: 'ウィナー、', es: 'Ganador, ', fr: 'Vainqueur, ', it: 'Vincitore, ', ko: '승자, ' };
   /* what to say when player p has just handed over: the points, plus the first-out notice */
-  function gotSay(p, l) { var n = S.inn[p][S.inn[p].length - 1] || 0, out = !S.over && S.sc[p] >= S.cfg.g[p]; l = l || cl(); return out ? (n ? gotText(n, l) + (l === 'ja' || l === 'ko' ? '。' : '. ') : '') + OUT1[l] : gotText(n, l); }
-  function winSay(l) { l = l || cl(); var pct = function (p) { return S.sc[p] / S.cfg.g[p]; }, w = 0, tie = false; S.cfg.n.forEach(function (x, p) { if (p && pct(p) > pct(w)) { w = p; tie = false; } else if (p && pct(p) === pct(w)) tie = true; }); return tie ? DRAWT[l] : ''; } /* only a draw is announced; the winner's name is not read out */
+  function gotSay(p, l) { var n = S.inn[p][S.inn[p].length - 1] || 0, out = !S.over && S.sc[p] >= S.cfg.g[p]; l = l || cl(); return (out ? (n ? gotText(n, l) + (l === 'ja' || l === 'ko' ? '。' : '. ') : '') + OUT1[l] : gotText(n, l)) + lastSay(p, l); }
+  function winSay(l) { l = l || cl(); var pct = function (p) { return S.sc[p] / S.cfg.g[p]; }, w = 0, tie = false; S.cfg.n.forEach(function (x, p) { if (p && pct(p) > pct(w)) { w = p; tie = false; } else if (p && pct(p) === pct(w)) tie = true; }); return tie || S.hd ? DRAWT[l] : ''; } /* only a draw is announced; the winner's name is not read out */
   /* two rising notes when the turn passes to the next player */
   function chime() { beep(660, 110); setTimeout(function () { beep(990, 170); }, 120); }
   function undo() {
@@ -533,8 +544,8 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   function newGame(keep) { snap(); var c = S.cfg; S = def(c); S.ready = !c.n.every(isDefName); if (!keep) hist = []; tStop(); $('winL').hidden = true; render(); }
   function showWin() {
     var pct = function (p) { return S.sc[p] / S.cfg.g[p]; }, w = 0, tie = false, ps = S.cfg.n.map(function (x, i) { return i; });
-    ps.forEach(function (p) { if (p && pct(p) > pct(w)) { w = p; tie = false; } else if (p && pct(p) === pct(w)) tie = true; }); if (tie) w = -1;
-    $('wName').textContent = w < 0 ? '引き分け（DRAW）' : '勝者：' + S.cfg.n[w] + ' (' + S.cfg.g[w] + ')';
+    ps.forEach(function (p) { if (p && pct(p) > pct(w)) { w = p; tie = false; } else if (p && pct(p) === pct(w)) tie = true; }); if (tie || S.hd) w = -1;
+    $('wName').textContent = w < 0 ? (S.hd ? '引き分け（' + (S.cfg.hfi | 0) + 'イニングで、持ち点の50％に届かず）' : '引き分け（DRAW）') : '勝者：' + S.cfg.n[w] + ' (' + S.cfg.g[w] + ')';
     var tb = $('wT'); tb.textContent = '';
     ps.forEach(function (p) { var tr = document.createElement('tr'); [S.cfg.n[p] + ' (' + S.cfg.g[p] + ')', S.sc[p] + ' / ' + S.cfg.g[p], S.inn[p].length, hi(p), avg(p)].forEach(function (v, i) { var c = document.createElement(i ? 'td' : 'th'); c.textContent = v; tr.appendChild(c); }); tb.appendChild(tr); });
     $('winL').hidden = false;
@@ -542,7 +553,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   function openSet() {
     for (var q = 0; q < 4; q++) { $('fn' + q).value = S.cfg.n[q] || 'PLAYER ' + (q + 1); $('fg' + q).value = S.cfg.g[q] || S.cfg.g[0]; }
     $('fnp').value = NP(); $('fnp').disabled = !fresh(); $('fto').value = S.cfg.to; setRows();
-    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1; $('fvd').value = S.cfg.vdev || 'both'; $('ften').value = S.cfg.ten === 0 ? 0 : 1; $('fcl').value = S.cfg.clang || 'en'; $('fcv').value = S.cfg.cvo === 'm' ? 'm' : 'f';
+    $('fp').value = S.cfg.pm; $('fl').value = S.cfg.lim; $('fhf').value = S.cfg.hfi | 0; $('flc').value = S.cfg.lastc === 0 ? 0 : 1; $('ft').value = S.cfg.t; $('fe').value = S.cfg.eq; $('fs').value = S.cfg.snd; $('fz').value = S.cfg.easy ? 1 : 0; $('fv').value = S.cfg.voice === 0 ? 0 : 1; $('fvd').value = S.cfg.vdev || 'both'; $('ften').value = S.cfg.ten === 0 ? 0 : 1; $('fcl').value = S.cfg.clang || 'en'; $('fcv').value = S.cfg.cvo === 'm' ? 'm' : 'f';
     $('fcam').value = camPref();
     $('setL').hidden = false; $('fn0').focus(); $('fn0').select();
   }
@@ -552,7 +563,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
       var num = function (id, lo, hi, d) { var v = parseInt($(id).value, 10); return isNaN(v) ? d : Math.max(lo, Math.min(hi, v)); };
       var nn = fresh() ? +$('fnp').value : NP(), oldTo = S.cfg.to; if (nn !== NP()) setN(nn);
       for (var q = 0; q < nn; q++) { S.cfg.n[q] = $('fn' + q).value.trim() || 'PLAYER ' + (q + 1); S.cfg.g[q] = num('fg' + q, 1, 999, 25); }
-      S.cfg.to = num('fto', 0, 9, 3); if (S.cfg.to !== oldTo) S.to = S.to.map(function (v) { return Math.max(0, v + S.cfg.to - oldTo); }); S.cfg.lim = num('fl', 0, 999, 0); S.cfg.t = num('ft', 0, 180, 40); S.cfg.pm = num('fp', 1, 60, 5);
+      S.cfg.to = num('fto', 0, 9, 3); if (S.cfg.to !== oldTo) S.to = S.to.map(function (v) { return Math.max(0, v + S.cfg.to - oldTo); }); S.cfg.lim = num('fl', 0, 999, 0); S.cfg.hfi = num('fhf', 0, 999, 0); S.cfg.lastc = +$('flc').value; S.cfg.t = num('ft', 0, 180, 40); S.cfg.pm = num('fp', 1, 60, 5);
       S.cfg.eq = +$('fe').value; S.cfg.snd = +$('fs').value; S.cfg.easy = +$('fz').value; S.cfg.voice = +$('fv').value; S.cfg.vdev = $('fvd').value; S.cfg.ten = +$('ften').value; S.cfg.clang = $('fcl').value; S.cfg.cvo = $('fcv').value; prefSave(); camPref(+$('fcam').value);
       remember();
       for (var p = 0; p < NP(); p++) if (S.sc[p] > S.cfg.g[p]) S.cfg.g[p] = S.sc[p];
@@ -562,7 +573,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
   }
   function cfSchema() { var c = S.cfg, yn = [[1, 'あり'], [0, 'なし']]; return [
     { k: 'lim', l: 'イニング制限（0＝なし）', t: 'n', min: 0, max: 999, v: c.lim }, { k: 't', l: '残り秒数（0＝使わない）', t: 'n', min: 0, max: 180, v: c.t },
-    { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
+    { k: 'hfi', l: '引き分け判定のイニング（0＝なし。このイニングまでに、だれも持ち点の50％に届かなければ引き分け）', t: 'n', min: 0, max: 999, v: c.hfi | 0 }, { k: 'lastc', l: 'ラストイニングの音声（制限の1つ前と最後）', t: 's', o: yn, v: c.lastc === 0 ? 0 : 1 }, { k: 'to', l: 'タイムアウトの回数（0＝なし）', t: 'n', min: 0, max: 9, v: c.to }, { k: 'pm', l: '練習時間（分）', t: 'n', min: 1, max: 60, v: c.pm },
     { k: 'easy', l: 'イージーモード（点数・イニング・名前・ハイランだけ表示）', t: 's', o: yn, v: c.easy ? 1 : 0 }, { k: 'voice', l: '音声コール（点数を読み上げ）', t: 's', o: yn, v: c.voice === 0 ? 0 : 1 }, { k: 'vdev', l: '音声コールを出す場所', t: 's', o: [['both', 'モニターとタブレット'], ['pc', 'モニターだけ'], ['tab', 'タブレットだけ']], v: c.vdev || 'both' }, { k: 'ten', l: '残り10秒の音声（読み上げ）', t: 's', o: yn, v: c.ten === 0 ? 0 : 1 }, { k: 'clang', l: '読み上げの言葉', t: 's', o: [['en', '英語'], ['ja', '日本語'], ['es', 'スペイン語'], ['fr', 'フランス語'], ['it', 'イタリア語'], ['ko', '韓国語']], v: c.clang || 'en' }, { k: 'cvo', l: '声', t: 's', o: [['f', '女性'], ['m', '男性']], v: c.cvo === 'm' ? 'm' : 'f' }, { k: 'eq', l: '裏撞き（全員が撞いてから終了）', t: 's', o: yn, v: c.eq }, { k: 'snd', l: '音（残り10秒・時間切れ）', t: 's', o: yn, v: c.snd }]; }
   function cfApply(v) {
     var oldTo = S.cfg.to;
@@ -818,8 +829,8 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     rws.onerror = function () { try { rws.close(); } catch (e) {} };
     rmStatus();
   }
-  var PFK = 'vibes-count-prefs', PFL = ['lim', 't', 'to', 'pm', 'eq', 'snd', 'easy', 'voice', 'ten'];
-  function prefSave() { if (S.cfg.mode) return; var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } PFL.forEach(function (k) { o[k] = k === 'voice' || k === 'ten' ? (S.cfg[k] === 0 ? 0 : 1) : +S.cfg[k] || 0; }); o.vdev = S.cfg.vdev || 'both'; o.clang = S.cfg.clang || 'en'; o.cvo = S.cfg.cvo === 'm' ? 'm' : 'f'; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
+  var PFK = 'vibes-count-prefs', PFL = ['lim', 't', 'to', 'pm', 'eq', 'snd', 'easy', 'voice', 'ten', 'hfi', 'lastc'];
+  function prefSave() { if (S.cfg.mode) return; var o = {}; try { o = JSON.parse(localStorage.getItem(PFK) || '{}') || {}; } catch (e) { o = {}; } PFL.forEach(function (k) { o[k] = k === 'voice' || k === 'ten' || k === 'lastc' ? (S.cfg[k] === 0 ? 0 : 1) : +S.cfg[k] || 0; }); o.vdev = S.cfg.vdev || 'both'; o.clang = S.cfg.clang || 'en'; o.cvo = S.cfg.cvo === 'm' ? 'm' : 'f'; try { localStorage.setItem(PFK, JSON.stringify(o)); } catch (e) {} }
   function menuInit() {
     var q = /[?&]n=(new|again)/.exec(location.search); if (!q) return;
     var ticket = /[?&]rpt=([^&]+)/.exec(location.search), replay = ticket && CM ? CM.consume('carom', ticket[1]) : null;
@@ -1010,7 +1021,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
       if (b) k = b.getAttribute('data-k'); else if (o && o.querySelector('kbd')) k = o.querySelector('kbd').textContent; else if (h && h.querySelector('kbd')) k = h.querySelector('kbd').textContent;
       if (k === 'BackSpace') k = 'Backspace'; if (/^([0-9]|Enter|Backspace)$/.test(k)) { e.preventDefault(); onKey(k, noop); } }); })();
   function act(a) {
-    if (MIR) { var said = 0; if (a.type === 'key' && a.k === '+' && !S.cfg.mode && typeof callText === 'function' && S.cfg.voice !== 0 && !S.over && !S.ready && !S.pz && !(S.cfg.vdev === 'pc' && mva)) { var rm0 = S.cfg.g[S.turn] - S.sc[S.turn]; if (S.run < rm0) { said = 1; if (fresh1(S.run, S.run + 1)) psay(callText(S.run + 1, rm0 - S.run - 1, cl()), cl(), callText(S.run + 1, rm0 - S.run - 1)); S.run++; /* count ahead so quick taps are called in order; the monitor's next message replaces this */ } }
+    if (MIR) { var said = 0; if (a.type === 'key' && a.k === '+' && !S.cfg.mode && typeof callText === 'function' && S.cfg.voice !== 0 && !S.over && !S.ready && !S.pz && !(S.cfg.vdev === 'pc' && mva)) { var rm0 = S.cfg.g[S.turn] - S.sc[S.turn]; if (S.run < rm0) { said = 1; if (fresh1(S.run, S.run + 1)) psay(callText(S.run + 1, rm0 - S.run - 1, cl()) + extSay(S.turn, S.sc[S.turn] + S.run + 1, cl()), cl(), callText(S.run + 1, rm0 - S.run - 1) + extSay(S.turn, S.sc[S.turn] + S.run + 1, 'en')); S.run++; /* count ahead so quick taps are called in order; the monitor's next message replaces this */ } }
       try { parent.postMessage({ type: 'mir', send: a, said: said }, location.origin); } catch (e) {} return; }
     if (a.type === 'key') onKey(a.k, noop); else if (a.c === 'pause') { if (S.pz) pzOff(); else pzOn(); } else if (a.c === 'end') endGame();
   }
