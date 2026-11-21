@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 const root = new URL('../', import.meta.url);
 const read = name => fs.readFileSync(new URL(name, root), 'utf8');
 const shared = read('static/js/queen-cup.js');
+const menuShared = read('static/js/count-menu.js');
 const pad = read('static/apps/event-score-pad.html');
 const overlay = read('static/apps/event-score-obs.html');
 const studio = read('static/apps/count-studio.html');
@@ -21,7 +22,7 @@ function section(source, start, end) {
 
 function environment(query = '') {
   const elements = new Map();
-  const storage = new Map();
+  const storage = new Map(), session = new Map();
   const events = {};
   let now = 100000;
   function element(id) {
@@ -42,13 +43,16 @@ function environment(query = '') {
     document: { body: element('body'), activeElement: null,
       addEventListener(type, handler) { events[type] = handler; } },
     localStorage: { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) },
+    sessionStorage: { getItem: key => session.get(key) || null, setItem: (key, value) => session.set(key, value), removeItem: key => session.delete(key) },
+    URL, location: { origin: 'https://vibesbilliards.com' },
     $: element, $$: () => [], setInterval() {}, setTimeout() {}, clearInterval() {}, clearTimeout() {},
     navigator: {}, addEventListener() {}, toast() {}, store() {}, save() {},
     sock(code, role, receive) { events.receive = receive; events.role = role; return { send() {} }; }
   });
   vm.runInContext(shared, context);
+  vm.runInContext(menuShared, context);
   context.QC = context.window.VibesQueenCup;
-  return { context, elements, element, events, storage, advance(ms) { now += ms; } };
+  return { context, elements, element, events, storage, session, advance(ms) { now += ms; } };
 }
 
 function operator() {
@@ -88,7 +92,7 @@ function test(name, run) {
 
 function menuLaunch(id) {
   const env = environment();
-  Object.assign(env.context, { TB: 2, U: { '3c': '/pages/count-3c/', pocket: '/pages/count-pocket/' }, btoa, atob, escape, unescape });
+  Object.assign(env.context, { CM: env.context.window.VibesCountMenu, TB: 2, U: { '3c': '/pages/count-3c/', pocket: '/pages/count-pocket/' }, btoa, atob, escape, unescape });
   vm.runInContext(section(home, '  var MENU = {', '  function edMenu()'), env.context);
   vm.runInContext(section(home, '  function prequeenUrl(', '  function open('), env.context);
   const address = new URL(env.context.url(id), 'https://vibesbilliards.com');
@@ -166,7 +170,7 @@ test('carom home has choices 1–5 and keeps pocket and shop settings available'
   vm.runInContext(section(home, '  var TOOLS =', '  var MENU ='), p);
   vm.runInContext(section(home, '  function edMenu()', '  var COL ='), p);
   p.ED = 'carom'; p.edMenu();
-  assert.deepEqual(Array.from(p.MENU.top.items, x => x.id), ['carom', 'again', 'tour', 'roster', 'config']);
+  assert.deepEqual(Array.from(p.MENU.top.items, x => x.id), ['carom', 'again', 'tour', 'prequeen', 'config']);
   p.ED = 'pocket'; p.edMenu();
   assert.equal(p.MENU.top.items.length, 5);
   assert.equal(p.MENU.top.items[4].id, 'shop');
@@ -237,6 +241,25 @@ test('fresh-entry recovery blocks controls while legacy and W3C matches have no 
   assert.equal(normal.prepBlocked(), false); normal.add(0, 1);
   assert.equal(normal.S.p[0].s, 1);
   normal.S.cfg.entry = ''; normal.newGame(); assert.equal(normal.prepActive(), false);
+});
+
+test('Pre Queen rematch uses the selected pair in a new room and retains banking across reload', () => {
+  const original = menuLaunch('prequeen-qual'); beginEntry(original.context);
+  const cm = original.context.window.VibesCountMenu;
+  const past = cm.recent('carom', 2)[0]; assert(past);
+  const next = new URL(cm.prepare(past, 2), 'https://vibesbilliards.com');
+  assert.notEqual(next.searchParams.get('match'), original.address.searchParams.get('match'));
+  assert.equal(next.searchParams.has('cfg'), false);
+  const replay = environment();
+  for (const [key, value] of original.session) replay.session.set(key, value);
+  Object.assign(replay.context, { match: next.searchParams.get('match'), qs: key => next.searchParams.get(key) || '', atob, escape });
+  vm.runInContext(section(pad, '  var CFG0 =', '  /* ---- drawing:'), replay.context);
+  assert.equal(replay.context.S.prep.stage, 'bank');
+  assert.deepEqual(Array.from(replay.context.S.p, p => p.n), ['テスト選手 A', 'テスト選手 B']);
+  assert.deepEqual(Array.from(replay.context.S.p, p => p.h), [7, 7]);
+  assert.deepEqual(Array.from(replay.context.S.p, p => p.s), [0, 0]);
+  const reloaded = reloadEntry(replay); assert.equal(reloaded.context.S.prep.stage, 'bank');
+  assert.equal(cm.recent('carom', 2).length, 1);
 });
 
 test('preset defaults and custom 30-second clock', () => {

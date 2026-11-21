@@ -68,6 +68,7 @@ input:focus{outline:none;border-color:var(--lime)}
 .mt{border:0;border-radius:16px;padding:14px 8px;min-height:104px;color:#fff;font:inherit;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer;touch-action:manipulation;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
 .mt.carom{background:linear-gradient(180deg,#2468C0,#1E5AA8 46%,#164482)}.mt.pocket{background:linear-gradient(180deg,#6E7683,#5A616C 46%,#434953)}
 .mt:active{transform:scale(.97)}.mt small{font-size:10px;font-weight:700;letter-spacing:.14em;color:#DCE3F0}.mt b{font-size:17px;font-weight:900;line-height:1.25}
+.mt:disabled{opacity:.48;filter:saturate(.25);cursor:default}.mt:disabled:active{transform:none}
 .mg.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.mg.c2 .mt b{font-size:20px}
 .mlogo span{margin-top:10px;padding-top:9px;border-top:3px solid var(--lime);font-family:VLNum,Unbounded,Anton,sans-serif;font-weight:900;font-size:15px;letter-spacing:.34em;text-indent:.34em;color:var(--chalk)}
 .mlogo span::after{content:attr(data-ed);display:block;font-size:.6em;letter-spacing:.34em;margin-top:.55em;color:var(--sub,#A9AFBD);text-align:center}
@@ -326,7 +327,8 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   </section>
 
   <section class="card" id="vCf" hidden>
-    <h1>設定</h1>
+    <h1>各種設定（選手登録・ゲームルールなど）</h1>
+    <button type="button" class="rob k" style="width:100%;min-height:56px;font-size:18px">選手登録をひらく</button>
     <p>変えたい所を直して「モニターに送る」を押してください。</p>
     <form id="fCf"><div id="cfRows"></div>
       <button class="go" type="submit">モニターに送る</button>
@@ -436,7 +438,7 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
   function send(o) { if (ws && ws.readyState === 1) { ws.send(JSON.stringify(o)); return true; } status(false, 'つながっていません'); connect(); return false; }
-  function tile(it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'mt ' + (it.c === 'carom' ? 'carom' : 'pocket'); if (it.col && /^#[0-9A-Fa-f]{6}$/.test(it.col[0] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[1] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[2] + '')) b.style.background = 'linear-gradient(180deg,' + it.col[0] + ',' + it.col[1] + ' 46%,' + it.col[2] + ')'; if (it.lt) b.classList.add('lt'); var s1 = document.createElement('small'); s1.textContent = it.s; var b1 = document.createElement('b'); b1.textContent = it.b; b.appendChild(s1); b.appendChild(b1); if (it.d) { var e1 = document.createElement('em'); e1.textContent = it.d; b.appendChild(e1); } b.onclick = function () { if (it.id === 'tour') { location.href = '/pages/count-tour/'; return; } if (it.id === 'roster') return roOpen(); if (it.id === 'config') return cfOpen(); if (it.id === 'shop') { $('shN').value = (last && last.shop) || ''; $('shNow').textContent = last && last.shop ? '今の登録：' + last.shop : 'まだ登録されていません。'; return show('vShop'); } send({ type: 'cmd', c: 'open', v: it.id }); if (navigator.vibrate) navigator.vibrate(15); }; return b; }
+  function tile(it) { var b = document.createElement('button'); b.type = 'button'; b.disabled = !!it.disabled; b.className = 'mt ' + (it.c === 'carom' ? 'carom' : 'pocket'); if (it.col && /^#[0-9A-Fa-f]{6}$/.test(it.col[0] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[1] + '') && /^#[0-9A-Fa-f]{6}$/.test(it.col[2] + '')) b.style.background = 'linear-gradient(180deg,' + it.col[0] + ',' + it.col[1] + ' 46%,' + it.col[2] + ')'; if (it.lt) b.classList.add('lt'); var s1 = document.createElement('small'); s1.textContent = it.s; var b1 = document.createElement('b'); b1.textContent = it.b; b.appendChild(s1); b.appendChild(b1); if (it.d) { var e1 = document.createElement('em'); e1.textContent = it.d; b.appendChild(e1); } b.onclick = function () { if (it.id === 'tour') { location.href = '/pages/count-tour/'; return; } if (it.id === 'roster') return roOpen(); if (it.id === 'config') return cfOpen(); if (it.id === 'shop') { $('shN').value = (last && last.shop) || ''; $('shNow').textContent = last && last.shop ? '今の登録：' + last.shop : 'まだ登録されていません。'; return show('vShop'); } send({ type: 'cmd', c: 'open', v: it.id }); if (navigator.vibrate) navigator.vibrate(15); }; return b; }
   function drawMenu(m) { var a = $('mgTop'), b = $('mgBot'), n = (m.items || []).length; a.textContent = ''; b.textContent = ''; a.className = b.className = 'mg c' + (n === 3 ? 3 : n === 2 ? 1 : n === 4 || n === 5 ? 2 : 3); var edTop = !!m.ed && !m.back && n >= 5; if (edTop) { a.className = 'mg c2'; b.className = 'mg c3'; }
     (m.items || []).forEach(function (it, i) { var t = tile(it); if (edTop) { if (!i || (n === 5 && i === 1)) t.style.gridColumn = '1/-1'; (i < n - 3 ? a : b).appendChild(t); return; } if (n === 5 && i === 4) { t.style.gridColumn = '1/-1'; t.style.minHeight = '84px'; } (n === 3 ? b : n === 5 ? (i < 2 ? a : b) : (i < Math.ceil(n / 2) ? a : b)).appendChild(t); }); $('mTitle').textContent = m.title || m.shop || ''; $('mBack').hidden = !m.back; $('mEd').setAttribute('data-ed', m.ed === 'carom' ? 'FOR CAROM' : m.ed === 'pocket' ? 'FOR POCKET' : ''); }
   function drawPk(m) {
@@ -528,7 +530,7 @@ textarea{width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--chal
   $('roQ').addEventListener('input', function () { $('roG').value = ''; roDraw(); }); $('piQ').addEventListener('input', function () { $('piG').value = ''; piDraw(); });
   $('roG').addEventListener('input', function () { $('roQ').value = ''; roDraw(); }); $('piG').addEventListener('input', function () { $('piQ').value = ''; piDraw(); });
   $('roNew').onclick = function () { edOpen(null); };
-  $('roBack').onclick = function () { if (roFrom === 'vPl') { for (var p = 0; p < 4; p++) (function (p) { var i = $('pn' + p), g = $('pg' + p); if (!i || !g || !ro.t) return; ro.list.forEach(function (o) { if (o.n === i.value.trim() && o.g) g.value = o.g; }); })(p); show('vPl'); return; } show(tvOf(last)); };
+  $('roBack').onclick = function () { if (roFrom === 'vCf') return show('vCf'); if (roFrom === 'vPl') { for (var p = 0; p < 4; p++) (function (p) { var i = $('pn' + p), g = $('pg' + p); if (!i || !g || !ro.t) return; ro.list.forEach(function (o) { if (o.n === i.value.trim() && o.g) g.value = o.g; }); })(p); show('vPl'); return; } show(tvOf(last)); };
   $('piBack').onclick = function () { show('vPl'); };
   $('edBack').onclick = function () { show('vRo'); roDraw(); };
   $('edDel').onclick = function () { var n = Date.now(), sm = this.querySelector('small'); if (n - delAt < 2500) { delAt = 0; sm.textContent = '2回押す'; if (send({ type: 'roster', op: 'del', i: edI })) { show('vRo'); roDraw(); } } else { delAt = n; sm.textContent = 'もう一度押すと消えます'; setTimeout(function () { sm.textContent = '2回押す'; }, 2500); } };
