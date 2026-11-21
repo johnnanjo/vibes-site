@@ -98,6 +98,8 @@ body.mon #fin .t{font-size:4vh}body.mon #fin .w{font-size:8.5vh;border-radius:2.
 body.mon #fin th{font-size:3.2vh}body.mon #fin td{font-size:12vh;padding:2vh 1vw}body.mon #fin td:first-child{font-size:6.4vh;max-width:40vw}body.mon #fin .y{font-size:3vh}
 /* standings / bracket shown over the whole picture between games */
 #bd{position:fixed;inset:0;width:100vw;height:100vh;border:0;z-index:8;background:#0B192C}
+/* sponsor commercials played over the whole picture between games, taking turns with the board */
+#cmv{position:fixed;inset:0;width:100vw;height:100vh;z-index:9;background:#000;object-fit:contain}
 #msg{position:fixed;left:40px;top:40px;background:#0B192C;color:#fff;font-weight:800;font-size:22px;line-height:1.7;padding:16px 20px;border-radius:14px;max-width:900px}
 .ck{position:relative}.ck b{font:inherit}
 .ck .queen-meter{position:absolute;left:8%;bottom:5px;width:84%;height:5px}
@@ -129,6 +131,7 @@ body.queen.mon .rw .o{font-size:2.4vh}
 </div>
 <div id="fin" hidden><div class="t">試合終了</div><div class="w" id="fw"></div><table id="ft"></table><div class="y" id="fy"></div></div>
 <iframe id="bd" title="リーグ表・トーナメント表" hidden></iframe>
+<video id="cmv" playsinline preload="none" hidden></video>
 <div id="msg" hidden></div>
 <script src="/js/queen-cup.js"></script>
 <script>
@@ -159,7 +162,22 @@ body.queen.mon .rw .o{font-size:2.4vh}
   var BOARD = !/[?&]board=0/.test(q) && lay !== 'monitor', BWAIT = Math.max(0, Math.min(120, parseFloat((/[?&]boardwait=([0-9.]+)/.exec(q) || [])[1]))), bdReady = false, bdTimer = null, bdOn = false, bdDue = false;
   if (isNaN(BWAIT)) BWAIT = 10;
   if (BOARD && match) { $('bd').src = '/event-board/?match=' + encodeURIComponent(match.replace(/-t\d+$/, '')); window.addEventListener('message', function (e) { if (e.data && e.data.vibesBoard) { bdReady = true; if (bdOn && bdDue) $('bd').hidden = false; } }); }
-  function boardShow(on) { if (!BOARD) return; if (on === bdOn) return; bdOn = on; bdDue = false; clearTimeout(bdTimer); if (!on) { $('bd').hidden = true; return; } bdTimer = setTimeout(function () { bdDue = true; if (bdOn && bdReady) $('bd').hidden = false; }, (showRes ? BWAIT : 3) * 1000); }
+  /* Sponsor commercials (2026-11-21). Between games: result -> board for CMWAIT seconds -> one commercial -> board -> the next sponsor's commercial ... until the next game starts.
+     The list is /cm/list.json ([{name, src}]); the place in the list is kept in this browser so the same sponsor never plays twice in a row, also across games. &cm=0 turns it off, &cmwait=<seconds> sets the board time (default 20). */
+  var CM = !/[?&]cm=0/.test(q) && lay !== 'monitor', CMWAIT = Math.max(5, Math.min(600, parseFloat((/[?&]cmwait=([0-9.]+)/.exec(q) || [])[1]))), cmList = [], cmTimer = null, cmGuard = null, CMKEY = 'vibes-cm-i';
+  if (isNaN(CMWAIT)) CMWAIT = 20;
+  if (CM && window.fetch) fetch('/cm/list.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : []; }).then(function (l) { cmList = (Array.isArray(l) ? l : []).filter(function (x) { return x && typeof x.src === 'string' && /^\/cm\/[\w.\-]+\.mp4$/.test(x.src); }); }).catch(function () {});
+  function cmStop() { clearTimeout(cmTimer); clearTimeout(cmGuard); var v = $('cmv'); if (!v.hidden) { try { v.pause(); } catch (e) {} v.hidden = true; v.removeAttribute('src'); try { v.load(); } catch (e) {} } }
+  function cmQueue() { clearTimeout(cmTimer); if (!CM) return; cmTimer = setTimeout(cmPlay, CMWAIT * 1000); }
+  function cmPlay() {
+    if (!bdOn || !cmList.length) { cmQueue(); return; }
+    var i = 0; try { i = (parseInt(localStorage.getItem(CMKEY), 10) || 0) % cmList.length; localStorage.setItem(CMKEY, String((i + 1) % cmList.length)); } catch (e) {}
+    var v = $('cmv'), done = false, end = function () { if (done) return; done = true; clearTimeout(cmGuard); v.onended = v.onerror = null; try { v.pause(); } catch (e) {} v.hidden = true; if (bdOn) cmQueue(); };
+    v.onended = end; v.onerror = end; v.muted = false; v.src = cmList[i].src; v.hidden = false;
+    var p = v.play(); if (p && p.catch) p.catch(function () { v.muted = true; var p2 = v.play(); if (p2 && p2.catch) p2.catch(end); });   /* a normal browser refuses sound without a click: play it silent there. OBS plays the sound */
+    cmGuard = setTimeout(end, 120000);
+  }
+  function boardShow(on) { if (!BOARD) return; if (on === bdOn) return; bdOn = on; bdDue = false; clearTimeout(bdTimer); if (!on) { $('bd').hidden = true; cmStop(); return; } bdTimer = setTimeout(function () { bdDue = true; if (bdOn && bdReady) $('bd').hidden = false; cmQueue(); }, (showRes ? BWAIT : 3) * 1000); }
   var KEY = 'vibes-event-obs:' + match, ws = null, tries = 0, timer = null, last = 0, CK = null;
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function draw(m, live) {
