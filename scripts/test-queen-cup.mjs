@@ -55,7 +55,7 @@ function operator() {
   const env = environment();
   vm.runInContext(section(pad, '  var CFG0 =', '  /* ---- drawing:'), env.context);
   vm.runInContext(section(pad, '  function idle()', '  function applyAssign('), env.context);
-  vm.runInContext(section(pad, '  var setupConfig =', '  /* ---- actions ---- */'), env.context);
+  vm.runInContext(section(pad, '  var setupConfig =', '  /* ---- player list'), env.context);
   vm.runInContext(section(pad, "  document.addEventListener('click'", "  document.addEventListener('input'"), env.context);
   vm.runInContext(section(pad, '  function snap() {', '  function push() {'), env.context);
   env.context.S.cfg = env.context.cfgOf(env.context.QC.preset());
@@ -96,7 +96,26 @@ function menuLaunch(id) {
   env.context.qs = key => address.searchParams.get(key) || '';
   vm.runInContext(section(pad, '  var CFG0 =', '  /* ---- drawing:'), env.context);
   env.context.takeCfg();
+  env.context.entryLoading = false;
   return { ...env, address };
+}
+
+function beginEntry(p) {
+  assert.equal(p.prepSelect(0, { key: 'test-a', n: 'テスト選手 A' }), true);
+  assert.equal(p.prepSelect(1, { key: 'test-b', n: 'テスト選手 B' }), true);
+  assert.equal(p.prepBank(), true);
+  assert.equal(p.prepBegin(), true);
+}
+
+function reloadEntry(env) {
+  vm.runInContext(section(pad, '  function store() {', '  /* ---- connection:'), env.context);
+  env.context.store();
+  const restored = environment();
+  for (const [key, value] of env.storage) restored.storage.set(key, value);
+  Object.assign(restored.context, { match: env.context.match, qs: env.context.qs, atob, escape });
+  vm.runInContext(section(pad, '  var CFG0 =', '  /* ---- drawing:'), restored.context);
+  restored.context.takeCfg();
+  return restored;
 }
 
 test('new-game menu replaces band with Pre Queen and preserves the regular 3C route', () => {
@@ -112,15 +131,17 @@ test('new-game menu replaces band with Pre Queen and preserves the regular 3C ro
 
 test('Pre Queen qualifying launches with seven points and retains the both-lose cap rule', () => {
   const { context: p } = menuLaunch('prequeen-qual');
+  beginEntry(p);
   assert.deepEqual(Array.from(p.S.p, x => x.h), [7, 7]);
   assert.equal(p.S.cfg.limit, 25); assert.equal(p.S.cfg.back, true); assert.equal(p.S.cfg.clk, 0);
-  assert.equal(p.S.round, 'ゼッケン決定戦');
+  assert.equal(p.S.round, '予選リーグ');
   p.S.inn = 25; p.S.turn = 1; p.S.p[0].s = 6; p.S.p[1].s = 5; p.next();
   assert.equal(p.S.over.w, -2);
 });
 
 test('Pre Queen final launches with ten points and retains sudden death on a tied cap', () => {
   const { context: p } = menuLaunch('prequeen-final');
+  beginEntry(p);
   assert.deepEqual(Array.from(p.S.p, x => x.h), [10, 10]);
   assert.equal(p.S.cfg.back, false); assert.equal(p.S.cfg.limit, 25); assert.equal(p.S.cfg.clk, 0);
   p.S.inn = 25; p.S.turn = 1; p.S.p[0].s = 8; p.S.p[1].s = 8; p.next();
@@ -131,11 +152,91 @@ test('Pre Queen final launches with ten points and retains sudden death on a tie
 test('Pre Queen games use independent rooms and rereading their setup preserves the score', () => {
   const first = menuLaunch('prequeen-qual'), second = menuLaunch('prequeen-qual');
   const p = first.context;
+  beginEntry(p);
   assert.notEqual(first.address.searchParams.get('match'), second.address.searchParams.get('match'));
   assert.deepEqual(Array.from(p.S.p, x => x.h), [7, 7]);
   assert.equal(p.S.cfg.limit, 25); assert.equal(p.S.cfg.clk, 0);
   p.add(0, 1); p.takeCfg();
   assert.equal(p.S.p[0].s, 1); assert.equal(p.S.p[0].h, 7);
+});
+
+test('carom home has choices 1–5 and keeps pocket and shop settings available', () => {
+  const { context: p } = menuLaunch('prequeen-qual');
+  p.ED = 'carom';
+  vm.runInContext(section(home, '  var TOOLS =', '  var MENU ='), p);
+  vm.runInContext(section(home, '  function edMenu()', '  var COL ='), p);
+  p.ED = 'carom'; p.edMenu();
+  assert.deepEqual(Array.from(p.MENU.top.items, x => x.id), ['carom', 'again', 'tour', 'roster', 'config']);
+  p.ED = 'pocket'; p.edMenu();
+  assert.equal(p.MENU.top.items.length, 5);
+  assert.equal(p.MENU.top.items[4].id, 'shop');
+  assert.match(home, /id="cfShop">店名登録/);
+});
+
+test('player setup blocks scoring and rejects an empty, duplicate or unconfirmed pair', () => {
+  const { context: p } = menuLaunch('prequeen-qual');
+  assert.equal(p.prepActive(), true); assert.equal(p.S.prep.stage, 'players');
+  p.add(0, 1); p.next();
+  assert.equal(p.S.p[0].s, 0); assert.equal(p.S.turn, 0); assert.equal(p.S.inn, 1);
+  assert.equal(p.prepBank(), false); assert.equal(p.prepBegin(), false);
+  assert.equal(p.prepSelect(0, { key: 'a', n: '選手A' }), true);
+  assert.equal(p.prepSelect(1, { key: 'a', n: '選手A' }), false);
+  assert.equal(p.prepBank(), false);
+  assert.equal(p.prepSelect(1, { key: 'b', n: '選手B' }), true);
+  assert.equal(p.prepBegin(), false);
+  assert.deepEqual(Array.from(p.S.p, x => x.h), [7, 7]);
+});
+
+test('banking swaps the complete pair, then starts with white on the left and a score of zero', () => {
+  const { context: p } = menuLaunch('prequeen-qual');
+  p.prepSelect(0, { key: 'a', n: '選手A' }); p.prepSelect(1, { key: 'b', n: '選手B' });
+  assert.equal(p.prepSwap(), false);
+  assert.equal(p.prepBank(), true); assert.equal(p.prepSwap(), true);
+  assert.deepEqual(Array.from(p.S.p, x => x.n), ['選手B', '選手A']);
+  assert.equal(p.S.prep.players[0].key, 'b');
+  p.add(0, 1); assert.equal(p.S.p[0].s, 0);
+  assert.equal(p.prepBegin(), true); assert.equal(p.prepActive(), false);
+  assert.equal(p.S.startedAt, 100000); assert.equal(p.S.turn, 0); assert.equal(p.S.inn, 1);
+  assert.equal(p.prepSwap(), false); assert.equal(p.prepBegin(), false);
+  p.add(0, 1); assert.equal(p.S.p[0].s, 1); assert.equal(p.S.p[1].s, 0);
+});
+
+test('reload preserves selected names, banking order and a started match', () => {
+  const first = menuLaunch('prequeen-final'); let p = first.context;
+  p.prepSelect(0, { key: 'a', n: '選手A' });
+  const picking = reloadEntry(first); p = picking.context;
+  assert.equal(p.S.prep.players[0].n, '選手A'); assert.equal(p.S.prep.stage, 'players');
+  p.prepSelect(1, { key: 'b', n: '選手B' }); p.prepBank(); p.prepSwap();
+  const banking = reloadEntry(picking); p = banking.context;
+  assert.equal(p.S.prep.stage, 'bank'); assert.equal(p.S.p[0].n, '選手B');
+  p.prepBegin(); p.add(0, 1);
+  const running = reloadEntry(banking); p = running.context;
+  assert.equal(p.prepActive(), false); assert.equal(p.S.p[0].n, '選手B');
+  assert.equal(p.S.p[0].s, 1); assert.equal(p.S.p[0].h, 10); assert.equal(p.S.cfg.back, false);
+  p.newGame(); assert.equal(p.prepActive(), true); assert.equal(p.S.prep.stage, 'players');
+});
+
+test('the player list includes every registered player without applying personal handicaps', () => {
+  const env = menuLaunch('prequeen-qual'), p = env.context;
+  const players = Array.from({ length: 137 }, (_, i) => ({ id: 'player-' + i, sei: 'テスト' + i, mei: '選手', ys: String(i).padStart(3, '0'), gs: { three: 30 } }));
+  env.storage.set('vibes-players-v3', JSON.stringify(players));
+  const list = p.prepRoster();
+  assert.equal(list.length, 137); assert.equal(list[136].n, 'テスト136 選手');
+  p.prepSelect(0, list[0]); p.prepSelect(1, list[136]); p.prepBank();
+  assert.deepEqual(Array.from(p.S.p, x => x.h), [7, 7]);
+  env.storage.set('vibes-players-v3', '{broken');
+  env.storage.set('vibes-count-3c-players-v2', JSON.stringify([null, {}, { sei: '旧登録', mei: '選手' }]));
+  assert.deepEqual(Array.from(p.prepRoster(), x => x.n), ['旧登録 選手']);
+});
+
+test('fresh-entry recovery blocks controls while legacy and W3C matches have no new setup gate', () => {
+  const { context: p } = menuLaunch('prequeen-qual');
+  p.entryLoading = true; p.add(0, 1); p.next();
+  assert.equal(p.S.p[0].s, 0); assert.equal(p.S.turn, 0);
+  const { context: normal } = operator();
+  assert.equal(normal.prepBlocked(), false); normal.add(0, 1);
+  assert.equal(normal.S.p[0].s, 1);
+  normal.S.cfg.entry = ''; normal.newGame(); assert.equal(normal.prepActive(), false);
 });
 
 test('preset defaults and custom 30-second clock', () => {
