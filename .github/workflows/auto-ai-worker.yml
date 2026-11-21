@@ -13,7 +13,8 @@ on:
         options: [auto, anthropic, openai]
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 concurrency:
   group: ai-inbox-main
@@ -38,12 +39,23 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
+      - name: 未完了タスクを検出して表示
+        id: queue
+        run: node scripts/auto-ai-worker.mjs inspect
+      - name: APIキー未設定時はタスクを保持して正常終了
+        id: credentials
+        if: steps.queue.outputs.pending != '0'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node scripts/auto-ai-worker.mjs credentials
       - name: 受付と重複PRを確認
         id: tasks
+        if: steps.credentials.outputs.configured == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/auto-ai-worker.mjs prepare
-      - name: タスクごとにClaudeまたはOpenAI APIで変更を作成
+      - name: AI_RULESを読みタスクごとにClaudeまたはOpenAI APIで変更を作成
         if: steps.tasks.outputs.run == 'true'
         timeout-minutes: 25
         env:

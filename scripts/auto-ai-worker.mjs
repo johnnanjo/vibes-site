@@ -49,6 +49,7 @@ export function parseInbox(text) {
     const match = /^-\s+\[([ xX])\]\s+(.+)$/.exec(line);
     if (match) {
       finish(index);
+      if (match[2].trim() === '（ここにスマホからタスクを追記）') return;
       tasks.push({ line: index, title: match[2], done: match[1] !== ' ', text: '', id: '' });
       start = index;
     } else if (/^#{1,6}\s/.test(line)) finish(index);
@@ -169,6 +170,24 @@ function withoutWorkNote(handoff) {
   return result;
 }
 
+export function inspectQueue(ctx = settings()) {
+  const inbox = read(path.join(ctx.repo, 'AI_INBOX.md'));
+  assertNoSecrets(inbox);
+  const tasks = parseInbox(inbox).filter(task => !task.done);
+  output(ctx, 'pending', String(tasks.length));
+  summary(ctx, '未完了タスク: ' + tasks.length + '件（テンプレート行は実行しません）。');
+  for (const task of tasks) summary(ctx, '- ' + task.title);
+  return tasks;
+}
+
+export function checkCredentials(ctx = settings()) {
+  const configured = !!((ctx.env.ANTHROPIC_API_KEY || '').trim() || (ctx.env.OPENAI_API_KEY || '').trim());
+  output(ctx, 'configured', configured ? 'true' : 'false');
+  summary(ctx, configured ? 'APIキーの設定を確認しました。値は表示しません。'
+    : 'APIキーが未設定のため、タスクを未完了のまま保持して正常終了します。Repository secrets に OPENAI_API_KEY または ANTHROPIC_API_KEY を登録してください。');
+  return configured;
+}
+
 export function prepare(ctx = settings()) {
   const inbox = read(path.join(ctx.repo, 'AI_INBOX.md'));
   const tasks = parseInbox(inbox).filter(task => !task.done);
@@ -177,7 +196,7 @@ export function prepare(ctx = settings()) {
   if (!tasks.length) { output(ctx, 'run', 'false'); return summary(ctx, '未処理タスクは0件です。AIは呼び出していません。'); }
   const ids = tasks.map(task => task.id);
   if (new Set(ids).size !== ids.length) fail('同じ内容の未処理タスクが重複しています。まとめてから実行してください。');
-  const rules = ['CLAUDE.md', 'HANDOFF.md', 'AGENTS.md'].map(name => ({ name, text: read(path.join(ctx.repo, name)) }));
+  const rules = ['CLAUDE.md', 'HANDOFF.md', 'AGENTS.md', 'AI_RULES.md'].map(name => ({ name, text: read(path.join(ctx.repo, name)) }));
   assertNoSecrets(inbox);
   for (const rule of rules) assertNoSecrets(rule.text);
   const prs = openPRs(ctx);
@@ -189,7 +208,7 @@ export function prepare(ctx = settings()) {
   write(path.join(ctx.dir, 'schema.json'), JSON.stringify(resultSchema));
   const prompt = [
     'あなたはjohnnanjo/vibes-siteの自動実装担当です。返事と変更記録は日本語にしてください。',
-    '最初に以下のCLAUDE.md、HANDOFF.md、AGENTS.mdをこの順ですべて読み、その決まりに従ってください。',
+    '最初に以下のCLAUDE.md、HANDOFF.md、AGENTS.md、AI_RULES.mdをこの順ですべて読み、その決まりに従ってください。',
     ...rules.map(rule => '\n----- ' + rule.name + ' -----\n' + rule.text),
     '\n----- この実行の指示 -----',
     '開始時の未処理タスクをすべて検討し、必要なコードとファイルを実装してください。',
@@ -386,7 +405,9 @@ export function publish(ctx = settings()) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const ctx = settings(), mode = process.argv[2];
   try {
-    if (mode === 'prepare') prepare(ctx);
+    if (mode === 'inspect') inspectQueue(ctx);
+    else if (mode === 'credentials') checkCredentials(ctx);
+    else if (mode === 'prepare') prepare(ctx);
     else if (mode === 'export-draft') exportDraft(ctx);
     else if (mode === 'validate-draft') validateDraft(ctx);
     else if (mode === 'provider') {
@@ -395,7 +416,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     } else if (mode === 'claude') runClaude(ctx);
     else if (mode === 'finalize') finalize(ctx);
     else if (mode === 'publish') publish(ctx);
-    else fail('prepare / export-draft / validate-draft / finalize / publish を指定してください。');
+    else fail('inspect / credentials / prepare / export-draft / validate-draft / finalize / publish を指定してください。');
   } catch (error) {
     summary(ctx, '自動実装を停止しました: ' + error.message);
     process.exitCode = 1;
