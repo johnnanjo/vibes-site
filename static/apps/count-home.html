@@ -190,6 +190,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   </div>
 </div>
 <script src="/js/qr.js"></script>
+<script src="/js/queen-cup.js"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -201,21 +202,32 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   var EDN = { carom: 'FOR CAROM', pocket: 'FOR POCKET' }, EDC = { carom: '#1E5AA8', pocket: '#5A616C' };
   var TOOLS = [{ id: 'roster', b: '選手登録', s: 'PLAYERS', c: 'pocket', d: '選手の登録・持ち点の修正' }, { id: 'config', b: '各種設定', s: 'SETTINGS', c: 'pocket', d: '秒数・タイムアウト・イージーモード' }, { id: 'shop', b: '店名登録', s: 'SHOP NAME', c: 'pocket', d: '' }];
   var MENU = {
-    pick: { t: 'どちらで使いますか？', items: [{ id: 'ed-carom', b: 'キャロム', s: 'FOR CAROM', c: 'carom', d: 'スリークッション・バンド' }, { id: 'ed-pocket', b: 'ポケット', s: 'FOR POCKET', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }] },
+    pick: { t: 'どちらで使いますか？', items: [{ id: 'ed-carom', b: 'キャロム', s: 'FOR CAROM', c: 'carom', d: 'スリークッション・プレクイーン' }, { id: 'ed-pocket', b: 'ポケット', s: 'FOR POCKET', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }] },
     top: { t: '', items: [] },
-    carom: { t: 'ニューゲーム', back: 'top', items: [{ id: '3c', b: 'スリークッション', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }, { id: 'band', b: 'バンド', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }] },
+    carom: { t: 'ニューゲーム', back: 'top', items: [{ id: '3c', b: 'スリークッション', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }, { id: 'prequeen', b: 'プレクイーン', s: 'PRE QUEEN CUP', c: 'carom', d: '大会用・予選／決勝／W3C' }] },
+    prequeen: { t: 'プレクイーン｜試合形式を選ぶ', back: 'carom', items: [{ id: 'prequeen-qual', b: '予選リーグ', s: 'プレクイーン', c: 'carom', d: '7点・25イニング・裏撞きあり', go: 1 }, { id: 'prequeen-final', b: '決勝トーナメント', s: 'プレクイーン', c: 'carom', d: '10点・25イニング・裏撞きなし', go: 1 }, { id: 'prequeen-w3c', b: 'W3C・25点', s: 'プレクイーン', c: 'carom', d: '35イニング・40秒・EXT 2回', go: 1 }] },
     pocket: { t: 'ニューゲーム', back: 'top', items: [{ id: 'bowlard', b: 'ボーラード', s: 'POCKET', c: 'pocket', d: '1〜4人・ボウリングのスコア', go: 1 }, { id: 'nine', b: '9ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-9' }, { id: 'ten', b: '10ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-10' }] },
     nine: { t: '9ボール', back: 'pocket', items: [{ id: 'nine-set', b: 'セットマッチ', s: '9-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g59', b: '5-9', s: '9-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] },
     ten: { t: '10ボール', back: 'pocket', items: [{ id: 'ten-set', b: 'セットマッチ', s: '10-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g510', b: '5-10', s: '10-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] }
   };
-  function edMenu() { MENU.top.items = ED === 'carom' ? [{ id: 'carom', b: 'ニューゲーム', s: 'NEW GAME', c: 'carom', d: 'スリークッション・バンド' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }, { id: 'tour', b: 'リーグ戦', s: 'LEAGUE', c: 'pocket', d: 'ハンデキャップ戦・リーグ表と対戦表' }].concat(TOOLS)
+  function edMenu() { MENU.top.items = ED === 'carom' ? [{ id: 'carom', b: 'ニューゲーム', s: 'NEW GAME', c: 'carom', d: 'スリークッション・プレクイーン' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }, { id: 'tour', b: 'リーグ戦', s: 'LEAGUE', c: 'pocket', d: 'ハンデキャップ戦・リーグ表と対戦表' }].concat(TOOLS)
     : ED === 'pocket' ? [{ id: 'pocket', b: 'ニューゲーム', s: 'NEW GAME', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }].concat(TOOLS) : []; }
   edMenu();
   var COL = { carom: ['#2468C0', '#1E5AA8', '#164482'], pocket: ['#6E7683', '#5A616C', '#434953'], purple: ['#8656C4', '#6A3FA0', '#4C2B78'], green: ['#1F9A5C', '#14804A', '#0D5C35'], yellow: ['#FFD83A', '#F2C200', '#C79E00', 1], blue: ['#3A66E8', '#1D4ED8', '#1539A3'], red: ['#E04A52', '#C4262E', '#8F1A21'] };
-  var KOL = { shop: 'yellow', again: 'green', tour: 'red', roster: 'purple', config: 'pocket', 'ed-carom': 'carom', 'ed-pocket': 'pocket', band: 'purple', bowlard: 'green', nine: 'yellow', ten: 'blue', 'nine-set': 'yellow', g59: 'red', 'ten-set': 'blue', g510: 'red' };
+  var KOL = { shop: 'yellow', again: 'green', tour: 'red', roster: 'purple', config: 'pocket', 'ed-carom': 'carom', 'ed-pocket': 'pocket', prequeen: 'purple', 'prequeen-qual': 'carom', 'prequeen-final': 'purple', 'prequeen-w3c': 'yellow', bowlard: 'green', nine: 'yellow', ten: 'blue', 'nine-set': 'yellow', g59: 'red', 'ten-set': 'blue', g510: 'red' };
   var colOf = function (it) { return COL[KOL[it.id] || it.c]; };
   var lv = ED ? 'top' : 'pick', tiles = [], sel = -1;
-  var url = function (id) { var u = id === '3c' ? U['3c'] + '?g=three' : id === 'band' ? U['3c'] + '?g=band' : U.pocket + '?m=' + id.replace('-set', ''); u += '&n=new'; if (TB) u += '&t=' + TB; return u; };
+  function prequeenUrl(id) {
+    /* Keep the approved 7/10-point tournament rules separate from the W3C preset. */
+    var w3c = id === 'prequeen-w3c', qualifying = id === 'prequeen-qual';
+    var cfg = w3c ? window.VibesQueenCup.preset() : { mode: '3c', h: qualifying ? [7, 7] : [10, 10], limit: 25, back: qualifying, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: qualifying ? 'both' : 'sd', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯', round: qualifying ? 'ゼッケン決定戦' : '' };
+    /* Each new game owns its room; refreshing the same address preserves its score. */
+    var issue = 'pq-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+    cfg.id = issue;
+    var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(cfg)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return '/event-score-pad/?match=' + issue + '&cfg=' + encoded + '&from=count' + (TB ? '&t=' + TB : '');
+  }
+  var url = function (id) { if (id.indexOf('prequeen-') === 0) return prequeenUrl(id); var u = id === '3c' ? U['3c'] + '?g=three' : id === 'band' ? U['3c'] + '?g=band' : U.pocket + '?m=' + id.replace('-set', ''); u += '&n=new'; if (TB) u += '&t=' + TB; return u; };
   function open(id) {
     if (id === 'ed-carom' || id === 'ed-pocket') { if (lv !== 'pick') return; ED = id.slice(3); try { localStorage.setItem(EDK, ED); } catch (e) {} edMenu(); lv = 'top'; menu(); ttDraw(); return; }
     if (id === 'tour') return tourPanel();

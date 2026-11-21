@@ -21,6 +21,7 @@ button{font-family:inherit}
 .top{display:flex;align-items:center;gap:1vw;min-height:6.5vh}
 .top .mt{display:flex;align-items:center;gap:.6vw;background:#12284A;border-radius:1.2vh;padding:.6vh 1vw;font-weight:800;font-size:2.1vh}
 .top .mt small{font-size:1.7vh;color:#B9C4D6}
+.from-count .top .mt:first-of-type{display:none}
 .top input{font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;font-weight:800;font-size:2.1vh;color:#fff;background:#0B192C;border:.2vh solid #2B4A7A;border-radius:.9vh;padding:.7vh .8vw;min-width:0;-webkit-user-select:text;user-select:text}
 #iMatch{width:11vw}#iTitle{width:18vw}#iRound{width:10vw}
 .top select{font:800 2.1vh/1.2 "Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;color:#0B192C;background:#FFD700;border:0;border-radius:.9vh;padding:.8vh .6vw;max-width:14vw}
@@ -134,6 +135,7 @@ button:active{transform:scale(.97)}
 <!-- tablet, landscape -->
 <div id="app">
   <div class="top">
+    <button class="tb" type="button" data-count-home hidden>メニュー</button>
     <label class="mt"><small>試合ID</small><input id="iMatch" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="試合ID"></label>
     <label class="mt"><small>表示名</small><input data-f="title" autocomplete="off" maxlength="60" aria-label="配信に出すタイトル" id="iTitle"></label>
     <label class="mt"><small>回戦</small><select id="sRound" aria-label="いま何回戦か"><option value="">表示しない</option><option>ゼッケン決定戦</option><option>予選リーグ</option><option>1回戦</option><option>2回戦</option><option>3回戦</option><option>敗者1回戦</option><option>敗者2回戦</option><option>敗者3回戦</option><option>準々決勝</option><option>準決勝</option><option>3位決定戦</option><option>決勝</option><option value="*">その他（入力する）</option></select><input id="iRound" maxlength="12" autocomplete="off" aria-label="回戦を入力" hidden></label>
@@ -158,7 +160,7 @@ button:active{transform:scale(.97)}
 </div>
 <!-- phone, portrait -->
 <div id="ph">
-  <div class="ph-top"><b data-o="ttl"></b><button class="tb" type="button" data-act="setup">試合設定</button><div class="st" data-st><i></i><span data-o="st">つないでいます</span></div></div>
+  <div class="ph-top"><button class="tb" type="button" data-count-home hidden>メニュー</button><b data-o="ttl"></b><button class="tb" type="button" data-act="setup">試合設定</button><div class="st" data-st><i></i><span data-o="st">つないでいます</span></div></div>
   <div class="queen-badges" data-queen-badges hidden><span data-queen-final hidden>FINAL INNING<small>最終イニング</small></span><span data-queen-equal hidden>EQUALIZING INNING<small>後攻ラストチャンス</small></span></div>
   <div class="ph-sc">
     <div class="ph-p a" data-pl="0"><span data-o="n0"></span><b data-o="s0">0</b><small data-o="m0"></small><div class="queen-extensions" data-queen-ext hidden><button type="button" data-ext="0,0" aria-label="選手AのEXT 1を使う。40秒延長">EXT 1</button><button type="button" data-ext="0,1" aria-label="選手AのEXT 2を使う。40秒延長">EXT 2</button></div></div>
@@ -205,6 +207,9 @@ button:active{transform:scale(.97)}
   /* the relay's rooms are 6-digit numbers: the match id is turned into one (same rule on the display page) */
   function room(m) { var h = 2166136261; for (var i = 0; i < m.length; i++) { h ^= m.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return String(100000 + (h % 900000)); }
   function qs(k) { var m = new RegExp('[?&]' + k + '=([^&#]+)').exec(location.search); return m ? decodeURIComponent(m[1]) : ''; }
+  var countHome = qs('from') === 'count' ? '/pages/count/' + (/^[1-5]$/.test(qs('t')) ? '?t=' + qs('t') : '') : '';
+  if (countHome) document.body.classList.add('from-count');
+  $$('[data-count-home]').forEach(function (b) { b.hidden = !countHome; b.onclick = function () { location.href = countHome; }; });
   var match = clean(qs('match')) || 'test';
   var CFG0 = { id: '', preset: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: 'pts' };   /* end = what the inning cap decides: pts = more points wins (level = draw), both = neither reached the target, both lose, sd = level scores go to sudden death */
   function cfgOf(o) {

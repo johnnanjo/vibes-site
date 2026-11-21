@@ -10,6 +10,7 @@ const shared = read('static/js/queen-cup.js');
 const pad = read('static/apps/event-score-pad.html');
 const overlay = read('static/apps/event-score-obs.html');
 const studio = read('static/apps/count-studio.html');
+const home = read('static/apps/count-home.html');
 
 function section(source, start, end) {
   const left = source.indexOf(start);
@@ -84,6 +85,58 @@ function test(name, run) {
   run(); passed++;
   console.log(`ok ${passed} - ${name}`);
 }
+
+function menuLaunch(id) {
+  const env = environment();
+  Object.assign(env.context, { TB: 2, U: { '3c': '/pages/count-3c/', pocket: '/pages/count-pocket/' }, btoa, atob, escape, unescape });
+  vm.runInContext(section(home, '  var MENU = {', '  function edMenu()'), env.context);
+  vm.runInContext(section(home, '  function prequeenUrl(', '  function open('), env.context);
+  const address = new URL(env.context.url(id), 'https://vibesbilliards.com');
+  env.context.match = address.searchParams.get('match');
+  env.context.qs = key => address.searchParams.get(key) || '';
+  vm.runInContext(section(pad, '  var CFG0 =', '  /* ---- drawing:'), env.context);
+  env.context.takeCfg();
+  return { ...env, address };
+}
+
+test('new-game menu replaces band with Pre Queen and preserves the regular 3C route', () => {
+  const { context: p, address } = menuLaunch('prequeen-qual');
+  assert.deepEqual(Array.from(p.MENU.carom.items, x => x.b), ['スリークッション', 'プレクイーン']);
+  assert.equal(p.MENU.prequeen.items.length, 3);
+  assert.equal(p.url('3c'), '/pages/count-3c/?g=three&n=new&t=2');
+  assert.equal(address.pathname, '/event-score-pad/');
+  assert.equal(address.searchParams.get('from'), 'count');
+  assert.equal(address.searchParams.get('t'), '2');
+});
+
+test('Pre Queen qualifying launches with seven points and retains the both-lose cap rule', () => {
+  const { context: p } = menuLaunch('prequeen-qual');
+  assert.deepEqual(Array.from(p.S.p, x => x.h), [7, 7]);
+  assert.equal(p.S.cfg.limit, 25); assert.equal(p.S.cfg.back, true); assert.equal(p.S.cfg.clk, 0);
+  assert.equal(p.S.round, 'ゼッケン決定戦');
+  p.S.inn = 25; p.S.turn = 1; p.S.p[0].s = 6; p.S.p[1].s = 5; p.next();
+  assert.equal(p.S.over.w, -2);
+});
+
+test('Pre Queen final launches with ten points and retains sudden death on a tied cap', () => {
+  const { context: p } = menuLaunch('prequeen-final');
+  assert.deepEqual(Array.from(p.S.p, x => x.h), [10, 10]);
+  assert.equal(p.S.cfg.back, false); assert.equal(p.S.cfg.limit, 25); assert.equal(p.S.cfg.clk, 0);
+  p.S.inn = 25; p.S.turn = 1; p.S.p[0].s = 8; p.S.p[1].s = 8; p.next();
+  assert.equal(p.S.sd, true); assert.equal(p.S.over, null);
+  p.add(0, 1); assert.equal(p.S.over.w, 0);
+});
+
+test('W3C entry uses an independent room and rereading its setup preserves score and spent EXT', () => {
+  const first = menuLaunch('prequeen-w3c'), second = menuLaunch('prequeen-w3c');
+  const p = first.context;
+  assert.notEqual(first.address.searchParams.get('match'), second.address.searchParams.get('match'));
+  assert.deepEqual(Array.from(p.S.p, x => x.h), [25, 25]);
+  assert.equal(p.S.cfg.limit, 35); assert.equal(p.S.cfg.clk, 40); assert.equal(p.S.cfg.to, 2);
+  assert.equal(p.S.title, 'W3C PRE QUEEN CUP 2026');
+  p.add(0, 1); p.QC.extend(p.S.p[0], 0); p.takeCfg();
+  assert.equal(p.S.p[0].s, 1); assert.equal(p.QC.usedMask(p.S.p[0]), 1);
+});
 
 test('preset defaults and custom 30-second clock', () => {
   const { context: p } = operator();
