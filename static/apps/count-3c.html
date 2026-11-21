@@ -441,7 +441,7 @@ body.easy.cam .n2 .inn{grid-column:1/-1}
     $('rdSwap').textContent = (N === 2 ? '先攻・後攻の入れ替え' : '順番を回す') + ' (/)';
   }
   function rdSwap() { if (!S.ready) return; var c = S.cfg; if (NP() === 2) { c.n.reverse(); c.g.reverse(); } else { c.n.push(c.n.shift()); c.g.push(c.g.shift()); } render(); }
-  function rdStart() { if (!S.ready) return; S.ready = false; begin(); render(); }
+  function rdStart() { if (!S.ready) return; S.ready = false; begin(); render(); tStart(); /* 2026-11-22: the countdown starts together with the game (no-op when the seconds are set to 0) */ }
   function gtText() { if (!S.t0) return '0:00'; var v = Math.max(0, Math.floor(((S.over && S.t1 ? S.t1 : S.pz || Date.now()) - S.t0) / 1000)), h = Math.floor(v / 3600), m = Math.floor(v % 3600 / 60), x = v % 60, z = function (n) { return (n < 10 ? '0' : '') + n; }; return h ? h + ':' + z(m) + ':' + z(x) : m + ':' + z(x); }
   function drawTime() { var t = gtText(), e = $('gt'); if (e.textContent !== t) { e.textContent = t; e.classList.toggle('long', t.length > 5); } }
   function rememberRecent() {
