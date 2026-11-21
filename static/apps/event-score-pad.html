@@ -120,7 +120,7 @@ button:active{transform:scale(.97)}
 .pg-list button{border:1px solid #526179;background:#0B192C;color:#F3F4EF;text-align:left;padding:14px;border-radius:12px;font:inherit;font-size:18px;font-weight:800;line-height:1.4;min-height:66px;cursor:pointer;overflow-wrap:anywhere}
 .pg-list strong{display:block;font-size:20px}.pg-list small{display:block;font-size:14px;color:#B9C4D6;font-weight:500}
 .pg .pg-empty{padding:16px;background:#0B192C;border-radius:12px}
-.pg nav #pgStart{grid-column:1/-1}#pgOrder .pg-player{cursor:default}
+.pg nav #pgStart{grid-column:1/-1}
 @media(max-width:640px){.pg>div{gap:14px}.pg-head{flex-direction:column;align-items:flex-start;gap:12px}.pg-logo{width:180px}.pg-pair{grid-template-columns:1fr;gap:10px}.pg-player{min-height:96px;padding:16px;gap:8px}.pg-list{grid-template-columns:1fr 1fr}.pg nav{grid-template-columns:1fr}.pg-steps{gap:5px}.pg-steps li{padding:7px 9px}}
 @media (orientation:portrait){
   #app{display:none}
@@ -226,10 +226,9 @@ button:active{transform:scale(.97)}
   <ol class="pg-steps"><li id="pgStep1">1 選手選択</li><li id="pgStep2">2 バンキング</li><li>3 開始</li></ol>
   <p id="pgHelp"></p>
   <p id="pgBusy" hidden>試合のデータを読み込んでいます。</p>
-  <div class="pg-pair" id="pgPlayers"><button class="pg-player" type="button" data-pre-choose="0"><small>選手1</small><strong id="pgName0">名前を選ぶ</strong><span>押すと登録選手の一覧が開きます</span></button><button class="pg-player" type="button" data-pre-choose="1"><small>選手2</small><strong id="pgName1">名前を選ぶ</strong><span>押すと登録選手の一覧が開きます</span></button></div>
+  <div class="pg-pair" id="pgPlayers"><button class="pg-player white" type="button" data-pre-choose="0"><small id="pgLabel0">選手1</small><strong id="pgName0">名前を選ぶ</strong><span>押すと登録選手の一覧が開きます</span></button><button class="pg-player yellow" type="button" data-pre-choose="1"><small id="pgLabel1">選手2</small><strong id="pgName1">名前を選ぶ</strong><span>押すと登録選手の一覧が開きます</span></button></div>
   <section class="pg-roster" id="pgRoster" hidden aria-labelledby="pgPickTitle"><h2 id="pgPickTitle" tabindex="-1"></h2><label>名前・よみがなで検索<input id="pgSearch" type="search" autocomplete="off" placeholder="入力しなくても全員が表示されます"></label><p id="pgCount" aria-live="polite"></p><div class="pg-list" id="pgList"></div><p class="pg-empty" id="pgEmpty" hidden></p></section>
-  <div class="pg-pair" id="pgOrder" hidden><div class="pg-player white"><small>先攻・白球（左）</small><strong id="pgFirst"></strong></div><div class="pg-player yellow"><small>後攻・黄球（右）</small><strong id="pgSecond"></strong></div></div>
-  <nav><button class="no" type="button" data-pre="back" id="pgBack">メニューへ戻る</button><button class="pg-start" type="button" data-pre="bank" id="pgBank">バンキングへ</button><button class="no" type="button" data-pre="swap" id="pgSwap" hidden>先攻・後攻を入れ替える (/)</button><button class="pg-start" type="button" data-pre="start" id="pgStart" hidden>ゲーム開始 (Enter)</button></nav>
+  <nav><button class="no" type="button" data-pre="back" id="pgBack">メニューへ戻る</button><button class="no" type="button" data-pre="swap" id="pgSwap" hidden>先攻・後攻を入れ替える (/)</button><button class="pg-start" type="button" data-pre="start" id="pgStart" disabled>ゲーム開始 (Enter)</button></nav>
 </div></div>
 <script src="/js/queen-cup.js"></script>
 <script src="/js/count-menu.js"></script>
@@ -543,37 +542,38 @@ button:active{transform:scale(.97)}
       box.appendChild(b);
     });
     $('pgEmpty').hidden = prepList.length > 0;
-    $('pgEmpty').textContent = all.length ? '該当する選手がいません。検索欄を空にすると全員が表示されます。' : 'この端末には選手が登録されていません。メニューの「4 選手登録」で登録してください。';
+    $('pgEmpty').textContent = all.length ? '該当する選手がいません。検索欄を空にすると全員が表示されます。' : 'この端末には選手が登録されていません。メニューの「5 各種設定」から選手を登録してください。';
   }
   function prepDraw() {
     var on = prepBlocked(), layer = $('pregame'); layer.hidden = !on;
     ['app', 'ph'].forEach(function (id) { $(id).inert = on; });
     if (!on) { prepChoosing = -1; return; }
-    var busy = entryLoading || !S.prep, bank = !busy && S.prep.stage === 'bank', choosing = !busy && !bank && prepChoosing >= 0;
+    var busy = entryLoading || !S.prep;
+    /* An older saved setup may already have both names. It needs no extra Next action. */
+    if (!busy && prepChoosing < 0 && S.prep.stage === 'players' && prepPairReady()) prepBank();
+    var bank = !busy && S.prep.stage === 'bank', choosing = !busy && prepChoosing >= 0;
     $('pgRule').textContent = busy ? 'プレクイーン' : (S.cfg.back ? '予選リーグ' : '決勝トーナメント') + '｜' + S.p[0].h + '点・' + S.cfg.limit + 'イニング';
     $('pgTitle').textContent = busy ? '試合を準備しています' : bank ? 'バンキング・順番の確認' : '対戦する2人を選ぶ';
     $('pgHelp').textContent = busy ? '' : bank ? '台でバンキングをしてください。決まったら、先攻の選手が左になるよう入れ替えて「ゲーム開始」を押します。' : 'それぞれの名前ボタンを押すと、登録されている選手全員の一覧が開きます。';
-    $('pgBusy').hidden = !busy; $('pgPlayers').hidden = busy || bank || choosing; $('pgRoster').hidden = !choosing; $('pgOrder').hidden = !bank;
+    $('pgBusy').hidden = !busy; $('pgPlayers').hidden = busy || choosing; $('pgRoster').hidden = !choosing;
     $('pgStep1').setAttribute('aria-current', !busy && !bank ? 'step' : 'false'); $('pgStep2').setAttribute('aria-current', bank ? 'step' : 'false');
-    if (!busy) [0, 1].forEach(function (i) { $('pgName' + i).textContent = S.prep.players[i] ? S.prep.players[i].n : '名前を選ぶ'; });
-    if (bank) { $('pgFirst').textContent = S.p[0].n; $('pgSecond').textContent = S.p[1].n; }
+    if (!busy) [0, 1].forEach(function (i) { $('pgName' + i).textContent = S.prep.players[i] ? S.prep.players[i].n : '名前を選ぶ'; $('pgLabel' + i).textContent = bank ? (i ? '後攻・黄球（右）' : '先攻・白球（左）') : '選手' + (i + 1); });
     if (choosing) { $('pgPickTitle').textContent = '選手' + (prepChoosing + 1) + 'の名前を選ぶ'; prepListDraw(); }
-    $('pgBack').hidden = busy; $('pgBack').textContent = bank ? '名前の選択に戻る' : choosing ? '選手の確認に戻る' : 'メニューへ戻る';
-    $('pgBank').hidden = busy || bank || choosing; $('pgBank').disabled = !prepPairReady(); $('pgSwap').hidden = !bank; $('pgStart').hidden = !bank;
+    $('pgBack').hidden = busy; $('pgBack').textContent = choosing ? '選手の確認に戻る' : 'メニューへ戻る';
+    $('pgSwap').hidden = !bank || choosing; $('pgStart').hidden = busy || choosing; $('pgStart').disabled = !bank;
   }
   function prepClick(d) {
     if (entryLoading || !prepActive()) return;
-    if (d.preChoose != null) { prepChoosing = +d.preChoose; $('pgSearch').value = ''; prepDraw(); $('pgPickTitle').focus(); }
+    if (d.preChoose != null) { S.prep.stage = 'players'; prepChoosing = +d.preChoose; $('pgSearch').value = ''; prepDraw(); $('pgPickTitle').focus(); }
     else if (d.prePick != null) {
       if (!prepSelect(prepChoosing, prepList[+d.prePick])) return;
-      prepChoosing = -1; save(); (prepPairReady() ? $('pgBank') : document.querySelector('[data-pre-choose="1"]')).focus();
+      prepChoosing = -1; if (prepPairReady()) prepBank(); save();
+      (S.prep.stage === 'bank' ? $('pgStart') : document.querySelector('[data-pre-choose="' + (S.prep.players[0] ? 1 : 0) + '"]')).focus();
     }
-    else if (d.pre === 'bank') { if (prepBank()) { prepChoosing = -1; save(); $('pgStart').focus(); } }
     else if (d.pre === 'swap') { if (prepSwap()) { save(); $('pgStart').focus(); } }
     else if (d.pre === 'start') { if (prepBegin()) { save(); document.querySelector(window.matchMedia('(orientation:portrait)').matches ? '[data-add="t,1"]' : '[data-add="0,1"]').focus(); } }
     else if (d.pre === 'back') {
       if (prepChoosing >= 0) { prepChoosing = -1; prepDraw(); }
-      else if (S.prep.stage === 'bank') { S.prep.stage = 'players'; save(); }
       else location.href = countHome || '/pages/count/';
     }
   }
@@ -621,7 +621,7 @@ button:active{transform:scale(.97)}
       if (entryLoading || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
       if (e.key === '/') { e.preventDefault(); prepClick({ pre: 'swap' }); }
       else if (e.key === 'Escape' || e.key === 'Backspace') { e.preventDefault(); prepClick({ pre: 'back' }); }
-      else if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') { e.preventDefault(); prepClick({ pre: S.prep.stage === 'bank' ? 'start' : 'bank' }); }
+      else if (e.key === 'Enter' && e.target.tagName !== 'BUTTON' && prepChoosing < 0 && S.prep.stage === 'bank') { e.preventDefault(); prepClick({ pre: 'start' }); }
       return;
     }
     if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.target.blur();
