@@ -1,0 +1,229 @@
+<style>
+#sp141{color-scheme:dark;--felt:#0A3A2C;--felt2:#0F4F3C;--felt3:#146650;--rail:#052019;--line:#2B7A62;--chalk:#F5F2E7;--mute:#A8C7BA;--amber:#C0FC09;--red:#FF6E61;--redbg:#5A1D1A;--ink:#06231B}
+#sp141 *{box-sizing:border-box}
+#sp141{background:var(--rail);color:var(--chalk);font-size:16px;line-height:1.6;margin:0 calc(50% - 50vw);padding:0 calc(50vw - 50%)}
+#sp141 .wrap{max-width:860px;margin:0 auto;padding-block:18px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#sp141 .num{font-family:Anton,"Arial Narrow",sans-serif;font-weight:400;font-variant-numeric:tabular-nums}
+#sp141 h1{font-size:22px;font-weight:900;margin:0;letter-spacing:.04em;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+#sp141 h1 small{font-size:13px;font-weight:500;color:var(--mute)}
+#sp141 h2{font-size:15px;font-weight:700;color:var(--mute);margin:26px 0 10px;letter-spacing:.08em}
+#sp141 .card{background:var(--felt);border:1px solid var(--line);border-radius:16px;padding:16px}
+#sp141 .set{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+#sp141 .set label{display:block;font-size:13px;font-weight:700;color:var(--mute);min-width:0}
+#sp141 .set input{width:100%;margin-top:4px;height:46px;border-radius:10px;border:1px solid var(--line);background:var(--rail);color:var(--chalk);font:inherit;font-weight:700;padding:0 12px;min-width:0}
+#sp141 .set input:focus-visible,#sp141 button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+#sp141 .chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+#sp141 .chips button{height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--mute);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+#sp141 .pl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+#sp141 .p{background:var(--felt2);border:3px solid transparent;border-radius:18px;padding:14px 16px;min-width:0;position:relative}
+#sp141 .p.on{border-color:var(--amber);background:var(--felt3)}
+#sp141 .p .who{font-size:13px;font-weight:700;color:var(--mute);display:flex;justify-content:space-between;gap:8px}
+#sp141 .p .who b{color:var(--ink);background:var(--amber);border-radius:6px;padding:0 8px;font-size:12px;visibility:hidden;white-space:nowrap}
+#sp141 .p.on .who b{visibility:visible}
+#sp141 .p .nm{font-size:20px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sp141 .p .tot{font-size:clamp(72px,22vw,128px);line-height:.95;margin:2px 0 6px}
+#sp141 .p .sub{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;color:var(--mute)}
+#sp141 .p .sub b{display:block;color:var(--chalk);font-size:26px;line-height:1.1}
+#sp141 .fd{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:var(--mute)}
+#sp141 .fd i{width:14px;height:14px;border-radius:50%;border:2px solid var(--mute)}
+#sp141 .fd i.f{background:var(--red);border-color:var(--red)}
+#sp141 .warn{margin-top:14px;background:var(--redbg);border:2px solid var(--red);border-radius:14px;padding:12px 16px;font-weight:900;font-size:18px}
+#sp141 .warn small{display:block;font-weight:500;font-size:14px;color:#FFD3CE}
+#sp141 .win{margin-top:14px;background:var(--amber);color:var(--ink);border-radius:16px;padding:18px;text-align:center;font-weight:900;font-size:26px}
+#sp141 .win small{display:block;font-size:15px;font-weight:700}
+#sp141 .pad{margin-top:16px}
+#sp141 .run{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#sp141 .run .lab{font-size:14px;font-weight:700;color:var(--mute)}
+#sp141 .run .lab strong{display:block;color:var(--chalk);font-size:18px}
+#sp141 .run .v{display:flex;align-items:center;gap:10px}
+#sp141 .run .v .num{font-size:64px;line-height:1;min-width:1.4em;text-align:right}
+#sp141 .run input{width:96px;height:46px;border-radius:10px;border:1px solid var(--line);background:var(--rail);color:var(--chalk);font:inherit;font-weight:700;text-align:center}
+#sp141 .row{display:grid;gap:10px;margin-top:12px}
+#sp141 .r4{grid-template-columns:repeat(4,minmax(0,1fr))}
+#sp141 .r2{grid-template-columns:repeat(2,minmax(0,1fr))}
+#sp141 .btn{min-height:60px;border-radius:14px;border:0;font:inherit;font-weight:900;font-size:20px;cursor:pointer;padding:6px 8px;line-height:1.25;color:var(--ink);background:var(--chalk)}
+#sp141 .btn small{display:block;font-size:12px;font-weight:700;opacity:.75}
+#sp141 .btn.add .num{font-size:30px}
+#sp141 .btn.gho{background:transparent;color:var(--chalk);border:2px solid var(--line)}
+#sp141 .btn.ok{background:var(--amber)}
+#sp141 .btn.saf{background:#BFE3FF}
+#sp141 .btn.fo{background:var(--red);color:#2A0704}
+#sp141 .btn.sm{min-height:48px;font-size:15px}
+#sp141 .btn:disabled{opacity:.35;cursor:not-allowed}
+#sp141 .memo{width:100%;height:46px;border-radius:10px;border:1px solid var(--line);background:var(--rail);color:var(--chalk);font:inherit;padding:0 12px;margin-top:12px}
+#sp141 .sc{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--felt)}
+#sp141 table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px}
+#sp141 th,#sp141 td{padding:9px 8px;text-align:center;border-bottom:1px solid rgba(43,122,98,.6);white-space:nowrap}
+#sp141 thead th{background:var(--rail);color:var(--mute);font-size:12px;font-weight:700;position:sticky;top:0}
+#sp141 thead tr:first-child th{font-size:14px;color:var(--chalk)}
+#sp141 td.d{font-family:Anton,"Arial Narrow",sans-serif;font-weight:700;font-size:22px}
+#sp141 td.t{font-family:Anton,"Arial Narrow",sans-serif;font-weight:700;font-size:26px}
+#sp141 td.neg{color:var(--red)}
+#sp141 td.sy b{display:inline-block;min-width:26px;border-radius:6px;padding:0 6px;font-size:13px;font-weight:900;background:var(--felt3)}
+#sp141 td.sy b.F{background:var(--red);color:#2A0704}
+#sp141 td.sy b.S{background:#BFE3FF;color:var(--ink)}
+#sp141 td.sy b.W{background:var(--amber);color:var(--ink)}
+#sp141 td.m{text-align:left;white-space:normal;font-size:13px;color:var(--mute);min-width:150px}
+#sp141 td.bl{border-left:2px solid var(--line)}
+#sp141 tr.cur td{background:rgba(192,252,9,.10)}
+#sp141 .empty{padding:22px;text-align:center;color:var(--mute);font-size:14px}
+#sp141 .note{font-size:13px;color:var(--mute);margin-top:14px;line-height:1.8}
+#sp141 .cf{margin-top:12px;background:var(--rail);border:1px solid var(--line);border-radius:14px;padding:14px;font-weight:700}
+#sp141 .cf .row{margin-top:10px}
+@media (max-width:640px){#sp141 .set{grid-template-columns:1fr 1fr}
+#sp141 .r4{grid-template-columns:repeat(2,minmax(0,1fr))}
+#sp141 .p{padding:12px}
+#sp141 .btn{font-size:18px}
+}
+@font-face{font-family:Anton;src:url(/fonts/anton-latin-400-normal.woff2) format("woff2");font-display:swap}
+#sp141 button{font-family:inherit}
+#sp141 table{margin:0}
+#sp141 td.d,#sp141 td.t{font-weight:400}
+</style>
+
+
+<div id="sp141"><div class="wrap">
+  <h1>14-1 スコアボード <small>ストレートプール（無料・登録なし）</small></h1>
+
+  <div class="card set" id="set">
+    <label>日付<input type="date" id="fd"></label>
+    <label>先攻<input type="text" id="fa" maxlength="16" placeholder="先攻の名前"></label>
+    <label>後攻<input type="text" id="fb" maxlength="16" placeholder="後攻の名前"></label>
+    <label>目標点数<input type="number" id="ft" min="1" max="999" inputmode="numeric">
+      <span class="chips"><button type="button" data-t="50">50</button><button type="button" data-t="100">100</button><button type="button" data-t="125">125</button><button type="button" data-t="150">150</button></span></label>
+  </div>
+
+  <div class="pl">
+    <div class="p" id="p0"><div class="who"><span>先攻</span><b>撞く番</b></div><div class="nm" id="n0"></div><div class="tot num" id="t0">0</div>
+      <div class="sub"><span>残り<b class="num" id="r0"></b></span><span>ハイラン<b class="num" id="h0">0</b></span></div><div class="fd" id="f0"></div></div>
+    <div class="p" id="p1"><div class="who"><span>後攻</span><b>撞く番</b></div><div class="nm" id="n1"></div><div class="tot num" id="t1">0</div>
+      <div class="sub"><span>残り<b class="num" id="r1"></b></span><span>ハイラン<b class="num" id="h1">0</b></span></div><div class="fd" id="f1"></div></div>
+  </div>
+
+  <div id="warn"></div>
+  <div class="win" id="win" hidden></div>
+
+  <div class="card pad" id="pad">
+    <div class="run">
+      <div class="lab"><span id="inl"></span><strong id="who"></strong></div>
+      <div class="v"><span class="lab">この回の得点</span><span class="num" id="run">0</span>
+        <input type="number" id="rin" min="0" max="999" inputmode="numeric" aria-label="この回の得点を数字で入力" placeholder="数字で入力"></div>
+    </div>
+    <div class="row r4">
+      <button class="btn add" data-add="1"><span class="num">+1</span></button>
+      <button class="btn add" data-add="5"><span class="num">+5</span></button>
+      <button class="btn add" data-add="14"><span class="num">+14</span><small>1ラックぶん</small></button>
+      <button class="btn gho" id="clr">0に戻す</button>
+    </div>
+    <div class="row r4">
+      <button class="btn ok" data-end="miss">ミス<small>交代する</small></button>
+      <button class="btn saf" data-end="safe">セーフティ<small>S を記録</small></button>
+      <button class="btn fo" data-end="foul">ファウル<small>−1</small></button>
+      <button class="btn fo" data-end="bfoul">ブレイクファウル<small>−2</small></button>
+    </div>
+    <input class="memo" id="memo" maxlength="60" placeholder="メモ（この回の状況。書かなくてもよい）">
+    <div class="row r2">
+      <button class="btn gho sm" id="undo">1つ戻す</button>
+      <button class="btn gho sm" id="new">新しい試合を始める</button>
+    </div>
+    <div class="cf" id="cf" hidden>いまのスコアを消して、新しい試合を始めますか？
+      <div class="row r2"><button class="btn fo sm" id="cfy">消して始める</button><button class="btn gho sm" id="cfn">やめる</button></div></div>
+  </div>
+
+  <h2>スコアシート</h2>
+  <div class="sc"><table>
+    <thead><tr><th rowspan="2">イニング</th><th colspan="3" class="bl" id="ha">先攻</th><th colspan="3" class="bl" id="hb">後攻</th><th rowspan="2" class="bl">メモ・状況</th></tr>
+      <tr><th class="bl">増減</th><th>合計</th><th>記号</th><th class="bl">増減</th><th>合計</th><th>記号</th></tr></thead>
+    <tbody id="tb"></tbody></table><div class="empty" id="emp">まだ記録がありません。得点を入れて「ミス」「セーフティ」「ファウル」で回を終えると、ここに1行ずつ増えていきます。</div></div>
+
+  <p class="note">記号：<b>S</b>＝セーフティ／<b>F</b>＝ファウル（−1）／<b>BF</b>＝ブレイクファウル（−2）／<b>3F</b>＝3回連続ファウル（−1 に加えて −15）／<b>W</b>＝あがり。<br>
+  連続ファウルは「−1 のファウル」だけを数えます。得点を入れた回、ミスやセーフティで終えた回があると 0 に戻ります。ブレイクファウルは連続ファウルに数えません。<br>
+  記録はこの端末のブラウザに保存されます（ほかの端末とは共有されません）。</p>
+</div></div>
+
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); }, KEY = 'vibes-141-v1';
+  function today() { var d = new Date(), z = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); }
+  var S = { date: today(), a: '', b: '', target: 50, log: [], run: 0 };
+  try { var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (j && Array.isArray(j.log)) { S = j; S.run = S.run | 0; S.target = Math.max(1, S.target | 0) || 50; } } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function name(p) { return (p ? S.b : S.a) || (p ? '後攻' : '先攻'); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  /* Everything shown is worked out again from the list of innings, so "undo" is just removing the last one. */
+  function calc() {
+    var tot = [0, 0], fc = [0, 0], hr = [0, 0], rows = [], over = -1;
+    S.log.forEach(function (e, i) {
+      var p = i % 2, pen = 0, sym = '', memo = [];
+      if (e.run > 0) fc[p] = 0;                      /* a ball pocketed is a legal shot: the count starts again */
+      if (e.end === 'foul') { fc[p]++; if (fc[p] >= 3) { pen = 16; sym = '3F'; fc[p] = 0; memo.push(name(p) + '：3回連続ファウル（−1 と −15）。ラックを組み直してブレイク'); } else { pen = 1; sym = 'F'; if (fc[p] === 2) memo.push(name(p) + '：2回連続ファウル（リーチ）'); } }
+      else if (e.end === 'bfoul') { pen = 2; sym = 'BF'; }
+      else if (e.end === 'safe') { fc[p] = 0; sym = 'S'; }
+      else if (e.end === 'win') { sym = 'W'; }
+      else fc[p] = 0;
+      var d = e.run - pen; tot[p] += d; if (e.run > hr[p]) hr[p] = e.run;
+      if (e.run >= 15) memo.push(name(p) + '：' + e.run + '点の連続得点');
+      if (e.end === 'win') { over = p; memo.push(name(p) + ' の勝ち'); }
+      if (e.note) memo.push(e.note);
+      rows.push({ p: p, d: d, t: tot[p], sym: sym, memo: memo });
+    });
+    return { tot: tot, fc: fc, hr: hr, rows: rows, over: over, turn: S.log.length % 2, inn: Math.floor(S.log.length / 2) + 1 };
+  }
+  function end(kind) {
+    var c = calc(); if (c.over >= 0) return;
+    var note = $('memo').value.trim();
+    S.log.push({ run: S.run, end: kind, note: note }); S.run = 0; $('memo').value = ''; save(); draw();
+  }
+  function setRun(n) {
+    var c = calc(); if (c.over >= 0) return;
+    S.run = Math.max(0, Math.min(999, n | 0));
+    if (c.tot[c.turn] + S.run >= S.target) { S.run = Math.max(0, S.target - c.tot[c.turn]); end('win'); return; }   /* reaching the target ends the game at once */
+    save(); draw();
+  }
+  function fmt(d) { return d > 0 ? '+' + d : d === 0 ? '0' : '−' + Math.abs(d); }
+  function draw() {
+    var c = calc(), over = c.over >= 0;
+    $('fd').value = S.date; if (document.activeElement !== $('fa')) $('fa').value = S.a; if (document.activeElement !== $('fb')) $('fb').value = S.b; if (document.activeElement !== $('ft')) $('ft').value = S.target;
+    $('ha').textContent = '先攻　' + name(0); $('hb').textContent = '後攻　' + name(1);
+    [0, 1].forEach(function (p) {
+      $('n' + p).textContent = name(p); $('t' + p).textContent = c.tot[p] + (!over && c.turn === p ? S.run : 0);
+      $('r' + p).textContent = Math.max(0, S.target - c.tot[p] - (!over && c.turn === p ? S.run : 0)); $('h' + p).textContent = Math.max(c.hr[p], !over && c.turn === p ? S.run : 0);
+      $('p' + p).classList.toggle('on', !over && c.turn === p);
+      $('f' + p).innerHTML = '連続ファウル <i' + (c.fc[p] > 0 ? ' class="f"' : '') + '></i><i' + (c.fc[p] > 1 ? ' class="f"' : '') + '></i><span>' + c.fc[p] + ' 回</span>';
+    });
+    var w = ''; [0, 1].forEach(function (p) { if (c.fc[p] === 2 && !over) w += '<div class="warn" role="alert">リーチ：' + esc(name(p)) + ' は2回連続ファウル<small>次もファウルすると、−1 に加えて −15点（合計 −16点）になります。</small></div>'; });
+    $('warn').innerHTML = w;
+    $('win').hidden = !over; if (over) $('win').innerHTML = esc(name(c.over)) + ' の勝ち！<small>' + c.tot[0] + ' － ' + c.tot[1] + '（目標 ' + S.target + '点・' + Math.ceil(S.log.length / 2) + 'イニング）</small>';
+    $('inl').textContent = over ? '試合終了' : c.inn + ' イニング目'; $('who').textContent = over ? '' : name(c.turn) + ' の番';
+    $('run').textContent = S.run; if (document.activeElement !== $('rin')) $('rin').value = '';
+    Array.prototype.forEach.call(document.querySelectorAll('#pad [data-add],#pad [data-end],#clr,#rin,#memo'), function (b) { b.disabled = over; });
+    $('undo').disabled = !S.log.length && !S.run;
+    /* sheet */
+    var h = '', n = Math.ceil(c.rows.length / 2);
+    for (var i = 0; i < n; i++) {
+      var a = c.rows[i * 2], b = c.rows[i * 2 + 1], cell = function (r) { return r ? '<td class="d bl' + (r.d < 0 ? ' neg' : '') + '">' + fmt(r.d) + '</td><td class="t' + (r.t < 0 ? ' neg' : '') + '">' + r.t + '</td><td class="sy">' + (r.sym ? '<b class="' + (r.sym === 'S' ? 'S' : r.sym === 'W' ? 'W' : 'F') + '">' + r.sym + '</b>' : '') + '</td>' : '<td class="bl"></td><td></td><td></td>'; };
+      var memo = (a ? a.memo : []).concat(b ? b.memo : []).map(esc).join('<br>');
+      h += '<tr' + (i === n - 1 ? ' class="cur"' : '') + '><td class="num" style="font-size:20px">' + (i + 1) + '</td>' + cell(a) + cell(b) + '<td class="m bl">' + memo + '</td></tr>';
+    }
+    $('tb').innerHTML = h; $('emp').hidden = c.rows.length > 0;
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.add) setRun(S.run + (+b.dataset.add));
+    else if (b.dataset.end) end(b.dataset.end);
+    else if (b.dataset.t) { S.target = +b.dataset.t; save(); draw(); }
+    else if (b.id === 'clr') setRun(0);
+    else if (b.id === 'undo') { if (S.run) S.run = 0; else { var l = S.log.pop(); if (l) { S.run = l.end === 'win' ? 0 : l.run; $('memo').value = l.note || ''; } } save(); draw(); }
+    else if (b.id === 'new') { if (!S.log.length && !S.run) return; $('cf').hidden = false; $('cfy').focus(); }
+    else if (b.id === 'cfn') $('cf').hidden = true;
+    else if (b.id === 'cfy') { S.log = []; S.run = 0; S.date = today(); $('memo').value = ''; $('cf').hidden = true; save(); draw(); }
+  });
+  $('rin').addEventListener('change', function () { var v = parseInt(this.value, 10); if (!isNaN(v)) setRun(v); this.value = ''; });
+  $('fd').addEventListener('change', function () { S.date = this.value || today(); save(); });
+  $('fa').addEventListener('input', function () { S.a = this.value.trim(); save(); draw(); });
+  $('fb').addEventListener('input', function () { S.b = this.value.trim(); save(); draw(); });
+  $('ft').addEventListener('change', function () { S.target = Math.max(1, Math.min(999, parseInt(this.value, 10) || 50)); save(); draw(); });
+  draw();
+})();
+</script>
