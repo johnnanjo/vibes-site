@@ -193,7 +193,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   <p style="font-size:2.1vh">この台に試合を送るときは、受付の画面で「台を追加」を押し、この番号を入れます。</p><div class="c" id="trC"></div>
   <div class="acts"><button type="button" class="btn go" id="trX">閉じる (Enter)</button></div></div></div>
 <div class="ov" id="shL" hidden><div class="panel" role="dialog" aria-label="店名登録"><h2>店名登録</h2><p style="font-size:2vh;color:var(--sub)">お店の名前を入れて「登録する」を押します。トップ画面とタブレットのメニューに出ます。</p><p id="shNow" style="font-weight:900"></p><form id="shF"><div class="pf" style="grid-template-columns:1fr"><div><label for="shN">店名</label><input id="shN" maxlength="30" autocomplete="off" placeholder="例：WINDビリヤード"></div></div><div class="acts"><button type="button" class="btn" id="shX">閉じる (Esc)</button><button type="submit" class="btn go">登録する</button></div></form></div></div>
-<div class="ov" id="cfL" hidden><div class="panel" role="dialog" aria-label="各種設定"><h2>各種設定</h2><p style="font-size:1.9vh;color:var(--sub)">ここで決めた内容が、次の試合から使われます。</p><form id="cfF"><div class="pf" id="cfR"></div><p class="cfk">テンキーで操作：<b>＋</b> 次の項目　<b>−</b> 前の項目　<b>Enter</b> 切り替え・決定　<b>数字</b> 入力　<b>BackSpace</b> 消す　<b>＊</b> 保存せずに閉じる</p><div class="acts"><button type="button" class="btn" id="cfX">閉じる (Esc)</button><button type="submit" class="btn go">保存する</button></div></form></div></div>
+<div class="ov" id="cfL" hidden><div class="panel" role="dialog" aria-label="各種設定"><h2>各種設定</h2><p style="font-size:1.9vh;color:var(--sub)">ここで決めた内容が、次の試合から使われます。</p><form id="cfF"><div class="pf" id="cfR"></div><p class="cfk">テンキーで操作：<b>＋</b> 次の項目　<b>−</b> 前の項目　<b>Enter</b> 切り替え・決定　<b>数字</b> 入力　<b>BackSpace</b> 消す　<b>＊</b> 保存せずに閉じる</p><div class="acts"><button type="button" class="btn" id="cfX">閉じる (Esc)</button><button type="button" class="btn" id="cfShop">店名登録</button><button type="submit" class="btn go">保存する</button></div></form></div></div>
 <div class="ov" id="roL" hidden><div class="panel" role="dialog" aria-label="選手登録"><h2>選手登録</h2><p style="font-size:1.9vh;color:var(--sub)">一度登録した選手は、ずっと残ります。持ち点はスリークッションの持ち点です。スマホ・タブレットからも登録できます。</p>
   <form class="rof" id="roF"><div><label for="roN">名前</label><input id="roN" maxlength="20" autocomplete="off" placeholder="山田 太郎"></div><div><label for="roY">よみがな</label><input id="roY" maxlength="30" autocomplete="off" placeholder="やまだたろう"></div><div><label for="roG">持ち点</label><input id="roG" type="number" min="1" max="999" value="25"></div><button type="submit" class="btn go">登録</button></form>
   <div class="rqr" id="roQW" hidden><div class="qr sm" id="roQ"></div><p><b>お客様のスマホで登録</b><br>このQRコードを読むと、名前・よみがな・持ち点を自分で入力できます。入力すると、この名簿に入ります。</p></div>
@@ -229,7 +229,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
     nine: { t: '9ボール', back: 'pocket', items: [{ id: 'nine-set', b: 'セットマッチ', s: '9-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g59', b: '5-9', s: '9-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] },
     ten: { t: '10ボール', back: 'pocket', items: [{ id: 'ten-set', b: 'セットマッチ', s: '10-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g510', b: '5-10', s: '10-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] }
   };
-  function edMenu() { MENU.top.items = ED === 'carom' ? [{ id: 'carom', b: 'ニューゲーム', s: 'NEW GAME', c: 'carom', d: 'スリークッション・プレクイーン' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }, { id: 'tour', b: 'リーグ戦', s: 'LEAGUE', c: 'pocket', d: 'ハンデキャップ戦・リーグ表と対戦表' }].concat(TOOLS)
+  function edMenu() { MENU.top.items = ED === 'carom' ? [{ id: 'carom', b: 'ニューゲーム', s: 'NEW GAME', c: 'carom', d: 'スリークッション・プレクイーン' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }, { id: 'tour', b: 'リーグ戦', s: 'LEAGUE', c: 'pocket', d: 'ハンデキャップ戦・リーグ表と対戦表' }].concat(TOOLS.filter(function (it) { return it.id !== 'shop'; }))
     : ED === 'pocket' ? [{ id: 'pocket', b: 'ニューゲーム', s: 'NEW GAME', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }].concat(TOOLS) : []; }
   edMenu();
   var COL = { carom: ['#2468C0', '#1E5AA8', '#164482'], pocket: ['#6E7683', '#5A616C', '#434953'], purple: ['#8656C4', '#6A3FA0', '#4C2B78'], green: ['#1F9A5C', '#14804A', '#0D5C35'], yellow: ['#FFD83A', '#F2C200', '#C79E00', 1], blue: ['#3A66E8', '#1D4ED8', '#1539A3'], red: ['#E04A52', '#C4262E', '#8F1A21'] };
@@ -239,7 +239,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   function prequeenUrl(id) {
     if (id !== 'prequeen-qual' && id !== 'prequeen-final') return '';
     var qualifying = id === 'prequeen-qual';
-    var cfg = { mode: '3c', h: qualifying ? [7, 7] : [10, 10], limit: 25, back: qualifying, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: qualifying ? 'both' : 'sd', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯', round: qualifying ? 'ゼッケン決定戦' : '' };
+    var cfg = { entry: 'prequeen', mode: '3c', h: qualifying ? [7, 7] : [10, 10], limit: 25, back: qualifying, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: qualifying ? 'both' : 'sd', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯', round: qualifying ? '予選リーグ' : '' };
     /* Each new game owns its room; refreshing the same address preserves its score. */
     var issue = 'pq-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     cfg.id = issue;
@@ -388,6 +388,7 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   }
   $('cfF').addEventListener('submit', function (e) { e.preventDefault(); var v = {}; Array.prototype.forEach.call(document.querySelectorAll('#cfR [data-k]'), function (i) { v[i.getAttribute('data-k')] = i.value; }); cfSave(v); $('cfL').hidden = true; push(); });
   $('cfX').onclick = function () { $('cfL').hidden = true; }; $('roX').onclick = function () { $('roL').hidden = true; }; $('ntOk').onclick = function () { $('ntL').hidden = true; };
+  $('cfShop').onclick = function () { $('cfL').hidden = true; shopPanel(); };
   function roList() { var B = $('roB'), a = roGet().sort(function (x, y) { return ((x.ys || '') + (x.ym || '') || roFull(x)).localeCompare((y.ys || '') + (y.ym || '') || roFull(y), 'ja'); }); B.textContent = '';
     a.forEach(function (o) { var d = document.createElement('div'), n = document.createElement('span'); n.textContent = roFull(o); var y = document.createElement('small'); y.textContent = (o.ys || '') + (o.ym || ''); n.appendChild(y); var g = document.createElement('i'); g.textContent = o.gs && o.gs.three ? '持ち点 ' + o.gs.three : ''; var x = document.createElement('button'); x.type = 'button'; x.textContent = '消す'; var at = 0;
       x.onclick = function () { if (Date.now() - at < 2500) roSet(roGet().filter(function (q) { return q.id !== o.id; })); else { at = Date.now(); x.textContent = 'もう一度押す'; setTimeout(function () { x.textContent = '消す'; }, 2500); } };

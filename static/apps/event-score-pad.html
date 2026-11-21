@@ -97,6 +97,31 @@ button:active{transform:scale(.97)}
 .setup-fields input,.setup-fields select{min-height:48px;min-width:0;padding:10px;border:2px solid #2B4A7A;border-radius:10px;background:#0B192C;color:#fff;font:inherit;user-select:text;-webkit-user-select:text}
 .dlg button[aria-pressed="true"]{box-shadow:inset 0 0 0 3px #C0FC09}
 .dlg button:disabled{opacity:.4}
+/* A separate preparation screen keeps scoring locked until both players and the order are confirmed. */
+.pg{z-index:12;background:#171A22}
+.pg>div{background:#202633;border-color:#3A3F4C;max-width:1050px;gap:16px;padding:clamp(18px,3vw,32px);text-align:left}
+.pg h1,.pg h2,.pg p{margin:0}.pg h1{font-size:clamp(24px,3vw,36px)}.pg h2{font-size:22px}
+.pg p{font-size:16px;line-height:1.6}.pg .pg-rule{color:#F3F4EF;font-weight:800;font-size:16px}
+.pg-head{display:flex;align-items:center;gap:22px}.pg-head>div{min-width:0}
+.pg-logo{display:block;flex:none;width:230px;aspect-ratio:725/255;overflow:hidden;border-radius:10px;background:#F5F0D4}
+.pg-logo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 0}
+.pg-steps{list-style:none;display:flex;gap:10px;padding:0;margin:0;flex-wrap:wrap;font-size:14px;font-weight:800;color:#B9C4D6}
+.pg-steps li{padding:8px 12px;border-radius:999px;background:#0B192C}.pg-steps [aria-current="step"]{background:#C0FC09;color:#171A22}
+.pg-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pg-player{display:flex;flex-direction:column;gap:14px;border:2px solid #526179;border-radius:18px;padding:22px;background:#12284A;color:#F3F4EF;min-height:140px;text-align:left;font:inherit;cursor:pointer;min-width:0}
+.pg-player small{font-size:16px;font-weight:800}.pg-player strong{font-size:clamp(22px,3vw,34px);overflow-wrap:anywhere;line-height:1.4}.pg-player span{font-size:16px;color:#B9C4D6}
+.pg-player.white{border-color:#F3F4EF}.pg-player.yellow{border-color:#FFD700}.pg-player.yellow small{color:#FFD700}
+.pg button:focus-visible,.pg input:focus-visible{outline:3px solid #C0FC09;outline-offset:3px}
+.pg nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pg nav button{font-size:18px;line-height:1.4;padding:12px;min-height:58px}
+.pg .pg-start{background:#C0FC09;color:#171A22}.pg button:disabled{cursor:default;opacity:.4}
+.pg-roster{display:grid;gap:12px}.pg-roster label{font-size:16px;font-weight:800;display:grid;gap:6px}
+.pg-roster input{width:100%;min-height:48px;padding:12px;background:#0B192C;border:2px solid #526179;border-radius:10px;color:#F3F4EF;font:inherit;user-select:text;-webkit-user-select:text}
+.pg-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-height:38vh;max-height:38dvh;overflow:auto;padding:3px}
+.pg-list button{border:1px solid #526179;background:#0B192C;color:#F3F4EF;text-align:left;padding:14px;border-radius:12px;font:inherit;font-size:18px;font-weight:800;line-height:1.4;min-height:66px;cursor:pointer;overflow-wrap:anywhere}
+.pg-list strong{display:block;font-size:20px}.pg-list small{display:block;font-size:14px;color:#B9C4D6;font-weight:500}
+.pg .pg-empty{padding:16px;background:#0B192C;border-radius:12px}
+.pg nav #pgStart{grid-column:1/-1}#pgOrder .pg-player{cursor:default}
+@media(max-width:640px){.pg>div{gap:14px}.pg-head{flex-direction:column;align-items:flex-start;gap:12px}.pg-logo{width:180px}.pg-pair{grid-template-columns:1fr;gap:10px}.pg-player{min-height:96px;padding:16px;gap:8px}.pg-list{grid-template-columns:1fr 1fr}.pg nav{grid-template-columns:1fr}.pg-steps{gap:5px}.pg-steps li{padding:7px 9px}}
 @media (orientation:portrait){
   #app{display:none}
   html,body{overflow:auto}
@@ -196,6 +221,16 @@ button:active{transform:scale(.97)}
   </div>
   <nav><button class="no" type="button" data-act="setupclose">とじる</button><button class="ye" type="button" id="setupApply" data-act="setupapply">設定を適用する</button></nav>
 </div></div>
+<div class="dlg pg" id="pregame" hidden><div role="dialog" aria-modal="true" aria-labelledby="pgTitle" tabindex="-1">
+  <header class="pg-head"><span class="pg-logo"><img src="/img/prequeen-cup-2026-poster.png" alt="Pre Queen Cup 2026–2027"></span><div><p class="pg-rule" id="pgRule"></p><h1 id="pgTitle">対戦する2人を選ぶ</h1></div></header>
+  <ol class="pg-steps"><li id="pgStep1">1 選手選択</li><li id="pgStep2">2 バンキング</li><li>3 開始</li></ol>
+  <p id="pgHelp"></p>
+  <p id="pgBusy" hidden>試合のデータを読み込んでいます。</p>
+  <div class="pg-pair" id="pgPlayers"><button class="pg-player" type="button" data-pre-choose="0"><small>選手1</small><strong id="pgName0">名前を選ぶ</strong><span>押すと登録選手の一覧が開きます</span></button><button class="pg-player" type="button" data-pre-choose="1"><small>選手2</small><strong id="pgName1">名前を選ぶ</strong><span>押すと登録選手の一覧が開きます</span></button></div>
+  <section class="pg-roster" id="pgRoster" hidden aria-labelledby="pgPickTitle"><h2 id="pgPickTitle" tabindex="-1"></h2><label>名前・よみがなで検索<input id="pgSearch" type="search" autocomplete="off" placeholder="入力しなくても全員が表示されます"></label><p id="pgCount" aria-live="polite"></p><div class="pg-list" id="pgList"></div><p class="pg-empty" id="pgEmpty" hidden></p></section>
+  <div class="pg-pair" id="pgOrder" hidden><div class="pg-player white"><small>先攻・白球（左）</small><strong id="pgFirst"></strong></div><div class="pg-player yellow"><small>後攻・黄球（右）</small><strong id="pgSecond"></strong></div></div>
+  <nav><button class="no" type="button" data-pre="back" id="pgBack">メニューへ戻る</button><button class="pg-start" type="button" data-pre="bank" id="pgBank">バンキングへ</button><button class="no" type="button" data-pre="swap" id="pgSwap" hidden>先攻・後攻を入れ替える (/)</button><button class="pg-start" type="button" data-pre="start" id="pgStart" hidden>ゲーム開始 (Enter)</button></nav>
+</div></div>
 <script src="/js/queen-cup.js"></script>
 <script>
 (function () {
@@ -211,12 +246,13 @@ button:active{transform:scale(.97)}
   if (countHome) document.body.classList.add('from-count');
   $$('[data-count-home]').forEach(function (b) { b.hidden = !countHome; b.onclick = function () { location.href = countHome; }; });
   var match = clean(qs('match')) || 'test';
-  var CFG0 = { id: '', preset: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: 'pts' };   /* end = what the inning cap decides: pts = more points wins (level = draw), both = neither reached the target, both lose, sd = level scores go to sudden death */
+  var CFG0 = { id: '', preset: '', entry: '', mode: '3c', limit: 0, back: false, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: 'pts' };   /* end = what the inning cap decides: pts = more points wins (level = draw), both = neither reached the target, both lose, sd = level scores go to sudden death */
   function cfgOf(o) {
     var c = {}, k;
     for (k in CFG0) c[k] = CFG0[k];
     if (!o) return c;
     c.id = String(o.id || '');
+    c.entry = o.entry === 'prequeen' ? 'prequeen' : '';
     c.preset = QC.active(o) ? QC.id : '';
     if (/^(3c|pocket|free)$/.test(o.mode)) c.mode = o.mode;
     c.limit = Math.max(0, Math.min(200, o.limit | 0));
@@ -251,6 +287,7 @@ button:active{transform:scale(.97)}
   var fresh = !S; if (!S) S = blank();
   /* settings handed over by the admin page: taken in once per issue (its id), never touching the running score */
   var inCfg = null; try { var raw = qs('cfg'); if (raw) inCfg = JSON.parse(decodeURIComponent(escape(atob(raw.replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { inCfg = null; }
+  var entryLoading = !!(fresh && inCfg && inCfg.entry === 'prequeen');
   function takeCfg() {
     if (!inCfg || !inCfg.id || inCfg.id === S.cfg.id) return;
     S.cfg = cfgOf(inCfg);
@@ -258,6 +295,7 @@ button:active{transform:scale(.97)}
     if (inCfg.h) [0, 1].forEach(function (i) { if (inCfg.h[i] != null) S.p[i].h = Math.max(0, Math.min(999, inCfg.h[i] | 0)); });
     if (inCfg.n) [0, 1].forEach(function (i) { if (inCfg.n[i]) S.p[i].n = String(inCfg.n[i]).slice(0, 16); });
     if (typeof inCfg.round === 'string') S.round = inCfg.round.slice(0, 12);
+    if (S.cfg.entry === 'prequeen' && !S.startedAt && S.inn === 1 && S.p.every(function (p) { return !p.s; })) prepReset();
     S.ck = null; S.t = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
   }
   /* ---- shot clock: {left: ms, run: bool, t: when left was true}. The display pages count down by themselves from the last message ---- */
@@ -283,7 +321,7 @@ button:active{transform:scale(.97)}
     if (QC.active(S.cfg)) ckSet(ckLeft(), false);
   }
   function next() {
-    if (S.over) return; endRun();
+    if (prepBlocked() || S.over) return; endRun();
     if (P()) { S.turn = S.turn ? 0 : 1; ckSet(S.cfg.clk * 1000, false); return; }
     if (S.turn === 0) { S.turn = 1; if (reached(0) && S.cfg.back) S.rep = true; }
     else {
@@ -298,6 +336,7 @@ button:active{transform:scale(.97)}
     ckSet(S.cfg.clk * 1000, !!S.cfg.clk);
   }
   function add(i, d) {
+    if (prepBlocked()) return;
     if (d > 0 && (S.over || (QC.active(S.cfg) && reached(i)))) return; var p = S.p[i], was = p.s; p.s = Math.max(0, Math.min(999, p.s + d));
     if (p.s === was) return;
     p.run = Math.max(0, p.run + d); p.hr = Math.max(p.hb | 0, p.run);   /* hb = high run before this visit, so a mistaken +1 taken back with −1 leaves no wrong high run */
@@ -307,11 +346,49 @@ button:active{transform:scale(.97)}
       check(i);
     } else if (S.rep && !reached(0)) S.rep = false;
   }
-  function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; p.ext = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.sd = false; S.ck = null; S.gid = gid(); }
+  function newGame() { S.p.forEach(function (p) { p.s = 0; p.hr = 0; p.run = 0; p.hb = 0; p.to = 0; p.ext = 0; }); S.inn = 1; S.turn = 0; S.over = null; S.rep = false; S.sd = false; S.ck = null; S.gid = gid(); prepReset(); }
+  /* Pre Queen's setup belongs to this match and survives a reload, just like its score. */
+  function prepActive() { return S.cfg.entry === 'prequeen' && !!S.prep; }
+  function prepBlocked() { return entryLoading || prepActive(); }
+  function prepReset() { S.prep = S.cfg.entry === 'prequeen' ? { stage: 'players', players: [null, null] } : null; S.startedAt = 0; }
+  function prepPairReady() { var a = S.prep && S.prep.players; return !!(a && a[0] && a[1] && a[0].key !== a[1].key); }
+  function prepSelect(index, player) {
+    if (!prepActive() || S.prep.stage !== 'players' || (index !== 0 && index !== 1) || !player || !player.key || !player.n) return false;
+    var other = S.prep.players[1 - index]; if (other && other.key === player.key) return false;
+    S.prep.players[index] = { key: String(player.key), n: String(player.n).slice(0, 20) }; return true;
+  }
+  function prepBank() {
+    if (!prepActive() || S.prep.stage !== 'players' || !prepPairReady()) return false;
+    S.p.forEach(function (p, i) { p.n = S.prep.players[i].n; }); S.prep.stage = 'bank'; return true;
+  }
+  function prepSwap() {
+    if (!prepActive() || S.prep.stage !== 'bank') return false;
+    S.p.reverse(); S.prep.players.reverse(); return true;
+  }
+  function prepBegin() {
+    if (!prepActive() || S.prep.stage !== 'bank' || !prepPairReady()) return false;
+    S.prep = null; S.startedAt = Date.now(); S.turn = 0; ckSet(S.cfg.clk * 1000, !!S.cfg.clk); return true;
+  }
+  function prepRoster() {
+    var list = null;
+    ['vibes-players-v3', 'vibes-count-3c-players-v2'].some(function (key) {
+      try { var v = JSON.parse(localStorage.getItem(key) || 'null'); if (Array.isArray(v)) { list = v; return true; } } catch (e) {} return false;
+    });
+    var seen = {}, out = [];
+    (list || []).forEach(function (p) {
+      if (!p || typeof p !== 'object') return;
+      var n = [p.sei, p.mei].filter(function (s) { return typeof s === 'string' && s.trim(); }).join(' ').trim().slice(0, 20);
+      if (!n) return;
+      var key = p.id ? 'id:' + String(p.id) : 'name:' + n; if (seen[key]) return; seen[key] = true;
+      out.push({ key: key, n: n, y: String(p.ys || '') + String(p.ym || '') });
+    });
+    return out.sort(function (a, b) { return (a.y || a.n).localeCompare(b.y || b.n, 'ja'); });
+  }
   /* ---- drawing: every element marked data-o="key" gets the text for that key (both layouts at once) ---- */
   function put(k, v) { $$('[data-o="' + k + '"]').forEach(function (e) { if (e.textContent !== String(v)) e.textContent = v; }); }
   function show(sel, on) { $$(sel).forEach(function (e) { e.hidden = !on; }); }
   function draw() {
+    prepDraw();
     var c = S.cfg, pk = P(), cur = S.p[S.turn], oth = S.p[S.turn ? 0 : 1];
     var queen = QC.active(c), badges = QC.status(S);
     document.body.classList.toggle('queen', queen);
@@ -385,7 +462,7 @@ button:active{transform:scale(.97)}
   /* a device that has never held this match (swapped device, cleared browser) first asks the relay for the last known score */
   function start() {
     if (!fresh) { takeCfg(); draw(); return connect(); }
-    var w, done = false, go = function () { if (done) return; done = true; try { w.close(); } catch (e) {} takeCfg(); draw(); connect(); };
+    var w, done = false, go = function () { if (done) return; done = true; try { w.close(); } catch (e) {} entryLoading = false; takeCfg(); draw(); connect(); };
     try { w = new WebSocket('wss://' + WSH + '/api/count/' + room(match) + '?role=remote'); } catch (e) { return go(); }
     w.onmessage = function (ev) { var m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (valid(m) && m.m === match) { if (Array.isArray(m.log) && !LOG.length) { LOG = m.log; logSave(); } delete m.log; S = fix(m); if (S.ck) S.ck.t = Date.now(); store(); go(); } };
     w.onerror = go; w.onclose = go; setTimeout(go, 1500);
@@ -440,9 +517,62 @@ button:active{transform:scale(.97)}
     if (QC.active(S.cfg)) S.title = QC.title;
     newGame(); $('setup').hidden = true; save();
   }
+  /* ---- player list and banking screen (only the Pre Queen new-game entry) ---- */
+  var prepChoosing = -1, prepList = [];
+  function prepListDraw() {
+    if (!prepActive() || prepChoosing < 0) return;
+    var all = prepRoster(), query = $('pgSearch').value.trim().toLocaleLowerCase('ja'), box = $('pgList'); box.textContent = '';
+    prepList = all.filter(function (p) { return !query || (p.n + ' ' + p.y).toLocaleLowerCase('ja').indexOf(query) >= 0; });
+    $('pgCount').textContent = query ? prepList.length + '人表示／登録 ' + all.length + '人' : '登録 ' + all.length + '人・全員を表示しています';
+    var other = S.prep.players[1 - prepChoosing];
+    prepList.forEach(function (p, index) {
+      var b = document.createElement('button'), name = document.createElement('strong'); b.type = 'button'; b.dataset.prePick = String(index); name.textContent = p.n; b.appendChild(name);
+      var used = !!(other && other.key === p.key); b.disabled = used;
+      if (p.y || used) { var note = document.createElement('small'); note.textContent = used ? '相手として選択済み' : p.y; b.appendChild(note); }
+      box.appendChild(b);
+    });
+    $('pgEmpty').hidden = prepList.length > 0;
+    $('pgEmpty').textContent = all.length ? '該当する選手がいません。検索欄を空にすると全員が表示されます。' : 'この端末には選手が登録されていません。メニューの「4 選手登録」で登録してください。';
+  }
+  function prepDraw() {
+    var on = prepBlocked(), layer = $('pregame'); layer.hidden = !on;
+    ['app', 'ph'].forEach(function (id) { $(id).inert = on; });
+    if (!on) { prepChoosing = -1; return; }
+    var busy = entryLoading || !S.prep, bank = !busy && S.prep.stage === 'bank', choosing = !busy && !bank && prepChoosing >= 0;
+    $('pgRule').textContent = busy ? 'プレクイーン' : (S.cfg.back ? '予選リーグ' : '決勝トーナメント') + '｜' + S.p[0].h + '点・' + S.cfg.limit + 'イニング';
+    $('pgTitle').textContent = busy ? '試合を準備しています' : bank ? 'バンキング・順番の確認' : '対戦する2人を選ぶ';
+    $('pgHelp').textContent = busy ? '' : bank ? '台でバンキングをしてください。決まったら、先攻の選手が左になるよう入れ替えて「ゲーム開始」を押します。' : 'それぞれの名前ボタンを押すと、登録されている選手全員の一覧が開きます。';
+    $('pgBusy').hidden = !busy; $('pgPlayers').hidden = busy || bank || choosing; $('pgRoster').hidden = !choosing; $('pgOrder').hidden = !bank;
+    $('pgStep1').setAttribute('aria-current', !busy && !bank ? 'step' : 'false'); $('pgStep2').setAttribute('aria-current', bank ? 'step' : 'false');
+    if (!busy) [0, 1].forEach(function (i) { $('pgName' + i).textContent = S.prep.players[i] ? S.prep.players[i].n : '名前を選ぶ'; });
+    if (bank) { $('pgFirst').textContent = S.p[0].n; $('pgSecond').textContent = S.p[1].n; }
+    if (choosing) { $('pgPickTitle').textContent = '選手' + (prepChoosing + 1) + 'の名前を選ぶ'; prepListDraw(); }
+    $('pgBack').hidden = busy; $('pgBack').textContent = bank ? '名前の選択に戻る' : choosing ? '選手の確認に戻る' : 'メニューへ戻る';
+    $('pgBank').hidden = busy || bank || choosing; $('pgBank').disabled = !prepPairReady(); $('pgSwap').hidden = !bank; $('pgStart').hidden = !bank;
+  }
+  function prepClick(d) {
+    if (entryLoading || !prepActive()) return;
+    if (d.preChoose != null) { prepChoosing = +d.preChoose; $('pgSearch').value = ''; prepDraw(); $('pgPickTitle').focus(); }
+    else if (d.prePick != null) {
+      if (!prepSelect(prepChoosing, prepList[+d.prePick])) return;
+      prepChoosing = -1; save(); (prepPairReady() ? $('pgBank') : document.querySelector('[data-pre-choose="1"]')).focus();
+    }
+    else if (d.pre === 'bank') { if (prepBank()) { prepChoosing = -1; save(); $('pgStart').focus(); } }
+    else if (d.pre === 'swap') { if (prepSwap()) { save(); $('pgStart').focus(); } }
+    else if (d.pre === 'start') { if (prepBegin()) { save(); document.querySelector(window.matchMedia('(orientation:portrait)').matches ? '[data-add="t,1"]' : '[data-add="0,1"]').focus(); } }
+    else if (d.pre === 'back') {
+      if (prepChoosing >= 0) { prepChoosing = -1; prepDraw(); }
+      else if (S.prep.stage === 'bank') { S.prep.stage = 'players'; save(); }
+      else location.href = countHome || '/pages/count/';
+    }
+  }
+  $('pgSearch').addEventListener('input', prepListDraw);
+  window.addEventListener('storage', function (e) { if (prepActive() && (e.key === 'vibes-players-v3' || e.key === 'vibes-count-3c-players-v2')) prepDraw(); });
   /* ---- actions ---- */
   document.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b || b.disabled) return; var d = b.dataset, who = function (v) { return v === 't' ? S.turn : +v; };
+    if (d.pre || d.preChoose != null || d.prePick != null) return prepClick(d);
+    if (prepBlocked()) return;
     if (d.preset) choosePreset(d.preset);
     else if (d.act === 'setup') openSetup();
     else if (d.act === 'setupclose') $('setup').hidden = true;
@@ -467,6 +597,7 @@ button:active{transform:scale(.97)}
     else if (d.act === 'asgok') { if (PEND) applyAssign(PEND); }
   });
   document.addEventListener('input', function (e) {
+    if (prepBlocked()) return;
     var el = e.target, f = el.getAttribute && el.getAttribute('data-f'); if (!f) return; var v = el.value;
     if (f === 'title') S.title = v.slice(0, 60) || 'Pre Queen Cup 2026-2027';
     else if (f.charAt(0) === 'n') S.p[+f.charAt(1)].n = v.slice(0, 16) || (f === 'n0' ? 'PLAYER A' : 'PLAYER B');
@@ -474,7 +605,16 @@ button:active{transform:scale(.97)}
     store(); push(); draw();
   });
   document.addEventListener('focusout', function (e) { if (e.target.getAttribute && e.target.getAttribute('data-f')) setTimeout(draw, 0); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.target.blur(); });
+  document.addEventListener('keydown', function (e) {
+    if (prepBlocked()) {
+      if (entryLoading || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+      if (e.key === '/') { e.preventDefault(); prepClick({ pre: 'swap' }); }
+      else if (e.key === 'Escape' || e.key === 'Backspace') { e.preventDefault(); prepClick({ pre: 'back' }); }
+      else if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') { e.preventDefault(); prepClick({ pre: S.prep.stage === 'bank' ? 'start' : 'bank' }); }
+      return;
+    }
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.target.blur();
+  });
   $('sRound').addEventListener('change', function () { var v = $('sRound').value; if (v === '*') { custom = true; S.round = ''; save(); $('iRound').value = ''; $('iRound').focus(); } else { custom = false; S.round = v; save(); } });
   $('iRound').addEventListener('input', function () { S.round = $('iRound').value.slice(0, 12); store(); push(); });
   $('iMatch').addEventListener('change', function () { var m = clean($('iMatch').value); if (m && m !== match) location.search = '?match=' + encodeURIComponent(m); else $('iMatch').value = match; });
