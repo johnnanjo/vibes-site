@@ -54,6 +54,7 @@ ${n2 ? `<a class="mini-next only-sp" href="${n2.url}"><span class="cal-chip"><b>
 <span class="only-pc" style="font-size:13px;font-weight:900;color:var(--sub-d)">これからの公式戦</span>
 ${official.slice(1, 4).map((t) => `<div class="only-pc">${oRow(t, today, daysBetween(today, t.d))}</div>`).join('')}
 <a class="btn btn-lime btn-block" href="/pages/tournaments">大会をさがす</a>
+${(config.homeNew || []).length ? `<div class="hnew"><span class="hnew-b">NEW</span><ul>${config.homeNew.slice(0, 4).map((n) => `<li><a href="${esc(n.href)}"><b>${esc(n.label)}</b>${n.note ? `<small>${esc(n.note)}</small>` : ''}</a></li>`).join('')}</ul></div>` : ''}
 </div></div></div></div>
 
 <main class="wrap">

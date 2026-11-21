@@ -1,1 +1,22 @@
-{"contactHook": "https://hook.eu1.make.com/1097wh53bh91ks1c2xuemy5y64467fpt", "orderHook": "https://hook.eu1.make.com/1097wh53bh91ks1c2xuemy5y64467fpt", "homeWinners": false}
+{
+ "contactHook": "https://hook.eu1.make.com/1097wh53bh91ks1c2xuemy5y64467fpt",
+ "orderHook": "https://hook.eu1.make.com/1097wh53bh91ks1c2xuemy5y64467fpt",
+ "homeWinners": false,
+ "homeNew": [
+  {
+   "label": "14-1 超入門ガイド",
+   "note": "ストレートプールのルール・得点と減点",
+   "href": "/pages/straight-pool-guide"
+  },
+  {
+   "label": "14-1 スコアボード",
+   "note": "無料・登録なしのスコア表",
+   "href": "/pages/straight-pool"
+  },
+  {
+   "label": "宮下綾香プロ 特集ページ",
+   "note": "戦績と使用用具",
+   "href": "/pages/ayaka-miyashita"
+  }
+ ]
+}
