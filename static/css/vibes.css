@@ -200,7 +200,7 @@ main{display:block;padding-bottom:110px}
 .hscroll::-webkit-scrollbar{display:none}
 .hscroll>*{scroll-snap-align:start}
 @media(min-width:900px){.hscroll{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));overflow:visible}}
-.pcard{flex:0 0 156px;display:flex;flex-direction:column;gap:8px;padding:16px 14px;border-radius:20px;background:var(--card);box-shadow:0 0 0 1px var(--line);text-decoration:none}
+.pcard{flex:0 0 156px;display:flex;flex-direction:column;gap:8px;padding:16px 14px;border-radius:20px;background:var(--card);border:2px solid var(--night);text-decoration:none}
 .pcard .nm{font-size:16px;font-weight:900}
 .pcard .lt{font-size:11px;line-height:1.55;color:var(--sub)}
 .ball{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(23,26,34,.18);flex:0 0 auto}
