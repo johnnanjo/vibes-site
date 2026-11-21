@@ -1,0 +1,143 @@
+<style>
+/* 14-1 beginner's guide. Everything is scoped to #g141 so the site's own styles are untouched. */
+#g141{--night:#171A22;--card:#1F2430;--card2:#262C3A;--line:#353C4D;--chalk:#F3F4EF;--mute:#A9B0BF;--lime:#C0FC09;--felt:#0E6B47;--em:#0E7A5A;--cr:#C81E3A;--deep:#6E0F1E;--hot:#FF5A6E;
+  background:var(--night);color:var(--chalk);margin:0 calc(50% - 50vw);padding:0 calc(50vw - 50%);font-size:16px;line-height:1.8}
+#g141 *{box-sizing:border-box}
+#g141 .in{max-width:1012px;margin:0 auto;padding:28px 16px 56px}
+#g141 .ey{display:inline-block;background:var(--lime);color:var(--night);font-weight:900;font-size:13px;letter-spacing:.08em;border-radius:999px;padding:3px 14px}
+#g141 h1{font-size:clamp(30px,8vw,52px);line-height:1.25;font-weight:900;margin:14px 0 10px;color:var(--chalk)}
+#g141 h1 span{display:block;font-size:.5em;color:var(--mute);font-weight:700}
+#g141 .ld{font-size:17px;color:#D5D9E2;margin:0 0 20px;max-width:40em}
+#g141 h2{font-size:clamp(22px,5.6vw,30px);line-height:1.4;font-weight:900;margin:52px 0 6px;color:var(--chalk);padding-left:14px;border-left:6px solid var(--lime)}
+#g141 .sub{color:var(--mute);font-size:14px;margin:0 0 18px;padding-left:20px}
+#g141 .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+#g141 .bt{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:14px;font-weight:900;font-size:16px;text-decoration:none;background:var(--lime);color:var(--night)}
+#g141 .bt.g{background:transparent;color:var(--chalk);border:2px solid var(--line)}
+/* 4 steps */
+#g141 .steps{display:grid;gap:12px;grid-template-columns:1fr;counter-reset:s;list-style:none;margin:0;padding:0}
+#g141 .steps li{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 16px 70px;position:relative;min-width:0}
+#g141 .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:16px;top:16px;width:40px;height:40px;border-radius:50%;background:var(--lime);color:var(--night);font-weight:900;font-size:20px;display:grid;place-items:center}
+#g141 .steps b{display:block;font-size:18px;line-height:1.5;margin-bottom:2px}
+#g141 .steps p{margin:0;color:#D5D9E2;font-size:15px}
+#g141 .fig{background:var(--felt);border-radius:16px;padding:16px;margin-top:12px;display:grid;grid-template-columns:1fr;gap:14px}
+#g141 .fig figure{margin:0;min-width:0}
+#g141 .fig svg{display:block;width:100%;height:auto;max-width:380px;margin:0 auto}
+#g141 .fig figcaption{font-size:14px;font-weight:700;text-align:center;margin-top:8px;color:#EAF6F0}
+/* score table */
+#g141 table{width:100%;border-collapse:separate;border-spacing:0 10px;margin:0}
+#g141 thead th{font-size:13px;color:var(--mute);font-weight:700;text-align:left;padding:0 16px}
+#g141 thead th:nth-child(2){text-align:center}
+#g141 tbody td{background:var(--card);padding:16px;vertical-align:middle;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#g141 tbody td:first-child{border-left:1px solid var(--line);border-radius:16px 0 0 16px;font-weight:900;font-size:17px;width:30%}
+#g141 tbody td:last-child{border-right:1px solid var(--line);border-radius:0 16px 16px 0;color:#D5D9E2;font-size:15px}
+#g141 tbody td:nth-child(2){text-align:center;width:120px;white-space:nowrap}
+#g141 .pt{display:inline-block;min-width:78px;border-radius:999px;padding:5px 14px;font-weight:900;font-size:18px;color:#fff;line-height:1.4}
+#g141 .pt.p{background:var(--em)}
+#g141 .pt.m{background:var(--cr)}
+#g141 .pt.x{background:var(--deep);border:3px solid var(--hot);color:#FFE3E7;box-shadow:0 0 0 4px rgba(255,90,110,.18)}
+#g141 tr.dz td{background:#2A1A20;border-color:#6A2B37}
+/* 3 rules */
+#g141 .rules{display:grid;grid-template-columns:1fr;gap:14px}
+#g141 .rule{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 20px 20px;position:relative;overflow:hidden;min-width:0}
+#g141 .rule .no{position:absolute;right:10px;top:-14px;font-size:104px;font-weight:900;line-height:1;color:rgba(243,244,239,.07);font-family:Anton,"Arial Narrow",sans-serif;letter-spacing:.02em}
+#g141 .rule .ic{width:52px;height:52px;border-radius:14px;background:var(--felt);display:grid;place-items:center;margin-bottom:14px}
+#g141 .rule .ic svg{width:30px;height:30px}
+#g141 .rule h3{font-size:19px;line-height:1.5;font-weight:900;margin:0 0 8px;color:var(--chalk);position:relative}
+#g141 .rule p{margin:0;font-size:15px;color:#D5D9E2;position:relative}
+#g141 .neg{display:inline-block;background:var(--cr);color:#fff;font-weight:900;border-radius:999px;padding:0 10px;margin:0 2px;line-height:1.6;white-space:nowrap}
+#g141 .end{margin-top:44px;background:var(--felt);border-radius:20px;padding:24px 20px;text-align:center}
+#g141 .end b{display:block;font-size:22px;line-height:1.5;margin-bottom:4px}
+#g141 .end p{margin:0 0 14px;color:#EAF6F0;font-size:15px}
+#g141 .end .bt{background:var(--chalk)}
+@media (min-width:760px){
+  #g141 .steps{grid-template-columns:1fr 1fr}
+  #g141 .fig{grid-template-columns:1fr 1fr;padding:22px}
+  #g141 .rules{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:640px){
+  /* the table turns into cards: play and points on one line, the note underneath */
+  #g141 table,#g141 tbody,#g141 tr,#g141 td{display:block;width:auto}
+  #g141 thead{position:absolute;left:-9999px}
+  #g141 tbody tr{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:10px;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center}
+  #g141 tbody tr.dz{background:#2A1A20;border-color:#6A2B37}
+  #g141 tbody td,#g141 tr.dz td{background:transparent;border:0!important;border-radius:0!important;padding:0;width:auto!important}
+  #g141 tbody td:last-child{grid-column:1/-1}
+}
+</style>
+
+<div id="g141"><div class="in">
+
+  <span class="ey">ポケットビリヤード入門</span>
+  <h1>14-1 超入門ガイド<span>ストレートプール</span></h1>
+  <p class="ld">14-1（フォーティーンワン）は、どの球を入れても1点。決めた点数に先に届いたほうが勝ちの、ポケットビリヤードの基本になるゲームです。</p>
+  <div class="cta"><a class="bt" href="/pages/straight-pool">14-1 スコアボードを使う</a><a class="bt g" href="#g141-score">得点と減点を見る</a></div>
+
+  <h2>ゲームの流れ（4ステップ）</h2>
+  <p class="sub">14個入れたら組み直して、続けて撞く。これが名前の由来です。</p>
+  <ol class="steps">
+    <li><b>15個を三角に並べてブレイク</b><p>最初のブレイクは強く割らず、相手に難しい配置を渡すのが定石です。</p></li>
+    <li><b>球とポケットを宣言して入れる</b><p>1個入れるごとに1点。入れ続けているあいだは、ずっと自分の番です。</p></li>
+    <li><b>14個入れたら、1個を台に残す</b><p>最後の1個（ブレイクボール）と手球は、そのままの位置に置いておきます。</p></li>
+    <li><b>14個を組み直して、続けて撞く</b><p>残した1個を入れながらラックを割ると、そのまま得点を重ねられます。</p></li>
+  </ol>
+  <div class="fig">
+    <figure>
+      <svg viewBox="0 0 380 220" role="img" aria-label="14個を入れ終わり、的球1個と手球だけが台に残っている図">
+        <rect x="6" y="6" width="368" height="208" rx="18" fill="#3A2412"/><rect x="20" y="20" width="340" height="180" rx="8" fill="#12805A"/>
+        <path d="M250 110 l56 -32 v64 z" fill="none" stroke="#EAF6F0" stroke-width="2" stroke-dasharray="6 6" opacity=".7"/>
+        <circle cx="222" cy="150" r="11" fill="#F5C400" stroke="#0A3A2C" stroke-width="2"/><circle cx="110" cy="92" r="11" fill="#fff" stroke="#0A3A2C" stroke-width="2"/>
+        <text x="222" y="182" text-anchor="middle" font-size="13" font-weight="700" fill="#EAF6F0">残した1個</text><text x="110" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#EAF6F0">手球</text>
+      </svg>
+      <figcaption>ステップ3：14個入れた。台には1個と手球だけ</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 380 220" role="img" aria-label="14個を三角に組み直し、残した1個を入れながらラックを割る図">
+        <rect x="6" y="6" width="368" height="208" rx="18" fill="#3A2412"/><rect x="20" y="20" width="340" height="180" rx="8" fill="#12805A"/>
+        <g fill="#E5484D" stroke="#0A3A2C" stroke-width="1.5">
+          <circle cx="270" cy="99" r="9"/><circle cx="270" cy="121" r="9"/>
+          <circle cx="289" cy="88" r="9"/><circle cx="289" cy="110" r="9"/><circle cx="289" cy="132" r="9"/>
+          <circle cx="308" cy="77" r="9"/><circle cx="308" cy="99" r="9"/><circle cx="308" cy="121" r="9"/><circle cx="308" cy="143" r="9"/>
+          <circle cx="327" cy="66" r="9"/><circle cx="327" cy="88" r="9"/><circle cx="327" cy="110" r="9"/><circle cx="327" cy="132" r="9"/><circle cx="327" cy="154" r="9"/>
+        </g>
+        <circle cx="251" cy="110" r="9" fill="none" stroke="#EAF6F0" stroke-width="2" stroke-dasharray="4 4"/>
+        <circle cx="222" cy="150" r="11" fill="#F5C400" stroke="#0A3A2C" stroke-width="2"/><circle cx="110" cy="92" r="11" fill="#fff" stroke="#0A3A2C" stroke-width="2"/>
+        <path d="M122 97 L208 144" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M226 141 L262 106" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 8"/>
+        <text x="251" y="50" text-anchor="middle" font-size="13" font-weight="700" fill="#EAF6F0">先頭は空ける</text><path d="M251 56 v40" stroke="#EAF6F0" stroke-width="1.5"/>
+      </svg>
+      <figcaption>ステップ4：14個を組み直し、割りながら続ける</figcaption>
+    </figure>
+  </div>
+
+  <h2 id="g141-score">これだけ覚えればOK！得点と減点のルール</h2>
+  <p class="sub">プラスは緑、マイナスは赤。枠つきの赤は、いちばん大きな減点です。</p>
+  <table>
+    <thead><tr><th scope="col">プレーの内容</th><th scope="col">点数</th><th scope="col">解説・ポイント</th></tr></thead>
+    <tbody>
+      <tr><td>的球を1個ポケット</td><td><span class="pt p">+1点</span></td><td>番号やポケットの指定（コール）が必要です。</td></tr>
+      <tr><td>14個目とブレイク球を同時イン</td><td><span class="pt p">+2点</span></td><td>2個同時に落ちた場合はそのまま2点入り、15個すべて組み直します。</td></tr>
+      <tr><td>通常のファウル</td><td><span class="pt m">-1点</span></td><td>スクラッチ（手球落ち）やノーヒットなど。ファウルで入った球は得点にならずテーブルに戻します。</td></tr>
+      <tr><td>オープニングブレイク違反</td><td><span class="pt m">-2点</span></td><td>試合最初のブレイクで条件を満たせなかった場合のペナルティです。</td></tr>
+      <tr class="dz"><td>3回連続ファウル</td><td><span class="pt x">-15点</span></td><td>自分のターンで3回連続ファウルをすると大量減点！2回連続したら要注意です。</td></tr>
+    </tbody>
+  </table>
+
+  <h2>初心者が最初に覚えるべき3つの重要ルール</h2>
+  <p class="sub">この3つが分かれば、14-1は始められます。</p>
+  <div class="rules">
+    <article class="rule"><span class="no" aria-hidden="true">01</span>
+      <div class="ic"><svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="5"/><path d="M16 2v5M16 25v5M2 16h5M25 16h5"/></svg></div>
+      <h3>1. コールショット制（狙う球と穴を宣言する）</h3>
+      <p>14-1は「狙った球が、宣言したポケットに入った時」だけ得点になります。偶然別の穴に入ったり、別の球が落ちたりしても得点にはならず、相手と交代になります（ファウルではありません）。</p></article>
+    <article class="rule"><span class="no" aria-hidden="true">02</span>
+      <div class="ic"><svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3l11 4v8c0 7-4.6 11.6-11 14C9.600000000000001 26.6 5 22 5 15V7z"/><path d="M11 16l4 4 6-8"/></svg></div>
+      <h3>2. オープニングブレイクは「セーフティ」で始める</h3>
+      <p>試合最初のブレイクショットは、ナインボールのように強く割るのではなく、「的球2個と手球をクッション（壁）に当てる」という条件だけを満たして、相手に難しい配置で渡す（セーフティ）のが定石です。これを満たせないと <span class="neg">-2点</span> になります。</p></article>
+    <article class="rule"><span class="no" aria-hidden="true">03</span>
+      <div class="ic"><svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M16 4l13 23H3z"/><circle cx="16" cy="13" r="1.6" fill="#fff"/><circle cx="12.6" cy="19" r="1.6" fill="#fff"/><circle cx="19.4" cy="19" r="1.6" fill="#fff"/></svg></div>
+      <h3>3. 「15個目の残し方」が勝負の鍵</h3>
+      <p>14個目を入れる前に、「どの球を15個目（ブレイクボール）として残せば、三角形のラックを割りやすいか？」を逆算して取り切っていくのが14-1最大の面白さです。</p></article>
+  </div>
+
+  <div class="end"><b>さっそく、点数をつけてみよう</b><p>得点を入れるだけで、合計・残り点数・連続ファウルを自動で数えます。無料・登録なし。</p><a class="bt" href="/pages/straight-pool">14-1 スコアボードを使う</a></div>
+
+</div></div>
