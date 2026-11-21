@@ -310,7 +310,7 @@ function playersPages() {
 ${placed.length ? `<section class="sec"><div class="sec-h"><h2>入賞した選手</h2></div><div class="count">${placed.length}人（公式戦などの準優勝・3位）</div><div class="hscroll" style="flex-wrap:wrap">${placed.map(pCard).join('')}</div></section>` : ''}
 <section class="sec"><div class="empty"><b>ご本人の方へ</b><p>所属・ホームのお店・使用キューなどを追加できます。公式LINEで「選手ページ」とお送りください。</p><a class="btn btn-lineapp btn-sm" href="${LINE_ADD}" target="_blank" rel="noopener">LINEで申請する</a></div></section></main>`;
   put('/pages/players', page({ title: '選手', desc: 'ビリヤード大会の優勝者・入賞者を選手ごとに。成績が自動でたまる選手ページ。', path: '/pages/players', cur: 'p', body }));
-  const FEATURE = { '西本優子': '/pages/yuko-nishimoto' };
+  const FEATURE = { '西本優子': '/pages/yuko-nishimoto', '宮下綾香': '/pages/ayaka-miyashita' };
   const INSTA = { '西本優子': 'yuko.nishimoto.10' }; /* players' Instagram accounts (given by the operator): shown on their player page */ /* players with a feature page: a link is added to their player page */
   for (const p of list) {
     const carom = p.disc === 'carom';
@@ -486,6 +486,8 @@ ${o.extra || ''}<section class="sec"><div class="sec-h"><h2>${o.h2}</h2></div><d
     raw = raw.replace('<!--PHOTO:gear-->', ext ? `<div class="af"><img src="/img/players/yuko-nishimoto-gear.${ext}" alt="" loading="lazy"></div>` : '');
     put('/pages/yuko-nishimoto', { raw });
   }
+  /* player feature page: Ayaka Miyashita (stand-alone poster design, vivid colour fields + geometric shapes; no photo slot) */
+  put('/pages/ayaka-miyashita', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/ayaka-miyashita.html'), 'utf8') });
   put('/pages/count-overlay', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-overlay.html'), 'utf8') });
   put('/pages/count-cam', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-cam.html'), 'utf8') });
   put('/pages/count-live', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-live.html'), 'utf8') });
