@@ -593,7 +593,7 @@ button:active{transform:scale(.97)}
         refereeHost = new window.VibesEventReferee.Host({ match: match, active: refereeLocked, view: refereeView, apply: refereeApply,
           send: function (m) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); }, changed: refereeDraw });
         var url = refereeHost.url(location.origin), qr = qrcode(0, 'M'); qr.addData(url); qr.make();
-        $('refQr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); $('refLink').href = url;
+        $('refQr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 16, scalable: true }); $('refLink').href = url;
       } catch (e) { refereeError = '安全な接続を準備できません。HTTPSで開き、端末の保存領域を確認してください。'; }
     }
     var online = !!(refereeHost && refereeHost.online() && ws && ws.readyState === 1);

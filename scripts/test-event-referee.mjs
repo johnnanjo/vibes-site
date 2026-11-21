@@ -24,6 +24,16 @@ await test('QR keeps the random pairing key in a URL fragment', async () => {
   assert(!u.search.includes(host.state.key)); assert.equal(u.hash, '#key=' + host.state.key);
   assert.notEqual(RF.random(), host.state.key);
 });
+await test('the displayed QR includes a four-module quiet zone at every viewport size', async () => {
+  vm.runInContext(read('static/js/qr.js'), c);
+  const qr = c.qrcode(0, 'M'); qr.addData(host.url('https://vibesbilliards.com')); qr.make();
+  const call = pad.match(/qr\.createSvgTag\((\{[^}]+\})\)/);
+  assert(call, 'The venue must render its own QR with explicit sizing');
+  const options = vm.runInContext('(' + call[1] + ')', c);
+  assert(options.margin >= 4 * options.cellSize);
+  const svg = qr.createSvgTag(options), edge = qr.getModuleCount() * options.cellSize + 2 * options.margin;
+  assert(svg.includes(`viewBox="0 0 ${edge} ${edge}"`));
+});
 await test('wrong signatures and altered payloads cannot acquire control', async () => {
   const wrong = await RF.signer(RF.random()).sign({ type: 'referee-command', m: 'referee-test', client, seq: 0, op: 'hello' });
   assert.equal(await host.receive(wrong), false); assert.equal(host.state.client, '');
