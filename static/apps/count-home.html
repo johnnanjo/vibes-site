@@ -128,6 +128,25 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   .ring.ed{grid-template-columns:1fr 1fr;grid-template-rows:auto}.ring.ed .logo,.ring.ed .tile{grid-column:auto!important;grid-row:auto!important}.ring.ed .logo,.ring.ed .tile.big{grid-column:1/-1!important}.edp{font-size:5vw}
 }
 @media (prefers-reduced-motion:reduce){.tile{transition:none}}
+/* Display the supplied POP's original logo area without redrawing its lettering. */
+.pq-mark{display:block;aspect-ratio:725/255;overflow:hidden;border-radius:12px;background:#F5F0D4}
+.ring.n2 .pq-mark img{display:block;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 0;filter:none}
+.tile .pq-mark{width:100%;margin:auto 0;flex:none}
+.ring.n2 .logo.prequeen-logo{width:27vw;padding:0}
+.prequeen-logo .pq-mark{width:100%}
+.ring.match-menu~.hq{display:none}
+@media (max-width:760px){
+  .ring.match-menu{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;gap:16px}
+  .ring.match-menu .logo,.ring.match-menu .tile{grid-column:1!important;grid-row:auto!important}
+  .ring.match-menu .logo{grid-row:1!important;padding:0}
+  .ring.match-menu .logo img{height:100px;max-width:65vw}
+  .ring.match-menu .tile{min-height:160px;padding:20px;gap:6px}
+  .ring.match-menu .tile b{font-size:clamp(22px,5vw,36px);white-space:normal}
+  .ring.match-menu .tile small{font-size:14px}.ring.match-menu .tile span{font-size:16px}
+  .ring.match-menu .tile .pq-mark{max-width:440px;align-self:center;margin:8px 0 16px}
+  .ring.match-menu .logo.prequeen-logo{width:min(90vw,420px)}
+  .ring.match-menu .pq-mark img{width:100%;height:100%;max-width:none}
+}
 </style>
 </head>
 <body>
@@ -204,8 +223,8 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   var MENU = {
     pick: { t: 'どちらで使いますか？', items: [{ id: 'ed-carom', b: 'キャロム', s: 'FOR CAROM', c: 'carom', d: 'スリークッション・プレクイーン' }, { id: 'ed-pocket', b: 'ポケット', s: 'FOR POCKET', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }] },
     top: { t: '', items: [] },
-    carom: { t: 'ニューゲーム', back: 'top', items: [{ id: '3c', b: 'スリークッション', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }, { id: 'prequeen', b: 'プレクイーン', s: 'PRE QUEEN CUP', c: 'carom', d: '大会用・予選／決勝／W3C' }] },
-    prequeen: { t: 'プレクイーン｜試合形式を選ぶ', back: 'carom', items: [{ id: 'prequeen-qual', b: '予選リーグ', s: 'プレクイーン', c: 'carom', d: '7点・25イニング・裏撞きあり', go: 1 }, { id: 'prequeen-final', b: '決勝トーナメント', s: 'プレクイーン', c: 'carom', d: '10点・25イニング・裏撞きなし', go: 1 }, { id: 'prequeen-w3c', b: 'W3C・25点', s: 'プレクイーン', c: 'carom', d: '35イニング・40秒・EXT 2回', go: 1 }] },
+    carom: { t: 'ニューゲーム', back: 'top', items: [{ id: '3c', b: 'スリークッション', s: 'CAROM', c: 'carom', d: '2〜4人・持ち点・タイムアウト', go: 1 }, { id: 'prequeen', b: 'プレクイーン', s: 'PRE QUEEN CUP', c: 'carom', d: '大会用・予選7点／決勝10点' }] },
+    prequeen: { t: 'プレクイーン', back: 'carom', items: [{ id: 'prequeen-qual', b: '予選リーグ', s: 'プレクイーン', c: 'carom', d: '7点・25イニング・裏撞きあり', go: 1 }, { id: 'prequeen-final', b: '決勝トーナメント', s: 'プレクイーン', c: 'carom', d: '10点・25イニング・裏撞きなし', go: 1 }] },
     pocket: { t: 'ニューゲーム', back: 'top', items: [{ id: 'bowlard', b: 'ボーラード', s: 'POCKET', c: 'pocket', d: '1〜4人・ボウリングのスコア', go: 1 }, { id: 'nine', b: '9ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-9' }, { id: 'ten', b: '10ボール', s: 'POCKET', c: 'pocket', d: 'セットマッチ・5-10' }] },
     nine: { t: '9ボール', back: 'pocket', items: [{ id: 'nine-set', b: 'セットマッチ', s: '9-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g59', b: '5-9', s: '9-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] },
     ten: { t: '10ボール', back: 'pocket', items: [{ id: 'ten-set', b: 'セットマッチ', s: '10-BALL', c: 'pocket', d: '2人・ハンデはセット数で設定', go: 1 }, { id: 'g510', b: '5-10', s: '10-BALL', c: 'pocket', d: '2〜4人・かけ玉の点を自動計算', go: 1 }] }
@@ -214,13 +233,13 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
     : ED === 'pocket' ? [{ id: 'pocket', b: 'ニューゲーム', s: 'NEW GAME', c: 'pocket', d: 'ボーラード・9ボール・10ボール' }, { id: 'again', b: '同じ人とゲーム', s: 'REMATCH', c: 'pocket', d: '' }].concat(TOOLS) : []; }
   edMenu();
   var COL = { carom: ['#2468C0', '#1E5AA8', '#164482'], pocket: ['#6E7683', '#5A616C', '#434953'], purple: ['#8656C4', '#6A3FA0', '#4C2B78'], green: ['#1F9A5C', '#14804A', '#0D5C35'], yellow: ['#FFD83A', '#F2C200', '#C79E00', 1], blue: ['#3A66E8', '#1D4ED8', '#1539A3'], red: ['#E04A52', '#C4262E', '#8F1A21'] };
-  var KOL = { shop: 'yellow', again: 'green', tour: 'red', roster: 'purple', config: 'pocket', 'ed-carom': 'carom', 'ed-pocket': 'pocket', prequeen: 'purple', 'prequeen-qual': 'carom', 'prequeen-final': 'purple', 'prequeen-w3c': 'yellow', bowlard: 'green', nine: 'yellow', ten: 'blue', 'nine-set': 'yellow', g59: 'red', 'ten-set': 'blue', g510: 'red' };
+  var KOL = { shop: 'yellow', again: 'green', tour: 'red', roster: 'purple', config: 'pocket', 'ed-carom': 'carom', 'ed-pocket': 'pocket', prequeen: 'purple', 'prequeen-qual': 'carom', 'prequeen-final': 'purple', bowlard: 'green', nine: 'yellow', ten: 'blue', 'nine-set': 'yellow', g59: 'red', 'ten-set': 'blue', g510: 'red' };
   var colOf = function (it) { return COL[KOL[it.id] || it.c]; };
   var lv = ED ? 'top' : 'pick', tiles = [], sel = -1;
   function prequeenUrl(id) {
-    /* Keep the approved 7/10-point tournament rules separate from the W3C preset. */
-    var w3c = id === 'prequeen-w3c', qualifying = id === 'prequeen-qual';
-    var cfg = w3c ? window.VibesQueenCup.preset() : { mode: '3c', h: qualifying ? [7, 7] : [10, 10], limit: 25, back: qualifying, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: qualifying ? 'both' : 'sd', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯', round: qualifying ? 'ゼッケン決定戦' : '' };
+    if (id !== 'prequeen-qual' && id !== 'prequeen-final') return '';
+    var qualifying = id === 'prequeen-qual';
+    var cfg = { mode: '3c', h: qualifying ? [7, 7] : [10, 10], limit: 25, back: qualifying, clk: 0, warn: true, to: 0, stats: true, brk: 'alt', end: qualifying ? 'both' : 'sd', title: 'Pre Queen Cup 2026-2027｜第5回 アマチュアスリークッションビリヤード 女王杯', round: qualifying ? 'ゼッケン決定戦' : '' };
     /* Each new game owns its room; refreshing the same address preserves its score. */
     var issue = 'pq-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     cfg.id = issue;
@@ -241,18 +260,28 @@ html,body{height:100%;margin:0;color:var(--chalk);font-family:VLDig,"Noto Sans J
   }
   function lastGame() { try { var L = JSON.parse(localStorage.getItem('vibes-count-last') || 'null'); return L && typeof L.u === 'string' && L.n && L.n.length && (!ED || (L.u.indexOf(U.pocket) === 0) === (ED === 'pocket')) ? L : null; } catch (e) { return null; } }
   function note(t) { $('ntT').textContent = t; $('ntL').hidden = false; }
+  function prequeenMark(decorative) {
+    var mark = document.createElement('span'), image = document.createElement('img');
+    mark.className = 'pq-mark'; image.src = '/img/prequeen-cup-2026-poster.png';
+    image.alt = decorative ? '' : 'Pre Queen Cup 2026–2027 — Billiards E-place';
+    if (decorative) mark.setAttribute('aria-hidden', 'true');
+    mark.appendChild(image); return mark;
+  }
   function menu() {
     var Lg = lastGame(); MENU.top.items.forEach(function (x) { if (x.id === 'again') x.d = Lg ? Lg.n.join(' ・ ') + '（' + (Lg.title || '') + '）' : 'まだ試合の記録がありません'; if (x.id === 'shop') x.d = shopGet() ? '登録中：' + shopGet() : 'お店の名前を登録する'; });
     var edTop = lv === 'top' && !!ED; document.documentElement.style.setProperty('--ec', EDC[ED] || '#1E5AA8'); $('soloLab').setAttribute('data-ed', EDN[ED] || '');
-    var m = MENU[lv], r = $('ring'); r.textContent = ''; r.className = edTop ? 'ring ed' : 'ring n' + m.items.length; sel = -1; tiles = [];
+    var m = MENU[lv], r = $('ring'); r.textContent = ''; r.className = (edTop ? 'ring ed' : 'ring n' + m.items.length) + (lv === 'carom' || lv === 'prequeen' ? ' match-menu' : ''); sel = -1; tiles = [];
     var cr = $('crumb'); cr.textContent = ''; if (lv === 'pick') cr.textContent = 'どちらで使いますか？（最初の1回だけ）'; if (m.back) { var bb = document.createElement('button'); bb.type = 'button'; bb.textContent = '← もどる (BackSpace)'; bb.onclick = function () { open('back'); }; cr.appendChild(bb); cr.appendChild(document.createTextNode(m.t)); }
     m.items.forEach(function (it, i) {
       var a = document.createElement('button'), cl = colOf(it); a.type = 'button'; a.className = 'tile' + (cl[3] ? ' lt' : ''); a.style.setProperty('--a', cl[0]); a.style.setProperty('--b', cl[1]); a.style.setProperty('--c', cl[2]);
       var kb = document.createElement('kbd'); kb.textContent = String(i + 1); var sm = document.createElement('small'); sm.textContent = it.s; var b = document.createElement('b'); b.textContent = it.b; var sp = document.createElement('span'); sp.textContent = it.d;
-      a.appendChild(kb); a.appendChild(sm); a.appendChild(b); a.appendChild(sp); a.onclick = function () { open(it.id); }; r.appendChild(a); tiles.push(a);
+      a.appendChild(kb); if (it.id === 'prequeen') a.appendChild(prequeenMark(true)); a.appendChild(sm); a.appendChild(b); a.appendChild(sp); a.onclick = function () { open(it.id); }; r.appendChild(a); tiles.push(a);
       if (edTop) { var N = m.items.length, last = i === N - 1, k = i - 1, odd = (N - 2) % 2 === 1; if (!i) { a.className += ' big'; a.style.gridColumn = '2/4'; a.style.gridRow = '1'; } else if (last) { a.className += ' sh'; a.style.gridColumn = '1'; a.style.gridRow = '3'; } else { a.style.gridRow = String(2 + Math.floor(k / 2)); a.style.gridColumn = odd && i === N - 2 ? '2/4' : String(2 + k % 2); } }
     });
-    var lg = document.createElement('div'); lg.className = 'logo'; var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LAB'; lb.setAttribute('data-ed', EDN[ED] || ''); lg.appendChild(lb); if (edTop) { var ep = document.createElement('div'); ep.className = 'edp'; edPlate(ep); lg.appendChild(ep); } r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
+    var lg = document.createElement('div'); lg.className = 'logo';
+    if (lv === 'prequeen') { lg.className += ' prequeen-logo'; lg.appendChild(prequeenMark(false)); }
+    else { var im = document.createElement('img'); im.src = $('logoSrc').src; im.alt = 'VIBES BILLIARDS'; lg.appendChild(im); }
+    var lb = document.createElement('div'); lb.className = 'lab'; lb.textContent = 'DIGITAL LAB'; lb.setAttribute('data-ed', EDN[ED] || ''); lg.appendChild(lb); if (edTop) { var ep = document.createElement('div'); ep.className = 'edp'; edPlate(ep); lg.appendChild(ep); } r.insertBefore(lg, m.items.length === 2 ? tiles[1] : tiles[0]);
     var f = $('foot'); f.textContent = ''; [['1', '〜'], [String(m.items.length), '選ぶ'], ['Enter', '決定']].concat(m.back ? [['BackSpace', 'もどる']] : []).concat([['F', '全画面']]).forEach(function (x, i) { var sp2 = i === 1 ? f.lastChild : document.createElement('span'); var k2 = document.createElement('kbd'); k2.textContent = x[0]; sp2.appendChild(k2); sp2.appendChild(document.createTextNode(x[1])); if (i !== 1) f.appendChild(sp2); });
     if (typeof shopDraw === 'function') shopDraw();
     if (typeof push === 'function') push();
