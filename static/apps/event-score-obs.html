@@ -154,7 +154,7 @@ body.queen.mon .rw .o{font-size:2.4vh}
     if (pos === 'bl' || pos === 'br') { c.style.top = 'auto'; c.style.bottom = '40px'; if (pos === 'bl') c.style.transformOrigin = '0 100%'; }
   }
   /* sponsors' logos shown with the score, per event (the match id may carry a suffix such as w3c-1205-t2). Files are the ones the organiser supplied. */
-  var SPONSORS = { 'w3c-1205': [['/img/event/w3c-1205/sp-3seconds.png', '3seconds'], ['/img/event/w3c-1205/sp-labeaute.png', 'La Beaute']] };
+  var SPONSORS = { 'w3c-1205': [['/img/event/w3c-1205/sp-3seconds.jpg', '3seconds'], ['/img/event/w3c-1205/sp-labeaute.png', 'La Beaute']] };
   Object.keys(SPONSORS).forEach(function (k) { if (match === k || match.indexOf(k + '-') === 0) { SPONSORS[k].forEach(function (s) { var i = new Image(); i.src = s[0]; i.alt = s[1]; $('sp').appendChild(i); }); $('sp').hidden = /[?&]sponsor=0/.test(q); } });
   /* Between games the stream shows the organiser's tables (event-board): the result panel first, then the standings or the bracket,
      until the next game starts at this table. &board=0 turns this off, &boardwait=<seconds> sets how long the result stays (default 10).

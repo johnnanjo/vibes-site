@@ -47,6 +47,7 @@ AI 共通の進め方は `AGENTS.md`（ChatGPT / Codex もここを読む。決�
 - `data/config.json` フォーム送信先（`contactHook`, `orderHook`）。空なら mailto にフォールバック。`youtubeLive` に YouTube チャンネルのURLを入れると `/live`（VIBES LIVE の入口）のボタンが有効になる（空なら「準備中」）。`homeWinners` が true のときだけ、トップに「◯月の優勝者」を出す（2026-11-16 から一時的に閉鎖中＝false）。`homeNew`（`[{label, note, href}]`。先頭から4件まで）＝トップの「大会をさがす」ボタンの下に出す「NEW」の一覧（2026-11-21 運営者「大会を探すの下に NEW、新しいコンテンツを表記して」）。新しいコンテンツを出したら、ここの先頭に足して古いものを外す。空にすると NEW の枠ごと出ない
 
 ## 配信の協賛CM（2026-11-21 運営者の指定）
+- 12/5の協賛ロゴ「3 seconds」は運営者提供の `6229.jpg`（2026-11-23受領）を原本のまま使用する。保存先は `static/img/event/w3c-1205/sp-3seconds.jpg`。`event-score-obs` の協賛欄はこのJPEGを参照し、配色・縦横比を変えない。旧 `sp-3seconds.png` は履歴として残す。ロゴ提供はCM動画の追加ではない。
 - 12/5 の配信は「試合 → 結果 → 対戦表 → 協賛CM → 対戦表 → 別の協賛のCM …（次の試合が始まるまで）」の流れ（運営者「動画とまったく同じようにしたい」「CMと対戦表を交互に」「同じ協賛企業が続かないように」）。YouTube のチャットはオフにする（運営者の決定）。
 - しくみ：配信の帯 `/event-score-obs`（帯・カード。`layout=monitor` は対象外）が、試合終了 → 結果（`boardwait` 秒）→ 対戦表（`cmwait` 秒。標準20、5〜600）→ CM 1本 → 対戦表 → 次の協賛のCM … をくり返し、次の試合が始まると止める。`&cm=0` でCMなし。CMの一覧は `static/cm/list.json`（`[{name, src}]`。src は `/cm/<ファイル名>.mp4` だけ受けつける）。順番の位置はその端末のブラウザに保存（`vibes-cm-i`）＝試合をまたいでも同じ協賛が続かない。
 - CM動画は `static/cm/`（公開の場所）。いまは La Beaute と Billiards E-place の15秒（運営者「2社とも了承済み。置いてよい」2026-11-21）。差し替え・追加は、ファイルを置いて list.json を直す。
