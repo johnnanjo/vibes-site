@@ -1,25 +1,25 @@
 /* Tournament live article: readable cross-table with a pinned player column. */
-#yondan-league{font-size:1rem;line-height:1.7;margin:24px 0}
-#yondan-league .league-hint{font-weight:700;padding:10px 12px;border-left:4px solid var(--lime);background:#fff}
-#yondan-league .league-scroll{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff;isolation:isolate}
-#yondan-league table{display:table;overflow:visible;width:100%;min-width:840px;table-layout:fixed;border-collapse:separate;border-spacing:0;font-size:1rem;line-height:1.4}
-#yondan-league caption{text-align:left;padding:12px 14px;font-size:1rem;font-weight:700;caption-side:top}
-#yondan-league .league-player-col{width:160px}
-#yondan-league .league-match-col{width:84px}
-#yondan-league .league-total-col{width:46px}
-#yondan-league th,#yondan-league td{text-align:center;vertical-align:middle;padding:12px 6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--night)}
-#yondan-league thead th{background:var(--night);color:var(--chalk);font-weight:700}
-#yondan-league .league-name{position:sticky;left:0;z-index:1;text-align:left;padding-left:12px;background:#fff;border-right:2px solid var(--night)}
-#yondan-league thead .league-name{z-index:2;background:var(--night);color:var(--chalk)}
-#yondan-league .league-fullname{display:block;font-size:.875rem;font-weight:800;white-space:nowrap}
-#yondan-league .league-shop{display:block;font-size:.875rem;font-weight:400;color:var(--sub);margin-top:4px;white-space:normal}
-#yondan-league .league-score{display:block;white-space:nowrap;font-size:1rem;font-weight:800;font-variant-numeric:tabular-nums}
-#yondan-league .league-detail{display:block;margin-top:6px;font-size:.875rem;color:var(--sub);line-height:1.5;white-space:normal}
-#yondan-league .league-win{background:#eef5df}
-#yondan-league .league-loss{background:#fff}
-#yondan-league .league-empty{background:var(--chalk);color:var(--sub)}
-#yondan-league .league-self{background:var(--line2);color:var(--sub)}
-#yondan-league .league-total{background:var(--chalk);font-weight:800;font-variant-numeric:tabular-nums}
-#yondan-league tr>*:last-child{border-right:0}
-#yondan-league tbody tr:last-child>*{border-bottom:0}
-#yondan-league .league-note{margin-top:14px;font-size:.875rem;line-height:1.8}
+.yondan-league{font-size:1rem;line-height:1.7;margin:24px 0}
+.yondan-league .league-hint{font-weight:700;padding:10px 12px;border-left:4px solid var(--lime);background:#fff}
+.yondan-league .league-scroll{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff;isolation:isolate}
+.yondan-league table{display:table;overflow:visible;width:100%;min-width:840px;table-layout:fixed;border-collapse:separate;border-spacing:0;font-size:1rem;line-height:1.4}
+.yondan-league caption{text-align:left;padding:12px 14px;font-size:1rem;font-weight:700;caption-side:top}
+.yondan-league .league-player-col{width:160px}
+.yondan-league .league-match-col{width:84px}
+.yondan-league .league-total-col{width:46px}
+.yondan-league th,.yondan-league td{text-align:center;vertical-align:middle;padding:12px 6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--night)}
+.yondan-league thead th{background:var(--night);color:var(--chalk);font-weight:700}
+.yondan-league .league-name{position:sticky;left:0;z-index:1;text-align:left;padding-left:12px;background:#fff;border-right:2px solid var(--night)}
+.yondan-league thead .league-name{z-index:2;background:var(--night);color:var(--chalk)}
+.yondan-league .league-fullname{display:block;font-size:.875rem;font-weight:800;white-space:nowrap}
+.yondan-league .league-shop{display:block;font-size:.875rem;font-weight:400;color:var(--sub);margin-top:4px;white-space:normal}
+.yondan-league .league-score{display:block;white-space:nowrap;font-size:1rem;font-weight:800;font-variant-numeric:tabular-nums}
+.yondan-league .league-detail{display:block;margin-top:6px;font-size:.875rem;color:var(--sub);line-height:1.5;white-space:normal}
+.yondan-league .league-win{background:#eef5df}
+.yondan-league .league-loss{background:#fff}
+.yondan-league .league-empty{background:var(--chalk);color:var(--sub)}
+.yondan-league .league-self{background:var(--line2);color:var(--sub)}
+.yondan-league .league-total{background:var(--chalk);font-weight:800;font-variant-numeric:tabular-nums}
+.yondan-league tr>*:last-child{border-right:0}
+.yondan-league tbody tr:last-child>*{border-bottom:0}
+.yondan-league .league-note{margin-top:14px;font-size:.875rem;line-height:1.8}
