@@ -1,202 +1,339 @@
 <style>
-/* layout: one reading column. the three steps run top to bottom, each with a drawn screen beside its text (stacked on phones). */
-#c3g{--night:#171A22;--panel:#222631;--panel2:#2B303D;--line:#3A4050;--chalk:#F3F4EF;--dim:#AEB4C0;--lime:#C0FC09;--carom:#1E5AA8;--board:#1F3B34;--rule:#D8C24A;--loss:#FF8A9A;--num:Anton,"Arial Narrow",Impact,sans-serif;color-scheme:dark}
+/* layout: a picture-first manual. every section leads with a drawn figure; words are captions. one column on phones, figure beside text on wide screens. */
+#c3g{--night:#171A22;--panel:#222631;--panel2:#2B303D;--line:#3A4050;--chalk:#F3F4EF;--dim:#AEB4C0;--lime:#C0FC09;--carom:#1E5AA8;--sky:#7CC0FF;--sun:#F2D24A;--loss:#FF8A9A;--board:#1F3B34;--num:Anton,"Arial Narrow",Impact,sans-serif;color-scheme:dark}
 #c3g *{box-sizing:border-box}
-#c3g{background:var(--night);color:var(--chalk);font-size:16px;line-height:1.75;margin:0 calc(50% - 50vw);padding:0 calc(50vw - 50%)}
-#c3g .in{max-width:880px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:40px}
-#c3g h1{font-size:clamp(26px,6vw,40px);font-weight:900;line-height:1.3;margin:0;text-wrap:balance}
-#c3g h2{font-size:22px;font-weight:900;margin:0 0 14px;line-height:1.4}
-#c3g h3{font-size:18px;font-weight:800;margin:0 0 6px}
+#c3g{background:var(--night);color:var(--chalk);font-size:16px;line-height:1.7;margin:0 calc(50% - 50vw);padding:0 calc(50vw - 50%)}
+#c3g .in{max-width:920px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:44px}
+#c3g h1{font-size:clamp(26px,6.4vw,42px);font-weight:900;line-height:1.3;margin:0;text-wrap:balance}
+#c3g h2{font-size:clamp(20px,5vw,26px);font-weight:900;margin:0 0 14px;line-height:1.4;text-wrap:balance}
+#c3g h3{font-size:18px;font-weight:800;margin:0 0 4px;line-height:1.45}
 #c3g p{margin:0}
-#c3g .lead{color:var(--dim);margin-top:10px;max-width:38em}
+#c3g .lead{color:var(--dim);margin-top:10px;max-width:36em}
+#c3g .cap{font-size:14px;color:#DADDE4}
 #c3g .cta{display:inline-block;background:var(--lime);color:var(--night);font-weight:900;text-decoration:none;border-radius:14px;padding:14px 22px;font-size:17px;margin-top:18px}
-#c3g .cta:focus-visible,#c3g a:focus-visible,#c3g summary:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
-#c3g .ready{background:var(--panel2);border-left:4px solid var(--rule);border-radius:8px;padding:10px 14px;font-size:14px;margin-top:16px;max-width:44em}
-/* the three steps */
-#c3g .step{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:24px;align-items:center;background:var(--panel);border-radius:20px;padding:22px}
-#c3g .step+.step{margin-top:14px}
-#c3g .no{font-family:var(--num);font-size:44px;line-height:1;color:var(--night);background:var(--lime);border-radius:12px;display:inline-flex;width:56px;height:56px;align-items:center;justify-content:center;margin-bottom:10px}
-#c3g .step p{color:#DADDE4}
-#c3g .step ul{margin:8px 0 0;padding-left:1.2em;color:#DADDE4;font-size:15px}
-/* drawn phone screens */
-#c3g .ph{background:#0E1016;border:3px solid #4A5163;border-radius:26px;padding:14px 12px;display:flex;flex-direction:column;gap:8px;font-size:12px;line-height:1.4;width:100%;max-width:300px;justify-self:center}
+#c3g a:focus-visible,#c3g summary:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+#c3g svg{display:block;width:100%;height:auto}
+#c3g svg text{font-family:inherit}
+/* the whole flow at a glance */
+#c3g .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:22px;counter-reset:f}
+#c3g .flow div{background:var(--panel);border-radius:16px;padding:14px 8px 12px;text-align:center;position:relative}
+#c3g .flow div+div::before{content:"";position:absolute;left:-8px;top:50%;width:8px;height:3px;background:var(--lime)}
+#c3g .flow svg{width:54px;height:54px;margin:0 auto 6px}
+#c3g .flow b{display:block;font-size:14px;line-height:1.35}
+#c3g .flow span{font-size:11.5px;color:var(--dim);display:block;line-height:1.4;margin-top:2px}
+/* figure + words */
+#c3g .fig{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:26px;align-items:center;background:var(--panel);border-radius:22px;padding:22px}
+#c3g .fig+.fig{margin-top:14px}
+#c3g .fig.rev{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
+#c3g .no{font-family:var(--num);font-size:40px;line-height:1;color:var(--night);background:var(--lime);border-radius:12px;display:inline-flex;min-width:54px;height:54px;padding:0 12px;align-items:center;justify-content:center;margin-bottom:10px}
+#c3g .no.t{font-family:inherit;font-size:19px;font-weight:900}
+#c3g ol.do{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+#c3g ol.do li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;font-size:15px;color:#E4E6EB}
+#c3g .k{display:inline-flex;width:28px;height:28px;border-radius:50%;align-items:center;justify-content:center;font-family:var(--num);font-size:17px;color:var(--night);background:var(--chalk);flex:none}
+#c3g .k.a{background:var(--lime)}#c3g .k.b{background:var(--sky)}#c3g .k.c{background:var(--sun)}
+/* drawn phone */
+#c3g .ph{background:#0E1016;border:3px solid #4A5163;border-radius:28px;padding:16px 13px;display:flex;flex-direction:column;gap:9px;font-size:12px;line-height:1.4;width:100%;max-width:310px;margin:0 auto;position:relative}
 #c3g .ph .t{font-weight:800;font-size:13px}
-#c3g .btn{background:var(--lime);color:var(--night);font-weight:900;border-radius:10px;text-align:center;padding:10px 6px;font-size:13px}
-#c3g .btn2{border:1.5px solid var(--line);border-radius:10px;text-align:center;padding:8px 6px;font-weight:700;color:var(--chalk)}
-#c3g .two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-#c3g .bd{background:var(--board);border:2px solid var(--rule);border-radius:8px;overflow:hidden}
-#c3g .bd table{width:100%;border-collapse:collapse;font-family:var(--num);font-variant-numeric:tabular-nums}
-#c3g .bd th,#c3g .bd td{border:1px solid rgba(216,194,74,.55);text-align:center;padding:3px 0;font-size:16px;color:#fff;font-weight:400}
-#c3g .bd th{font-family:inherit;font-size:10.5px;color:#F1E7A8;font-weight:700;white-space:nowrap;padding:3px 2px}
-#c3g .bd th.me{background:var(--lime);color:var(--night)}
-#c3g .bd td.q{color:#F1E7A8;font-size:13px;width:30px}
-#c3g .bd td.s{color:#CFE0D8;font-size:13px}
-#c3g .bd td.u{background:rgba(255,138,154,.3)}
-#c3g .bd .chalk{font-family:"Segoe Script","Bradley Hand","Comic Sans MS",cursive;font-size:18px}
-#c3g .big{background:var(--carom);border-radius:10px;text-align:center;padding:8px 4px}
-#c3g .big b{display:block;font-family:var(--num);font-weight:400;font-size:38px;line-height:1.1}
-#c3g .big span{font-size:11px;color:#DCE8F8}
-#c3g .three{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-#c3g .three div{background:var(--panel2);border-radius:8px;text-align:center;padding:6px 2px}
-#c3g .three b{display:block;font-family:var(--num);font-weight:400;font-size:20px;line-height:1.1}
-#c3g .three span{font-size:10px;color:var(--dim)}
-/* tips: good and bad photos */
-#c3g .shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-#c3g .shot{background:var(--panel);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
-#c3g .shot svg{width:100%;height:auto;display:block;border-radius:8px;background:#0E1016}
-#c3g .ok,#c3g .ng{font-weight:900;font-size:13px;border-radius:999px;padding:3px 12px;align-self:flex-start}
-#c3g .ok{background:var(--lime);color:var(--night)}
-#c3g .ng{background:var(--panel2);color:var(--loss);border:1.5px solid var(--loss)}
-#c3g .shot p{font-size:14px;color:#DADDE4}
-/* reading rules + glossary */
-#c3g .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-#c3g .rule{background:var(--panel);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;align-items:center}
-#c3g .rule .mk{background:var(--board);border:2px solid var(--rule);border-radius:8px;height:56px;display:flex;align-items:center;justify-content:center;font-family:"Segoe Script","Bradley Hand","Comic Sans MS",cursive;font-size:26px;color:#fff}
-#c3g .rule b{display:block}
-#c3g .rule span{font-size:14px;color:var(--dim)}
-#c3g .term{background:var(--panel);border-radius:14px;padding:14px 16px}
-#c3g .term b{font-size:16px}
-#c3g .term p{font-size:14px;color:#DADDE4;margin-top:2px}
-#c3g .term code{font-family:var(--num);font-size:15px;background:var(--panel2);border-radius:6px;padding:1px 8px;color:var(--chalk)}
-#c3g details{background:var(--panel);border-radius:14px;padding:0 16px}
-#c3g details+details{margin-top:8px}
-#c3g summary{font-weight:800;cursor:pointer;padding:14px 0;list-style-position:outside}
-#c3g details p{padding:0 0 14px;color:#DADDE4;font-size:15px}
-#c3g .end{background:var(--carom);border-radius:20px;padding:26px 22px;text-align:center}
-#c3g .end p{color:#DCE8F8}
-@media (max-width:720px){
-  #c3g .step{grid-template-columns:minmax(0,1fr);padding:18px}
-  #c3g .shots,#c3g .grid2{grid-template-columns:minmax(0,1fr)}
-  #c3g .shot{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;column-gap:14px}
-  #c3g .shot svg{grid-row:1/3}
-}
+#c3g .ph .l{font-size:10.5px;color:var(--dim)}
+#c3g .btn{background:var(--lime);color:var(--night);font-weight:900;border-radius:10px;text-align:center;padding:11px 6px;font-size:13px;position:relative}
+#c3g .box{border:1.5px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--night);position:relative}
 #c3g .n3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-#c3g .n3 div{border:1.5px solid var(--line);border-radius:8px;text-align:center;padding:6px 2px;background:#171A22}
-#c3g .n3 b{display:block;font-family:var(--num);font-weight:400;font-size:26px;line-height:1.15}
+#c3g .n3 div{border:2px solid var(--line);border-radius:10px;text-align:center;padding:7px 2px 5px;background:var(--night);position:relative}
+#c3g .n3 b{display:block;font-family:var(--num);font-weight:400;font-size:30px;line-height:1.1}
 #c3g .n3 span{font-size:10.5px;color:var(--dim)}
-#c3g .lv{background:var(--carom);border-radius:8px;padding:6px 10px;display:flex;justify-content:space-between;align-items:baseline}
+#c3g .n3 .a{border-color:var(--lime)}#c3g .n3 .b{border-color:var(--sky)}#c3g .n3 .c{border-color:var(--sun)}
+#c3g .lv{background:var(--carom);border-radius:10px;padding:7px 11px;display:flex;justify-content:space-between;align-items:baseline;position:relative}
 #c3g .lv span{font-size:10.5px;color:#DCE8F8}
-#c3g .lv b{font-family:var(--num);font-weight:400;font-size:24px}
-#c3g .calc{background:var(--panel);border-radius:20px;padding:22px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:center;font-family:var(--num);font-size:clamp(30px,8vw,48px);line-height:1.1}
+#c3g .lv b{font-family:var(--num);font-weight:400;font-size:26px}
+#c3g .tag{position:absolute;top:-10px;right:-8px;z-index:1}
+#c3g .ph span.k{font-family:var(--num);font-size:17px;color:var(--night);line-height:1}
+#c3g .big{background:var(--carom);border-radius:10px;text-align:center;padding:8px 4px;position:relative}
+#c3g .big b{display:block;font-family:var(--num);font-weight:400;font-size:40px;line-height:1.1}
+#c3g .big span{font-size:11px;color:#DCE8F8}
+#c3g .s3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+#c3g .s3 div{background:var(--panel2);border-radius:8px;text-align:center;padding:6px 2px;position:relative}
+#c3g .s3 b{display:block;font-family:var(--num);font-weight:400;font-size:20px;line-height:1.1}
+#c3g .s3 span{font-size:10px;color:var(--dim)}
+#c3g .gm{background:var(--panel);border-radius:10px;padding:9px 10px;display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+#c3g .gm i{font-style:normal;font-weight:900;border-radius:999px;padding:2px 9px;font-size:11px;background:var(--panel2);color:var(--dim)}
+#c3g .gm i.w{background:var(--lime);color:var(--night)}#c3g .gm i.l{color:var(--loss)}
+#c3g .gm b{font-family:var(--num);font-weight:400;font-size:15px}
+#c3g .gm small{display:block;font-size:10px;color:var(--dim)}
+#c3g .gm em{font-style:normal;font-family:var(--num);font-size:19px;text-align:right}
+/* where to look on the blackboard */
+#c3g .bbwrap{background:var(--panel);border-radius:22px;padding:18px}
+#c3g .legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+#c3g .legend div{background:var(--panel2);border-radius:14px;padding:12px;border-top:5px solid var(--line)}
+#c3g .legend .a{border-top-color:var(--lime)}#c3g .legend .b{border-top-color:var(--sky)}#c3g .legend .c{border-top-color:var(--sun)}
+#c3g .legend b{display:flex;align-items:center;gap:8px;font-size:16px}
+#c3g .legend p{font-size:13.5px;color:#DADDE4;margin-top:4px}
+/* average */
+#c3g .calc{background:var(--panel);border-radius:22px;padding:22px 16px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:center;font-family:var(--num);font-size:clamp(32px,9vw,54px);line-height:1.1}
 #c3g .calc small{display:block;font-family:inherit;font-size:13px;color:var(--dim);font-weight:700;text-align:center}
 #c3g .calc .op{color:var(--dim);font-size:.7em}
-#c3g .calc .ans{background:var(--lime);color:var(--night);border-radius:12px;padding:6px 16px}
+#c3g .calc .ans{background:var(--lime);color:var(--night);border-radius:14px;padding:6px 18px}
 #c3g .calc .ans small{color:var(--night)}
+#c3g .cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+#c3g .cmp>div{background:var(--panel);border-radius:18px;padding:16px}
+#c3g .bar{height:22px;border-radius:999px;background:var(--panel2);overflow:hidden;margin:8px 0 6px}
+#c3g .bar i{display:block;height:100%;border-radius:999px;background:var(--carom)}
+#c3g .bar i.hi{background:var(--lime)}
+#c3g .cmp b{font-family:var(--num);font-weight:400;font-size:30px}
+/* mistakes */
+#c3g .ng{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#c3g .ng>div{background:var(--panel);border-radius:18px;padding:14px;border:2px solid transparent}
+#c3g .ng>div.x{border-color:var(--loss)}
+#c3g .ng .mark{font-weight:900;font-size:13px;border-radius:999px;padding:2px 12px;display:inline-block;margin-bottom:8px}
+#c3g .ng .x .mark{background:var(--panel2);color:var(--loss);border:1.5px solid var(--loss)}
+#c3g .ng .o .mark{background:var(--lime);color:var(--night)}
+#c3g .ng p{font-size:13.5px;color:#DADDE4;margin-top:8px}
+/* results + storage */
+#c3g .pills{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#c3g .pills div{background:var(--panel);border-radius:16px;padding:14px 10px;text-align:center}
+#c3g .pills i{font-style:normal;font-weight:900;border-radius:999px;padding:4px 14px;font-size:14px;display:inline-block;background:var(--panel2);color:var(--dim)}
+#c3g .pills i.w{background:var(--lime);color:var(--night)}#c3g .pills i.l{color:var(--loss)}
+#c3g .pills p{font-size:13px;color:#DADDE4;margin-top:8px;line-height:1.5}
+#c3g .keep{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#c3g .keep>div{background:var(--panel);border-radius:18px;padding:16px;display:grid;grid-template-columns:76px minmax(0,1fr);gap:14px;align-items:center}
+#c3g .keep b{display:block}
+#c3g .keep p{font-size:13.5px;color:#DADDE4}
+#c3g details{background:var(--panel);border-radius:14px;padding:0 16px}
+#c3g details+details{margin-top:8px}
+#c3g summary{font-weight:800;cursor:pointer;padding:14px 0}
+#c3g details p{padding:0 0 14px;color:#DADDE4;font-size:15px}
+#c3g .end{background:var(--carom);border-radius:22px;padding:26px 22px;text-align:center}
+#c3g .end p{color:#DCE8F8}
+@media (max-width:760px){
+  #c3g .fig{grid-template-columns:minmax(0,1fr);padding:18px;gap:18px}
+  #c3g .fig.rev{grid-template-columns:minmax(0,1fr)}
+  #c3g .fig.rev>:first-child{order:2}
+  #c3g .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #c3g .flow div:nth-child(3)::before{display:none}
+  #c3g .legend,#c3g .ng,#c3g .cmp,#c3g .keep{grid-template-columns:minmax(0,1fr)}
+  #c3g .pills{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 </style>
 <div id="c3g"><div class="in">
 
 <header>
   <h1>3つの数字を入れるだけ。<br>スリークッションの成長が、数字で見える。</h1>
-  <p class="lead">「3C 自己データ帳」は、ゲームが終わるたびに「得点・イニング・ハイラン」を入れると、アベレージを計算して自分の記録としてためていく無料のツールです。最初に自分の持ち点を登録するだけで使えます（メールアドレスやパスワードはいりません）。</p>
+  <p class="lead">「3C 自己データ帳」の使い方を、絵で説明します。無料で、メールアドレスやパスワードはいりません。</p>
   <a class="cta" href="/pages/3c-self-data">3C 自己データ帳をひらく</a>
+  <div class="flow" aria-label="全体の流れ">
+    <div><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="20" r="9" fill="none" stroke="#F3F4EF" stroke-width="3"/><path d="M10 46c2-10 9-14 17-14s15 4 17 14" fill="none" stroke="#F3F4EF" stroke-width="3" stroke-linecap="round"/></svg><b>登録</b><span>最初に1回だけ<br>持ち点を入れる</span></div>
+    <div><svg viewBox="0 0 54 54" aria-hidden="true"><rect x="4" y="16" width="13" height="22" rx="3" fill="none" stroke="#C0FC09" stroke-width="3"/><rect x="20.5" y="16" width="13" height="22" rx="3" fill="none" stroke="#7CC0FF" stroke-width="3"/><rect x="37" y="16" width="13" height="22" rx="3" fill="none" stroke="#F2D24A" stroke-width="3"/></svg><b>3つ入れる</b><span>得点・イニング<br>ハイラン</span></div>
+    <div><svg viewBox="0 0 54 54" aria-hidden="true"><rect x="6" y="14" width="42" height="26" rx="8" fill="#C0FC09"/><path d="M19 27l6 6 11-12" fill="none" stroke="#171A22" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>保存</b><span>アベレージを<br>確かめて押す</span></div>
+    <div><svg viewBox="0 0 54 54" aria-hidden="true"><rect x="7" y="32" width="8" height="14" rx="2" fill="#1E5AA8"/><rect x="19" y="26" width="8" height="20" rx="2" fill="#1E5AA8"/><rect x="31" y="18" width="8" height="28" rx="2" fill="#1E5AA8"/><rect x="43" y="9" width="8" height="37" rx="2" fill="#C0FC09"/></svg><b>成長を見る</b><span>グラフと通算が<br>自動で新しくなる</span></div>
+  </div>
 </header>
 
 <section aria-labelledby="g-pre">
-  <h2 id="g-pre">はじめに1回だけ：持ち点を登録</h2>
-  <div class="step">
-    <div>
-      <span class="no" style="font-family:inherit;font-size:20px;font-weight:900;width:auto;padding:0 14px">準備</span>
-      <h3>自分の持ち点を登録する</h3>
-      <p>ツールをひらくと、いちばん上に「ユーザー登録」が出ます。自分の持ち点を入れて「登録する」を押してください。ニックネームは入れなくてもかまいません。</p>
-      <ul><li>持ち点に届いたゲームを「勝ち」として数えるのに使います</li><li>持ち点が変わったら「変更する」で直せます</li><li>登録の内容は、その端末の中だけに保存します</li></ul>
-    </div>
-    <div class="ph" role="img" aria-label="ユーザー登録の画面。自分の持ち点に20、ニックネームの欄、登録するボタン">
+  <h2 id="g-pre">はじめに1回だけ：持ち点を登録する</h2>
+  <div class="fig">
+    <div class="ph" role="img" aria-label="ユーザー登録の画面。1の印が持ち点の欄、2の印がニックネームの欄、3の印が登録するボタン">
       <div class="t">ユーザー登録</div>
-      <div style="font-size:11px;color:#AEB4C0">自分の持ち点（必ず入れる）</div>
-      <div class="btn2" style="text-align:left;padding:8px 10px;font-family:var(--num);font-size:18px">20</div>
-      <div style="font-size:11px;color:#AEB4C0">ニックネーム（なくてもよい）</div>
-      <div class="btn2" style="text-align:left;padding:8px 10px;color:#AEB4C0;font-weight:500">例：ビリ太郎</div>
-      <div class="btn">登録する</div>
+      <div class="l">自分の持ち点（必ず入れる）</div>
+      <div class="box" style="font-family:var(--num);font-size:20px">20<span class="k a tag">1</span></div>
+      <div class="l">ニックネーム（なくてもよい）</div>
+      <div class="box" style="color:#AEB4C0">ビリ太郎<span class="k tag">2</span></div>
+      <div class="btn">登録する<span class="k tag">3</span></div>
+    </div>
+    <div>
+      <span class="no t">準備</span>
+      <h3>ツールをひらくと、いちばん上に出ます</h3>
+      <ol class="do">
+        <li><span class="k a">1</span><span>自分の持ち点を入れる（例：20）</span></li>
+        <li><span class="k">2</span><span>ニックネームは、入れても入れなくてもよい</span></li>
+        <li><span class="k">3</span><span>「登録する」を押す。これで準備は終わり</span></li>
+      </ol>
+      <p class="cap" style="margin-top:12px">持ち点が変わったら、あとから「変更する」で直せます。</p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="g-board">
+  <h2 id="g-board">黒板のどこを見る？ 入れる数字は、この3つ</h2>
+  <div class="bbwrap">
+    <svg viewBox="84 0 472 452" role="img" aria-label="スコア黒板の自分の欄の絵。合計の列のいちばん下の20が得点、最後のキュー数の25がイニング、得点の列でいちばん大きい4がハイラン。それぞれ下の3つの入力欄につながっている">
+      <rect x="150" y="8" width="340" height="270" rx="8" fill="#1F3B34" stroke="#D8C24A" stroke-width="3"/>
+      <g stroke="#D8C24A" stroke-width="1.2" opacity=".75">
+        <line x1="150" y1="44" x2="490" y2="44"/><line x1="150" y1="72" x2="490" y2="72"/>
+        <line x1="150" y1="102" x2="490" y2="102"/><line x1="150" y1="132" x2="490" y2="132"/><line x1="150" y1="162" x2="490" y2="162"/><line x1="150" y1="192" x2="490" y2="192"/><line x1="150" y1="218" x2="490" y2="218"/><line x1="150" y1="248" x2="490" y2="248"/>
+        <line x1="270" y1="44" x2="270" y2="278"/><line x1="390" y1="8" x2="390" y2="278"/>
+      </g>
+      <g fill="#F1E7A8" font-size="15" font-weight="700" text-anchor="middle">
+        <text x="270" y="32">W　（自分の欄）　様</text><text x="440" y="32">キュー数</text>
+        <text x="210" y="63">得点</text><text x="330" y="63">合計</text>
+        <text x="440" y="93">1</text><text x="440" y="123">2</text><text x="440" y="153">3</text><text x="440" y="183">4</text><text x="440" y="211" font-size="18">⋮</text><text x="440" y="239">24</text><text x="440" y="269">25</text>
+      </g>
+      <g fill="#fff" font-size="22" text-anchor="middle" font-family="Segoe Script,Bradley Hand,Comic Sans MS,cursive">
+        <text x="210" y="95">1</text><text x="210" y="125">0</text><text x="210" y="155">4</text><text x="210" y="185">2</text><text x="210" y="213" font-size="18">⋮</text><text x="210" y="241">0</text><text x="210" y="271">2</text>
+        <text x="330" y="95">1</text><text x="330" y="125">1</text><text x="330" y="155">5</text><text x="330" y="185">7</text><text x="330" y="213" font-size="18">⋮</text><text x="330" y="241">18</text><text x="330" y="271">20</text>
+      </g>
+      <!-- rings -->
+      <rect x="296" y="250" width="68" height="26" rx="13" fill="none" stroke="#C0FC09" stroke-width="4"/>
+      <rect x="406" y="250" width="68" height="26" rx="13" fill="none" stroke="#7CC0FF" stroke-width="4"/>
+      <rect x="176" y="134" width="68" height="26" rx="13" fill="none" stroke="#F2D24A" stroke-width="4"/>
+      <!-- connectors to the three boxes -->
+      <g fill="none" stroke-width="4" stroke-linecap="round">
+        <path d="M330 278V318H176V340" stroke="#C0FC09"/>
+        <path d="M440 278V328H320V340" stroke="#7CC0FF"/>
+        <path d="M176 147H96V442H516V406" stroke="#F2D24A"/>
+      </g>
+      <g font-family="Anton,Arial Narrow,Impact,sans-serif" font-size="40" text-anchor="middle" fill="#F3F4EF">
+        <rect x="110" y="342" width="132" height="62" rx="12" fill="#171A22" stroke="#C0FC09" stroke-width="4"/><text x="176" y="388">20</text>
+        <rect x="254" y="342" width="132" height="62" rx="12" fill="#171A22" stroke="#7CC0FF" stroke-width="4"/><text x="320" y="388">25</text>
+        <rect x="398" y="342" width="132" height="62" rx="12" fill="#171A22" stroke="#F2D24A" stroke-width="4"/><text x="464" y="388">4</text>
+      </g>
+      <g font-size="15" font-weight="800" text-anchor="middle" fill="#F3F4EF"><text x="176" y="424">得点</text><text x="320" y="424">イニング</text><text x="464" y="424">ハイラン</text></g>
+    </svg>
+    <div class="legend">
+      <div class="a"><b><span class="k a">1</span>得点</b><p>「合計」のいちばん下の数字。合計が書かれていないときは、得点を全部足します。</p></div>
+      <div class="b"><b><span class="k b">2</span>イニング</b><p>自分が最後に撞いた回の「キュー数」。撞いた回数です。</p></div>
+      <div class="c"><b><span class="k c">3</span>ハイラン</b><p>「得点」の列で、いちばん大きい数字。1回で取った最高得点です。</p></div>
     </div>
   </div>
 </section>
 
 <section aria-labelledby="g-steps">
-  <h2 id="g-steps">ゲームごとの使い方は3ステップ</h2>
+  <h2 id="g-steps">ゲームが終わったら、この3ステップ</h2>
 
-  <div class="step">
+  <div class="fig">
+    <div class="ph" role="img" aria-label="入力の画面。得点に20、イニングに25、ハイランに4。印の1・2・3がそれぞれの欄についている">
+      <div class="t">ゲームを記録する</div>
+      <div class="n3"><div class="a"><b>20</b><span>得点</span><span class="k a tag">1</span></div><div class="b"><b>25</b><span>イニング</span><span class="k b tag">2</span></div><div class="c"><b>4</b><span>ハイラン</span><span class="k c tag">3</span></div></div>
+      <div class="lv"><span>このゲームのアベレージ</span><b>—</b></div>
+      <div class="btn" style="opacity:.45">このゲームを保存する</div>
+    </div>
     <div>
       <span class="no">1</span>
-      <h3>ゲームが終わったら、3つの数字を入れる</h3>
-      <p>黒板を消す前に、自分の欄から次の3つを読み取って入れます。</p>
-      <ul><li><b>得点</b>：そのゲームで取った点数の合計</li><li><b>イニング</b>：自分が撞いた回数（黒板の「キュー数」）</li><li><b>ハイラン</b>：1回のイニングで取った、いちばん多い点数</li></ul>
-    </div>
-    <div class="ph" role="img" aria-label="入力の画面。得点20、イニング25、ハイラン4と入っていて、アベレージ0.800と出ている">
-      <div class="t">ゲームを記録する</div>
-      <div class="n3"><div><b>20</b><span>得点</span></div><div><b>25</b><span>イニング</span></div><div><b>4</b><span>ハイラン</span></div></div>
-      <div class="lv"><span>このゲームのアベレージ</span><b>0.800</b></div>
-      <div class="btn">このゲームを保存する</div>
+      <h3>黒板を消す前に、3つの数字を入れる</h3>
+      <ol class="do">
+        <li><span class="k a">1</span><span><b>得点</b>：取った点数の合計</span></li>
+        <li><span class="k b">2</span><span><b>イニング</b>：撞いた回数</span></li>
+        <li><span class="k c">3</span><span><b>ハイラン</b>：1回で取った最高得点</span></li>
+      </ol>
     </div>
   </div>
 
-  <div class="step">
+  <div class="fig rev">
     <div>
       <span class="no">2</span>
-      <h3>アベレージを確かめて、保存する</h3>
-      <p>数字を入れると、そのゲームのアベレージがすぐに出ます。確かめたら「このゲームを保存する」を押します。</p>
-      <ul><li>日付は今日が入っています（前の日のゲームは日付を変えて入れられます）</li><li>結果は、持ち点に届いていれば自動で「勝ち」。負け・引き分けは自分で選べます</li><li>相手やお店をメモに残せます（入れなくてもよい）</li><li>数字のつじつまが合わないとき（ハイランが得点より大きい など）は知らせます</li></ul>
+      <h3>アベレージを確かめて、保存を押す</h3>
+      <ol class="do">
+        <li><span class="k">1</span><span>入れたとたんに、青い帯に<b>アベレージ</b>が出る</span></li>
+        <li><span class="k">2</span><span><b>「このゲームを保存する」</b>を押す</span></li>
+      </ol>
+      <p class="cap" style="margin-top:12px">日付は今日が入っています。前の日のゲームは、日付を変えて入れられます。</p>
     </div>
-    <div class="ph" role="img" aria-label="保存したゲームの表示。勝ち、20点、25イニング、ハイラン4、アベレージ0.800">
-      <div class="t">ゲームの記録</div>
-      <div style="background:#222631;border-radius:10px;padding:10px;display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center">
-        <span style="background:#C0FC09;color:#171A22;font-weight:900;border-radius:999px;padding:2px 9px;font-size:11px">勝ち</span>
-        <span><span style="font-family:var(--num);font-size:16px">20点 ／ 25イニング</span><br><span style="font-size:10px;color:#AEB4C0">2026-11-23・ハイラン 4・持ち点 20</span></span>
-        <span style="font-family:var(--num);font-size:20px;text-align:right">0.800<br><span style="font-family:inherit;font-size:9px;color:#AEB4C0">アベレージ</span></span>
-      </div>
-      <div style="background:#222631;border-radius:10px;padding:10px;display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center">
-        <span style="background:#2B303D;color:#FF8A9A;font-weight:900;border-radius:999px;padding:2px 9px;font-size:11px">負け</span>
-        <span><span style="font-family:var(--num);font-size:16px">14点 ／ 22イニング</span><br><span style="font-size:10px;color:#AEB4C0">2026-11-21・ハイラン 3・持ち点 20</span></span>
-        <span style="font-family:var(--num);font-size:20px;text-align:right">0.636<br><span style="font-family:inherit;font-size:9px;color:#AEB4C0">アベレージ</span></span>
-      </div>
+    <div class="ph" role="img" aria-label="入力の画面。青い帯にアベレージ0.800が出ていて、保存するボタンに2の印がついている">
+      <div class="t">ゲームを記録する</div>
+      <div class="n3"><div><b>20</b><span>得点</span></div><div><b>25</b><span>イニング</span></div><div><b>4</b><span>ハイラン</span></div></div>
+      <div class="lv"><span>このゲームのアベレージ</span><b>0.800</b><span class="k tag">1</span></div>
+      <div class="btn">このゲームを保存する<span class="k tag">2</span></div>
     </div>
   </div>
 
-  <div class="step">
+  <div class="fig">
+    <div class="ph" role="img" aria-label="保存したあとの画面。通算アベレージ0.812、ゲーム数12、直近5ゲーム0.905、ハイラン6、右上がりの棒グラフ、ゲームの記録が2つ">
+      <div class="t">通算成績</div>
+      <div class="big"><b>0.812</b><span>通算アベレージ</span><span class="k tag">1</span></div>
+      <div class="s3"><div><b>12</b><span>ゲーム数</span></div><div><b>0.905</b><span>直近5ゲーム</span></div><div><b>6</b><span>ハイラン</span></div></div>
+      <div style="position:relative"><svg viewBox="0 0 260 84" aria-hidden="true"><line x1="6" x2="254" y1="78" y2="78" stroke="#3A4050"/><line x1="6" x2="254" y1="42" y2="42" stroke="#3A4050"/><g fill="#1E5AA8"><rect x="12" y="56" width="14" height="22" rx="2"/><rect x="32" y="50" width="14" height="28" rx="2"/><rect x="52" y="58" width="14" height="20" rx="2"/><rect x="72" y="46" width="14" height="32" rx="2"/><rect x="92" y="48" width="14" height="30" rx="2"/><rect x="112" y="40" width="14" height="38" rx="2"/><rect x="132" y="44" width="14" height="34" rx="2"/><rect x="152" y="34" width="14" height="44" rx="2"/><rect x="172" y="38" width="14" height="40" rx="2"/><rect x="192" y="28" width="14" height="50" rx="2"/><rect x="212" y="32" width="14" height="46" rx="2"/></g><rect x="232" y="20" width="14" height="58" rx="2" fill="#C0FC09"/></svg><span class="k tag" style="top:-4px;right:-8px">2</span></div>
+      <div class="gm" style="position:relative"><i class="w">勝ち</i><span><b>20点 ／ 25イニング</b><small>ハイラン 4・持ち点 20</small></span><em>0.800</em><span class="k tag">3</span></div>
+      <div class="l">画面はイメージです（数字は見本）</div>
+    </div>
     <div>
       <span class="no">3</span>
-      <h3>自分の記録と成長を見る</h3>
-      <p>保存するたびに、通算の成績とグラフが新しくなります。ゲームごとのアベレージがならぶので、調子の波や伸びがひと目でわかります。</p>
-      <ul><li>ライムの棒が、いちばん新しいゲーム</li><li>「直近5ゲームのアベレージ」と通算をくらべると、いまの調子がわかります</li></ul>
-    </div>
-    <div class="ph" role="img" aria-label="通算成績の画面。通算アベレージ0.812、ゲーム数12、ハイラン6、ゲームごとのアベレージが右上がりの棒グラフ">
-      <div class="t">通算成績</div>
-      <div class="big"><b>0.812</b><span>通算アベレージ</span></div>
-      <div class="three"><div><b>12</b><span>ゲーム数</span></div><div><b>0.905</b><span>直近5ゲーム</span></div><div><b>6</b><span>ハイラン</span></div></div>
-      <svg viewBox="0 0 260 90" style="width:100%;height:auto;display:block" aria-hidden="true">
-        <line x1="6" x2="254" y1="78" y2="78" stroke="#3A4050"/><line x1="6" x2="254" y1="42" y2="42" stroke="#3A4050"/>
-        <g fill="#1E5AA8"><rect x="12" y="56" width="14" height="22" rx="2"/><rect x="32" y="50" width="14" height="28" rx="2"/><rect x="52" y="58" width="14" height="20" rx="2"/><rect x="72" y="46" width="14" height="32" rx="2"/><rect x="92" y="48" width="14" height="30" rx="2"/><rect x="112" y="40" width="14" height="38" rx="2"/><rect x="132" y="44" width="14" height="34" rx="2"/><rect x="152" y="34" width="14" height="44" rx="2"/><rect x="172" y="38" width="14" height="40" rx="2"/><rect x="192" y="28" width="14" height="50" rx="2"/><rect x="212" y="32" width="14" height="46" rx="2"/></g>
-        <rect x="232" y="20" width="14" height="58" rx="2" fill="#C0FC09"/>
-      </svg>
-      <div style="font-size:10px;color:#AEB4C0">画面はイメージです（数字は見本）</div>
+      <h3>記録がたまり、成長が見える</h3>
+      <ol class="do">
+        <li><span class="k">1</span><span><b>通算アベレージ</b>：これまで全部の成績</span></li>
+        <li><span class="k">2</span><span><b>グラフ</b>：ゲームごとのアベレージ。右へ行くほど新しい</span></li>
+        <li><span class="k">3</span><span><b>ゲームの記録</b>：1ゲームずつ、新しい順に並ぶ</span></li>
+      </ol>
     </div>
   </div>
 </section>
 
 <section aria-labelledby="g-calc">
-  <h2 id="g-calc">アベレージの計算</h2>
+  <h2 id="g-calc">アベレージは「得点 ÷ イニング」</h2>
   <div class="calc" role="img" aria-label="得点20 割る イニング25 は アベレージ0.800">
     <span>20<small>得点</small></span><span class="op">÷</span><span>25<small>イニング</small></span><span class="op">＝</span><span class="ans">0.800<small>アベレージ</small></span>
   </div>
-  <p class="lead" style="font-size:14px">1イニングあたり何点取れたか、という数字です。小数点以下4けた目は切り捨てて表示します。</p>
+  <div class="cmp">
+    <div><p class="cap">20点を <b style="font-family:inherit;font-size:inherit">25イニング</b>で取ったゲーム</p><div class="bar"><i class="hi" style="width:80%"></i></div><b>0.800</b></div>
+    <div><p class="cap">14点を <b style="font-family:inherit;font-size:inherit">22イニング</b>で取ったゲーム</p><div class="bar"><i style="width:63.6%"></i></div><b>0.636</b></div>
+  </div>
+  <p class="lead" style="font-size:14px">1イニングあたり何点取れたか、という数字です。同じ点数でも、少ないイニングで取るほど高くなります。小数点以下4けた目は切り捨てて表示します。</p>
 </section>
 
-<section aria-labelledby="g-term">
-  <h2 id="g-term">出てくる数字の意味</h2>
-  <div class="grid2">
-    <div class="term"><b>通算アベレージ</b><p>これまでの総得点 ÷ 総イニング。<code>65点 ÷ 80イニング ＝ 0.812</code></p></div>
-    <div class="term"><b>直近5ゲームのアベレージ</b><p>新しいほうから5ゲーム分の得点 ÷ イニング。通算より高ければ、調子は上向きです。</p></div>
-    <div class="term"><b>ベストゲーム</b><p>これまでで、いちばんアベレージが高かったゲームの数字。</p></div>
-    <div class="term"><b>ハイラン</b><p>1回のイニングで取った、いちばん多い得点。通算では、全ゲームのなかの最高を出します。</p></div>
+<section aria-labelledby="g-grow">
+  <h2 id="g-grow">成長の見方：見るのは2か所</h2>
+  <div class="fig">
+    <svg viewBox="0 0 420 250" role="img" aria-label="ゲームごとのアベレージの棒グラフ。左が古く右が新しい。いちばん右のライムの棒が最新のゲーム。全体に右上がり">
+      <line x1="34" x2="410" y1="206" y2="206" stroke="#3A4050" stroke-width="2"/><line x1="34" x2="410" y1="126" y2="126" stroke="#3A4050"/><line x1="34" x2="410" y1="46" y2="46" stroke="#3A4050"/>
+      <g fill="#AEB4C0" font-size="12" text-anchor="end"><text x="28" y="210">0</text><text x="28" y="130">0.50</text><text x="28" y="50">1.00</text></g>
+      <g fill="#1E5AA8"><rect x="44" y="126" width="24" height="80" rx="3"/><rect x="78" y="110" width="24" height="96" rx="3"/><rect x="112" y="134" width="24" height="72" rx="3"/><rect x="146" y="104" width="24" height="102" rx="3"/><rect x="180" y="96" width="24" height="110" rx="3"/><rect x="214" y="112" width="24" height="94" rx="3"/><rect x="248" y="82" width="24" height="124" rx="3"/><rect x="282" y="90" width="24" height="116" rx="3"/><rect x="316" y="70" width="24" height="136" rx="3"/></g>
+      <rect x="350" y="60" width="24" height="146" rx="3" fill="#C0FC09"/>
+      <path d="M50 118 L362 46" fill="none" stroke="#F3F4EF" stroke-width="3" stroke-dasharray="7 7" stroke-linecap="round"/><path d="M362 46l-16 0M362 46l-8 14" fill="none" stroke="#F3F4EF" stroke-width="3" stroke-linecap="round"/>
+      <g font-size="13" font-weight="800"><text x="44" y="230" fill="#AEB4C0">古いゲーム</text><text x="410" y="230" text-anchor="end" fill="#AEB4C0">新しいゲーム</text>
+      <rect x="306" y="14" width="104" height="26" rx="13" fill="#C0FC09"/><text x="358" y="32" text-anchor="middle" fill="#171A22">ライム＝最新</text></g>
+    </svg>
+    <div>
+      <span class="no t">グラフ</span>
+      <h3>棒が右上がりなら、伸びている</h3>
+      <p class="cap">1本の棒が1ゲーム。高い棒ほど、アベレージが高いゲームです。直近30ゲームまで並びます。</p>
+    </div>
+  </div>
+  <div class="fig rev">
+    <div>
+      <span class="no t">数字</span>
+      <h3>「直近5ゲーム」と「通算」をくらべる</h3>
+      <p class="cap">直近5ゲームのほうが高ければ、いまの調子は上向き。低ければ、少し落ちています。</p>
+    </div>
+    <svg viewBox="0 0 420 190" role="img" aria-label="通算アベレージ0.812と、直近5ゲームのアベレージ0.905をくらべた絵。直近のほうが高く、上向きの矢印">
+      <rect x="10" y="40" width="170" height="120" rx="16" fill="#1E5AA8"/><rect x="240" y="40" width="170" height="120" rx="16" fill="#2B303D" stroke="#C0FC09" stroke-width="4"/>
+      <g font-family="Anton,Arial Narrow,Impact,sans-serif" font-size="50" text-anchor="middle" fill="#F3F4EF"><text x="95" y="112">0.812</text><text x="325" y="112">0.905</text></g>
+      <g font-size="14" font-weight="800" text-anchor="middle"><text x="95" y="142" fill="#DCE8F8">通算</text><text x="325" y="142" fill="#F3F4EF">直近5ゲーム</text></g>
+      <path d="M192 112h30M210 100l14 12-14 12" fill="none" stroke="#AEB4C0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="262" y="6" width="126" height="28" rx="14" fill="#C0FC09"/><text x="325" y="25" font-size="14" font-weight="900" text-anchor="middle" fill="#171A22">上向き ↑</text>
+    </svg>
+  </div>
+</section>
+
+<section aria-labelledby="g-ng">
+  <h2 id="g-ng">入れまちがいは、保存の前に知らせます</h2>
+  <div class="ng">
+    <div class="x"><span class="mark">保存できない</span><div class="n3"><div><b>5</b><span>得点</span></div><div><b>10</b><span>イニング</span></div><div style="border-color:var(--loss)"><b>6</b><span>ハイラン</span></div></div><p>ハイランが得点より大きい。1回で6点取ったなら、得点は6点以上のはずです。</p></div>
+    <div class="x"><span class="mark">保存できない</span><div class="n3"><div style="border-color:var(--loss)"><b>20</b><span>得点</span></div><div><b>4</b><span>イニング</span></div><div><b>3</b><span>ハイラン</span></div></div><p>最高3点で4イニングなら、多くても12点。得点かイニングがちがいます。</p></div>
+    <div class="o"><span class="mark">これでOK</span><div class="n3"><div><b>20</b><span>得点</span></div><div><b>25</b><span>イニング</span></div><div><b>4</b><span>ハイラン</span></div></div><p>つじつまが合っていれば、そのまま保存できます。</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="g-res">
+  <h2 id="g-res">結果のつけ方</h2>
+  <div class="pills">
+    <div><i class="w">勝ち</i><p>持ち点に届くと、自動でつきます。自分で選ぶこともできます。</p></div>
+    <div><i class="l">負け</i><p>相手が先にあがったとき。「結果」で選びます。</p></div>
+    <div><i>引き分け</i><p>「結果」で選びます。</p></div>
+    <div><i>記録</i><p>練習や途中まで。勝ち負けには数えません。</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="g-keep">
+  <h2 id="g-keep">記録の保存先と、消し方</h2>
+  <div class="keep">
+    <div><svg viewBox="0 0 76 76" role="img" aria-label="スマホの中に鍵がある絵"><rect x="20" y="6" width="36" height="64" rx="8" fill="none" stroke="#F3F4EF" stroke-width="3"/><rect x="29" y="36" width="18" height="15" rx="3" fill="#C0FC09"/><path d="M32 36v-5a6 6 0 0 1 12 0v5" fill="none" stroke="#C0FC09" stroke-width="3"/></svg><div><b>この端末の中だけに保存</b><p>VIBESのサーバーには送りません。ほかの人からは見えません。別の端末では、記録は別々になります。</p></div></div>
+    <div><svg viewBox="0 0 76 76" role="img" aria-label="ゲームの記録を押して、消すボタンを押す絵"><rect x="6" y="12" width="64" height="22" rx="7" fill="#2B303D"/><rect x="12" y="19" width="24" height="8" rx="4" fill="#C0FC09"/><rect x="6" y="42" width="64" height="24" rx="7" fill="none" stroke="#FF8A9A" stroke-width="3"/><path d="M30 54h16" stroke="#FF8A9A" stroke-width="3" stroke-linecap="round"/></svg><div><b>まちがえたゲームは消して入れ直す</b><p>「ゲームの記録」でそのゲームを押す →「この記録を消す」。消した記録は元に戻せません。</p></div></div>
   </div>
 </section>
 
 <section aria-labelledby="g-faq">
   <h2 id="g-faq">よくある質問</h2>
   <details><summary>お金はかかりますか。登録はいりますか。</summary><p>無料です。最初に自分の持ち点（とニックネーム）を登録しますが、メールアドレスやパスワードはいりません。</p></details>
-  <details><summary>記録はどこに保存されますか。</summary><p>お使いのスマホやパソコンの中（ブラウザ）だけです。VIBESのサーバーには送りません。ほかの人から見えることもありません。</p></details>
-  <details><summary>機種変更したら、記録は引き継げますか。</summary><p>いまは引き継げません。別の端末や別のブラウザでは、記録は別々になります。ブラウザのデータを消すと記録も消えます。</p></details>
+  <details><summary>機種変更したら、記録は引き継げますか。</summary><p>いまは引き継げません。ブラウザのデータを消すと、記録も消えます。</p></details>
   <details><summary>途中で終わったゲームや練習も記録できますか。</summary><p>できます。そこまでの得点・イニング・ハイランを入れてください。結果を「つけない」にすると、勝ち負けには数えません。</p></details>
-  <details><summary>入れまちがえたゲームは直せますか。</summary><p>「ゲームの記録」でそのゲームを押してひらき、「この記録を消す」を押してから、正しい数字で入れ直してください。消した記録は元に戻せません。</p></details>
+  <details><summary>0点で終わったゲームは、どう入れますか。</summary><p>得点 0、ハイラン 0、イニングは撞いた回数を入れてください。アベレージは 0.000 になります。</p></details>
 </section>
 
 <section class="end">
