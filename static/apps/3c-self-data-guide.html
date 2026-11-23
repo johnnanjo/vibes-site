@@ -1,0 +1,209 @@
+<style>
+/* layout: one reading column. the three steps run top to bottom, each with a drawn screen beside its text (stacked on phones). */
+#c3g{--night:#171A22;--panel:#222631;--panel2:#2B303D;--line:#3A4050;--chalk:#F3F4EF;--dim:#AEB4C0;--lime:#C0FC09;--carom:#1E5AA8;--board:#1F3B34;--rule:#D8C24A;--loss:#FF8A9A;--num:Anton,"Arial Narrow",Impact,sans-serif;color-scheme:dark}
+#c3g *{box-sizing:border-box}
+#c3g{background:var(--night);color:var(--chalk);font-size:16px;line-height:1.75;margin:0 calc(50% - 50vw);padding:0 calc(50vw - 50%)}
+#c3g .in{max-width:880px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:40px}
+#c3g h1{font-size:clamp(26px,6vw,40px);font-weight:900;line-height:1.3;margin:0;text-wrap:balance}
+#c3g h2{font-size:22px;font-weight:900;margin:0 0 14px;line-height:1.4}
+#c3g h3{font-size:18px;font-weight:800;margin:0 0 6px}
+#c3g p{margin:0}
+#c3g .lead{color:var(--dim);margin-top:10px;max-width:38em}
+#c3g .cta{display:inline-block;background:var(--lime);color:var(--night);font-weight:900;text-decoration:none;border-radius:14px;padding:14px 22px;font-size:17px;margin-top:18px}
+#c3g .cta:focus-visible,#c3g a:focus-visible,#c3g summary:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+#c3g .ready{background:var(--panel2);border-left:4px solid var(--rule);border-radius:8px;padding:10px 14px;font-size:14px;margin-top:16px;max-width:44em}
+/* the three steps */
+#c3g .step{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:24px;align-items:center;background:var(--panel);border-radius:20px;padding:22px}
+#c3g .step+.step{margin-top:14px}
+#c3g .no{font-family:var(--num);font-size:44px;line-height:1;color:var(--night);background:var(--lime);border-radius:12px;display:inline-flex;width:56px;height:56px;align-items:center;justify-content:center;margin-bottom:10px}
+#c3g .step p{color:#DADDE4}
+#c3g .step ul{margin:8px 0 0;padding-left:1.2em;color:#DADDE4;font-size:15px}
+/* drawn phone screens */
+#c3g .ph{background:#0E1016;border:3px solid #4A5163;border-radius:26px;padding:14px 12px;display:flex;flex-direction:column;gap:8px;font-size:12px;line-height:1.4;width:100%;max-width:300px;justify-self:center}
+#c3g .ph .t{font-weight:800;font-size:13px}
+#c3g .btn{background:var(--lime);color:var(--night);font-weight:900;border-radius:10px;text-align:center;padding:10px 6px;font-size:13px}
+#c3g .btn2{border:1.5px solid var(--line);border-radius:10px;text-align:center;padding:8px 6px;font-weight:700;color:var(--chalk)}
+#c3g .two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#c3g .bd{background:var(--board);border:2px solid var(--rule);border-radius:8px;overflow:hidden}
+#c3g .bd table{width:100%;border-collapse:collapse;font-family:var(--num);font-variant-numeric:tabular-nums}
+#c3g .bd th,#c3g .bd td{border:1px solid rgba(216,194,74,.55);text-align:center;padding:3px 0;font-size:16px;color:#fff;font-weight:400}
+#c3g .bd th{font-family:inherit;font-size:10.5px;color:#F1E7A8;font-weight:700;white-space:nowrap;padding:3px 2px}
+#c3g .bd th.me{background:var(--lime);color:var(--night)}
+#c3g .bd td.q{color:#F1E7A8;font-size:13px;width:30px}
+#c3g .bd td.s{color:#CFE0D8;font-size:13px}
+#c3g .bd td.u{background:rgba(255,138,154,.3)}
+#c3g .bd .chalk{font-family:"Segoe Script","Bradley Hand","Comic Sans MS",cursive;font-size:18px}
+#c3g .big{background:var(--carom);border-radius:10px;text-align:center;padding:8px 4px}
+#c3g .big b{display:block;font-family:var(--num);font-weight:400;font-size:38px;line-height:1.1}
+#c3g .big span{font-size:11px;color:#DCE8F8}
+#c3g .three{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+#c3g .three div{background:var(--panel2);border-radius:8px;text-align:center;padding:6px 2px}
+#c3g .three b{display:block;font-family:var(--num);font-weight:400;font-size:20px;line-height:1.1}
+#c3g .three span{font-size:10px;color:var(--dim)}
+/* tips: good and bad photos */
+#c3g .shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#c3g .shot{background:var(--panel);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+#c3g .shot svg{width:100%;height:auto;display:block;border-radius:8px;background:#0E1016}
+#c3g .ok,#c3g .ng{font-weight:900;font-size:13px;border-radius:999px;padding:3px 12px;align-self:flex-start}
+#c3g .ok{background:var(--lime);color:var(--night)}
+#c3g .ng{background:var(--panel2);color:var(--loss);border:1.5px solid var(--loss)}
+#c3g .shot p{font-size:14px;color:#DADDE4}
+/* reading rules + glossary */
+#c3g .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#c3g .rule{background:var(--panel);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;align-items:center}
+#c3g .rule .mk{background:var(--board);border:2px solid var(--rule);border-radius:8px;height:56px;display:flex;align-items:center;justify-content:center;font-family:"Segoe Script","Bradley Hand","Comic Sans MS",cursive;font-size:26px;color:#fff}
+#c3g .rule b{display:block}
+#c3g .rule span{font-size:14px;color:var(--dim)}
+#c3g .term{background:var(--panel);border-radius:14px;padding:14px 16px}
+#c3g .term b{font-size:16px}
+#c3g .term p{font-size:14px;color:#DADDE4;margin-top:2px}
+#c3g .term code{font-family:var(--num);font-size:15px;background:var(--panel2);border-radius:6px;padding:1px 8px;color:var(--chalk)}
+#c3g details{background:var(--panel);border-radius:14px;padding:0 16px}
+#c3g details+details{margin-top:8px}
+#c3g summary{font-weight:800;cursor:pointer;padding:14px 0;list-style-position:outside}
+#c3g details p{padding:0 0 14px;color:#DADDE4;font-size:15px}
+#c3g .end{background:var(--carom);border-radius:20px;padding:26px 22px;text-align:center}
+#c3g .end p{color:#DCE8F8}
+@media (max-width:720px){
+  #c3g .step{grid-template-columns:minmax(0,1fr);padding:18px}
+  #c3g .shots,#c3g .grid2{grid-template-columns:minmax(0,1fr)}
+  #c3g .shot{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;column-gap:14px}
+  #c3g .shot svg{grid-row:1/3}
+}
+</style>
+<div id="c3g"><div class="in">
+
+<header>
+  <h1>黒板を撮るだけ。<br>スリークッションの成長が、数字で見える。</h1>
+  <p class="lead">「3C 自己データ帳」は、ゲームのあとにスコア黒板を撮ると、キューごとの得点を読み取って、アベレージやハイランを自動で計算し、自分の記録としてためていく無料のツールです。登録はいりません。</p>
+  <a class="cta" href="/pages/3c-self-data">3C 自己データ帳をひらく</a>
+  <p class="ready">黒板の写真からの読み取りは、いま準備中です。使えるようになると、ツールに「黒板を撮って読み取る」のボタンが出ます。それまでは「手で入力する」で同じように記録できます。</p>
+</header>
+
+<section aria-labelledby="g-steps">
+  <h2 id="g-steps">使い方は3ステップ</h2>
+
+  <div class="step">
+    <div>
+      <span class="no">1</span>
+      <h3>消す前に、黒板を撮る</h3>
+      <p>ゲームが終わったら、黒板を消す前にツールをひらき、「黒板を撮って読み取る」を押して撮影します。10〜60秒で読み取りが終わります。</p>
+      <ul><li>前に撮ってある写真をえらぶこともできます</li><li>写真が使えないときは「手で入力する」</li></ul>
+    </div>
+    <div class="ph" role="img" aria-label="ツールの画面。黒板を撮って読み取るボタンと、スコア黒板の絵">
+      <div class="t">ゲームを記録する</div>
+      <div class="btn">黒板を撮って読み取る</div>
+      <div class="two"><div class="btn2">写真をえらぶ</div><div class="btn2">手で入力する</div></div>
+      <div class="bd"><table>
+        <tr><th colspan="2">W　20 様</th><th>キュー</th><th colspan="2">Y　15 様</th></tr>
+        <tr><td class="chalk">0</td><td></td><td class="q">1</td><td class="chalk">/</td><td></td></tr>
+        <tr><td class="chalk">・</td><td></td><td class="q">2</td><td class="chalk">2</td><td></td></tr>
+        <tr><td class="chalk">3</td><td></td><td class="q">3</td><td class="chalk">/</td><td></td></tr>
+        <tr><td class="chalk">・</td><td></td><td class="q">4</td><td class="chalk">。</td><td></td></tr>
+        <tr><td class="chalk">4</td><td></td><td class="q">5</td><td class="chalk">/</td><td></td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div>
+      <span class="no">2</span>
+      <h3>数字を確かめて、保存する</h3>
+      <p>読み取った得点が、黒板と同じ並びで出ます。合計は自動で計算されます。写真と見くらべて、違うマスだけ押して直してください。</p>
+      <ul><li>赤っぽいマスは、読み取りに自信がないところ</li><li>「自分はどちら側ですか」で左（W）か右（Y）をえらぶ（次からは覚えています）</li><li>相手の名前やお店のメモも残せます（入れなくてもよい）</li></ul>
+    </div>
+    <div class="ph" role="img" aria-label="確認の画面。左が自分、右が相手で、得点と合計がならぶ。1マスだけ赤くなっている">
+      <div class="t">読み取り結果の確認</div>
+      <div class="two"><div class="btn" style="padding:7px 4px;font-size:12px">左（W・白）</div><div class="btn2" style="padding:6px 4px">右（Y・黄）</div></div>
+      <div class="bd"><table>
+        <tr><th class="me" colspan="2">左＝自分</th><th>キュー</th><th colspan="2">右＝相手</th></tr>
+        <tr><td>0</td><td class="s">0</td><td class="q">1</td><td>1</td><td class="s">1</td></tr>
+        <tr><td>0</td><td class="s">0</td><td class="q">2</td><td class="u">2</td><td class="s">3</td></tr>
+        <tr><td>3</td><td class="s">3</td><td class="q">3</td><td>1</td><td class="s">4</td></tr>
+        <tr><td>0</td><td class="s">3</td><td class="q">4</td><td>0</td><td class="s">4</td></tr>
+        <tr><td>4</td><td class="s">7</td><td class="q">5</td><td>1</td><td class="s">5</td></tr>
+      </table></div>
+      <div class="btn">この内容で保存する</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div>
+      <span class="no">3</span>
+      <h3>自分の記録と成長を見る</h3>
+      <p>保存するたびに、通算の成績とグラフが新しくなります。ゲームごとのアベレージがならぶので、調子の波や伸びがひと目でわかります。</p>
+      <ul><li>ライムの棒が、いちばん新しいゲーム</li><li>ゲームの記録を押すと、キューごとの得点を見返せます</li></ul>
+    </div>
+    <div class="ph" role="img" aria-label="通算成績の画面。通算アベレージ0.812、ゲーム数12、ハイラン6、ゲームごとのアベレージが右上がりの棒グラフ">
+      <div class="t">通算成績</div>
+      <div class="big"><b>0.812</b><span>通算アベレージ</span></div>
+      <div class="three"><div><b>12</b><span>ゲーム数</span></div><div><b>7-4</b><span>勝ち-負け</span></div><div><b>6</b><span>ハイラン</span></div></div>
+      <svg viewBox="0 0 260 90" style="width:100%;height:auto;display:block" aria-hidden="true">
+        <line x1="6" x2="254" y1="78" y2="78" stroke="#3A4050"/><line x1="6" x2="254" y1="42" y2="42" stroke="#3A4050"/>
+        <g fill="#1E5AA8"><rect x="12" y="56" width="14" height="22" rx="2"/><rect x="32" y="50" width="14" height="28" rx="2"/><rect x="52" y="58" width="14" height="20" rx="2"/><rect x="72" y="46" width="14" height="32" rx="2"/><rect x="92" y="48" width="14" height="30" rx="2"/><rect x="112" y="40" width="14" height="38" rx="2"/><rect x="132" y="44" width="14" height="34" rx="2"/><rect x="152" y="34" width="14" height="44" rx="2"/><rect x="172" y="38" width="14" height="40" rx="2"/><rect x="192" y="28" width="14" height="50" rx="2"/><rect x="212" y="32" width="14" height="46" rx="2"/></g>
+        <rect x="232" y="20" width="14" height="58" rx="2" fill="#C0FC09"/>
+      </svg>
+      <div style="font-size:10px;color:#AEB4C0">画面はイメージです（数字は見本）</div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="g-shot">
+  <h2 id="g-shot">うまく読み取れる撮り方</h2>
+  <div class="shots">
+    <div class="shot">
+      <svg viewBox="0 0 160 110" role="img" aria-label="黒板全体が正面からまっすぐ写っている写真の絵"><rect x="24" y="12" width="112" height="86" rx="3" fill="#1F3B34" stroke="#D8C24A" stroke-width="2"/><g stroke="#D8C24A" stroke-width="1" opacity=".7"><line x1="24" y1="30" x2="136" y2="30"/><line x1="24" y1="44" x2="136" y2="44"/><line x1="24" y1="58" x2="136" y2="58"/><line x1="24" y1="72" x2="136" y2="72"/><line x1="24" y1="86" x2="136" y2="86"/><line x1="70" y1="12" x2="70" y2="98"/><line x1="90" y1="12" x2="90" y2="98"/></g><g fill="#fff" font-size="10" font-family="sans-serif"><text x="44" y="41">0</text><text x="44" y="55">3</text><text x="44" y="69">1</text><text x="108" y="41">1</text><text x="108" y="55">2</text><text x="108" y="69">0</text></g></svg>
+      <span class="ok">よい例</span>
+      <p>正面から、名前欄と「キュー数」の列をふくめて黒板全体を入れる。</p>
+    </div>
+    <div class="shot">
+      <svg viewBox="0 0 160 110" role="img" aria-label="ななめから撮って黒板がゆがみ、右側が切れている写真の絵"><polygon points="40,20 170,4 170,108 40,90" fill="#1F3B34" stroke="#D8C24A" stroke-width="2"/><g stroke="#D8C24A" stroke-width="1" opacity=".7"><line x1="40" y1="36" x2="170" y2="26"/><line x1="40" y1="52" x2="170" y2="50"/><line x1="40" y1="68" x2="170" y2="76"/><line x1="96" y1="13" x2="96" y2="98"/></g></svg>
+      <span class="ng">読みにくい</span>
+      <p>ななめから撮る、片方の選手の欄が切れている。</p>
+    </div>
+    <div class="shot">
+      <svg viewBox="0 0 160 110" role="img" aria-label="照明が反射して、黒板の上のほうが白く光っている写真の絵"><defs><radialGradient id="c3g-gl" cx="50%" cy="18%" r="45%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><rect x="24" y="12" width="112" height="86" rx="3" fill="#1F3B34" stroke="#D8C24A" stroke-width="2"/><g stroke="#D8C24A" stroke-width="1" opacity=".7"><line x1="24" y1="44" x2="136" y2="44"/><line x1="24" y1="58" x2="136" y2="58"/><line x1="24" y1="72" x2="136" y2="72"/><line x1="24" y1="86" x2="136" y2="86"/><line x1="70" y1="12" x2="70" y2="98"/><line x1="90" y1="12" x2="90" y2="98"/></g><rect x="24" y="12" width="112" height="86" fill="url(#c3g-gl)"/></svg>
+      <span class="ng">読みにくい</span>
+      <p>照明が反射して白く光っている。少し下がるか、角度を変える。</p>
+    </div>
+  </div>
+  <p class="lead" style="font-size:14px">名前や顔が写らないように撮ってください。写真は読み取りのためにAI（Claude）へ送られ、VIBESのサーバーには残しません。</p>
+</section>
+
+<section aria-labelledby="g-read">
+  <h2 id="g-read">黒板の書き方は、こう読みます</h2>
+  <div class="grid2">
+    <div class="rule"><div class="mk">・</div><div><b>点や小さな丸は 0点</b><span>「・」「。」「−」はどれも0点として読みます。</span></div></div>
+    <div class="rule"><div class="mk">/</div><div><b>ななめの1本線は 1点</b><span>数字の「1」と同じです。</span></div></div>
+    <div class="rule"><div class="mk">20</div><div><b>名前欄の数字は持ち点</b><span>持ち点に届いたほうを、自動で「勝ち」にします。結果は手でも選べます。</span></div></div>
+    <div class="rule"><div class="mk"></div><div><b>空欄は「まだ撞いていない回」</b><span>途中で終わったゲームも、そこまでの分を記録できます。</span></div></div>
+  </div>
+</section>
+
+<section aria-labelledby="g-term">
+  <h2 id="g-term">出てくる数字の意味</h2>
+  <div class="grid2">
+    <div class="term"><b>通算アベレージ</b><p>総得点 ÷ 総キュー数。1キューあたり何点取れているか。<code>65点 ÷ 80キュー ＝ 0.812</code></p></div>
+    <div class="term"><b>ハイラン</b><p>1キューで取った、いちばん多い得点。</p></div>
+    <div class="term"><b>0点の回</b><p>全部のキューのうち、0点だった回の割合。下がるほど安定しています。</p></div>
+    <div class="term"><b>ベストゲーム</b><p>5キュー以上撞いたゲームのなかで、いちばん高いアベレージ。</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="g-faq">
+  <h2 id="g-faq">よくある質問</h2>
+  <details><summary>お金はかかりますか。登録はいりますか。</summary><p>無料です。登録もログインもいりません。</p></details>
+  <details><summary>記録はどこに保存されますか。</summary><p>お使いのスマホやパソコンの中（ブラウザ）だけです。VIBESのサーバーには送りません。ほかの人から見えることもありません。</p></details>
+  <details><summary>機種変更したら、記録は引き継げますか。</summary><p>いまは引き継げません。別の端末や別のブラウザでは、記録は別々になります。ブラウザのデータを消すと記録も消えます。</p></details>
+  <details><summary>読み取りが間違っていたら。</summary><p>保存の前に確認の画面が出ます。違うマスを押して、正しい数字に直してから保存してください。</p></details>
+  <details><summary>写真の読み取りは、1日に何回でも使えますか。</summary><p>1人につき1日12回までです。サイト全体の上限に達した日は、翌日まで「手で入力する」をお使いください。</p></details>
+  <details><summary>まちがえて保存したゲームは消せますか。</summary><p>「ゲームの記録」でそのゲームを押してひらき、「この記録を消す」を押します。消した記録は元に戻せません。</p></details>
+</section>
+
+<section class="end">
+  <h2 style="margin-bottom:6px">今日のゲームから、記録をはじめる</h2>
+  <p>つづけるほど、グラフが自分の成長の記録になります。</p>
+  <a class="cta" href="/pages/3c-self-data">3C 自己データ帳をひらく</a>
+</section>
+
+</div></div>

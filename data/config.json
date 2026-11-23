@@ -4,6 +4,11 @@
  "homeWinners": false,
  "homeNew": [
   {
+   "label": "3C 自己データ帳の使い方",
+   "note": "図で見るマニュアル",
+   "href": "/pages/3c-self-data-guide"
+  },
+  {
    "label": "3C 自己データ帳",
    "note": "黒板を撮ってスリークッションの成績を記録",
    "href": "/pages/3c-self-data"
@@ -17,11 +22,6 @@
    "label": "14-1 スコアボード",
    "note": "無料・登録なしのスコア表",
    "href": "/pages/straight-pool"
-  },
-  {
-   "label": "宮下綾香プロ 特集ページ",
-   "note": "戦績と使用用具",
-   "href": "/pages/ayaka-miyashita"
   }
  ]
 }
