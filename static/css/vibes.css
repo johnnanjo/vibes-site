@@ -97,14 +97,14 @@ main{display:block;padding-bottom:110px}
 .card.dark{background:var(--night);color:var(--chalk);box-shadow:none}
 .list{padding:0 14px}
 .card.list>*:last-child{border-bottom:0}
-.row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line2);text-decoration:none}
-@media(min-width:900px){.row{grid-template-columns:72px minmax(0,1fr) minmax(0,240px) 74px;gap:16px;padding:14px 8px}}
-.row .tm{font-family:var(--disp);font-size:20px;line-height:1}
-.row .tt{display:block;font-size:14px;font-weight:700;line-height:1.45}
-.row .vv{display:block;font-size:11px;color:var(--sub)}
-.row .vv2{display:none;font-size:13px;color:var(--sub)}
-@media(min-width:900px){.row .tm{font-size:22px}.row .tt{font-size:15px}.row .vv{display:none}.row .vv2{display:block}}
-.row .tag{justify-self:end}
+.row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;grid-template-areas:"tm tt tag" "tm vv tag";column-gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line2);text-decoration:none}
+.row.nov{grid-template-areas:"tm tt tag"}
+@media(min-width:900px){.row,.row.nov{grid-template-columns:72px minmax(0,1fr) minmax(0,240px) 74px;grid-template-areas:"tm tt vv tag";column-gap:16px;padding:14px 8px}}
+.row .tm{grid-area:tm;font-family:var(--disp);font-size:20px;line-height:1}
+.row .tt{grid-area:tt;display:block;min-width:0;font-size:14px;font-weight:700;line-height:1.45}
+.row .vv{grid-area:vv;display:block;min-width:0;font-size:11px;color:var(--sub)}
+@media(min-width:900px){.row .tm{font-size:22px}.row .tt{font-size:15px}.row .vv{font-size:13px}}
+.row .tag{grid-area:tag;justify-self:end}
 .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:900;white-space:nowrap;line-height:1.4}
 .b-off{background:var(--lime);color:var(--night)}
 .b-house{box-shadow:inset 0 0 0 1.5px var(--night)}
@@ -419,3 +419,5 @@ main{display:block;padding-bottom:110px}
 .hnew a b{font-weight:800;font-size:15px}
 .hnew a small{display:block;font-size:12.5px;color:rgba(243,244,239,.66)}
 .hnew a:hover b{text-decoration:underline}
+
+.sub-h{margin:14px 0 8px;font-size:12px;font-weight:900;color:var(--sub);letter-spacing:.04em}.sub-h:first-of-type{margin-top:0}

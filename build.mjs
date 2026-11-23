@@ -49,19 +49,18 @@ function home() {
 <div class="band"><div class="wrap">
 <div class="hero">
 <div style="display:flex;flex-direction:column;gap:14px">${n1 ? nextOfficial(n1, today, daysBetween(today, n1.d)) : ''}
-${n2 ? `<a class="mini-next only-sp" href="${n2.url}"><span class="cal-chip"><b>${+n2.d.slice(8)}</b><small>${+n2.d.slice(5, 7)}月</small></span><span style="min-width:0"><span style="display:block;font-size:11px;font-weight:700;color:var(--lime)">注目 あと${daysBetween(today, n2.d)}日</span><span style="display:block;font-size:14px;font-weight:900;line-height:1.4">${esc(n2.title)}</span><span style="display:block;font-size:11px;color:var(--sub-d)">${esc(n2.venue)}</span></span>${svg('next', 18, '#A3A8B5', 2.4)}</a>` : ''}</div>
+${n2 ? `<a class="mini-next" href="${n2.url}"><span class="cal-chip"><b>${+n2.d.slice(8)}</b><small>${+n2.d.slice(5, 7)}月</small></span><span style="min-width:0"><span style="display:block;font-size:11px;font-weight:700;color:var(--lime)">注目 あと${daysBetween(today, n2.d)}日</span><span style="display:block;font-size:14px;font-weight:900;line-height:1.4">${esc(n2.title)}</span><span style="display:block;font-size:11px;color:var(--sub-d)">${esc(n2.venue)}</span></span>${svg('next', 18, '#A3A8B5', 2.4)}</a>` : ''}</div>
 <div class="olist">
-<span class="only-pc" style="font-size:13px;font-weight:900;color:var(--sub-d)">これからの公式戦</span>
-${official.slice(1, 4).map((t) => `<div class="only-pc">${oRow(t, today, daysBetween(today, t.d))}</div>`).join('')}
 <a class="btn btn-lime btn-block" href="/pages/tournaments">大会をさがす</a>
+<a href="/pages/tournaments?k=official" style="align-self:flex-start;font-size:13px;font-weight:700;color:var(--chalk)">これからの公式戦を一覧で見る ›</a>
 ${(config.homeNew || []).length ? `<div class="hnew"><span class="hnew-b">NEW</span><ul>${config.homeNew.slice(0, 4).map((n) => `<li><a href="${esc(n.href)}"><b>${esc(n.label)}</b>${n.note ? `<small>${esc(n.note)}</small>` : ''}</a></li>`).join('')}</ul></div>` : ''}
 </div></div></div></div>
 
 <main class="wrap">
-<section class="sec" style="padding-top:20px;padding-bottom:0"><div class="sec-h"><h2>カテゴリーから探す</h2></div>${discTiles(true)}</section>
+<section class="sec" style="padding-top:20px;padding-bottom:0"><div class="sec-h"><h2>カテゴリーから探す</h2></div>${discTiles()}</section>
 <div class="sec" style="padding-top:18px">
 <form class="search-m" action="/pages/tournaments" role="search">${svg('search', 20, '#5B5F6B')}<input type="search" name="q" placeholder="大会・ビリヤード場を検索" aria-label="大会・ビリヤード場を検索"></form>
-<div class="quick">${[['/pages/tournaments', '大会', 'cal'], ['/blogs/results', '結果', 'trophy'], ['/blogs/live', '速報', 'camera'], ['/pages/players', '選手', 'user'], ['/pages/near', '近くの店', 'pin'], ['/pages/bowlard', 'ボーラード', 'count'], ['/blogs/news', 'NEWS', 'news'], ['/pages/shaft', 'SHOP', 'bag']].map(([h, l, i]) => `<a href="${h}"><i>${svg(i, 18, '#C0FC09', 2.2)}</i>${l}</a>`).join('')}</div>
+<div class="quick">${[['/pages/tournaments', '大会', 'cal'], ['/blogs/results', '結果', 'trophy'], ['/blogs/live', '速報', 'camera'], ['/pages/players', '選手', 'user'], ['/pages/near', '近くの店', 'pin'], ['/pages/tools', 'ツール', 'count'], ['/blogs/news', 'NEWS', 'news'], ['/pages/shaft', 'SHOP', 'bag']].map(([h, l, i]) => `<a href="${h}"><i>${svg(i, 18, '#C0FC09', 2.2)}</i>${l}</a>`).join('')}</div>
 </div>
 
 <section class="sec"><div class="sec-h"><h2>今日のビリヤード</h2></div>
@@ -70,7 +69,7 @@ ${(config.homeNew || []).length ? `<div class="hnew"><span class="hnew-b">NEW</s
 <section class="sec" data-daytabs><div class="sec-h"><h2>大会カレンダー</h2><a href="/pages/tournaments">すべての大会</a></div>
 <div class="days" role="tablist" aria-label="日付">${days.map(([d, l]) => `<button type="button" class="day" role="tab" aria-selected="${d === firstWeekend}" data-day="${d}"><b>${md(d)}</b><small>${wdJa(wdOf(d))}・${l.length}件</small></button>`).join('')}</div>
 ${days.map(([d, l]) => `<div data-daypanel="${d}"${d === firstWeekend ? '' : ' hidden'}><div class="card list">${l.slice(0, 12).map((t) => tRow(t)).join('')}</div>${l.length > 12 ? `<p style="margin-top:8px"><a href="/pages/tournaments?date=${d}" style="font-size:13px;font-weight:900">この日の大会をすべて見る（${l.length}件）</a></p>` : ''}</div>`).join('')}
-<p class="muted" style="font-size:12px">掲載のない大会は、お店からLINEまたは<a href="/pages/tournament-form">掲載フォーム</a>で送れます。</p>
+<p class="muted" style="font-size:12px;margin:8px 0 0"><a href="/pages/tournament-form" style="color:inherit">掲載のない大会を送る（ビリヤード場の方へ）›</a></p>
 </section>
 
 <section class="sec"><div class="cols">
@@ -83,24 +82,25 @@ ${config.homeWinners && ps.length ? `<section class="sec"><div class="sec-h"><h2
 
 
 <section class="sec"><div class="sec-h"><h2>ビリヤード場</h2><a href="/pages/near">地図でさがす</a></div>
-<div class="cols eq"><div style="display:flex;flex-direction:column;gap:10px"><div class="chips"><a class="chip" href="/pages/near?auto=1">現在地から探す</a>${prefs.map((p) => `<a class="chip" href="/pages/near?pref=${encodeURIComponent(p)}">${p.replace(/[都府県]$/, '')}</a>`).join('')}<a class="chip" href="/pages/near">すべて</a></div>
+<div><div style="display:flex;flex-direction:column;gap:10px"><div class="chips"><a class="chip" href="/pages/near?auto=1">現在地から探す</a>${prefs.map((p) => `<a class="chip" href="/pages/near?pref=${encodeURIComponent(p)}">${p.replace(/[都府県]$/, '')}</a>`).join('')}<a class="chip" href="/pages/near">すべて</a></div>
 ${wind ? `<a class="card pad" href="${wind.url}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;text-decoration:none"><span><span class="badge b-off" style="margin-bottom:6px">VIBES DIGITAL LAB導入（キャロム）</span><span style="display:block;font-size:16px;font-weight:900">ビリヤードWIND</span><span style="display:block;font-size:12px" class="muted">埼玉県志木市・18:00〜深夜・旋盤あり</span></span>${svg('next', 18, '#5B5F6B', 2.4)}</a>` : ''}</div>
-<div style="display:flex;flex-direction:column;gap:10px"><a class="dc" href="/pages/bowlard"><span><span class="tx" style="margin-top:0">ポケットビリヤード練習プログラム</span><span class="en">BOWLARD SCORE</span><span class="tx">ボーラードのスコア表。スマホでそのまま付けられます。無料。</span></span><span class="go-c">${svg('next', 18, '#171A22', 2.6)}</span></a>
-<a class="dc" href="/pages/digital-lab"><span><span class="tx" style="margin-top:0">スリークッションのデジタルスコアボード</span><span class="en">DIGITAL LAB FOR CAROM</span><span class="tx">お店の要望に合わせてカスタマイズ。</span></span><span class="go-c">${svg('next', 18, '#171A22', 2.6)}</span></a>
-<a class="dc" href="/pages/digital-lab-pocket"><span><span class="tx" style="margin-top:0">ポケットのデジタルスコアボード</span><span class="en">DIGITAL LAB FOR POCKET</span><span class="tx">お店の要望に合わせてカスタマイズ。</span></span><span class="go-c">${svg('next', 18, '#171A22', 2.6)}</span></a></div>
 </div></section>
+
+<section class="sec" id="tools"><div class="sec-h"><h2>WEBツール・スコアボード</h2><a href="/pages/tools">一覧</a></div><div class="tiles">${TOOLS.map(([h, t, d]) => `<a class="tile" href="${h}"><b>${t}</b><small>${d}</small></a>`).join('')}</div></section>
 
 <section class="sec"><div class="sec-h"><h2>はじめての方へ</h2></div><div class="tiles">
 <a class="tile lime full" href="/pages/guide" style="display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center"><span><b style="font-size:16px">大会に出てみよう ガイド</b><small style="display:block;color:var(--night)">P・A・B・C級の見方、申し込みから当日まで</small></span><span class="badge b-new">NEW</span></a>
 <a class="tile" href="/pages/heyball"><b>HEYBALLとは？</b><small>中国発の新種目</small></a><a class="tile" href="/pages/jpa"><b>JPAとは？</b><small>チームで戦うプールリーグ</small></a>
-<a class="tile" href="/pages/kids"><span class="en">KIDS</span><small>子どもと楽しむビリヤード</small></a><a class="tile" href="/pages/nine-drop"><span class="en">NINE DROP</span><small>ナインボールのパズル</small></a>
+<a class="tile" href="/pages/kids"><span class="en">KIDS</span><small>子どもと楽しむビリヤード</small></a>
 </div></section>
 
-<section class="sec"><div class="sec-h"><h2>SHOP</h2><a href="/pages/shaft#faq">よくある質問</a></div><div class="tiles">
+<section class="sec"><div class="sec-h"><h2>SHOP &amp; DIGITAL LAB</h2><a href="/pages/shaft#faq">よくある質問</a></div>
+<p class="sub-h">プレイヤー向け（SHOP）</p><div class="tiles">
 <a class="tile dark full" href="/pages/shaft"><small>パターンオーダー・税込・送料込・銀行振込</small><b style="font-size:17px">Vibes Carbon Shaft</b><span class="disp" style="font-size:36px;color:var(--lime)">¥25,000</span></a>
 <a class="tile" href="/pages/wear"><b>Wear Vibes</b><small>ロゴTシャツ</small></a><a class="tile" href="/pages/shaft#maintenance"><b>メンテナンス</b><small>タップ交換 ¥1,000〜</small></a>
-<a class="tile" href="/pages/app"><span class="en">VIBES APP</span><small>ホーム画面に追加</small></a><a class="tile" href="/pages/bowlard"><span class="en">BOWLARD</span><small>ボーラードスコア</small></a><a class="tile" href="/pages/3c-self-data"><span class="en">3C DATA</span><small>スリークッションの自己データ</small></a><a class="tile" href="/pages/straight-pool"><span class="en">14-1</span><small>ストレートプールのスコア</small></a><a class="tile" href="/pages/straight-pool-guide"><span class="en">14-1 GUIDE</span><small>ストレートプール超入門</small></a>
-</div></section>
+</div>
+<p class="sub-h">店舗・オーナー向け（DIGITAL LAB）</p><div style="display:flex;flex-direction:column;gap:10px"><a class="dc" href="/pages/digital-lab"><span><span class="tx" style="margin-top:0">スリークッションのデジタルスコアボード</span><span class="en">DIGITAL LAB FOR CAROM</span><span class="tx">お店の要望に合わせてカスタマイズ。</span></span><span class="go-c">${svg('next', 18, '#171A22', 2.6)}</span></a>
+<a class="dc" href="/pages/digital-lab-pocket"><span><span class="tx" style="margin-top:0">ポケットのデジタルスコアボード</span><span class="en">DIGITAL LAB FOR POCKET</span><span class="tx">お店の要望に合わせてカスタマイズ。</span></span><span class="go-c">${svg('next', 18, '#171A22', 2.6)}</span></a></div></section>
 
 <section class="sec">${shopCta()}</section>
 </main>`;
