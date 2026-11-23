@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { esc, write, copyDir, md, mdJa, ymdJa, wdEn, wdOf, wdJa, addDays, daysBetween, hm, svg, ball, trunc, SITE, LINE_ADD, LINE_ID, EMAIL } from './lib/util.mjs';
 import { loadAll, GAME, CLS, FEAT, ENTRY, ORG, DISC } from './lib/data.mjs';
-import { page, LANGS, VER } from './lib/layout.mjs';
+import { page, LANGS, VER, TOOLS } from './lib/layout.mjs';
 import { pageData as labPositions } from './scripts/lab-positions.mjs';
 import { tRow, rRow, nRow, pCard, nextOfficial, oRow, todayBlock, transitBlock, discTiles, shopCta, dayGroup, catBadge, gamesLabel, classLabel, fdot } from './lib/parts.mjs';
 
@@ -474,6 +474,8 @@ ${o.extra || ''}<section class="sec"><div class="sec-h"><h2>${o.h2}</h2></div><d
   put('/pages/digital-lab-check', page({ title: 'DIGITAL LAB 導入診断｜お店にあるもので使えるかを1分でチェック', desc: 'VIBES DIGITAL LAB をお店に入れるときの導入診断。台数、Wi-Fi、モニター、パソコン、タブレット、テンキーの有無を選ぶと、買い足す機材と設定のお手伝いの方法が分かります。', path: '/pages/digital-lab-check', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/digital-lab-check.html'), 'utf8') }));
   put('/pages/straight-pool-guide', page({ title: '14-1（ストレートプール）超入門ガイド｜ルール・得点と減点', desc: 'ポケットビリヤードの14-1（ストレートプール）を初心者向けに解説。ゲームの流れ4ステップ、得点と減点のルール、最初に覚える3つの重要ルール（コールショット・セーフティブレイク・15個目の残し方）。無料のスコアボードつき。', path: '/pages/straight-pool-guide', cur: 'pk', body: fs.readFileSync(path.join(ROOT, 'static/apps/straight-pool-guide.html'), 'utf8') }));
   put('/pages/3c-self-data-guide', page({ title: '3C 自己データ帳の使い方｜スリークッションのアベレージを記録', desc: 'スリークッションの成績をためる「3C 自己データ帳」の使い方を、画面の図つきで説明。持ち点の登録、得点・イニング・ハイランの入れ方、アベレージの計算、数字の意味、よくある質問。', path: '/pages/3c-self-data-guide', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-self-data-guide.html'), 'utf8') }));
+  // 2026-11-24 ヘッダーの「ツール」の行き先（運営者の指定でボーラード単体のリンクをまとめた）。中身は lib/layout.mjs の TOOLS
+  put('/pages/tools', page({ title: 'ツール｜スコア表・練習記録・ガイド', desc: 'ボーラードスコア、14-1 スコアボード、VIBES 3C LAB、3C NOTE など、VIBES BILLIARDS の無料ツールの一覧。', path: '/pages/tools', cur: 'c', body: `<main class="wrap"><section class="sec"><div class="sec-h"><h1 style="font-size:22px;margin:0">ツール</h1></div><p class="sub" style="margin:0 0 12px">スコア表・練習の記録・ルールのガイド。どれも無料で使えます。</p><div class="tiles">${TOOLS.map(([h, t, d]) => `<a class="tile" href="${h}"><b>${t}</b><small>${d}</small></a>`).join('')}</div></section></main>` }));
   put('/pages/3c-self-data', page({ title: '3C 自己データ帳｜スリークッションのアベレージを記録（無料）', desc: 'スリークッションのゲームごとに得点・イニング・ハイランを入れると、アベレージを計算して自分の成績としてためていく無料ツール。通算アベレージ、直近5ゲーム、ベストゲーム、推移のグラフ。最初に持ち点を登録するだけ（メールアドレス不要）。記録は端末の中だけに保存。', path: '/pages/3c-self-data', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-self-data.html'), 'utf8') }));
   put('/pages/straight-pool', page({ title: '14-1 スコアボード｜ストレートプールのスコア表（無料）', desc: 'ポケットビリヤードの14-1（ストレートプール）専用の無料スコアボード。イニングごとの得点を入れるだけで合計と残り点数を自動計算。連続ファウルのリーチ警告と3ファウルの自動ペナルティ、スコアシートつき。登録なし。', path: '/pages/straight-pool', cur: 'pk', body: fs.readFileSync(path.join(ROOT, 'static/apps/straight-pool.html'), 'utf8') }));
   put('/pages/3c-note', page({ title: '3C NOTE｜スリークッションの練習記録・アベレージ管理', desc: 'スリークッションの練習ゲームを1ゲームずつ記録。点数とイニングを入れるだけで、通算アベレージ・直近のアベレージ・ハイラン・ベストゲームがグラフで見えます。無料・登録なし。', path: '/pages/3c-note', cur: 'cr', body: fs.readFileSync(path.join(ROOT, 'static/apps/3c-note.html'), 'utf8') }));
