@@ -91,6 +91,29 @@ main{display:block;padding-bottom:110px}
 .cols{display:grid;gap:16px}
 @media(min-width:900px){.cols{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;align-items:start}.cols.eq{grid-template-columns:1fr 1fr}}
 
+/* ---------- official YouTube ---------- */
+.youtube-link svg{flex:none}
+.youtube-link:hover,.youtube-link:focus-visible{background:var(--lime);color:var(--night)}
+.youtube-link.btn-lime:hover,.youtube-link.btn-lime:focus-visible{background:var(--chalk);box-shadow:0 0 0 2px var(--lime)}
+@media(max-width:479px){
+  .hd-youtube{width:44px;padding:0}
+  .hd-youtube span{display:none}
+}
+.youtube-card{display:grid;gap:16px;padding:clamp(14px,3vw,32px);border-top:3px solid var(--lime)}
+.youtube-copy{display:grid;justify-items:start;align-content:center;gap:12px;min-width:0}
+.youtube-copy h2{font-size:clamp(26px,4.3vw,54px);line-height:1.08}
+.youtube-copy h2 span{white-space:nowrap}
+.youtube-copy p{color:var(--sub-d);font-size:14px}
+.youtube-copy .btn{max-width:100%;padding-inline:12px;overflow-wrap:anywhere}
+.youtube-media{min-width:0}
+.youtube-player{display:grid;aspect-ratio:16/9;background:var(--night2);border-radius:var(--rs)}
+.youtube-player iframe,.youtube-placeholder{width:100%;height:100%;border:0;border-radius:inherit}
+.youtube-placeholder{display:grid;place-content:center;justify-items:center;gap:8px;background:repeating-linear-gradient(0deg,transparent 0 5px,#ffffff08 5px 6px),radial-gradient(ellipse,var(--line-d),var(--night2) 75%);text-decoration:none;font-size:13px;font-weight:700}
+.youtube-placeholder:hover{box-shadow:inset 0 0 0 2px var(--lime)}
+.youtube-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px;margin-top:6px;font-size:13px;font-weight:700}
+.youtube-meta a{display:inline-flex;align-items:center;min-height:36px;text-underline-offset:.22em}
+@media(min-width:720px){.youtube-card{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:24px}}
+
 /* ---------- cards & lists ---------- */
 .card{background:var(--card);border-radius:var(--r);box-shadow:0 0 0 1px var(--line)}
 .card.pad{padding:16px}
@@ -313,6 +336,8 @@ main{display:block;padding-bottom:110px}
 .ft-col{display:flex;flex-direction:column;gap:8px;min-width:0}.ft-col h2{margin:0 0 2px;font-size:12px;font-weight:700;color:var(--sub-d);letter-spacing:.04em}
 @media(min-width:900px){.ft-links{grid-template-columns:repeat(4,auto);gap:8px 40px}}
 .ft a{color:var(--chalk);text-decoration:none}
+.ft-social{display:flex;flex-wrap:wrap;gap:8px}
+.ft a.youtube-link:is(:hover,:focus-visible){color:var(--night)}
 .ft-logo img{height:44px;width:auto}
 
 /* tab bar */

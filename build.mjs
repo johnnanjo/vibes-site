@@ -5,6 +5,7 @@ import path from 'node:path';
 import { esc, write, copyDir, md, mdJa, ymdJa, wdEn, wdOf, wdJa, addDays, daysBetween, hm, svg, ball, trunc, SITE, LINE_ADD, LINE_ID, EMAIL } from './lib/util.mjs';
 import { loadAll, GAME, CLS, FEAT, ENTRY, ORG, DISC } from './lib/data.mjs';
 import { page, LANGS, VER, TOOLS } from './lib/layout.mjs';
+import { YOUTUBE_CHANNEL, youtubeSection } from './lib/youtube.mjs';
 import { pageData as labPositions } from './scripts/lab-positions.mjs';
 import { tRow, rRow, nRow, pCard, nextOfficial, oRow, todayBlock, transitBlock, discTiles, shopCta, dayGroup, catBadge, gamesLabel, classLabel, fdot } from './lib/parts.mjs';
 
@@ -77,6 +78,8 @@ ${days.map(([d, l]) => `<div data-daypanel="${d}"${d === firstWeekend ? '' : ' h
 <div class="card dark list">${recentOff.map(rRow).join('')}<a class="rrow" href="/blogs/live" style="border-bottom:0"><span class="t">ハウストーナメント　結果待ち ${housePending}件</span><span class="w" style="color:var(--sub-d);font-size:12px">お店の方は送信 ›</span></a></div></div>
 <div style="display:flex;flex-direction:column;gap:12px"><div class="sec-h"><h2>NEWS</h2><a href="/blogs/news">すべて</a></div><div class="card list">${news.map(nRow).join('')}</div></div>
 </div></section>
+
+${youtubeSection(config)}
 
 ${config.homeWinners && ps.length ? `<section class="sec"><div class="sec-h"><h2>${psLabel}</h2><a href="/pages/players">選手一覧</a></div><div class="hscroll">${ps.map(pCard).join('')}</div></section>` : ''}
 
@@ -427,9 +430,9 @@ function contentPages() {
   put('/pages/count-pocket', { raw: gated('count-pocket.html') });
   put('/pages/count-remote', { raw: fs.readFileSync(path.join(ROOT, 'static/apps/count-remote.html'), 'utf8') });
   put('/pages/count-tour', { raw: gated('count-tour.html') });
-  /* VIBES LIVE: the address told to people (/live). data/config.json "youtubeLive" = channel URL; empty = 準備中 */
+  /* VIBES LIVE: the address told to people (/live). data/config.json "youtubeLive" can override the official channel URL */
   {
-    let yt = ''; try { yt = String(JSON.parse(fs.readFileSync(path.join(ROOT, 'data/config.json'), 'utf8')).youtubeLive || ''); } catch {}
+    const yt = String(config.youtubeLive || YOUTUBE_CHANNEL);
     const ok = /^https:\/\/(www\.)?youtube\.com\//.test(yt);
     const body = `<div class="band"><div class="wrap band-in"><p class="crumb"><a href="/" style="color:#fff">トップ</a></p><span class="disp" style="font-size:clamp(56px,13vw,120px);color:var(--chalk)">VIBES LIVE</span><div class="ph" style="padding-top:0"><h1>ビリヤードの試合を、ライブ配信で。</h1><p style="color:#fff;opacity:.85">スリークッションやポケットの試合を、スコアつきの映像で YouTube から配信します。</p></div>${ok ? `<a class="btn btn-lime" href="${esc(yt)}" target="_blank" rel="noopener">YouTube で見る</a>` : '<span class="btn" style="background:var(--night2);color:var(--chalk);cursor:default">配信は準備中です</span>'}</div></div>
 <main class="wrap"><section class="sec"><div class="card pad" style="display:flex;flex-direction:column;gap:10px"><b style="font-size:17px">${ok ? '配信の見かた' : '配信開始のお知らせを受け取る'}</b><span style="font-size:14px;line-height:1.8;color:var(--sub)">${ok ? '上のボタンから YouTube のチャンネルを開き、「チャンネル登録」をすると、配信が始まったときに通知が届きます。' : '配信の開始は、NEWS と公式LINE でお知らせします。'}</span><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-dark btn-sm" href="/blogs/news">NEWS を見る</a><a class="btn btn-sm" style="background:#06C755;color:#fff" href="${LINE_ADD}" target="_blank" rel="noopener">公式LINE を友だち追加</a></div></div></section></main>`;
