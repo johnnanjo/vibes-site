@@ -9,6 +9,6 @@
     "html_handling": "drop-trailing-slash",
     "run_worker_first": true
   },
-  "durable_objects": { "bindings": [{ "name": "COUNT_ROOM", "class_name": "CountRoom" }, { "name": "LABO", "class_name": "LaboAccounts" }] },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CountRoom"] }, { "tag": "v2", "new_sqlite_classes": ["LaboAccounts"] }]
+  "durable_objects": { "bindings": [{ "name": "COUNT_ROOM", "class_name": "CountRoom" }, { "name": "LABO", "class_name": "LaboAccounts" }, { "name": "BOARD_QUOTA", "class_name": "BoardQuota" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CountRoom"] }, { "tag": "v2", "new_sqlite_classes": ["LaboAccounts"] }, { "tag": "v3", "new_sqlite_classes": ["BoardQuota"] }]
 }

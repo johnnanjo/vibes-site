@@ -4,6 +4,11 @@
  "homeWinners": false,
  "homeNew": [
   {
+   "label": "3C 自己データ帳",
+   "note": "黒板を撮ってスリークッションの成績を記録",
+   "href": "/pages/3c-self-data"
+  },
+  {
    "label": "14-1 超入門ガイド",
    "note": "ストレートプールのルール・得点と減点",
    "href": "/pages/straight-pool-guide"
