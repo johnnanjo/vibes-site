@@ -1,8 +1,7 @@
 /* Cloudflare Worker: static site (assets) + realtime relay for the scoreboard remote
    + VIBES BILLIARDS DIGITAL LABO (vibesdigilabo.com): shop accounts, login, gated scoreboard pages.
    /api/count/<6-digit room>?role=display|remote  →  WebSocket, relayed inside a Durable Object per room.
-   /api/labo/*                                     →  accounts and sessions (Durable Object with SQLite).
-   /api/board-read                                 →  reads a score blackboard photo for /pages/3c-self-data (needs ANTHROPIC_API_KEY). */
+   /api/labo/*                                     →  accounts and sessions (Durable Object with SQLite). */
 import { DurableObject } from 'cloudflare:workers';
 
 export class CountRoom extends DurableObject {
@@ -202,10 +201,8 @@ async function ytSearch(req, env, url, ctx) {
   return new Response(hit.body, { status: 200, headers: h });
 }
 
-/* Blackboard reader for /pages/3c-self-data (2026-11-23). The page sends one photo of a three-cushion score blackboard; Claude reads the chalk numbers and the
-   page shows them for the player to check before saving on their own device. Needs the secret ANTHROPIC_API_KEY (the operator sets it in Cloudflare; never in the
-   repository). Only our own pages may call it. Each read costs money, so there is a per-visitor and a whole-site daily limit (BOARD_PER_IP / BOARD_PER_DAY to change).
-   Photos are passed straight through and are not stored. */
+/* BoardQuota: left from the blackboard-photo reader that /pages/3c-self-data had for one day (2026-11-23; the operator dropped the photo feature the same day).
+   Nothing calls it now. The class stays because Cloudflare already created it (migration v3); removing it needs a deleted_classes migration. */
 export class BoardQuota extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
@@ -221,64 +218,10 @@ export class BoardQuota extends DurableObject {
     return '';
   }
 }
-const BOARD_PROMPT = [
-  'この写真は、日本のビリヤード場にあるスリークッション用のスコア黒板です。チョークで書かれた得点を読み取って、JSONだけを返してください。',
-  '黒板の作り：まん中に「キュー数」の列（1,2,3…と印刷）。その左どなりの選手欄（上に W の印）と、右どなりの選手欄（上に Y の印）が今回の2人です。それぞれ「得点」と「合計」の列があります。さらに外側に別の選手欄が見えていても無視します。',
-  '読み方の決まり：',
-  '- 各キュー数の行の「得点」列の数字を、1キュー目から順に読みます。「合計」列に数字があれば、得点の検算に使ってください（合計の差＝その回の得点）。',
-  '- 小さな点・丸・「・」「。」「-」は 0 点です。斜めの1本線「/」は 1 点です。',
-  '- 何も書かれていない行は、その選手がまだ撞いていない回です。そこで配列を終えます（途中の空欄は null）。',
-  '- 以前の文字を消したあとの、うすい跡（消し残し）は読みません。はっきり書かれたチョークだけを読みます。',
-  '- 選手欄の「様」の左に大きく書かれた数字（例：20、15）は持ち点です。数字でなく名前が書かれていれば、持ち点は null にします（名前は返しません）。',
-  '- 自信のないマスは、いちばん確からしい数字を入れたうえで unsure に "L3"（左の3キュー目）や "R5" の形で挙げます。',
-  '返す形（この形のJSONだけ。説明文やコードの囲みは付けない）：',
-  '{"left":{"handicap":20,"scores":[0,0,3,0,4]},"right":{"handicap":15,"scores":[1,2,1,0,1]},"unsure":[],"readable":true}',
-  '黒板が写っていない、または数字が1つも読めないときは {"readable":false} を返します。',
-].join('\n');
-async function boardRead(req, env, url) {
-  const origin = req.headers.get('origin') || '', cors = YT_ORIGINS.test(origin) ? { 'access-control-allow-origin': origin, vary: 'origin' } : {};
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: { ...cors, 'access-control-allow-methods': 'GET, POST', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400' } });
-  if (origin && !YT_ORIGINS.test(origin)) return json({ ok: false, error: 'origin' }, 403);
-  if (!origin && !YT_ORIGINS.test(url.origin)) return json({ ok: false, error: 'origin' }, 403);
-  const key = String(env.ANTHROPIC_API_KEY || '').trim();
-  if (req.method === 'GET') return json({ ok: true, ready: !!key }, 200, cors);
-  if (req.method !== 'POST') return json({ ok: false, error: 'method' }, 405, cors);
-  if (!key) return json({ ok: false, error: 'nokey' }, 503, cors);
-  if (Number(req.headers.get('content-length') || 0) > 3200000) return json({ ok: false, error: 'image' }, 413, cors);
-  let d; try { d = await req.json(); } catch { return json({ ok: false, error: 'image' }, 400, cors); }
-  const img = String((d && d.image) || '');
-  if (img.length < 2000 || img.length > 3000000 || !/^[A-Za-z0-9+/]+={0,2}$/.test(img) || !img.startsWith('/9j/')) return json({ ok: false, error: 'image' }, 400, cors);
-  const day = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
-  const hb = await crypto.subtle.digest('SHA-256', new TextEncoder().encode((req.headers.get('cf-connecting-ip') || 'x') + '|' + day + '|board'));
-  const who = [...new Uint8Array(hb)].slice(0, 8).map((b) => b.toString(16).padStart(2, '0')).join('');
-  const lim = (v, def) => { const n = parseInt(v, 10); return n > 0 ? n : def; };
-  const over = await env.BOARD_QUOTA.get(env.BOARD_QUOTA.idFromName('main')).take(day, who, lim(env.BOARD_PER_IP, 12), lim(env.BOARD_PER_DAY, 200));
-  if (over) return json({ ok: false, error: over === 'ip' ? 'limit' : 'full' }, 429, cors);
-  let r;
-  try {
-    r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', signal: AbortSignal.timeout(75000),
-      headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: String(env.BOARD_MODEL || 'claude-sonnet-5-5').trim(), max_tokens: 1200, messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: img } }, { type: 'text', text: BOARD_PROMPT }] }] }),
-    });
-  } catch { return json({ ok: false, error: 'busy' }, 504, cors); }
-  if (!r.ok) return json({ ok: false, error: r.status === 401 || r.status === 403 ? 'key' : r.status === 429 || r.status === 529 ? 'busy' : r.status === 404 ? 'model' : 'api' }, 502, cors);
-  let out = null;
-  try {
-    const a = await r.json(), t = (a.content || []).filter((c) => c.type === 'text').map((c) => c.text).join(''), i = t.indexOf('{'), j = t.lastIndexOf('}');
-    out = JSON.parse(t.slice(i, j + 1));
-  } catch { out = null; }
-  if (!out || out.readable === false || !out.left || !out.right) return json({ ok: true, readable: false }, 200, cors);
-  const sc = (a) => (Array.isArray(a) ? a : []).slice(0, 60).map((v) => (typeof v === 'number' && isFinite(v) ? Math.max(0, Math.min(99, Math.round(v))) : null));
-  const hc = (p) => (typeof p.handicap === 'number' && p.handicap > 0 && p.handicap < 100 ? Math.round(p.handicap) : null);
-  return json({ ok: true, readable: true, left: { handicap: hc(out.left), scores: sc(out.left.scores) }, right: { handicap: hc(out.right), scores: sc(out.right.scores) }, unsure: (Array.isArray(out.unsure) ? out.unsure : []).filter((x) => typeof x === 'string' && /^[LR]\d{1,2}$/.test(x)).slice(0, 40) }, 200, cors);
-}
-
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
     if (url.pathname === '/api/yt/search') return ytSearch(req, env, url, ctx);
-    if (url.pathname === '/api/board-read') return boardRead(req, env, url);
     const m = url.pathname.match(/^\/api\/count\/(\d{6})$/);
     if (m) return env.COUNT_ROOM.get(env.COUNT_ROOM.idFromName(m[1])).fetch(req);
     if (url.pathname.startsWith('/api/labo/')) return laboApi(req, env, url);

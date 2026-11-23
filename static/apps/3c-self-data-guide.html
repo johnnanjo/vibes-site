@@ -70,24 +70,35 @@
   #c3g .shot{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;column-gap:14px}
   #c3g .shot svg{grid-row:1/3}
 }
+#c3g .n3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+#c3g .n3 div{border:1.5px solid var(--line);border-radius:8px;text-align:center;padding:6px 2px;background:#171A22}
+#c3g .n3 b{display:block;font-family:var(--num);font-weight:400;font-size:26px;line-height:1.15}
+#c3g .n3 span{font-size:10.5px;color:var(--dim)}
+#c3g .lv{background:var(--carom);border-radius:8px;padding:6px 10px;display:flex;justify-content:space-between;align-items:baseline}
+#c3g .lv span{font-size:10.5px;color:#DCE8F8}
+#c3g .lv b{font-family:var(--num);font-weight:400;font-size:24px}
+#c3g .calc{background:var(--panel);border-radius:20px;padding:22px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:center;font-family:var(--num);font-size:clamp(30px,8vw,48px);line-height:1.1}
+#c3g .calc small{display:block;font-family:inherit;font-size:13px;color:var(--dim);font-weight:700;text-align:center}
+#c3g .calc .op{color:var(--dim);font-size:.7em}
+#c3g .calc .ans{background:var(--lime);color:var(--night);border-radius:12px;padding:6px 16px}
+#c3g .calc .ans small{color:var(--night)}
 </style>
 <div id="c3g"><div class="in">
 
 <header>
-  <h1>黒板を撮るだけ。<br>スリークッションの成長が、数字で見える。</h1>
-  <p class="lead">「3C 自己データ帳」は、ゲームのあとにスコア黒板を撮ると、キューごとの得点を読み取って、アベレージやハイランを自動で計算し、自分の記録としてためていく無料のツールです。最初に自分の持ち点を登録するだけで使えます（メールアドレスやパスワードはいりません）。</p>
+  <h1>3つの数字を入れるだけ。<br>スリークッションの成長が、数字で見える。</h1>
+  <p class="lead">「3C 自己データ帳」は、ゲームが終わるたびに「得点・イニング・ハイラン」を入れると、アベレージを計算して自分の記録としてためていく無料のツールです。最初に自分の持ち点を登録するだけで使えます（メールアドレスやパスワードはいりません）。</p>
   <a class="cta" href="/pages/3c-self-data">3C 自己データ帳をひらく</a>
-  <p class="ready">黒板の写真からの読み取りは、いま準備中です。使えるようになると、ツールに「黒板を撮って読み取る」のボタンが出ます。それまでは「手で入力する」で同じように記録できます。</p>
 </header>
 
-<section aria-labelledby="g-steps">
-  <h2 id="g-steps">はじめに1回だけ：持ち点を登録</h2>
-  <div class="step" style="margin-bottom:34px">
+<section aria-labelledby="g-pre">
+  <h2 id="g-pre">はじめに1回だけ：持ち点を登録</h2>
+  <div class="step">
     <div>
       <span class="no" style="font-family:inherit;font-size:20px;font-weight:900;width:auto;padding:0 14px">準備</span>
       <h3>自分の持ち点を登録する</h3>
       <p>ツールをひらくと、いちばん上に「ユーザー登録」が出ます。自分の持ち点を入れて「登録する」を押してください。ニックネームは入れなくてもかまいません。</p>
-      <ul><li>黒板の持ち点と見くらべて、白と黄の取りちがえを知らせるのに使います</li><li>持ち点が変わったら「変更する」で直せます</li><li>登録の内容は、その端末の中だけに保存します</li></ul>
+      <ul><li>持ち点に届いたゲームを「勝ち」として数えるのに使います</li><li>持ち点が変わったら「変更する」で直せます</li><li>登録の内容は、その端末の中だけに保存します</li></ul>
     </div>
     <div class="ph" role="img" aria-label="ユーザー登録の画面。自分の持ち点に20、ニックネームの欄、登録するボタン">
       <div class="t">ユーザー登録</div>
@@ -98,51 +109,45 @@
       <div class="btn">登録する</div>
     </div>
   </div>
-  <h2>ゲームごとの使い方は3ステップ</h2>
+</section>
+
+<section aria-labelledby="g-steps">
+  <h2 id="g-steps">ゲームごとの使い方は3ステップ</h2>
 
   <div class="step">
     <div>
       <span class="no">1</span>
-      <h3>球の色をえらんで、消す前に黒板を撮る</h3>
-      <p>ゲームが終わったら、黒板を消す前にツールをひらきます。まず、このゲームで撞いた球（白か黄）をえらび、「黒板を撮って読み取る」を押して撮影します。10〜60秒で読み取りが終わります。</p>
-      <ul><li>球の色は毎回えらびます（白＝左のWの欄、黄＝右のYの欄）</li><li>前に撮ってある写真をえらぶこともできます</li><li>写真が使えないときは「手で入力する」</li></ul>
+      <h3>ゲームが終わったら、3つの数字を入れる</h3>
+      <p>黒板を消す前に、自分の欄から次の3つを読み取って入れます。</p>
+      <ul><li><b>得点</b>：そのゲームで取った点数の合計</li><li><b>イニング</b>：自分が撞いた回数（黒板の「キュー数」）</li><li><b>ハイラン</b>：1回のイニングで取った、いちばん多い点数</li></ul>
     </div>
-    <div class="ph" role="img" aria-label="ツールの画面。白か黄をえらぶボタン、黒板を撮って読み取るボタン、スコア黒板の絵">
+    <div class="ph" role="img" aria-label="入力の画面。得点20、イニング25、ハイラン4と入っていて、アベレージ0.800と出ている">
       <div class="t">ゲームを記録する</div>
-      <div style="font-size:11px;color:#AEB4C0">このゲームで撞いた球</div>
-      <div class="two"><div class="btn" style="padding:7px 4px;font-size:12px">白（W）</div><div class="btn2" style="padding:6px 4px">黄（Y）</div></div>
-      <div class="btn">黒板を撮って読み取る</div>
-      <div class="two"><div class="btn2">写真をえらぶ</div><div class="btn2">手で入力する</div></div>
-      <div class="bd"><table>
-        <tr><th colspan="2">W　20 様</th><th>キュー</th><th colspan="2">Y　15 様</th></tr>
-        <tr><td class="chalk">0</td><td></td><td class="q">1</td><td class="chalk">/</td><td></td></tr>
-        <tr><td class="chalk">・</td><td></td><td class="q">2</td><td class="chalk">2</td><td></td></tr>
-        <tr><td class="chalk">3</td><td></td><td class="q">3</td><td class="chalk">/</td><td></td></tr>
-        <tr><td class="chalk">・</td><td></td><td class="q">4</td><td class="chalk">。</td><td></td></tr>
-        <tr><td class="chalk">4</td><td></td><td class="q">5</td><td class="chalk">/</td><td></td></tr>
-      </table></div>
+      <div class="n3"><div><b>20</b><span>得点</span></div><div><b>25</b><span>イニング</span></div><div><b>4</b><span>ハイラン</span></div></div>
+      <div class="lv"><span>このゲームのアベレージ</span><b>0.800</b></div>
+      <div class="btn">このゲームを保存する</div>
     </div>
   </div>
 
   <div class="step">
     <div>
       <span class="no">2</span>
-      <h3>数字を確かめて、保存する</h3>
-      <p>読み取った得点が、黒板と同じ並びで出ます。合計は自動で計算されます。写真と見くらべて、違うマスだけ押して直してください。</p>
-      <ul><li>赤っぽいマスは、読み取りに自信がないところ</li><li>黒板の持ち点が登録とちがうときは、「球の色が逆かもしれません」と知らせます</li><li>球の色は、この画面でも直せます</li><li>相手の名前やお店のメモも残せます（入れなくてもよい）</li></ul>
+      <h3>アベレージを確かめて、保存する</h3>
+      <p>数字を入れると、そのゲームのアベレージがすぐに出ます。確かめたら「このゲームを保存する」を押します。</p>
+      <ul><li>日付は今日が入っています（前の日のゲームは日付を変えて入れられます）</li><li>結果は、持ち点に届いていれば自動で「勝ち」。負け・引き分けは自分で選べます</li><li>相手やお店をメモに残せます（入れなくてもよい）</li><li>数字のつじつまが合わないとき（ハイランが得点より大きい など）は知らせます</li></ul>
     </div>
-    <div class="ph" role="img" aria-label="確認の画面。左が自分、右が相手で、得点と合計がならぶ。1マスだけ赤くなっている">
-      <div class="t">読み取り結果の確認</div>
-      <div class="two"><div class="btn" style="padding:7px 4px;font-size:12px">左（W・白）</div><div class="btn2" style="padding:6px 4px">右（Y・黄）</div></div>
-      <div class="bd"><table>
-        <tr><th class="me" colspan="2">左＝自分</th><th>キュー</th><th colspan="2">右＝相手</th></tr>
-        <tr><td>0</td><td class="s">0</td><td class="q">1</td><td>1</td><td class="s">1</td></tr>
-        <tr><td>0</td><td class="s">0</td><td class="q">2</td><td class="u">2</td><td class="s">3</td></tr>
-        <tr><td>3</td><td class="s">3</td><td class="q">3</td><td>1</td><td class="s">4</td></tr>
-        <tr><td>0</td><td class="s">3</td><td class="q">4</td><td>0</td><td class="s">4</td></tr>
-        <tr><td>4</td><td class="s">7</td><td class="q">5</td><td>1</td><td class="s">5</td></tr>
-      </table></div>
-      <div class="btn">この内容で保存する</div>
+    <div class="ph" role="img" aria-label="保存したゲームの表示。勝ち、20点、25イニング、ハイラン4、アベレージ0.800">
+      <div class="t">ゲームの記録</div>
+      <div style="background:#222631;border-radius:10px;padding:10px;display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center">
+        <span style="background:#C0FC09;color:#171A22;font-weight:900;border-radius:999px;padding:2px 9px;font-size:11px">勝ち</span>
+        <span><span style="font-family:var(--num);font-size:16px">20点 ／ 25イニング</span><br><span style="font-size:10px;color:#AEB4C0">2026-11-23・ハイラン 4・持ち点 20</span></span>
+        <span style="font-family:var(--num);font-size:20px;text-align:right">0.800<br><span style="font-family:inherit;font-size:9px;color:#AEB4C0">アベレージ</span></span>
+      </div>
+      <div style="background:#222631;border-radius:10px;padding:10px;display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center">
+        <span style="background:#2B303D;color:#FF8A9A;font-weight:900;border-radius:999px;padding:2px 9px;font-size:11px">負け</span>
+        <span><span style="font-family:var(--num);font-size:16px">14点 ／ 22イニング</span><br><span style="font-size:10px;color:#AEB4C0">2026-11-21・ハイラン 3・持ち点 20</span></span>
+        <span style="font-family:var(--num);font-size:20px;text-align:right">0.636<br><span style="font-family:inherit;font-size:9px;color:#AEB4C0">アベレージ</span></span>
+      </div>
     </div>
   </div>
 
@@ -151,12 +156,12 @@
       <span class="no">3</span>
       <h3>自分の記録と成長を見る</h3>
       <p>保存するたびに、通算の成績とグラフが新しくなります。ゲームごとのアベレージがならぶので、調子の波や伸びがひと目でわかります。</p>
-      <ul><li>ライムの棒が、いちばん新しいゲーム</li><li>ゲームの記録を押すと、キューごとの得点を見返せます</li></ul>
+      <ul><li>ライムの棒が、いちばん新しいゲーム</li><li>「直近5ゲームのアベレージ」と通算をくらべると、いまの調子がわかります</li></ul>
     </div>
     <div class="ph" role="img" aria-label="通算成績の画面。通算アベレージ0.812、ゲーム数12、ハイラン6、ゲームごとのアベレージが右上がりの棒グラフ">
       <div class="t">通算成績</div>
       <div class="big"><b>0.812</b><span>通算アベレージ</span></div>
-      <div class="three"><div><b>12</b><span>ゲーム数</span></div><div><b>7-4</b><span>勝ち-負け</span></div><div><b>6</b><span>ハイラン</span></div></div>
+      <div class="three"><div><b>12</b><span>ゲーム数</span></div><div><b>0.905</b><span>直近5ゲーム</span></div><div><b>6</b><span>ハイラン</span></div></div>
       <svg viewBox="0 0 260 90" style="width:100%;height:auto;display:block" aria-hidden="true">
         <line x1="6" x2="254" y1="78" y2="78" stroke="#3A4050"/><line x1="6" x2="254" y1="42" y2="42" stroke="#3A4050"/>
         <g fill="#1E5AA8"><rect x="12" y="56" width="14" height="22" rx="2"/><rect x="32" y="50" width="14" height="28" rx="2"/><rect x="52" y="58" width="14" height="20" rx="2"/><rect x="72" y="46" width="14" height="32" rx="2"/><rect x="92" y="48" width="14" height="30" rx="2"/><rect x="112" y="40" width="14" height="38" rx="2"/><rect x="132" y="44" width="14" height="34" rx="2"/><rect x="152" y="34" width="14" height="44" rx="2"/><rect x="172" y="38" width="14" height="40" rx="2"/><rect x="192" y="28" width="14" height="50" rx="2"/><rect x="212" y="32" width="14" height="46" rx="2"/></g>
@@ -167,56 +172,31 @@
   </div>
 </section>
 
-<section aria-labelledby="g-shot">
-  <h2 id="g-shot">うまく読み取れる撮り方</h2>
-  <div class="shots">
-    <div class="shot">
-      <svg viewBox="0 0 160 110" role="img" aria-label="黒板全体が正面からまっすぐ写っている写真の絵"><rect x="24" y="12" width="112" height="86" rx="3" fill="#1F3B34" stroke="#D8C24A" stroke-width="2"/><g stroke="#D8C24A" stroke-width="1" opacity=".7"><line x1="24" y1="30" x2="136" y2="30"/><line x1="24" y1="44" x2="136" y2="44"/><line x1="24" y1="58" x2="136" y2="58"/><line x1="24" y1="72" x2="136" y2="72"/><line x1="24" y1="86" x2="136" y2="86"/><line x1="70" y1="12" x2="70" y2="98"/><line x1="90" y1="12" x2="90" y2="98"/></g><g fill="#fff" font-size="10" font-family="sans-serif"><text x="44" y="41">0</text><text x="44" y="55">3</text><text x="44" y="69">1</text><text x="108" y="41">1</text><text x="108" y="55">2</text><text x="108" y="69">0</text></g></svg>
-      <span class="ok">よい例</span>
-      <p>正面から、名前欄と「キュー数」の列をふくめて黒板全体を入れる。</p>
-    </div>
-    <div class="shot">
-      <svg viewBox="0 0 160 110" role="img" aria-label="ななめから撮って黒板がゆがみ、右側が切れている写真の絵"><polygon points="40,20 170,4 170,108 40,90" fill="#1F3B34" stroke="#D8C24A" stroke-width="2"/><g stroke="#D8C24A" stroke-width="1" opacity=".7"><line x1="40" y1="36" x2="170" y2="26"/><line x1="40" y1="52" x2="170" y2="50"/><line x1="40" y1="68" x2="170" y2="76"/><line x1="96" y1="13" x2="96" y2="98"/></g></svg>
-      <span class="ng">読みにくい</span>
-      <p>ななめから撮る、片方の選手の欄が切れている。</p>
-    </div>
-    <div class="shot">
-      <svg viewBox="0 0 160 110" role="img" aria-label="照明が反射して、黒板の上のほうが白く光っている写真の絵"><defs><radialGradient id="c3g-gl" cx="50%" cy="18%" r="45%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><rect x="24" y="12" width="112" height="86" rx="3" fill="#1F3B34" stroke="#D8C24A" stroke-width="2"/><g stroke="#D8C24A" stroke-width="1" opacity=".7"><line x1="24" y1="44" x2="136" y2="44"/><line x1="24" y1="58" x2="136" y2="58"/><line x1="24" y1="72" x2="136" y2="72"/><line x1="24" y1="86" x2="136" y2="86"/><line x1="70" y1="12" x2="70" y2="98"/><line x1="90" y1="12" x2="90" y2="98"/></g><rect x="24" y="12" width="112" height="86" fill="url(#c3g-gl)"/></svg>
-      <span class="ng">読みにくい</span>
-      <p>照明が反射して白く光っている。少し下がるか、角度を変える。</p>
-    </div>
+<section aria-labelledby="g-calc">
+  <h2 id="g-calc">アベレージの計算</h2>
+  <div class="calc" role="img" aria-label="得点20 割る イニング25 は アベレージ0.800">
+    <span>20<small>得点</small></span><span class="op">÷</span><span>25<small>イニング</small></span><span class="op">＝</span><span class="ans">0.800<small>アベレージ</small></span>
   </div>
-  <p class="lead" style="font-size:14px">名前や顔が写らないように撮ってください。写真は読み取りのためにAI（Claude）へ送られ、VIBESのサーバーには残しません。</p>
-</section>
-
-<section aria-labelledby="g-read">
-  <h2 id="g-read">黒板の書き方は、こう読みます</h2>
-  <div class="grid2">
-    <div class="rule"><div class="mk">・</div><div><b>点や小さな丸は 0点</b><span>「・」「。」「−」はどれも0点として読みます。</span></div></div>
-    <div class="rule"><div class="mk">/</div><div><b>ななめの1本線は 1点</b><span>数字の「1」と同じです。</span></div></div>
-    <div class="rule"><div class="mk">20</div><div><b>名前欄の数字は持ち点</b><span>登録した自分の持ち点と見くらべます。届いたほうを自動で「勝ち」にします（結果は手でも選べます）。</span></div></div>
-    <div class="rule"><div class="mk"></div><div><b>空欄は「まだ撞いていない回」</b><span>途中で終わったゲームも、そこまでの分を記録できます。</span></div></div>
-  </div>
+  <p class="lead" style="font-size:14px">1イニングあたり何点取れたか、という数字です。小数点以下4けた目は切り捨てて表示します。</p>
 </section>
 
 <section aria-labelledby="g-term">
   <h2 id="g-term">出てくる数字の意味</h2>
   <div class="grid2">
-    <div class="term"><b>通算アベレージ</b><p>総得点 ÷ 総キュー数。1キューあたり何点取れているか。<code>65点 ÷ 80キュー ＝ 0.812</code></p></div>
-    <div class="term"><b>ハイラン</b><p>1キューで取った、いちばん多い得点。</p></div>
-    <div class="term"><b>0点の回</b><p>全部のキューのうち、0点だった回の割合。下がるほど安定しています。</p></div>
-    <div class="term"><b>ベストゲーム</b><p>5キュー以上撞いたゲームのなかで、いちばん高いアベレージ。</p></div>
+    <div class="term"><b>通算アベレージ</b><p>これまでの総得点 ÷ 総イニング。<code>65点 ÷ 80イニング ＝ 0.812</code></p></div>
+    <div class="term"><b>直近5ゲームのアベレージ</b><p>新しいほうから5ゲーム分の得点 ÷ イニング。通算より高ければ、調子は上向きです。</p></div>
+    <div class="term"><b>ベストゲーム</b><p>これまでで、いちばんアベレージが高かったゲームの数字。</p></div>
+    <div class="term"><b>ハイラン</b><p>1回のイニングで取った、いちばん多い得点。通算では、全ゲームのなかの最高を出します。</p></div>
   </div>
 </section>
 
 <section aria-labelledby="g-faq">
   <h2 id="g-faq">よくある質問</h2>
-  <details><summary>お金はかかりますか。登録はいりますか。</summary><p>無料です。最初に自分の持ち点（とニックネーム）を登録しますが、メールアドレスやパスワードはいりません。登録の内容はその端末の中だけに保存します。</p></details>
+  <details><summary>お金はかかりますか。登録はいりますか。</summary><p>無料です。最初に自分の持ち点（とニックネーム）を登録しますが、メールアドレスやパスワードはいりません。</p></details>
   <details><summary>記録はどこに保存されますか。</summary><p>お使いのスマホやパソコンの中（ブラウザ）だけです。VIBESのサーバーには送りません。ほかの人から見えることもありません。</p></details>
   <details><summary>機種変更したら、記録は引き継げますか。</summary><p>いまは引き継げません。別の端末や別のブラウザでは、記録は別々になります。ブラウザのデータを消すと記録も消えます。</p></details>
-  <details><summary>読み取りが間違っていたら。</summary><p>保存の前に確認の画面が出ます。違うマスを押して、正しい数字に直してから保存してください。</p></details>
-  <details><summary>写真の読み取りは、1日に何回でも使えますか。</summary><p>1人につき1日12回までです。サイト全体の上限に達した日は、翌日まで「手で入力する」をお使いください。</p></details>
-  <details><summary>まちがえて保存したゲームは消せますか。</summary><p>「ゲームの記録」でそのゲームを押してひらき、「この記録を消す」を押します。消した記録は元に戻せません。</p></details>
+  <details><summary>途中で終わったゲームや練習も記録できますか。</summary><p>できます。そこまでの得点・イニング・ハイランを入れてください。結果を「つけない」にすると、勝ち負けには数えません。</p></details>
+  <details><summary>入れまちがえたゲームは直せますか。</summary><p>「ゲームの記録」でそのゲームを押してひらき、「この記録を消す」を押してから、正しい数字で入れ直してください。消した記録は元に戻せません。</p></details>
 </section>
 
 <section class="end">
