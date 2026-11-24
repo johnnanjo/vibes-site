@@ -1,0 +1,103 @@
+<!-- VIBES BILLIARDS TV（/pages/tv）。中身は data/tv.json から build.mjs が入れる。CSS は #vtv の中だけ。 -->
+<style>
+#vtv{--n:#171A22;--n2:#1F232D;--l:#C0FC09;--c:#F3F4EF;--s:#A3A8B5;--ln:#2C303B;--b:#1E5AA8;background:var(--n);color:var(--c);font-family:"Noto Sans JP",system-ui,sans-serif;overflow:hidden}
+#vtv *{box-sizing:border-box}
+#vtv .w{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#vtv a{color:inherit}
+#vtv .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.06em}
+/* ヒーロー */
+#vtv .hero{position:relative;padding:26px 0 30px;background:
+ repeating-linear-gradient(0deg,rgba(243,244,239,.035) 0 1px,transparent 1px 4px),
+ linear-gradient(90deg,rgba(192,252,9,.07) 1px,transparent 1px) 0 0/56px 56px,
+ linear-gradient(0deg,rgba(192,252,9,.07) 1px,transparent 1px) 0 0/56px 56px,
+ radial-gradient(90% 120% at 80% 0%,#1b2a44 0,#171A22 60%)}
+#vtv .bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:12px;color:var(--s)}
+#vtv .on{display:inline-flex;align-items:center;gap:7px;background:var(--l);color:var(--n);font-weight:900;padding:3px 10px;border-radius:4px;letter-spacing:.08em}
+#vtv .on i{width:8px;height:8px;border-radius:50%;background:var(--n);animation:vtvb 1.2s steps(2,end) infinite}
+@keyframes vtvb{50%{opacity:.15}}
+#vtv .sig{display:inline-flex;align-items:flex-end;gap:2px;height:14px}#vtv .sig b{width:4px;background:var(--c)}#vtv .sig b:nth-child(1){height:4px}#vtv .sig b:nth-child(2){height:7px}#vtv .sig b:nth-child(3){height:10px}#vtv .sig b:nth-child(4){height:14px}
+#vtv h1{position:relative;margin:22px 0 0;font-family:Anton,"Noto Sans JP",Impact,sans-serif;font-weight:400;font-size:clamp(46px,13.5vw,112px);line-height:.94;letter-spacing:.01em}
+#vtv h1 span{display:block;position:relative;white-space:nowrap;width:max-content;max-width:100%}
+#vtv h1 .g::before,#vtv h1 .g::after{content:attr(data-t);position:absolute;left:0;top:0;pointer-events:none}
+#vtv h1 .g::before{color:var(--l);transform:translate(-7px,0);clip-path:polygon(0 20%,100% 20%,100% 27%,0 27%,0 66%,100% 66%,100% 71%,0 71%);animation:vtvg 5s steps(1,end) infinite}
+#vtv h1 .g::after{color:#3D8BEA;transform:translate(7px,0);clip-path:polygon(0 44%,100% 44%,100% 50%,0 50%,0 84%,100% 84%,100% 89%,0 89%)}
+@keyframes vtvg{0%,92%{transform:translate(-7px,0)}94%{transform:translate(-16px,0)}96%{transform:translate(8px,0)}}
+#vtv h1 em{font-style:normal;display:inline-block;background:var(--l);color:var(--n);padding:0 .14em;margin-left:.12em}
+#vtv .lead{margin:16px 0 0;font-size:clamp(17px,4.6vw,24px);font-weight:900;letter-spacing:.04em}
+#vtv .sub{margin:8px 0 0;font-size:14px;line-height:1.8;color:var(--s);max-width:40em}
+#vtv .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+#vtv .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 22px;border-radius:999px;font-weight:900;font-size:15px;text-decoration:none}
+#vtv .btn.p{background:var(--l);color:var(--n)}#vtv .btn.o{box-shadow:inset 0 0 0 2px #4A5163;color:var(--c)}
+#vtv .btn:focus-visible,#vtv a:focus-visible{outline:3px solid var(--c);outline-offset:3px}
+#vtv .tri{width:0;height:0;border-left:11px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent}
+/* 流れる帯 */
+#vtv .tick{background:var(--l);color:var(--n);overflow:hidden;white-space:nowrap;font-family:Anton,sans-serif;font-size:18px;letter-spacing:.08em;padding:8px 0}
+#vtv .tick div{display:inline-block;padding-left:100%;animation:vtvt 34s linear infinite}
+@keyframes vtvt{to{transform:translateX(-100%)}}
+/* 章 */
+#vtv section{padding:34px 0 0}
+#vtv .h{display:flex;align-items:baseline;gap:12px;margin:0 0 14px}
+#vtv .h h2{margin:0;font-size:20px;font-weight:900}
+#vtv .h small{font-size:12px;color:var(--s)}
+#vtv .h .k{font-size:11px;background:var(--n2);border:1px solid var(--ln);color:var(--s);padding:2px 8px;border-radius:4px}
+/* 次の配信 */
+#vtv .next{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;padding:18px;border-radius:20px;background:linear-gradient(135deg,#1E5AA8 0,#1b2a44 70%);text-decoration:none;position:relative;overflow:hidden}
+#vtv .next::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0 1px,transparent 1px 4px);pointer-events:none}
+#vtv .cd{display:grid;place-items:center;min-width:104px;padding:10px 12px;border-radius:14px;background:var(--n);text-align:center}
+#vtv .cd b{font-family:Anton,sans-serif;font-weight:400;font-size:54px;line-height:1}
+#vtv .cd small{font-size:11px;color:var(--s);letter-spacing:.1em}
+#vtv .next .d{font-size:12px;font-weight:700}
+#vtv .next .t{display:block;margin:4px 0;font-size:clamp(16px,4.2vw,22px);font-weight:900;line-height:1.45}
+#vtv .next .n{font-size:12.5px;line-height:1.7;opacity:.9}
+/* 番組表 */
+#vtv .pg{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+#vtv .pg div{position:relative;padding:16px;border-radius:18px;background:var(--n2);border:1px solid var(--ln);min-height:150px}
+#vtv .pg .c{font-size:12px;color:var(--s)}
+#vtv .pg .e{display:block;margin:6px 0 4px;font-family:Anton,sans-serif;font-size:34px;line-height:1;letter-spacing:.02em}
+#vtv .pg b{display:block;font-size:15px;font-weight:900;line-height:1.5}
+#vtv .pg p{margin:6px 0 0;font-size:12.5px;line-height:1.7;color:var(--s)}
+#vtv .pg .st{position:absolute;right:12px;top:12px;font-size:11px;font-weight:900;padding:2px 8px;border-radius:4px;background:var(--l);color:var(--n)}
+#vtv .pg .st.off{background:transparent;color:var(--s);border:1px solid #4A5163}
+#vtv .pg .st.soon{background:var(--c);color:var(--n)}
+/* 動画 */
+#vtv .vs{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+#vtv .v{display:block;text-decoration:none;border-radius:18px;background:var(--n2);border:1px solid var(--ln);overflow:hidden}
+#vtv .th{position:relative;overflow:hidden;aspect-ratio:16/9;background:
+ repeating-linear-gradient(0deg,rgba(243,244,239,.05) 0 1px,transparent 1px 4px),
+ linear-gradient(135deg,#10121A 0,#1b2a44 100%);display:grid;place-items:center}
+#vtv .th::before{content:"";position:absolute;right:-20%;top:-10%;bottom:-10%;width:34%;background:var(--l);transform:skewX(-22deg);opacity:.9}
+#vtv .th .pl{position:relative;display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--c);color:var(--n)}
+#vtv .th .bg{position:absolute;left:12px;bottom:6px;font-family:Anton,sans-serif;font-size:clamp(40px,11vw,64px);line-height:1;letter-spacing:.02em;color:transparent;-webkit-text-stroke:2px rgba(243,244,239,.38);white-space:nowrap}
+#vtv .th .ct{position:absolute;left:10px;top:10px;font-size:11px;font-weight:900;background:var(--l);color:var(--n);padding:2px 8px;border-radius:4px}
+#vtv .th .ln2{position:absolute;right:10px;bottom:10px;font-size:12px;background:rgba(16,18,26,.9);color:var(--c);padding:2px 7px;border-radius:4px}
+#vtv .v .tx{display:block;padding:12px 14px 14px}
+#vtv .v b{display:block;font-size:15px;font-weight:900;line-height:1.5}
+#vtv .v small{display:block;margin-top:4px;font-size:12.5px;color:var(--s);line-height:1.6}
+#vtv .fine{margin:12px 0 0;font-size:12px;color:var(--s)}
+/* 最後 */
+#vtv .end{margin:34px 0 0;padding:26px 0 40px;background:var(--l);color:var(--n)}
+#vtv .end h2{margin:0;font-family:Anton,"Noto Sans JP",sans-serif;font-weight:400;font-size:clamp(30px,8vw,56px);line-height:1.05}
+#vtv .end p{margin:8px 0 16px;font-size:14px;font-weight:700;line-height:1.8}
+#vtv .end .btn.p{background:var(--n);color:var(--c)}#vtv .end .btn.o{box-shadow:inset 0 0 0 2px var(--n);color:var(--n)}
+@media (prefers-reduced-motion:reduce){#vtv .on i,#vtv h1 .g::before,#vtv .tick div{animation:none}#vtv .tick div{padding-left:16px}}
+</style>
+<div id="vtv">
+<div class="hero"><div class="w">
+<div class="bar mono"><span class="on"><i></i>ON AIR</span><span>CH.01</span><span class="sig" aria-hidden="true"><b></b><b></b><b></b><b></b></span><span id="vtv-clock">JST --:--:--</span></div>
+<h1><span class="g" data-t="VIBES">VIBES</span><span class="g" data-t="BILLIARDS">BILLIARDS<em>TV</em></span></h1>
+<p class="lead">ビリヤードの「いま」を、映像で。</p>
+<p class="sub">VIBES BILLIARDS の公式YouTubeチャンネルです。大会のライブ配信、サイトやツールの使い方、シャフトの検証、スリークッションのシステム解説を届けます。</p>
+<div class="cta"><a class="btn p" href="{{CH}}" target="_blank" rel="noopener"><span class="tri"></span>YouTubeで見る</a><a class="btn o" href="{{CH}}?sub_confirmation=1" target="_blank" rel="noopener">チャンネル登録する</a></div>
+</div></div>
+<div class="tick" aria-hidden="true"><div>LIVE STREAM ／ MATCH HIGHLIGHTS ／ HOW TO ／ SHAFT LAB ／ 3C SYSTEM ／ VIBES DIGITAL LAB ／ VIBES BILLIARDS TV ／ LIVE STREAM ／ MATCH HIGHLIGHTS ／ HOW TO ／ SHAFT LAB ／ 3C SYSTEM ／ VIBES DIGITAL LAB ／ VIBES BILLIARDS TV ／</div></div>
+<div class="w">
+{{NEXT}}
+<section><div class="h"><h2>番組表</h2><span class="k mono">PROGRAM</span></div><div class="pg">{{PROGRAMS}}</div></section>
+<section><div class="h"><h2>公開中の動画</h2><span class="k mono">NOW PLAYING</span></div><div class="vs">{{VIDEOS}}</div><p class="fine">動画は YouTube のチャンネルで再生されます。</p></section>
+</div>
+<div class="end"><div class="w"><h2>SUBSCRIBE</h2><p>新しい動画とライブ配信のお知らせが届きます。チャンネル登録をお願いします。</p><div class="cta" style="margin:0"><a class="btn p" href="{{CH}}?sub_confirmation=1" target="_blank" rel="noopener">チャンネル登録する</a><a class="btn o" href="{{LINE}}" target="_blank" rel="noopener">公式LINEで大会情報を受け取る</a></div></div></div>
+</div>
+<script>
+(function(){var c=document.getElementById('vtv-clock');function t(){try{c.textContent='JST '+new Date().toLocaleTimeString('ja-JP',{hour12:false,timeZone:'Asia/Tokyo'})}catch(e){}}t();setInterval(t,1000);
+var d=document.querySelector('#vtv [data-until]');if(d){var a=d.getAttribute('data-until').split('-'),n=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));var days=Math.round((Date.UTC(+a[0],a[1]-1,+a[2])-Date.UTC(n.getFullYear(),n.getMonth(),n.getDate()))/864e5);var b=d.querySelector('b'),s=d.querySelector('small');if(days>0){b.textContent=days;s.textContent='日後'}else if(days===0){b.textContent='TODAY';b.style.fontSize='34px';s.textContent='本日'}else{d.closest('section').hidden=true}}})();
+</script>

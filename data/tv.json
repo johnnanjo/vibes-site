@@ -1,0 +1,65 @@
+{
+ "channel": "https://www.youtube.com/@vibes-billiards",
+ "next": {
+  "label": "次のライブ配信",
+  "date": "2026-12-05",
+  "title": "第5回 アマチュアスリークッションビリヤード 女王杯（Pre Queen Cup 2026-2027）",
+  "place": "Billiards E-place",
+  "note": "配信予定。スコアは VIBES DIGITAL LAB の画面で表示します。",
+  "href": "/pages/tournament/w3c-20261205-pre-queen-cup-5"
+ },
+ "programs": [
+  {
+   "ch": "01",
+   "en": "LIVE",
+   "ja": "大会ライブ配信・試合ハイライト",
+   "note": "スコアつきの映像で、会場の「いま」を届けます。",
+   "on": false,
+   "st": "12.5 配信予定"
+  },
+  {
+   "ch": "02",
+   "en": "HOW TO",
+   "ja": "サイト・ツールの使い方",
+   "note": "VIBES BILLIARDS の使い方を、画面を見ながら案内します。",
+   "on": true
+  },
+  {
+   "ch": "03",
+   "en": "SHAFT LAB",
+   "ja": "カスタムシャフト検証",
+   "note": "VIBES Carbon Shaft の打感・性能・製作。",
+   "on": false
+  },
+  {
+   "ch": "04",
+   "en": "3C SYSTEM",
+   "ja": "スリークッション システム解説",
+   "note": "ファイブ＆ハーフ、プラスシステムなど。",
+   "on": false
+  }
+ ],
+ "videos": [
+  {
+   "cat": "HOW TO",
+   "len": "4:18",
+   "title": "VIBES BILLIARDS の使い方ガイド",
+   "note": "大会・試合結果・ビリヤード場・無料ツールの探し方",
+   "url": ""
+  },
+  {
+   "cat": "HOW TO",
+   "len": "0:56",
+   "title": "3C 自己データ帳の使い方",
+   "note": "スリークッションのアベレージをスマホで記録",
+   "url": ""
+  },
+  {
+   "cat": "DIGITAL LAB",
+   "len": "3:25",
+   "title": "VIBES DIGITAL LAB FOR CAROM 機能紹介（テンキー版）",
+   "note": "テンキーだけで使えるデジタルスコア",
+   "url": ""
+  }
+ ]
+}

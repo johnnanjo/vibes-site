@@ -422,14 +422,31 @@ main{display:block;padding-bottom:110px}
 
 .sub-h{margin:14px 0 8px;font-size:12px;font-weight:900;color:var(--sub);letter-spacing:.04em}.sub-h:first-of-type{margin-top:0}
 
-/* 2026-11-24 YouTubeチャンネル開設のバナー（トップ。data/config.json の youtubeChannel があるときだけ出る） */
-.yt-bn{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:6px;padding:20px 64px 18px 20px;border-radius:22px;background:var(--night);color:var(--chalk);text-decoration:none;overflow:hidden}
-.yt-bn::before{content:"";position:absolute;right:-40px;top:-10px;bottom:-10px;width:92px;background:var(--lime);transform:skewX(-24deg);opacity:.95}
-.yt-bn::after{content:"";position:absolute;right:66px;top:-10px;bottom:-10px;width:22px;background:var(--lime);transform:skewX(-24deg);opacity:.28}
-.yt-bn>*{position:relative;z-index:1}
-.yt-k{justify-self:start;font-size:12px;font-weight:900;background:var(--lime);color:var(--night);border-radius:999px;padding:3px 12px}
-.yt-t{font-family:var(--disp);font-size:clamp(30px,8.4vw,52px);line-height:1.05;letter-spacing:.02em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.yt-t i{font-style:normal;background:var(--lime);color:var(--night);padding:0 .22em;border-radius:6px}
-.yt-s{font-size:14px;font-weight:700;color:var(--chalk)}
-.yt-b{justify-self:start;display:inline-flex;align-items:center;gap:6px;margin-top:6px;background:var(--chalk);color:var(--night);font-size:14px;font-weight:900;border-radius:999px;padding:9px 16px}
-@media(min-width:900px){.yt-bn{padding:28px 32px 26px;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:24px}.yt-bn::before{width:220px;right:-40px}.yt-bn::after{right:210px}.yt-k,.yt-t,.yt-s{grid-column:1}.yt-b{grid-column:2;grid-row:1/4;margin:0 190px 0 0;font-size:15px;padding:12px 20px}.yt-s{font-size:16px}}
+/* 2026-11-24 VIBES BILLIARDS TV のバナー（トップ。押すと /pages/tv。data/config.json の youtubeChannel があるときだけ出る） */
+.tvb{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:16px 18px 46px;border-radius:22px;color:var(--chalk);text-decoration:none;overflow:hidden;background:
+ repeating-linear-gradient(0deg,rgba(243,244,239,.04) 0 1px,transparent 1px 4px),
+ linear-gradient(90deg,rgba(192,252,9,.08) 1px,transparent 1px) 0 0/44px 44px,
+ linear-gradient(0deg,rgba(192,252,9,.08) 1px,transparent 1px) 0 0/44px 44px,
+ radial-gradient(100% 140% at 85% 0%,#1b2a44 0,#171A22 62%)}
+.tvb::before{content:"";position:absolute;right:-46px;top:-20px;bottom:-20px;width:120px;background:var(--lime);transform:skewX(-22deg)}
+.tvb::after{content:"";position:absolute;right:92px;top:-20px;bottom:-20px;width:16px;background:#3D8BEA;transform:skewX(-22deg)}
+.tvb>*{position:relative;z-index:1}
+.tvb-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font:700 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.06em;color:var(--sub-d);padding-right:70px}
+.tvb-on{display:inline-flex;align-items:center;gap:6px;background:var(--lime);color:var(--night);font-weight:900;padding:2px 9px;border-radius:4px}
+.tvb-on i{width:7px;height:7px;border-radius:50%;background:var(--night);animation:tvbb 1.2s steps(2,end) infinite}
+@keyframes tvbb{50%{opacity:.15}}
+.tvb-sig{display:inline-flex;align-items:flex-end;gap:2px;height:12px}.tvb-sig b{width:3px;background:var(--chalk)}.tvb-sig b:nth-child(1){height:3px}.tvb-sig b:nth-child(2){height:6px}.tvb-sig b:nth-child(3){height:9px}.tvb-sig b:nth-child(4){height:12px}
+.tvb-t{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-family:var(--disp);font-size:clamp(34px,10vw,84px);line-height:.98;letter-spacing:.01em;padding-right:64px}
+.tvb-t em{font-style:normal;background:var(--lime);color:var(--night);padding:0 .16em}
+.tvb-g{position:relative}
+.tvb-g::before,.tvb-g::after{content:attr(data-t);position:absolute;left:0;top:0;white-space:nowrap;pointer-events:none}
+.tvb-g::before{color:var(--lime);transform:translate(-6px,0);clip-path:polygon(0 20%,100% 20%,100% 27%,0 27%,0 66%,100% 66%,100% 71%,0 71%)}
+.tvb-g::after{color:#3D8BEA;transform:translate(6px,0);clip-path:polygon(0 44%,100% 44%,100% 50%,0 50%,0 84%,100% 84%,100% 89%,0 89%)}
+.tvb-s{font-size:14px;font-weight:900;letter-spacing:.04em}
+.tvb-go{justify-self:start;display:inline-flex;align-items:center;gap:8px;margin-top:4px;background:var(--chalk);color:var(--night);font-size:14px;font-weight:900;border-radius:999px;padding:9px 18px}
+.tvb-tri{width:0;height:0;border-left:10px solid var(--night);border-top:6px solid transparent;border-bottom:6px solid transparent}
+.tvb-tick{position:absolute;left:0;right:0;bottom:0;z-index:2;background:var(--night);border-top:1px solid #3A4152;overflow:hidden;white-space:nowrap;font-family:var(--disp);font-size:13px;letter-spacing:.1em;color:var(--chalk);padding:6px 0}
+.tvb-tick span{display:inline-block;padding-left:100%;animation:tvbt 30s linear infinite}
+@keyframes tvbt{to{transform:translateX(-100%)}}
+@media(min-width:900px){.tvb{padding:26px 32px 56px;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;align-items:center}.tvb::before{width:240px;right:-60px}.tvb::after{right:210px;width:22px}.tvb-bar,.tvb-t,.tvb-s{grid-column:1;padding-right:0}.tvb-go{grid-column:2;grid-row:1/4;margin:0 230px 0 0;font-size:16px;padding:14px 24px}.tvb-s{font-size:17px}.tvb-tick{font-size:15px}}
+@media (prefers-reduced-motion:reduce){.tvb-on i,.tvb-tick span{animation:none}.tvb-tick span{padding-left:16px}}
