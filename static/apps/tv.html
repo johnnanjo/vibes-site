@@ -16,13 +16,9 @@
 #vtv .on i{width:8px;height:8px;border-radius:50%;background:var(--n);animation:vtvb 1.2s steps(2,end) infinite}
 @keyframes vtvb{50%{opacity:.15}}
 #vtv .sig{display:inline-flex;align-items:flex-end;gap:2px;height:14px}#vtv .sig b{width:4px;background:var(--c)}#vtv .sig b:nth-child(1){height:4px}#vtv .sig b:nth-child(2){height:7px}#vtv .sig b:nth-child(3){height:10px}#vtv .sig b:nth-child(4){height:14px}
-#vtv h1{position:relative;margin:22px 0 0;font-family:Anton,"Noto Sans JP",Impact,sans-serif;font-weight:400;font-size:clamp(46px,13.5vw,112px);line-height:.94;letter-spacing:.01em}
-#vtv h1 span{display:block;position:relative;white-space:nowrap;width:max-content;max-width:100%}
-#vtv h1 .g::before,#vtv h1 .g::after{content:attr(data-t);position:absolute;left:0;top:0;pointer-events:none}
-#vtv h1 .g::before{color:var(--l);transform:translate(-7px,0);clip-path:polygon(0 20%,100% 20%,100% 27%,0 27%,0 66%,100% 66%,100% 71%,0 71%);animation:vtvg 5s steps(1,end) infinite}
-#vtv h1 .g::after{color:#3D8BEA;transform:translate(7px,0);clip-path:polygon(0 44%,100% 44%,100% 50%,0 50%,0 84%,100% 84%,100% 89%,0 89%)}
-@keyframes vtvg{0%,92%{transform:translate(-7px,0)}94%{transform:translate(-16px,0)}96%{transform:translate(8px,0)}}
-#vtv h1 em{font-style:normal;display:inline-block;background:var(--l);color:var(--n);padding:0 .14em;margin-left:.12em}
+/* 題字＝運営者指定のロゴ（2026-11-24「ロゴは、これを使用して」）：チョークの「VIBES BILLIARDS」＋ライムの角丸の箱に夜色の「TV」。色ずれの効果は付けない */
+#vtv h1{margin:22px 0 0;display:flex;align-items:center;gap:.14em;font-family:Anton,"Noto Sans JP",Impact,sans-serif;font-weight:400;font-size:clamp(33px,10.2vw,104px);line-height:1;letter-spacing:.02em;white-space:nowrap}
+#vtv h1 em{font-style:normal;display:inline-block;background:var(--l);color:var(--n);padding:.06em .2em .02em;border-radius:.1em;font-size:.88em}
 #vtv .lead{margin:16px 0 0;font-size:clamp(17px,4.6vw,24px);font-weight:900;letter-spacing:.04em}
 #vtv .sub{margin:8px 0 0;font-size:14px;line-height:1.8;color:var(--s);max-width:40em}
 #vtv .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
@@ -79,12 +75,12 @@
 #vtv .end h2{margin:0;font-family:Anton,"Noto Sans JP",sans-serif;font-weight:400;font-size:clamp(30px,8vw,56px);line-height:1.05}
 #vtv .end p{margin:8px 0 16px;font-size:14px;font-weight:700;line-height:1.8}
 #vtv .end .btn.p{background:var(--n);color:var(--c)}#vtv .end .btn.o{box-shadow:inset 0 0 0 2px var(--n);color:var(--n)}
-@media (prefers-reduced-motion:reduce){#vtv .on i,#vtv h1 .g::before,#vtv .tick div{animation:none}#vtv .tick div{padding-left:16px}}
+@media (prefers-reduced-motion:reduce){#vtv .on i,#vtv .tick div{animation:none}#vtv .tick div{padding-left:16px}}
 </style>
 <div id="vtv">
 <div class="hero"><div class="w">
 <div class="bar mono"><span class="on"><i></i>ON AIR</span><span>CH.01</span><span class="sig" aria-hidden="true"><b></b><b></b><b></b><b></b></span><span id="vtv-clock">JST --:--:--</span></div>
-<h1><span class="g" data-t="VIBES">VIBES</span><span class="g" data-t="BILLIARDS">BILLIARDS<em>TV</em></span></h1>
+<h1><span>VIBES BILLIARDS</span><em>TV</em></h1>
 <p class="lead">ビリヤードの「いま」を、映像で。</p>
 <p class="sub">VIBES BILLIARDS の公式YouTubeチャンネルです。大会のライブ配信、サイトやツールの使い方、シャフトの検証、スリークッションのシステム解説を届けます。</p>
 <div class="cta"><a class="btn p" href="{{CH}}" target="_blank" rel="noopener"><span class="tri"></span>YouTubeで見る</a><a class="btn o" href="{{CH}}?sub_confirmation=1" target="_blank" rel="noopener">チャンネル登録する</a></div>
