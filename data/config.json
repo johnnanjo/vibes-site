@@ -4,6 +4,11 @@
  "homeWinners": false,
  "homeNew": [
   {
+   "label": "YouTube「VIBES BILLIARDS TV」",
+   "note": "公式チャンネルを開設しました",
+   "href": "/blogs/news/youtube-channel-open-2026-11-24"
+  },
+  {
    "label": "3C 自己データ帳の使い方",
    "note": "図で見るマニュアル",
    "href": "/pages/3c-self-data-guide"
@@ -17,11 +22,7 @@
    "label": "14-1 超入門ガイド",
    "note": "ストレートプールのルール・得点と減点",
    "href": "/pages/straight-pool-guide"
-  },
-  {
-   "label": "14-1 スコアボード",
-   "note": "無料・登録なしのスコア表",
-   "href": "/pages/straight-pool"
   }
- ]
+ ],
+ "youtubeChannel": "https://www.youtube.com/@vibes-billiards"
 }

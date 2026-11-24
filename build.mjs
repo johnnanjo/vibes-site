@@ -57,6 +57,7 @@ ${(config.homeNew || []).length ? `<div class="hnew"><span class="hnew-b">NEW</s
 </div></div></div></div>
 
 <main class="wrap">
+${config.youtubeChannel ? `<section class="sec" style="padding-top:20px;padding-bottom:0"><a class="yt-bn" href="${esc(config.youtubeChannel)}" target="_blank" rel="noopener"><span class="yt-k">YouTubeチャンネル開設</span><span class="yt-t">VIBES BILLIARDS <i>TV</i></span><span class="yt-s">ビリヤードの「いま」を、映像で。</span><span class="yt-b">${svg('next', 16, '#171A22', 2.6)}チャンネルを見る・登録する</span></a></section>` : ''}
 <section class="sec" style="padding-top:20px;padding-bottom:0"><div class="sec-h"><h2>カテゴリーから探す</h2></div>${discTiles()}</section>
 <div class="sec" style="padding-top:18px">
 <form class="search-m" action="/pages/tournaments" role="search">${svg('search', 20, '#5B5F6B')}<input type="search" name="q" placeholder="大会・ビリヤード場を検索" aria-label="大会・ビリヤード場を検索"></form>
