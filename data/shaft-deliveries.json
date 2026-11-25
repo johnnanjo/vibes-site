@@ -1,0 +1,42 @@
+{
+ "updated": "2026-11-25",
+ "note": "商品ページ（/products/vibes-carbon-shaft）の「納品したシャフトの仕様」。行を足すと表に出る。文面は運営者指定。",
+ "items": [
+  {
+   "tip": "11.8mm",
+   "length": "738mm",
+   "taper": "MELLOW（ストレート）",
+   "weight": "105g"
+  },
+  {
+   "tip": "12.0mm",
+   "length": "29インチ（736mm）",
+   "taper": "JAZZY（コニカル）",
+   "weight": "125g"
+  },
+  {
+   "tip": "12.0mm",
+   "length": "738mm",
+   "taper": "MELLOW（ストレート）",
+   "weight": "110g"
+  },
+  {
+   "tip": "11.8mm",
+   "length": "28インチ（711mm）",
+   "taper": "JAZZY（コニカル）",
+   "weight": "115g"
+  },
+  {
+   "tip": "13.0mm",
+   "length": "29インチ（738mm）",
+   "taper": "MELLOW（ストレート）",
+   "weight": "125g"
+  },
+  {
+   "tip": "11.8mm",
+   "length": "29インチ（738mm）",
+   "taper": "MELLOW（ストレート）",
+   "weight": "108g"
+  }
+ ]
+}

@@ -110,6 +110,16 @@ ${wind ? `<a class="card pad" href="${wind.url}" style="display:grid;grid-templa
 
 /* ================= TOURNAMENTS ================= */
 const PREFS = '北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県'.split(',');
+// 商品ページの「納品したシャフトの仕様」。中身は data/shaft-deliveries.json（行を足すと表に出る。文面は運営者指定）
+function shaftDeliv() {
+  let d; try { d = JSON.parse(fs.readFileSync('data/shaft-deliveries.json', 'utf8')); } catch (e) { return ''; }
+  const it = (d.items || []).filter(x => x && x.tip); if (!it.length) return '';
+  return `<section id="delivered" style="margin-top:28px"><h2 style="font-size:18px;margin:0 0 6px">納品したシャフトの仕様</h2>
+<p style="margin:0 0 10px;font-size:14px;line-height:1.8">Vibesカーボンシャフト、続々と納品が進んでおります。</p>
+<div class="card pad" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px;line-height:1.5"><thead><tr>${['先端径', '長さ', 'テーパー', '重さ'].map(h => `<th style="text-align:left;padding:8px 8px 8px 0;border-bottom:1px solid var(--line);white-space:nowrap">${h}</th>`).join('')}</tr></thead><tbody>${it.map(x => `<tr>${[x.tip, x.length, x.taper, x.weight].map(v => `<td style="padding:8px 8px 8px 0;border-bottom:1px solid var(--line);vertical-align:top">${esc(v || '')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+<p style="margin:12px 0 0;font-size:14px;line-height:1.8">この後にも、続々と納品が控えております。<br>ご購入されたお客様、本当にありがとうございます。</p>
+<div class="card pad" style="margin-top:12px;font-size:14px;line-height:1.8"><b>タップについて</b><br>なお、タップですが「工場でつけたもの」ですので、メーカーなどは不明です。<br>もし、ご希望のタップが御座いましたら、実費になりますが、タップ代＋工賃を別途ご請求になりますが、ご対応可能です。<br>ご相談下さい。</div></section>`;
+}
 function fRow(t) {
   const attrs = `data-d="${t.d}" data-e="${t.end}" data-p="${esc(t.pref)}" data-g="${t.disc}" data-k="${t.cat}" data-c="${t.classes.join(' ')}" data-w="${t.women_only === 'true' ? 1 : 0}" data-q="${esc((t.title + ' ' + t.venue + ' ' + t.pref + ' ' + (t.city || '')).toLowerCase())}"`;
   return tRow(t, { showDate: true }).replace('<a class="row"', `<a class="row" ${attrs}`);
@@ -568,7 +578,7 @@ ${sel('vb-engrave', 'engrave', '06 刻印', ['① なし（Vibesの刻印のみ�
 <a class="btn btn-line btn-sm" id="vb-ask" href="https://line.me/R/oaMessage/%40361mehjz/?" target="_blank" rel="noopener">注文の前に、LINEで質問する</a>
 <div class="card pad" id="vb-fb" hidden style="font-size:13px;line-height:1.75"><b>LINEが開かないときは</b><br>下の文面をコピーして、公式LINE（@361mehjz）に送ってください。<textarea id="vb-txt" readonly style="width:100%;min-height:210px;margin-top:8px;font-size:13px"></textarea><button class="btn btn-sm" type="button" id="vb-cp" style="margin-top:8px">文面をコピー</button> <a class="btn btn-line btn-sm" href="${LINE_ADD}" target="_blank" rel="noopener" style="margin-top:8px">公式LINEを友だち追加</a></div>
 <p class="muted" style="font-size:12px">ご注文・ご質問へのお返事は、平日も土日祝日も公式LINEで対応しています。</p>
-</form></main>`;
+</form>${shaftDeliv()}</main>`;
   put('/products/vibes-carbon-shaft', page({ title: 'Vibes Carbon Shaft をつくる（ご注文）', desc: 'パターンオーダーのカーボンシャフト。¥25,000（税込・送料込）。仕様を選んでご注文ください。', path: '/products/vibes-carbon-shaft', body: body.replace(/<label([^>]*)>([^<]+)<span class="req">必須<\/span>/g, '<label$1><span>$2<span class="req">必須</span></span>'), scripts: `<script>(function(){var f=document.getElementById('vb-order');if(!f)return;var L='https://line.me/R/oaMessage/%40361mehjz/?';
 function v(n){var e=f.querySelector('[name="'+n+'"]');return e?String(e.value||'').trim():''}
 function text(){var c=/カラー/.test(v('color')),a=['【シャフト注文】','長さ：'+v('length'),'テーパー：'+v('taper'),'先端径：'+v('tip'),'ジョイント：'+v('joint'),'ウェイト：'+v('weight'),'刻印：'+v('engrave')];if(v('engrave_name'))a.push('刻印する名前：'+v('engrave_name'));a.push('ロゴの色：'+v('color'));if(v('cue'))a.push('お使いのキュー：'+v('cue'));if(v('note'))a.push('ご質問・ご希望：'+v('note'));a.push('合計：'+(c?'27,500':'25,000')+'円（税込・送料込）');return a.join('\\n')}
