@@ -167,6 +167,18 @@ body.queen.mon .rw .o{font-size:2.4vh}
   var CM = !/[?&]cm=0/.test(q) && lay !== 'monitor', CMWAIT = Math.max(5, Math.min(600, parseFloat((/[?&]cmwait=([0-9.]+)/.exec(q) || [])[1]))), cmList = [], cmTimer = null, cmGuard = null;
   if (isNaN(CMWAIT)) CMWAIT = 20;
   if (CM && window.fetch) fetch('/cm/list.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : []; }).then(function (l) { cmList = (Array.isArray(l) ? l : []).filter(function (x) { return x && typeof x.src === 'string' && /^\/cm\/[\w.\-]+\.mp4$/.test(x.src); }); }).catch(function () {});
+  /* Background music (2026-11-25): the stream carries no sound from the hall, so the page itself plays a quiet original loop (/audio/live-bgm.mp3) all the time and steps aside while the commercials run.
+     &bgm=0 turns it off, &bgmvol=<0-100> sets how loud (default 60). OBS plays it ("OBS で音声を制御する"); a normal browser refuses sound without a click, there it simply stays silent. */
+  var BGM = !/[?&]bgm=0/.test(q) && lay !== 'monitor', BGV = parseFloat((/[?&]bgmvol=([0-9.]+)/.exec(q) || [])[1]), bgA = null, bgT = null;
+  BGV = isNaN(BGV) ? 0.6 : Math.max(0, Math.min(100, BGV)) / 100;
+  function bgm(on) {
+    if (!BGM || !window.Audio) return;
+    if (!bgA) { bgA = new Audio('/audio/live-bgm.mp3'); bgA.loop = true; bgA.volume = 0; }
+    clearInterval(bgT); var to = on ? BGV : 0;
+    if (on) { var p = bgA.play(); if (p && p.catch) p.catch(function () {}); }
+    bgT = setInterval(function () { var d = to - bgA.volume; if (Math.abs(d) < 0.04) { bgA.volume = to; clearInterval(bgT); if (!on) { try { bgA.pause(); } catch (e) {} } return; } bgA.volume = Math.max(0, Math.min(1, bgA.volume + (d > 0 ? 0.03 : -0.03))); }, 50);
+  }
+  bgm(true);
   /* Random order, joined (2026-11-25): at each break ALL films play one after another, in a new random order every time, and two films of the same sponsor never touch (also not across two breaks) as long as the list allows it.
      &cmrun=<n> plays only n films per break (1 = one film, then the board again). st = {q: the films still to come in this round, s: the sponsor shown last}; kept in this browser. */
   var CMRKEY = 'vibes-cm-r', CMRUN = parseInt((/[?&]cmrun=(\d+)/.exec(q) || [])[1], 10) || 0, cmLeft = 0;
@@ -188,7 +200,7 @@ body.queen.mon .rw .o{font-size:2.4vh}
     var i = by(qu.shift());
     return { i: i, st: { q: qu, s: sp(list[i]) } };
   }
-  function cmStop() { clearTimeout(cmTimer); clearTimeout(cmGuard); var v = $('cmv'); if (!v.hidden) { try { v.pause(); } catch (e) {} v.hidden = true; v.removeAttribute('src'); try { v.load(); } catch (e) {} } }
+  function cmStop() { clearTimeout(cmTimer); clearTimeout(cmGuard); var v = $('cmv'); if (!v.hidden) { try { v.pause(); } catch (e) {} v.hidden = true; v.removeAttribute('src'); try { v.load(); } catch (e) {} bgm(true); } }
   function cmQueue() { clearTimeout(cmTimer); if (!CM) return; cmLeft = 0; cmTimer = setTimeout(cmPlay, CMWAIT * 1000); }
   function cmPlay() {
     if (!bdOn || !cmList.length) { cmQueue(); return; }
@@ -196,8 +208,8 @@ body.queen.mon .rw .o{font-size:2.4vh}
     cmLeft--;
     var st = {}; try { st = JSON.parse(localStorage.getItem(CMRKEY)) || {}; } catch (e) {}
     var pk = cmPick(cmList, st, Math.random), i = pk.i; try { localStorage.setItem(CMRKEY, JSON.stringify(pk.st)); } catch (e) {}
-    var v = $('cmv'), done = false, end = function () { if (done) return; done = true; clearTimeout(cmGuard); v.onended = v.onerror = null; try { v.pause(); } catch (e) {} if (bdOn && cmLeft > 0) { cmPlay(); return; } v.hidden = true; if (bdOn) cmQueue(); };
-    v.onended = end; v.onerror = end; v.muted = false; v.src = cmList[i].src; v.hidden = false;
+    var v = $('cmv'), done = false, end = function () { if (done) return; done = true; clearTimeout(cmGuard); v.onended = v.onerror = null; try { v.pause(); } catch (e) {} if (bdOn && cmLeft > 0) { cmPlay(); return; } v.hidden = true; bgm(true); if (bdOn) cmQueue(); };
+    bgm(false); v.onended = end; v.onerror = end; v.muted = false; v.src = cmList[i].src; v.hidden = false;
     var p = v.play(); if (p && p.catch) p.catch(function () { v.muted = true; var p2 = v.play(); if (p2 && p2.catch) p2.catch(end); });   /* a normal browser refuses sound without a click: play it silent there. OBS plays the sound */
     cmGuard = setTimeout(end, 120000);
   }
