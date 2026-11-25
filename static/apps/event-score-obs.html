@@ -163,15 +163,27 @@ body.queen.mon .rw .o{font-size:2.4vh}
   if (isNaN(BWAIT)) BWAIT = 10;
   if (BOARD && match) { $('bd').src = '/event-board/?match=' + encodeURIComponent(match.replace(/-t\d+$/, '')); window.addEventListener('message', function (e) { if (e.data && e.data.vibesBoard) { bdReady = true; if (bdOn && bdDue) $('bd').hidden = false; } }); }
   /* Sponsor commercials (2026-11-21). Between games: result -> board for CMWAIT seconds -> one commercial -> board -> the next sponsor's commercial ... until the next game starts.
-     The list is /cm/list.json ([{name, src}]); the place in the list is kept in this browser so the same sponsor never plays twice in a row, also across games. &cm=0 turns it off, &cmwait=<seconds> sets the board time (default 20). */
-  var CM = !/[?&]cm=0/.test(q) && lay !== 'monitor', CMWAIT = Math.max(5, Math.min(600, parseFloat((/[?&]cmwait=([0-9.]+)/.exec(q) || [])[1]))), cmList = [], cmTimer = null, cmGuard = null, CMKEY = 'vibes-cm-i';
+     The list is /cm/list.json ([{name, sponsor, src}]); the order is random (see cmPick). &cm=0 turns it off, &cmwait=<seconds> sets the board time (default 20). */
+  var CM = !/[?&]cm=0/.test(q) && lay !== 'monitor', CMWAIT = Math.max(5, Math.min(600, parseFloat((/[?&]cmwait=([0-9.]+)/.exec(q) || [])[1]))), cmList = [], cmTimer = null, cmGuard = null;
   if (isNaN(CMWAIT)) CMWAIT = 20;
   if (CM && window.fetch) fetch('/cm/list.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : []; }).then(function (l) { cmList = (Array.isArray(l) ? l : []).filter(function (x) { return x && typeof x.src === 'string' && /^\/cm\/[\w.\-]+\.mp4$/.test(x.src); }); }).catch(function () {});
+  /* Random order (2026-11-25): every film is shown once before any comes round again, and two films of the same sponsor never follow each other (as long as another sponsor has a film). st = {u: films already shown this round, s: the sponsor shown last}; kept in this browser, so it also holds across games. */
+  var CMRKEY = 'vibes-cm-r';
+  function cmPick(list, st, rnd) {
+    var sp = function (x) { return x.sponsor || x.name || x.src; }, used = (st && Array.isArray(st.u) ? st.u : []).filter(function (u) { return list.some(function (x) { return x.src === u; }); }), last = st ? st.s : null;
+    var fresh = list.filter(function (x) { return used.indexOf(x.src) < 0; }); if (!fresh.length) { used = []; fresh = list.slice(); }
+    var pool = fresh.filter(function (x) { return sp(x) !== last; });
+    if (!pool.length) pool = list.filter(function (x) { return sp(x) !== last; });
+    if (!pool.length) pool = fresh;
+    var x = pool[Math.floor(rnd() * pool.length) % pool.length]; if (used.indexOf(x.src) < 0) used.push(x.src);
+    return { i: list.indexOf(x), st: { u: used, s: sp(x) } };
+  }
   function cmStop() { clearTimeout(cmTimer); clearTimeout(cmGuard); var v = $('cmv'); if (!v.hidden) { try { v.pause(); } catch (e) {} v.hidden = true; v.removeAttribute('src'); try { v.load(); } catch (e) {} } }
   function cmQueue() { clearTimeout(cmTimer); if (!CM) return; cmTimer = setTimeout(cmPlay, CMWAIT * 1000); }
   function cmPlay() {
     if (!bdOn || !cmList.length) { cmQueue(); return; }
-    var i = 0; try { i = (parseInt(localStorage.getItem(CMKEY), 10) || 0) % cmList.length; localStorage.setItem(CMKEY, String((i + 1) % cmList.length)); } catch (e) {}
+    var st = {}; try { st = JSON.parse(localStorage.getItem(CMRKEY)) || {}; } catch (e) {}
+    var pk = cmPick(cmList, st, Math.random), i = pk.i; try { localStorage.setItem(CMRKEY, JSON.stringify(pk.st)); } catch (e) {}
     var v = $('cmv'), done = false, end = function () { if (done) return; done = true; clearTimeout(cmGuard); v.onended = v.onerror = null; try { v.pause(); } catch (e) {} v.hidden = true; if (bdOn) cmQueue(); };
     v.onended = end; v.onerror = end; v.muted = false; v.src = cmList[i].src; v.hidden = false;
     var p = v.play(); if (p && p.catch) p.catch(function () { v.muted = true; var p2 = v.play(); if (p2 && p2.catch) p2.catch(end); });   /* a normal browser refuses sound without a click: play it silent there. OBS plays the sound */

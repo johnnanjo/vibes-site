@@ -1,4 +1,9 @@
 [
-  { "name": "La Beaute（ラ・ボーテ）", "src": "/cm/la-beaute-15.mp4" },
-  { "name": "Billiards E-place（ビリヤード イープレイス）", "src": "/cm/e-place-15.mp4" }
+  { "name": "Billiards E-place（ビリヤード イープレイス）①", "sponsor": "e-place", "src": "/cm/e-place-1.mp4" },
+  { "name": "Billiards E-place（ビリヤード イープレイス）②", "sponsor": "e-place", "src": "/cm/e-place-2.mp4" },
+  { "name": "Billiards E-place（ビリヤード イープレイス）③", "sponsor": "e-place", "src": "/cm/e-place-3.mp4" },
+  { "name": "La Beaute（ラ・ボーテ）①", "sponsor": "la-beaute", "src": "/cm/la-beaute-1.mp4" },
+  { "name": "La Beaute（ラ・ボーテ）②", "sponsor": "la-beaute", "src": "/cm/la-beaute-2.mp4" },
+  { "name": "La Beaute（ラ・ボーテ）③", "sponsor": "la-beaute", "src": "/cm/la-beaute-3.mp4" },
+  { "name": "3 seconds（協賛ロゴ）", "sponsor": "3seconds", "src": "/cm/3seconds-15.mp4" }
 ]
