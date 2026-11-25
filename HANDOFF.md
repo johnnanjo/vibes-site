@@ -42,7 +42,7 @@ AI どうし・AI と運営者のあいだの引きつぎ用です。**作業の
 
 ## 記録（新しいものを上に）
 ### 2026-11-25 — 配信の帯にBGM（Claude）
-- `event-score-obs.html` がBGM（`static/audio/live-bgm.mp3`。合成したオリジナル）をくり返し流し、CMのあいだだけ止める。`&bgm=0`／`&bgmvol=`。テスト環境のブラウザで「流れる→CMで止まる→CM後に戻る」を確認。音そのもの・OBS・本番の中継は未確認（運営者の確認待ち）。
+- `event-score-obs.html` がBGM（`static/audio/live-bgm-acidjazz.mp3`。合成したオリジナル。運営者の指定で ACID JAZZ に差し替え済み）をくり返し流し、CMのあいだだけ止める。`&bgm=0`／`&bgmvol=`。テスト環境のブラウザで「流れる→CMで止まる→CM後に戻る」を確認。音そのもの・OBS・本番の中継は未確認（運営者の確認待ち）。
 
 ### 2026-11-25 — 配信の協賛CMを7本に、順番をランダムに（Claude）
 - 運営者が素材を送付（E-place 3本・La Beaute 3本・3 seconds のロゴ）。`static/cm/` に7本、`list.json` に `sponsor` を追加。`event-score-obs.html` の順番を「位置を1つずつ進める」から `cmPick`（ランダム・1周で全部1回ずつ・同じ協賛は続けない。保存先は `vibes-cm-r`）へ。
