@@ -120,6 +120,25 @@ function shaftDeliv() {
 <p style="margin:12px 0 0;font-size:14px;line-height:1.8">この後にも、続々と納品が控えております。<br>ご購入されたお客様、本当にありがとうございます。</p>
 <div class="card pad" style="margin-top:12px;font-size:14px;line-height:1.8"><b>タップについて</b><br>なお、タップですが「工場でつけたもの」ですので、メーカーなどは不明です。<br>もし、ご希望のタップが御座いましたら、実費になりますが、タップ代＋工賃を別途ご請求になりますが、ご対応可能です。<br>ご相談下さい。</div></section>`;
 }
+// 紹介ページ（/pages/shaft）用。同じ data/shaft-deliveries.json を、あのページの見た目（.sx）で出す
+function shaftDelivSx() {
+  let d; try { d = JSON.parse(fs.readFileSync('data/shaft-deliveries.json', 'utf8')); } catch (e) { return ''; }
+  const it = (d.items || []).filter(x => x && x.tip); if (!it.length) return '';
+  const c = 'padding:10px 10px 10px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top';
+  return `<section id="delivered">
+    <div class="head two">
+      <h2 class="t-l">Delivered</h2>
+      <p class="sm">納品したシャフトの仕様。Vibesカーボンシャフト、続々と納品が進んでおります。</p>
+    </div>
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.5"><thead><tr>${['先端径', '長さ', 'テーパー', '重さ'].map(h => `<th style="${c};white-space:nowrap">${h}</th>`).join('')}</tr></thead><tbody>${it.map(x => `<tr>${[x.tip, x.length, x.taper, x.weight].map(v => `<td style="${c}">${esc(v || '')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+    <p class="sm" style="margin-top:16px">この後にも、続々と納品が控えております。<br>ご購入されたお客様、本当にありがとうございます。</p>
+    <div class="notice">
+      <span class="idx">(タップについて)</span>
+      <p>なお、タップですが「工場でつけたもの」ですので、メーカーなどは不明です。</p>
+      <p>もし、ご希望のタップが御座いましたら、実費になりますが、タップ代＋工賃を別途ご請求になりますが、ご対応可能です。<br>ご相談下さい。</p>
+    </div>
+  </section>`;
+}
 function fRow(t) {
   const attrs = `data-d="${t.d}" data-e="${t.end}" data-p="${esc(t.pref)}" data-g="${t.disc}" data-k="${t.cat}" data-c="${t.classes.join(' ')}" data-w="${t.women_only === 'true' ? 1 : 0}" data-q="${esc((t.title + ' ' + t.venue + ' ' + t.pref + ' ' + (t.city || '')).toLowerCase())}"`;
   return tRow(t, { showDate: true }).replace('<a class="row"', `<a class="row" ${attrs}`);
@@ -387,6 +406,7 @@ function port(file, { upcomingHtml = '', snippets = {}, orange, css = '' } = {})
     .replace(/\{%-?\s*render '([^']+)'\s*-?%\}/g, (m, n) => snippets[n] ?? '')
     .replace(/\{%-?\s*assign[\s\S]*?%\}/g, '')
     .replace(/\{\{\s*shaft_url\s*\}\}/g, '/products/vibes-carbon-shaft')
+    .replace(/\{\{\s*shaft_delivered\s*\}\}/g, () => shaftDelivSx())
     .replace(/\{\{\s*icon\s*\}\}&width=\d+/g, '/img/icon-512.png').replace(/\{\{\s*icon\s*\}\}/g, '/img/icon-512.png');
   h = fixHtml(h).replace(/Shopifyのカートは使いません。/g, '').replace(/#C6FF1F/gi, '#C0FC09').replace(/#0A0A09/gi, '#171A22');
   const left = h.match(/\{[{%][^}]*[}%]\}/g);

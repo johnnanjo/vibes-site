@@ -42,7 +42,7 @@ AI どうし・AI と運営者のあいだの引きつぎ用です。**作業の
 
 ## 記録（新しいものを上に）
 ### 2026-11-25 — カーボンシャフトの納品情報（Claude）
-- NEWS `vibes-carbon-shaft-delivery-20261125`（6本の仕様・お礼・タップの案内）と、商品ページ `/products/vibes-carbon-shaft` のフォーム下に同じ表（`data/shaft-deliveries.json`）。運営者の指示で公式LINEには送らない。本番は未確認。
+- NEWS `vibes-carbon-shaft-delivery-20261125`（6本の仕様・お礼・タップの案内）と、商品ページ `/products/vibes-carbon-shaft` のフォーム下に同じ表（`data/shaft-deliveries.json`）。紹介ページ `/pages/shaft` の FAQ の前にも同じ内容。運営者の指示で公式LINEには送らない。本番は未確認。
 
 ### 2026-11-25 — エキサイトHC決勝の結果／エニーエニー一次予選の組合せ（Claude）
 - 運営者がPDF 2枚（NBA関東支部事務局発行）を送付。`data/inbox/tournaments/manual-20261125-excite-result-anyany-draw.json`：①`official-nbakanto-20261123-excite-hc-final` に結果（優勝 秋山 武）②`official-ka3cf-2026{1129,1206,1213}-anyany-*` の3件を「第108回 エニーエニーボールチーム対抗戦」一次・二次・決勝として、会場・形式・組合せで更新（発行元に合わせ主催を NBA-KANTO に。handle はそのまま）。
