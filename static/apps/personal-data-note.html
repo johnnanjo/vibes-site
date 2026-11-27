@@ -93,8 +93,12 @@
 .n3-mo span{white-space:nowrap;text-align:right}
 .n3-mo span small{display:block;font-size:11.5px;font-weight:700;color:var(--sub)}
 .n3-vb{font-family:var(--disp);font-size:clamp(20px,5vw,30px);line-height:1;letter-spacing:.08em;margin:8px 0 0}
-.n3-who{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px;font-weight:900;line-height:1.4}
-.n3-who span{background:#fff;border:1.5px solid var(--line);color:var(--night);border-radius:999px;padding:6px 12px}
+.n3-me{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:12px;align-items:center}
+.n3-me div{min-width:0;display:flex;flex-direction:column;gap:3px}
+.n3-me small{font-size:11.5px;font-weight:900;color:var(--sub);line-height:1.3}
+.n3-me b{font-size:19px;font-weight:900;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.n3-me b.no{color:var(--sub);font-size:15px}
+@media(max-width:380px){.n3-me{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.n3-me .n3-btn{grid-column:1/-1;width:100%}}
 .n3-guide{display:inline-block;margin-top:8px;font-size:14px;font-weight:900;color:#fff}
 .n3-pill{font-size:11px;font-weight:900;line-height:1;padding:6px 9px;border-radius:999px;white-space:nowrap;background:var(--line2);color:var(--night)}
 .n3-pill.w{background:var(--lime);color:var(--night)}.n3-pill.l{background:var(--night);color:var(--chalk)}.n3-pill.d{background:var(--blue);color:#fff}
@@ -146,8 +150,8 @@ select.n3-in{appearance:auto}
 <section class="n3-v" id="n3-bdg" hidden></section>
 
 <section class="n3-v" id="n3-set" hidden>
-<h2 class="n3-h">持ち点の登録<small style="font-size:13px;font-weight:700;color:var(--sub);margin-left:8px">しなくても使えます</small></h2>
-<div class="n3-card n3-f"><p class="n3-note" style="margin:0">自分の持ち点を登録すると、持ち点に届いたゲームを自動で「勝ち」として数えます。持ち点が変わったら、ここで直せます。メールアドレスやパスワードはいりません。</p><div class="n3-two"><div class="n3-f"><label for="n3-ph">自分の持ち点</label><input class="n3-in" id="n3-ph" type="number" inputmode="numeric" min="1" max="99"></div><div class="n3-f"><label for="n3-pn">ニックネーム<small>なくてもよい</small></label><input class="n3-in" id="n3-pn" type="text" maxlength="20" autocomplete="off"></div></div><p class="n3-err" id="n3-pe" hidden></p><button class="n3-btn dk" type="button" id="n3-ps">登録する</button></div>
+<h2 class="n3-h">自分のデータ</h2>
+<div id="n3-me2"></div>
 <h2 class="n3-h">目標アベレージ</h2>
 <div class="n3-card n3-f"><label for="n3-goal">目標<small>例：0.500。空にすると、いまの実力の少し上を自動で目標にします</small></label><input class="n3-in" id="n3-goal" type="number" inputmode="decimal" step="0.001" min="0" max="9" placeholder="自動"><button class="n3-btn dk" type="button" id="n3-gs">目標を保存する</button></div>
 <h2 class="n3-h">ホームに出す「直近」のゲーム数</h2>
@@ -174,6 +178,15 @@ select.n3-in{appearance:auto}
 <div class="n3-two"><button class="n3-btn ln" type="button" id="n3-ex">やめる</button><button class="n3-btn ln" type="button" id="n3-edel">このゲームを消す</button></div>
 </div></dialog>
 
+<dialog id="n3-pf"><h3>自分のデータ</h3><div class="n3-v">
+<div class="n3-f"><label for="n3-pn">ニックネーム</label><input class="n3-in" id="n3-pn" type="text" maxlength="20" autocomplete="off" placeholder="例：ビリ太郎"></div>
+<div class="n3-f"><label for="n3-ph">持ち点</label><input class="n3-in" id="n3-ph" type="number" inputmode="numeric" min="1" max="99" placeholder="例：20"></div>
+<p class="n3-note" style="margin:0">持ち点を入れると、持ち点に届いたゲームを自動で「勝ち」として数えます。入れたデータは、この端末の中だけに保存します。メールアドレスやパスワードはいりません。</p>
+<p class="n3-err" id="n3-pe" hidden></p>
+<button class="n3-btn" type="button" id="n3-ps">保存する</button>
+<button class="n3-btn ln" type="button" id="n3-px">やめる</button>
+</div></dialog>
+
 <dialog id="n3-nb"><div class="n3-best"><span class="n3-tag" style="font-size:14px;padding:9px 16px">自己ベスト更新</span><div class="n3-big" id="n3-nbv">0.000</div><b id="n3-nbt" style="font-size:15px;font-weight:900;line-height:1.6"></b><button class="n3-btn dk" type="button" id="n3-nbc">とじる</button></div></dialog>
 
 <dialog id="n3-cf"><h3>記録をすべて消しますか？</h3><div class="n3-v"><p class="n3-note" style="margin:0" id="n3-cft"></p><button class="n3-btn rd" type="button" id="n3-cfy">すべて消す</button><button class="n3-btn ln" type="button" id="n3-cfn">やめる</button></div></dialog>
@@ -185,7 +198,8 @@ select.n3-in{appearance:auto}
   var KEY = 'vibes-3c-note', NS = [5, 10, 20, 30, 50, 100], RES = { w: '勝ち', l: '負け', d: '引き分け' };
   var $ = function (id) { return document.getElementById(id); };
   var S = { v: 2, goal: null, n: 20, games: [], prof: null, mig: 0 };
-  function profOf(p) { var h = p ? Math.floor(Number(p.h)) : 0; return h >= 1 && h <= 99 ? { h: h, name: String(p.name || '').slice(0, 20) } : null; }
+  function profOf(p) { if (!p) return null; var h = Math.floor(Number(p.h)), name = String(p.name || '').trim().slice(0, 20); h = h >= 1 && h <= 99 ? h : 0; return h || name ? { h: h, name: name } : null; }
+  function meCard() { var p = S.prof; return '<div class="n3-me"><div><small>ニックネーム</small><b' + (p && p.name ? '>' + esc(p.name) : ' class="no">未入力') + '</b></div><div><small>持ち点</small><b' + (p && p.h ? '>' + p.h : ' class="no">未入力') + '</b></div><button class="n3-btn sm ' + (p ? 'ln' : 'dk') + '" type="button" data-pf="1">' + (p ? '変更する' : '入れる') + '</button></div>'; }
   try { var raw = JSON.parse(localStorage.getItem(KEY) || 'null'); if (raw && Array.isArray(raw.games)) { S.goal = typeof raw.goal === 'number' && raw.goal > 0 ? raw.goal : null; S.n = NS.indexOf(raw.n) >= 0 ? raw.n : 20; S.games = raw.games.map(clean).filter(Boolean); S.prof = profOf(raw.prof); S.mig = raw.mig ? 1 : 0; } } catch (e) {}
   var saved = true;
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); saved = true; } catch (e) { saved = false; } }
@@ -249,7 +263,7 @@ select.n3-in{appearance:auto}
 
   function drawHome() {
     var el = $('n3-home'), all = sorted(), n = all.length;
-    var who = S.prof ? '<div class="n3-who">' + (S.prof.name ? '<span>' + esc(S.prof.name) + ' さん</span>' : '') + '<span>持ち点 ' + S.prof.h + '</span></div>' : '';
+    var who = meCard();
     if (!n) { el.innerHTML = who + '<div class="n3-dark"><div><div class="n3-k">通算アベレージ</div><div class="n3-big">0.000</div></div><svg class="n3-tbl" viewBox="0 0 340 196" role="img" aria-label="まだ記録がありません">' + table([], goal()) + '</svg></div><div class="n3-emp"><b>最初の1ゲームを記録しましょう。</b><span>ゲームが終わったら、得点・イニング・ハイランを入れるだけ。3ゲームほど入れると、グラフが動きはじめます。</span><button class="n3-btn" type="button" data-go="rec">ゲームを記録する</button></div>'; return; }
     var rec = all.slice(-S.n), last20 = all.slice(-20), G = goal(), ra = avg(rec), b = bestOf(all), hr = 0, tp = 0, ti = 0, w = 0, l = 0, dr = 0;
     all.forEach(function (g) { if (g.h > hr) hr = g.h; tp += g.p; ti += g.i; var r = resOf(g); if (r === 'w') w++; else if (r === 'l') l++; else if (r === 'd') dr++; });
@@ -307,7 +321,7 @@ select.n3-in{appearance:auto}
     var s = stats(), got = 0, h = BD.map(function (b) { var on = b[4](s); if (on) got++; return '<div class="n3-b' + (on ? ' on' : '') + '" style="--c:' + b[1] + '"><span class="o' + (b[5] ? ' d' : '') + '">' + b[0] + '</span><div><b>' + b[2] + '</b><small>' + b[3] + '</small></div></div>'; }).join('');
     $('n3-bdg').innerHTML = '<h2 class="n3-h">称号（' + got + ' / ' + BD.length + '）</h2><p class="n3-note" style="margin:0">条件をクリアすると、球に色がつきます。アベレージの称号は、5イニング以上のゲームが対象です。</p><div class="n3-bd">' + h + '</div>';
   }
-  function drawSet() { $('n3-ph').value = S.prof ? S.prof.h : ''; $('n3-pn').value = S.prof ? S.prof.name : ''; $('n3-ps').textContent = S.prof ? '変更を保存する' : '登録する'; $('n3-pe').hidden = true; $('n3-goal').value = S.goal ? f3(S.goal) : ''; $('n3-nset').innerHTML = NS.map(function (x) { return '<button type="button" data-n="' + x + '" aria-pressed="' + (x === S.n) + '">' + x + 'ゲーム</button>'; }).join(''); }
+  function drawSet() { $('n3-me2').innerHTML = meCard(); $('n3-goal').value = S.goal ? f3(S.goal) : ''; $('n3-nset').innerHTML = NS.map(function (x) { return '<button type="button" data-n="' + x + '" aria-pressed="' + (x === S.n) + '">' + x + 'ゲーム</button>'; }).join(''); }
 
   /* ---- tabs ---- */
   var TABS = ['home', 'rec', 'log', 'bdg', 'set'], cur = 'home';
@@ -315,12 +329,13 @@ select.n3-in{appearance:auto}
     if (TABS.indexOf(t) < 0) t = 'home'; cur = t;
     TABS.forEach(function (x) { $('n3-' + x).hidden = x !== t; });
     [].forEach.call(document.querySelectorAll('.n3-tabs button'), function (b) { b.setAttribute('aria-selected', b.dataset.t === t); });
-    ({ home: drawHome, log: drawLog, bdg: drawBdg, set: drawSet, rec: function () { if (!$('n3-d').value) $('n3-d').value = today(); if (S.prof && !$('n3-hc').value) $('n3-hc').value = S.prof.h; live(); } })[t]();
+    ({ home: drawHome, log: drawLog, bdg: drawBdg, set: drawSet, rec: function () { if (!$('n3-d').value) $('n3-d').value = today(); if (S.prof && S.prof.h && !$('n3-hc').value) $('n3-hc').value = S.prof.h; live(); } })[t]();
     if (!keep) { try { history.replaceState(null, '', t === 'home' ? location.pathname : '#' + t); } catch (e) {} var tb = document.querySelector('.n3-tabs'); if (tb.getBoundingClientRect().top < 0) tb.scrollIntoView(); }
   }
   document.querySelector('.n3').addEventListener('click', function (ev) {
     var b = ev.target.closest('button'); if (!b) return;
     if (b.dataset.t) return go(b.dataset.t);
+    if (b.dataset.pf) { $('n3-pn').value = S.prof ? S.prof.name : ''; $('n3-ph').value = S.prof && S.prof.h ? S.prof.h : ''; $('n3-pe').hidden = true; $('n3-pf').showModal(); return; }
     if (b.dataset.go) return go(b.dataset.go);
     if (b.dataset.n) { S.n = +b.dataset.n; save(); cur === 'set' ? (drawSet(), toast('直近 ' + S.n + ' ゲームで集計します')) : drawHome(); return; }
     if (b.dataset.s) { var q = b.dataset.s.split(','), f = $('n3-' + q[0]); f.value = Math.max(0, Math.min(999, int(f.value) + (+q[1]))); live(); return; }
@@ -336,7 +351,7 @@ select.n3-in{appearance:auto}
     if (er) { $('n3-er').textContent = er; $('n3-er').hidden = false; return; }
     var before = bestOf(S.games), g = clean({ p: p, i: i, h: h, d: $('n3-d').value || today(), m: $('n3-m').value.trim(), r: $('n3-r').value, hc: int($('n3-hc').value, 99) || (S.prof ? S.prof.h : 0) });
     S.games.push(g); save();
-    $('n3-p').value = 0; $('n3-i').value = 0; $('n3-h').value = 0; $('n3-m').value = ''; $('n3-r').value = 'auto'; $('n3-hc').value = S.prof ? S.prof.h : ''; $('n3-d').value = today();
+    $('n3-p').value = 0; $('n3-i').value = 0; $('n3-h').value = 0; $('n3-m').value = ''; $('n3-r').value = 'auto'; $('n3-hc').value = S.prof && S.prof.h ? S.prof.h : ''; $('n3-d').value = today();
     go('home');
     if (!saved) return toast('このブラウザでは保存できませんでした');
     if (before && S.games.length >= 3 && ga(g) > ga(before)) { $('n3-nbv').textContent = f3(ga(g)); $('n3-nbt').textContent = 'これまでのベスト ' + f3(ga(before)) + ' を超えました。'; $('n3-nb').showModal(); } else toast('保存しました（' + S.games.length + 'ゲーム目）' + (resOf(g) === 'w' ? '・勝ち' : ''));
@@ -360,12 +375,13 @@ select.n3-in{appearance:auto}
 
   /* ---- settings ---- */
   $('n3-ps').addEventListener('click', function () {
-    var p = profOf({ h: $('n3-ph').value, name: $('n3-pn').value.trim() }), first = !S.prof;
-    if (!p) { $('n3-pe').textContent = '持ち点を 1〜99 の数字で入れてください。'; $('n3-pe').hidden = false; return; }
-    S.prof = p; save(); $('n3-hc').value = p.h;
+    var hv = $('n3-ph').value.trim(), h = Math.floor(Number(hv)), name = $('n3-pn').value.trim();
+    if (hv !== '' && !(h >= 1 && h <= 99)) { $('n3-pe').textContent = '持ち点は 1〜99 の数字で入れてください。'; $('n3-pe').hidden = false; return; }
+    S.prof = profOf({ h: hv === '' ? 0 : h, name: name }); save();
     if (!saved) { $('n3-pe').textContent = 'この端末に保存できませんでした。プライベートブラウズ（シークレット）を切ってから、もう一度ためしてください。'; $('n3-pe').hidden = false; return; }
-    if (first) { drawSet(); toast('持ち点 ' + p.h + ' を登録しました'); } else { drawSet(); toast('持ち点を ' + p.h + ' にしました'); }
+    $('n3-hc').value = S.prof && S.prof.h ? S.prof.h : ''; $('n3-pf').close(); cur === 'set' ? drawSet() : cur === 'home' ? drawHome() : 0; toast(S.prof ? '自分のデータを保存しました' : '自分のデータを空にしました');
   });
+  $('n3-px').addEventListener('click', function () { $('n3-pf').close(); });
   $('n3-gs').addEventListener('click', function () { var v = parseFloat($('n3-goal').value); S.goal = isFinite(v) && v > 0 && v < 10 ? Math.round(v * 1000) / 1000 : null; save(); drawSet(); toast(S.goal ? '目標を ' + f3(S.goal) + ' にしました' : '目標を自動にしました'); });
   function dl(name, text, type) { var u = URL.createObjectURL(new Blob([text], { type: type })), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
   $('n3-ej').addEventListener('click', function () { if (!S.games.length) return toast('まだ記録がありません'); dl('vibes-personal-data-note-' + today() + '.json', JSON.stringify({ app: 'vibes-personal-data-note', v: 2, goal: S.goal, n: S.n, prof: S.prof, games: sorted() }, null, 1), 'application/json'); });
