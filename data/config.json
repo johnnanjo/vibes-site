@@ -5,6 +5,11 @@
  "homeWinners": false,
  "homeNew": [
   {
+   "label": "VIBES 3C LAB",
+   "note": "配置検索・ランダム練習・撞点クイズ",
+   "href": "/pages/3c-lab"
+  },
+  {
    "label": "VIBES PERSONAL DATA NOTE",
    "note": "3C NOTE と自己データ帳が1つに",
    "href": "/pages/personal-data-note"
@@ -18,11 +23,6 @@
    "label": "14-1 超入門ガイド",
    "note": "ストレートプールのルール・得点と減点",
    "href": "/pages/straight-pool-guide"
-  },
-  {
-   "label": "VIBES PERSONAL DATA NOTE の使い方",
-   "note": "図で見るマニュアル",
-   "href": "/pages/3c-self-data-guide"
   }
  ],
  "youtubeChannel": "https://www.youtube.com/@vibes-billiards"

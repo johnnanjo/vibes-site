@@ -1,4 +1,5 @@
-<!-- VIBES 3C LAB：これからスリークッションを楽しみたい人向け。3つのタブ＝取り口辞典（配置カード＝scripts/lab-positions.mjs が data/3c-lab-shots.json から軌道を計算、build.mjs がページへ埋め込む／ことばの8の形＝data/3c-lab.json の patterns）／基礎理論（初球・厚み・撞点・クッション・鏡）／システム計算（ファイブ＆ハーフ、プラス、短・長・短）。図はすべてこのファイルの中で描く。動画や外部の画像は使わない。 -->
+<!-- VIBES 3C LAB：配置検索・軌道の再生・ランダム練習・撞点クイズは static/js/3c-lab-learning.mjs。従来の取り口辞典／基礎理論／システム計算は下に保持。配置データ・計算式・保存済みのマイ帳面は共通。外部の画像・文章・動画は使わない。 -->
+<link rel="stylesheet" href="/css/3c-lab-learning.css">
 <style>
 .l3{--blue:#1E5AA8;--red:#D7262E;--yel:#F2C200}
 .l3 *{box-sizing:border-box}
@@ -135,9 +136,27 @@
 <p class="crumb"><a href="/" style="color:#fff">トップ</a>　<a href="/pages/carom" style="color:#fff">キャロム</a></p>
 <h1 class="l3-ttl">VIBES 3C LAB</h1>
 <p class="l3-lead">スリークッションを、これから楽しみたい人へ。</p>
-<p class="l3-sub">ルールはシンプル、でも奥が深い。まずは「取り口」と呼ばれる形を、配置カードと辞典で知るところから。慣れてきたら、厚みや回転の基礎理論、狙う場所を数字で出すシステム計算へ進みましょう。</p>
+<p class="l3-sub">配置を探す。動きを見る。撞点を考える。20の配置カードと8の取り口、基礎理論、3つのシステム計算で、次の一球を学ぶ練習室です。</p>
 </div></div>
 <main class="wrap">
+<div class="l3-shell">
+<aside class="l3-menu" id="l3-learning-menu" hidden>
+<h2>3C LAB の学習メニュー</h2>
+<nav aria-label="3C LAB の学習メニュー">
+<a href="#home" data-view="home"><span class="l3-menu-mark" aria-hidden="true">⌂</span>学習ホーム</a>
+<a href="#search" data-view="search"><span class="l3-menu-mark" aria-hidden="true">⌕</span>配置を探す</a>
+<a href="#cards" data-view="cards"><span class="l3-menu-mark" aria-hidden="true">▦</span>配置カード</a>
+<a href="#practice" data-view="practice"><span class="l3-menu-mark" aria-hidden="true">◇</span>ランダム練習</a>
+<a href="#quiz" data-view="quiz"><span class="l3-menu-mark" aria-hidden="true">?</span>撞点クイズ</a>
+<a href="#theory" data-view="theory"><span class="l3-menu-mark" aria-hidden="true">◎</span>基礎理論</a>
+<a href="#system" data-view="system"><span class="l3-menu-mark" aria-hidden="true">±</span>システム計算</a>
+<a href="#notebook" data-view="notebook"><span class="l3-menu-mark" aria-hidden="true">★</span>マイ帳面 <small id="l3-favorite-count">0</small></a>
+</nav>
+<div class="l3-menu-foot"><a href="/pages/personal-data-note">練習の成績を記録する</a><a href="/pages/near?t=carom">キャロム台のあるお店</a><a href="/blogs/news">VIBES NEWS</a></div>
+</aside>
+<div class="l3-content">
+<section class="l3-workbench" id="l3-workbench" aria-label="3C LAB の学習画面" hidden></section>
+<div id="l3-legacy">
 
 <section class="l3-v">
 <h2 class="l3-h">スリークッションって、どんなゲーム？</h2>
@@ -154,7 +173,7 @@
 <h2 class="l3-h">配置カード　__POSN__の配置</h2>
 <p class="l3-p">実戦でよく出る配置を、カードにまとめました。カードをえらぶと、軌道の図・撞点・厚み・ヒネリ・強さと、実戦の注意点が出ます。★を付けた配置は「マイ帳面」に残り、あとでまとめて見られます。</p>
 <div class="l3-chips" id="pc-cat" role="group" aria-label="種類でしぼる" style="padding-left:0;padding-right:0;flex-wrap:wrap"></div>
-<div class="l3-pf"><div class="row"><label>難易度<select id="pc-lv"></select></label><label>並べ方<select id="pc-so"><option value="0">おすすめ順</option><option value="1">やさしい順</option><option value="2">むずかしい順</option></select></label></div>
+<div class="l3-pf"><label class="l3-keyword">配置名・番号で探す<input type="search" id="pc-q" placeholder="例：裏回し、#8" autocomplete="off"></label><div class="row"><label>難易度<select id="pc-lv"></select></label><label>並べ方<select id="pc-so"><option value="0">おすすめ順</option><option value="1">やさしい順</option><option value="2">むずかしい順</option></select></label></div>
 <button type="button" class="l3-fav" id="pc-fav" aria-pressed="false">★ マイ帳面だけ表示</button></div>
 <p class="l3-p" id="pc-n" aria-live="polite" style="font-size:13px"></p>
 <div class="l3-pg" id="pc-g"></div>
@@ -341,6 +360,9 @@ __CARDS__
 <a href="/pages/tournaments?g=carom"><b>大会を見に行く・出てみる</b><small>公式戦やハウストーナメントの予定を、日付と地域からさがせます。</small></a>
 </div>
 </section>
+</div>
+</div>
+</div>
 </main>
 </div>
 <script>
@@ -349,9 +371,9 @@ __CARDS__
   /* position cards of the dictionary tab: filter, sort, favourites (kept in this browser only), detail dialog with the table figure */
   var $ = function (id) { return document.getElementById(id); }, D; try { D = JSON.parse($('pc-data').textContent); } catch (e) { return; }
   var KEY = 'vibes-3c-fav', fav = {}; try { (JSON.parse(localStorage.getItem(KEY) || '[]') || []).forEach(function (k) { fav[k] = 1; }); } catch (e) {}
-  var keep = true; function save() { try { localStorage.setItem(KEY, JSON.stringify(Object.keys(fav))); keep = localStorage.getItem(KEY) != null; } catch (e) { keep = false; } }
+  var keep = true; function save() { try { localStorage.setItem(KEY, JSON.stringify(Object.keys(fav))); keep = localStorage.getItem(KEY) != null; } catch (e) { keep = false; } window.dispatchEvent(new CustomEvent('vibes:3c-favorites', { detail: Object.keys(fav) })); }
   try { localStorage.setItem(KEY + '-t', '1'); localStorage.removeItem(KEY + '-t'); } catch (e) { keep = false; }
-  var st = { cat: '', lv: '', so: 0, fav: false }, LV = D.levels, cur = null, esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var st = { cat: '', lv: '', so: 0, fav: false, q: '' }, LV = D.levels, cur = null, esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   /* table figure of one position card (geometry worked out by scripts/lab-positions.mjs; units = diamonds, 8 x 4) */
   function posSvg(c, small) {
     var u = 48, ox = 38, oy = 34, W = 8 * u + ox * 2, H = 4 * u + oy * 2, g = c.geo, P = function (q) { return (ox + q[0] * u).toFixed(1) + ',' + (oy + q[1] * u).toFixed(1); }, r = 0.0866 * u * (small ? 1.9 : 1.35), i;
@@ -373,7 +395,12 @@ __CARDS__
   }
   function tags(c, full) { var i = LV.indexOf(c.level) + 1; return '<span class="l3-tags"><span class="lv' + i + '">' + c.level + (full && i === 3 ? '（4段〜プロレベル）' : '') + '</span><span>' + esc(c.cat) + '</span></span>'; }
   function list() {
-    var a = D.cards.filter(function (c) { return (!st.cat || c.cat === st.cat) && (!st.lv || c.level === st.lv) && (!st.fav || fav[c.id]); });
+    var q = st.q.normalize('NFKC').toLowerCase().trim();
+    var a = D.cards.filter(function (c) {
+      var text = [c.name, c.pattern, c.cat, c.level, c.lead, c.system, c.tip, c.english].concat(c.notes || []).join(' ').normalize('NFKC').toLowerCase();
+      var match = !q || (/^#?\d+$/.test(q) ? c.no === +q.replace('#', '') : q.split(/\s+/).every(function (word) { return text.indexOf(word) !== -1; }));
+      return match && (!st.cat || c.cat === st.cat) && (!st.lv || c.level === st.lv) && (!st.fav || fav[c.id]);
+    });
     if (st.so) a.sort(function (x, y) { return (LV.indexOf(x.level) - LV.indexOf(y.level)) * (st.so === 1 ? 1 : -1) || x.no - y.no; });
     $('pc-n').textContent = a.length + ' 件を表示しています' + (st.fav ? '（マイ帳面）' : '') + '　／　マイ帳面 ' + Object.keys(fav).length + ' 件' + (keep ? '' : '（このブラウザでは保存できないため、ページを閉じると消えます）');
     $('pc-g').innerHTML = a.length ? a.map(function (c) { return '<article class="l3-pc"><button type="button" class="op" data-id="' + c.id + '">' + posSvg(c, true) + '<span class="bd"><b>' + esc(c.name) + '</b>' + tags(c) + '</span></button><button type="button" class="l3-st" data-fav="' + c.id + '" aria-pressed="' + !!fav[c.id] + '" aria-label="' + esc(c.name) + 'をマイ帳面に' + (fav[c.id] ? '入れてあります。はずす' : '入れる') + '">★</button></article>'; }).join('') : '<p class="l3-none">' + (st.fav ? 'マイ帳面には、まだ何も入っていません。カードの右上の★を押すと、ここに残ります。' : 'この条件に合う配置はありません。しぼりこみを変えてみてください。') + '</p>';
@@ -383,7 +410,7 @@ __CARDS__
     $('pc-dt').textContent = c.name; $('pc-ds').setAttribute('aria-pressed', !!fav[c.id]);
     $('pc-db').innerHTML = tags(c, true) + '<p class="ld">' + esc(c.lead) + '</p>' + posSvg(c) +
       '<p class="l3-lg"><span><i style="background:#fff"></i>手球</span><span><i style="background:#FACC15"></i>第1的球</span><span><i style="background:#F43F5E"></i>第2的球</span><span><i class="ln" style="background:#fff"></i>当たるまで</span><span><i class="ln"></i>当たったあと</span><span><i class="nm">1</i>クッションの順番</span><span><i class="ln" style="background:#FACC15"></i>第1的球の進む向き（点線と矢印）</span></p>' +
-      '<p class="rt">' + esc(c.route) + '</p>' +
+      '<p class="rt">' + esc(c.route) + '</p><a class="l3-replay-link" data-replay="' + c.id + '" href="#practice-' + c.id + '">この配置の動きを見る</a>' +
       '<div class="l3-pm">' + tipSvg(c) + '<dl><dt>撞点</dt><dd>' + esc(c.tip) + '</dd><dt>厚み</dt><dd>' + esc(c.thick) + '</dd><dt>ヒネリ</dt><dd>' + esc(c.english) + '</dd><dt>強さ</dt><dd>' + c.speed + '</dd><dt>クッション</dt><dd>' + c.cushions + '回</dd><dt>システム</dt><dd>' + esc(c.system) + '</dd></dl></div>' +
       '<h4>実戦の注意点</h4><ul>' + c.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' +
       '<h4>キス回避・ミスの傾向</h4><ul><li>' + esc(c.kissNote) + '</li><li>' + esc(c.missNote) + '</li></ul>' +
@@ -397,11 +424,23 @@ __CARDS__
   $('pc-cat').addEventListener('click', function (e) { var a = e.target.closest('a'); if (!a) return; e.preventDefault(); st.cat = a.getAttribute('data-c'); [].forEach.call(this.children, function (x) { x.classList.toggle('on', x === a); }); list(); });
   $('pc-lv').innerHTML = '<option value="">すべて</option>' + LV.map(function (l, i) { return '<option value="' + l + '">' + l + (i === 2 ? '（4段〜プロレベル）' : '') + '</option>'; }).join('');
   $('pc-lv').addEventListener('change', function () { st.lv = this.value; list(); }); $('pc-so').addEventListener('change', function () { st.so = +this.value; list(); });
+  $('pc-q').addEventListener('input', function () { st.q = this.value; list(); });
   $('pc-fav').addEventListener('click', function () { st.fav = !st.fav; this.setAttribute('aria-pressed', st.fav); list(); });
   $('pc-g').addEventListener('click', function (e) { var f = e.target.closest('[data-fav]'), o = e.target.closest('[data-id]'); if (f) toggle(f.getAttribute('data-fav')); else if (o) open(o.getAttribute('data-id')); });
   $('pc-dx').addEventListener('click', close); $('pc-ds').addEventListener('click', function () { if (cur) toggle(cur.id); });
   $('pc-d').addEventListener('click', function (e) { if (e.target === this) close(); });
-  $('pc-d').addEventListener('close', function () { cur = null; try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} });
+  $('pc-d').addEventListener('close', function () {
+    if (this.open) return;
+    cur = null;
+    if (/^#pos-/.test(location.hash)) { try { history.replaceState(null, '', '#cards'); } catch (e) {} }
+  });
+  window.addEventListener('vibes:3c-open', function (e) { if (e.detail && typeof e.detail.id === 'string') open(e.detail.id); });
+  window.addEventListener('vibes:3c-toggle-favorite', function (e) { if (e.detail && D.cards.some(function (c) { return c.id === e.detail.id; })) toggle(e.detail.id); });
+  window.addEventListener('vibes:3c-filter-favorites', function (e) {
+    st.fav = !!(e.detail && e.detail.only); st.cat = ''; st.lv = ''; st.q = '';
+    $('pc-lv').value = ''; $('pc-q').value = ''; $('pc-fav').setAttribute('aria-pressed', st.fav);
+    [].forEach.call($('pc-cat').children, function (a) { a.classList.toggle('on', !a.getAttribute('data-c')); }); list();
+  });
   window.addEventListener('storage', function (e) { if (e.key !== KEY) return; fav = {}; try { (JSON.parse(e.newValue || '[]') || []).forEach(function (k) { fav[k] = 1; }); } catch (x) {} list(); if (cur) $('pc-ds').setAttribute('aria-pressed', !!fav[cur.id]); });
   list(); var h = /^#pos-(.+)$/.exec(location.hash); if (h) open(h[1]);
 })();
@@ -424,9 +463,10 @@ __CARDS__
 (function () {
   'use strict';
   /* tabs: dictionary / system guide (#system opens the second one) */
-  var TB = [1, 2, 3].map(function (n) { return [document.getElementById('l3-t' + n), document.getElementById('l3-p' + n)]; }), H = ['', '#system', '#theory'];
-  function tab(n, keep) { TB.forEach(function (x, i) { x[0].setAttribute('aria-selected', i + 1 === n); x[1].hidden = i + 1 !== n; }); if (!keep) { try { history.replaceState(null, '', H[n - 1] || location.pathname + location.search); } catch (e) {} } }
+  var TB = [1, 2, 3].map(function (n) { return [document.getElementById('l3-t' + n), document.getElementById('l3-p' + n)]; }), H = ['#cards', '#system', '#theory'];
+  function tab(n, keep) { TB.forEach(function (x, i) { x[0].setAttribute('aria-selected', i + 1 === n); x[1].hidden = i + 1 !== n; }); if (!keep) { try { history.replaceState(null, '', H[n - 1]); } catch (e) {} } window.dispatchEvent(new CustomEvent('vibes:3c-tab', { detail: n })); }
   TB.forEach(function (x, i) { x[0].addEventListener('click', function () { tab(i + 1); }); });
+  window.addEventListener('vibes:3c-select-tab', function (e) { if ([1, 2, 3].indexOf(e.detail) !== -1) tab(e.detail, true); });
   var h = location.hash; if (/^#(system|sys-)/.test(h)) tab(2, true); else if (/^#(theory|th-)/.test(h)) tab(3, true);
   if (/^#(sys|th)-/.test(h)) { var el = document.getElementById(h.slice(1)); if (el) setTimeout(function () { el.scrollIntoView(); }, 0); }
   /* Five & Half: number map + calculator. Long rail = 8 sections (7 points), short rail = 4 sections (3 points). */
@@ -629,3 +669,4 @@ __CARDS__
   })();
 })();
 </script>
+<script type="module" src="/js/3c-lab-learning.mjs"></script>

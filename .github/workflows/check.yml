@@ -17,6 +17,7 @@ jobs:
       - run: node scripts/test-auto-ai-worker.mjs
       - run: node scripts/test-ai-worker.mjs
       - run: node scripts/lab-positions.mjs --check
+      - run: node scripts/test-3c-lab-learning.mjs
       - run: node scripts/test-queen-cup.mjs
       - run: node scripts/test-count-menu.mjs
       - run: node scripts/test-event-referee.mjs
