@@ -96,6 +96,7 @@
 #c3g .keep{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 #c3g .keep>div{background:var(--panel);border-radius:18px;padding:16px;display:grid;grid-template-columns:76px minmax(0,1fr);gap:14px;align-items:center}
 #c3g .keep b{display:block}
+#c3g .keep.txt>div{grid-template-columns:minmax(0,1fr)}
 #c3g .keep p{font-size:13.5px;color:#DADDE4}
 #c3g details{background:var(--panel);border-radius:14px;padding:0 16px}
 #c3g details+details{margin-top:8px}
@@ -117,8 +118,8 @@
 
 <header>
   <h1>3つの数字を入れるだけ。<br>スリークッションの成長が、数字で見える。</h1>
-  <p class="lead">「3C 自己データ帳」の使い方を、絵で説明します。無料で、メールアドレスやパスワードはいりません。</p>
-  <a class="cta" href="/pages/3c-self-data">3C 自己データ帳をひらく</a>
+  <p class="lead">「VIBES PERSONAL DATA NOTE」の使い方を、絵で説明します。無料で、メールアドレスやパスワードはいりません。</p>
+  <a class="cta" href="/pages/personal-data-note">VIBES PERSONAL DATA NOTE をひらく</a>
   <div class="flow" aria-label="全体の流れ">
     <div><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="20" r="9" fill="none" stroke="#F3F4EF" stroke-width="3"/><path d="M10 46c2-10 9-14 17-14s15 4 17 14" fill="none" stroke="#F3F4EF" stroke-width="3" stroke-linecap="round"/></svg><b>登録</b><span>最初に1回だけ<br>持ち点を入れる</span></div>
     <div><svg viewBox="0 0 54 54" aria-hidden="true"><rect x="4" y="16" width="13" height="22" rx="3" fill="none" stroke="#C0FC09" stroke-width="3"/><rect x="20.5" y="16" width="13" height="22" rx="3" fill="none" stroke="#7CC0FF" stroke-width="3"/><rect x="37" y="16" width="13" height="22" rx="3" fill="none" stroke="#F2D24A" stroke-width="3"/></svg><b>3つ入れる</b><span>得点・イニング<br>ハイラン</span></div>
@@ -140,13 +141,13 @@
     </div>
     <div>
       <span class="no t">準備</span>
-      <h3>ツールをひらくと、いちばん上に出ます</h3>
+      <h3>はじめてひらくと「持ち点を登録する」のボタンが出ます</h3>
       <ol class="do">
         <li><span class="k a">1</span><span>自分の持ち点を入れる（例：20）</span></li>
         <li><span class="k">2</span><span>ニックネームは、入れても入れなくてもよい</span></li>
         <li><span class="k">3</span><span>「登録する」を押す。これで準備は終わり</span></li>
       </ol>
-      <p class="cap" style="margin-top:12px">持ち点が変わったら、あとから「変更する」で直せます。</p>
+      <p class="cap" style="margin-top:12px">持ち点が変わったら、「設定」のタブでいつでも直せます。</p>
     </div>
   </div>
 </section>
@@ -248,8 +249,8 @@
       <h3>記録がたまり、成長が見える</h3>
       <ol class="do">
         <li><span class="k">1</span><span><b>通算アベレージ</b>：これまで全部の成績</span></li>
-        <li><span class="k">2</span><span><b>グラフ</b>：ゲームごとのアベレージ。右へ行くほど新しい</span></li>
-        <li><span class="k">3</span><span><b>ゲームの記録</b>：1ゲームずつ、新しい順に並ぶ</span></li>
+        <li><span class="k">2</span><span><b>グラフ</b>：台の上の球が1ゲーム。右へ行くほど新しい</span></li>
+        <li><span class="k">3</span><span><b>履歴</b>：1ゲームずつ、新しい順に並ぶ</span></li>
       </ol>
     </div>
   </div>
@@ -270,26 +271,18 @@
 <section aria-labelledby="g-grow">
   <h2 id="g-grow">成長の見方：見るのは2か所</h2>
   <div class="fig">
-    <svg viewBox="0 0 420 250" role="img" aria-label="ゲームごとのアベレージの棒グラフ。左が古く右が新しい。いちばん右のライムの棒が最新のゲーム。全体に右上がり">
-      <line x1="34" x2="410" y1="206" y2="206" stroke="#3A4050" stroke-width="2"/><line x1="34" x2="410" y1="126" y2="126" stroke="#3A4050"/><line x1="34" x2="410" y1="46" y2="46" stroke="#3A4050"/>
-      <g fill="#AEB4C0" font-size="12" text-anchor="end"><text x="28" y="210">0</text><text x="28" y="130">0.50</text><text x="28" y="50">1.00</text></g>
-      <g fill="#1E5AA8"><rect x="44" y="126" width="24" height="80" rx="3"/><rect x="78" y="110" width="24" height="96" rx="3"/><rect x="112" y="134" width="24" height="72" rx="3"/><rect x="146" y="104" width="24" height="102" rx="3"/><rect x="180" y="96" width="24" height="110" rx="3"/><rect x="214" y="112" width="24" height="94" rx="3"/><rect x="248" y="82" width="24" height="124" rx="3"/><rect x="282" y="90" width="24" height="116" rx="3"/><rect x="316" y="70" width="24" height="136" rx="3"/></g>
-      <rect x="350" y="60" width="24" height="146" rx="3" fill="#C0FC09"/>
-      <path d="M50 118 L362 46" fill="none" stroke="#F3F4EF" stroke-width="3" stroke-dasharray="7 7" stroke-linecap="round"/><path d="M362 46l-16 0M362 46l-8 14" fill="none" stroke="#F3F4EF" stroke-width="3" stroke-linecap="round"/>
-      <g font-size="13" font-weight="800"><text x="44" y="230" fill="#AEB4C0">古いゲーム</text><text x="410" y="230" text-anchor="end" fill="#AEB4C0">新しいゲーム</text>
-      <rect x="306" y="14" width="104" height="26" rx="13" fill="#C0FC09"/><text x="358" y="32" text-anchor="middle" fill="#171A22">ライム＝最新</text></g>
-    </svg>
+    <svg viewBox="0 0 420 250" role="img" aria-label="ビリヤード台の形をしたグラフ。白い球が1ゲームで、右へ行くほど新しい。ライムの点線が目標、黄色がいちばん新しいゲーム、赤がベストのゲーム。全体に右上がり"><rect width="420" height="250" rx="20" fill="#262A35"/><rect x="18" y="18" width="384" height="214" rx="6" fill="#1E5AA8"/><circle cx="18.0" cy="9.0" r="2.2" fill="#F3F4EF"/><circle cx="18.0" cy="241.0" r="2.2" fill="#F3F4EF"/><circle cx="66.0" cy="9.0" r="2.2" fill="#F3F4EF"/><circle cx="66.0" cy="241.0" r="2.2" fill="#F3F4EF"/><circle cx="114.0" cy="9.0" r="2.2" fill="#F3F4EF"/><circle cx="114.0" cy="241.0" r="2.2" fill="#F3F4EF"/><circle cx="162.0" cy="9.0" r="2.2" fill="#F3F4EF"/><circle cx="162.0" cy="241.0" r="2.2" fill="#F3F4EF"/><circle cx="210.0" cy="9.0" r="2.2" fill="#F3F4EF"/><circle cx="210.0" cy="241.0" r="2.2" fill="#F3F4EF"/><circle cx="258.0" cy="9.0" r="2.2" fill="#F3F4EF"/><circle cx="258.0" cy="241.0" r="2.2" fill="#F3F4EF"/><circle cx="306.0" cy="9.0" r="2.2" fill="#F3F4EF"/><circle cx="306.0" cy="241.0" r="2.2" fill="#F3F4EF"/><circle cx="354.0" cy="9.0" r="2.2" fill="#F3F4EF"/><circle cx="354.0" cy="241.0" r="2.2" fill="#F3F4EF"/><circle cx="402.0" cy="9.0" r="2.2" fill="#F3F4EF"/><circle cx="402.0" cy="241.0" r="2.2" fill="#F3F4EF"/><circle cx="9.0" cy="18.0" r="2.2" fill="#F3F4EF"/><circle cx="411.0" cy="18.0" r="2.2" fill="#F3F4EF"/><circle cx="9.0" cy="71.5" r="2.2" fill="#F3F4EF"/><circle cx="411.0" cy="71.5" r="2.2" fill="#F3F4EF"/><circle cx="9.0" cy="125.0" r="2.2" fill="#F3F4EF"/><circle cx="411.0" cy="125.0" r="2.2" fill="#F3F4EF"/><circle cx="9.0" cy="178.5" r="2.2" fill="#F3F4EF"/><circle cx="411.0" cy="178.5" r="2.2" fill="#F3F4EF"/><circle cx="9.0" cy="232.0" r="2.2" fill="#F3F4EF"/><circle cx="411.0" cy="232.0" r="2.2" fill="#F3F4EF"/><line x1="23" x2="397" y1="92.2" y2="92.2" stroke="#C0FC09" stroke-width="2" stroke-dasharray="6 6"/><rect x="25" y="70.2" width="74" height="19" rx="9.5" fill="#C0FC09"/><text x="62" y="84.2" text-anchor="middle" font-size="12" font-weight="900" fill="#171A22">目標 0.700</text><polyline points="40.0,123.5 77.8,107.9 115.6,130.5 153.3,99.2 191.1,92.2 228.9,104.4 266.7,78.3 304.4,85.2 342.2,55.7 380.0,67.8" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2" stroke-linejoin="round"/><circle cx="40.0" cy="125.5" r="5.5" fill="#0B2A52" opacity=".45"/><circle cx="40.0" cy="123.5" r="5.5" fill="#fff"/><circle cx="77.8" cy="109.9" r="5.5" fill="#0B2A52" opacity=".45"/><circle cx="77.8" cy="107.9" r="5.5" fill="#fff"/><circle cx="115.6" cy="132.5" r="5.5" fill="#0B2A52" opacity=".45"/><circle cx="115.6" cy="130.5" r="5.5" fill="#fff"/><circle cx="153.3" cy="101.2" r="5.5" fill="#0B2A52" opacity=".45"/><circle cx="153.3" cy="99.2" r="5.5" fill="#fff"/><circle cx="191.1" cy="94.2" r="5.5" fill="#0B2A52" opacity=".45"/><circle cx="191.1" cy="92.2" r="5.5" fill="#fff"/><circle cx="228.9" cy="106.4" r="5.5" fill="#0B2A52" opacity=".45"/><circle cx="228.9" cy="104.4" r="5.5" fill="#fff"/><circle cx="266.7" cy="80.3" r="5.5" fill="#0B2A52" opacity=".45"/><circle cx="266.7" cy="78.3" r="5.5" fill="#fff"/><circle cx="304.4" cy="87.2" r="5.5" fill="#0B2A52" opacity=".45"/><circle cx="304.4" cy="85.2" r="5.5" fill="#fff"/><circle cx="342.2" cy="57.7" r="8" fill="#0B2A52" opacity=".45"/><circle cx="342.2" cy="55.7" r="8" fill="#D7262E"/><circle cx="380.0" cy="69.8" r="8" fill="#0B2A52" opacity=".45"/><circle cx="380.0" cy="67.8" r="8" fill="#F2C200"/><g font-size="12" font-weight="900" fill="#fff"><text x="342.2" y="41.7" text-anchor="middle">ベスト</text><text x="388.0" y="93.8" text-anchor="end">いちばん新しい</text></g></svg>
     <div>
       <span class="no t">グラフ</span>
-      <h3>棒が右上がりなら、伸びている</h3>
-      <p class="cap">1本の棒が1ゲーム。高い棒ほど、アベレージが高いゲームです。直近30ゲームまで並びます。</p>
+      <h3>球が右上がりなら、伸びている</h3>
+      <p class="cap">1つの球が1ゲーム。高い位置にあるほど、アベレージが高いゲームです。直近20ゲームまで並びます。ライムの点線は目標のアベレージです。</p>
     </div>
   </div>
   <div class="fig rev">
     <div>
       <span class="no t">数字</span>
-      <h3>「直近5ゲーム」と「通算」をくらべる</h3>
-      <p class="cap">直近5ゲームのほうが高ければ、いまの調子は上向き。低ければ、少し落ちています。</p>
+      <h3>「直近のゲーム」と「通算」をくらべる</h3>
+      <p class="cap">直近のゲームのほうが高ければ、いまの調子は上向き。低ければ、少し落ちています。直近を何ゲームで見るかは、5〜100から選べます。</p>
     </div>
     <svg viewBox="0 0 420 190" role="img" aria-label="通算アベレージ0.812と、直近5ゲームのアベレージ0.905をくらべた絵。直近のほうが高く、上向きの矢印">
       <rect x="10" y="40" width="170" height="120" rx="16" fill="#1E5AA8"/><rect x="240" y="40" width="170" height="120" rx="16" fill="#2B303D" stroke="#C0FC09" stroke-width="4"/>
@@ -316,7 +309,7 @@
     <div><i class="w">勝ち</i><p>持ち点に届くと、自動でつきます。自分で選ぶこともできます。</p></div>
     <div><i class="l">負け</i><p>相手が先にあがったとき。「結果」で選びます。</p></div>
     <div><i>引き分け</i><p>「結果」で選びます。</p></div>
-    <div><i>記録</i><p>練習や途中まで。勝ち負けには数えません。</p></div>
+    <div><i>つけない</i><p>練習や途中まで。勝ち負けには数えません（履歴に印は出ません）。</p></div>
   </div>
 </section>
 
@@ -324,14 +317,24 @@
   <h2 id="g-keep">記録の保存先と、消し方</h2>
   <div class="keep">
     <div><svg viewBox="0 0 76 76" role="img" aria-label="スマホの中に鍵がある絵"><rect x="20" y="6" width="36" height="64" rx="8" fill="none" stroke="#F3F4EF" stroke-width="3"/><rect x="29" y="36" width="18" height="15" rx="3" fill="#C0FC09"/><path d="M32 36v-5a6 6 0 0 1 12 0v5" fill="none" stroke="#C0FC09" stroke-width="3"/></svg><div><b>この端末の中だけに保存</b><p>VIBESのサーバーには送りません。ほかの人からは見えません。別の端末では、記録は別々になります。</p></div></div>
-    <div><svg viewBox="0 0 76 76" role="img" aria-label="ゲームの記録を押して、消すボタンを押す絵"><rect x="6" y="12" width="64" height="22" rx="7" fill="#2B303D"/><rect x="12" y="19" width="24" height="8" rx="4" fill="#C0FC09"/><rect x="6" y="42" width="64" height="24" rx="7" fill="none" stroke="#FF8A9A" stroke-width="3"/><path d="M30 54h16" stroke="#FF8A9A" stroke-width="3" stroke-linecap="round"/></svg><div><b>まちがえたゲームは消して入れ直す</b><p>「ゲームの記録」でそのゲームを押す →「この記録を消す」。消した記録は元に戻せません。</p></div></div>
+    <div><svg viewBox="0 0 76 76" role="img" aria-label="ゲームの記録を押して、消すボタンを押す絵"><rect x="6" y="12" width="64" height="22" rx="7" fill="#2B303D"/><rect x="12" y="19" width="24" height="8" rx="4" fill="#C0FC09"/><rect x="6" y="42" width="64" height="24" rx="7" fill="none" stroke="#FF8A9A" stroke-width="3"/><path d="M30 54h16" stroke="#FF8A9A" stroke-width="3" stroke-linecap="round"/></svg><div><b>まちがえたゲームは、なおすか消す</b><p>「履歴」のタブでそのゲームを押すと、数字をなおせます。消すときは「このゲームを消す」。消した記録は元に戻せません。</p></div></div>
+  </div>
+</section>
+
+<section aria-labelledby="g-more">
+  <h2 id="g-more">ほかにできること</h2>
+  <div class="keep txt">
+    <div><div><b>目標のアベレージを決める</b><p>「設定」で目標を入れると、グラフにライムの点線が出て、あとどれだけで届くかが分かります。入れなければ、いまの実力の少し上が自動で目標になります。</p></div></div>
+    <div><div><b>称号をあつめる</b><p>ゲーム数・ハイラン・アベレージの条件をクリアすると、「称号」のタブの球に色がつきます。全部で14個あります。</p></div></div>
+    <div><div><b>自己ベストを知らせる</b><p>これまでのベストを超えるアベレージのゲームを保存すると、その場でお知らせします。</p></div></div>
+    <div><div><b>記録をファイルに保存する</b><p>機種変更の前に、「設定」の「ファイルに保存」で記録を持ち出せます。表計算ソフトでひらける形でも保存できます。</p></div></div>
   </div>
 </section>
 
 <section aria-labelledby="g-faq">
   <h2 id="g-faq">よくある質問</h2>
   <details><summary>お金はかかりますか。登録はいりますか。</summary><p>無料です。最初に自分の持ち点（とニックネーム）を登録しますが、メールアドレスやパスワードはいりません。</p></details>
-  <details><summary>機種変更したら、記録は引き継げますか。</summary><p>いまは引き継げません。ブラウザのデータを消すと、記録も消えます。</p></details>
+  <details><summary>機種変更したら、記録は引き継げますか。</summary><p>引き継げます。「設定」のタブの「ファイルに保存」で記録をファイルにして、新しい端末で「保存したファイルを読み込む」を押してください。何もせずにブラウザのデータを消すと、記録も消えます。</p></details>
   <details><summary>途中で終わったゲームや練習も記録できますか。</summary><p>できます。そこまでの得点・イニング・ハイランを入れてください。結果を「つけない」にすると、勝ち負けには数えません。</p></details>
   <details><summary>0点で終わったゲームは、どう入れますか。</summary><p>得点 0、ハイラン 0、イニングは撞いた回数を入れてください。アベレージは 0.000 になります。</p></details>
 </section>
@@ -339,7 +342,7 @@
 <section class="end">
   <h2 style="margin-bottom:6px">今日のゲームから、記録をはじめる</h2>
   <p>つづけるほど、グラフが自分の成長の記録になります。</p>
-  <a class="cta" href="/pages/3c-self-data">3C 自己データ帳をひらく</a>
+  <a class="cta" href="/pages/personal-data-note">VIBES PERSONAL DATA NOTE をひらく</a>
 </section>
 
 </div></div>

@@ -5,24 +5,24 @@
  "homeWinners": false,
  "homeNew": [
   {
+   "label": "VIBES PERSONAL DATA NOTE",
+   "note": "3C NOTE と自己データ帳が1つに",
+   "href": "/pages/personal-data-note"
+  },
+  {
    "label": "1966年 小方浩也 vs クールマンス",
    "note": "VIBES BILLIARDS TV に貴重な映像を公開",
    "href": "/pages/tv"
   },
   {
-   "label": "3C 自己データ帳の使い方",
-   "note": "図で見るマニュアル",
-   "href": "/pages/3c-self-data-guide"
-  },
-  {
-   "label": "3C 自己データ帳",
-   "note": "スリークッションのアベレージを記録",
-   "href": "/pages/3c-self-data"
-  },
-  {
    "label": "14-1 超入門ガイド",
    "note": "ストレートプールのルール・得点と減点",
    "href": "/pages/straight-pool-guide"
+  },
+  {
+   "label": "VIBES PERSONAL DATA NOTE の使い方",
+   "note": "図で見るマニュアル",
+   "href": "/pages/3c-self-data-guide"
   }
  ],
  "youtubeChannel": "https://www.youtube.com/@vibes-billiards"

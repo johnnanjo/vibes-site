@@ -1,10 +1,10 @@
-<!-- 3C NOTE：スリークッションの練習ゲームを自分で記録するページ。build.mjs がサイトの枠（ヘッダー・フッター）に入れて /pages/3c-note に出す。記録は端末のブラウザ（localStorage: vibes-3c-note）だけに保存。 -->
+<!-- VIBES PERSONAL DATA NOTE（2026-11-27。運営者「3C NOTE と 3C 自己データ帳の良いところを組み合わせて1つに」）：スリークッションのゲームを1ゲームずつ記録するページ。build.mjs がサイトの枠に入れて /pages/personal-data-note に出す（/pages/3c-note と /pages/3c-self-data はここへ移動）。3C NOTE から＝タブ・台の形のグラフ・目標・称号・なおす・ファイル保存／自己データ帳から＝持ち点の登録・勝ち負け・ゲームごとの持ち点・数字の食いちがいチェック。記録は端末のブラウザ（localStorage: vibes-3c-note）だけ。自己データ帳の記録（vibes-3c-self-v1 / vibes-3c-self-profile）は最初にひらいたとき1回だけ取り込む（元は消さない）。 -->
 <style>
 .n3{--blue:#1E5AA8;--blue2:#184A8C;--red:#D7262E;--yel:#F2C200}
 .n3 *{box-sizing:border-box}
 .n3-band{background:var(--blue);color:#fff;border-radius:0 0 32px 32px;padding:0 0 22px}
 .n3-band .wrap{display:flex;flex-direction:column;gap:6px}
-.n3-ttl{font-family:var(--disp);font-size:clamp(52px,13vw,112px);line-height:.9;letter-spacing:.01em;margin:6px 0 0}
+.n3-ttl{font-family:var(--disp);font-size:clamp(46px,12vw,104px);line-height:.92;letter-spacing:.01em;margin:2px 0 0}
 .n3-lead{margin:6px 0 0;font-size:15px;font-weight:700;line-height:1.7;max-width:34em}
 .n3-tabs{position:sticky;top:0;z-index:15;background:var(--chalk);padding:10px 0 8px;margin-top:2px}
 .n3-tabs div{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;background:var(--night);border-radius:999px;padding:4px}
@@ -82,6 +82,14 @@
 .n3 dialog .n3-v{padding:0;gap:12px}
 .n3-best{text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
 .n3-best .n3-big{font-size:clamp(80px,24vw,120px)}
+.n3-vb{font-family:var(--disp);font-size:clamp(20px,5vw,30px);line-height:1;letter-spacing:.08em;margin:8px 0 0}
+.n3-who{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px;font-weight:900;line-height:1.4}
+.n3-who span{background:#fff;border:1.5px solid var(--line);color:var(--night);border-radius:999px;padding:6px 12px}
+.n3-guide{display:inline-block;margin-top:8px;font-size:14px;font-weight:900;color:#fff}
+.n3-pill{font-size:11px;font-weight:900;line-height:1;padding:6px 9px;border-radius:999px;white-space:nowrap;background:var(--line2);color:var(--night)}
+.n3-pill.w{background:var(--lime);color:var(--night)}.n3-pill.l{background:var(--night);color:var(--chalk)}.n3-pill.d{background:var(--blue);color:#fff}
+.n3-it .tg{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+select.n3-in{appearance:auto}
 .n3-toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--night);color:var(--chalk);font:900 14px/1.4 var(--jp);padding:13px 20px;border-radius:999px;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:calc(100vw - 32px)}
 @media(min-width:760px){.n3-g{grid-template-columns:repeat(3,minmax(0,1fr))}.n3-bd{grid-template-columns:repeat(3,minmax(0,1fr))}.n3-v{max-width:760px}.n3-tabs div{max-width:760px}}
 @media(prefers-reduced-motion:reduce){.n3-bar i{transition:none}}
@@ -89,11 +97,13 @@
 <div class="n3">
 <div class="n3-band"><div class="wrap">
 <p class="crumb"><a href="/" style="color:#fff">トップ</a>　<a href="/pages/carom" style="color:#fff">キャロム</a></p>
-<h1 class="n3-ttl">3C NOTE</h1>
-<p class="n3-lead">スリークッションの練習ゲームを、1ゲームずつ記録。点数とイニングを入れるだけで、アベレージの伸びが見えます。</p>
+<p class="n3-vb">VIBES</p>
+<h1 class="n3-ttl">PERSONAL<br>DATA NOTE</h1>
+<p class="n3-lead">スリークッションのゲームを、1ゲームずつ記録。得点・イニング・ハイランを入れるだけで、アベレージと勝ち負け、成長が見えます。無料。登録の内容も記録も、この端末の中だけに保存します。</p>
+<a class="n3-guide" href="/pages/3c-self-data-guide">使い方を図で見る</a>
 </div></div>
 <main class="wrap">
-<nav class="n3-tabs" aria-label="3C NOTE"><div role="tablist">
+<nav class="n3-tabs" aria-label="VIBES PERSONAL DATA NOTE"><div role="tablist">
 <button role="tab" data-t="home">ホーム</button><button role="tab" data-t="rec">記録する</button><button role="tab" data-t="log">履歴</button><button role="tab" data-t="bdg">称号</button><button role="tab" data-t="set">設定</button>
 </div></nav>
 
@@ -101,22 +111,31 @@
 
 <section class="n3-v" id="n3-rec" hidden>
 <h2 class="n3-h">ゲームを記録する</h2>
-<div class="n3-f"><label for="n3-p">点数<small>このゲームで当てた数</small></label><div class="n3-stp"><button type="button" data-s="p,-1" aria-label="点数を1へらす">−</button><input id="n3-p" type="number" inputmode="numeric" min="0" max="999" value="0"><button type="button" data-s="p,1" aria-label="点数を1ふやす">＋</button></div></div>
+<div class="n3-emp" id="n3-need" hidden><b>先に、自分の持ち点を登録してください。</b><span>持ち点に届いたゲームを「勝ち」として数えるのに使います。入れるのは持ち点だけ。メールアドレスやパスワードはいりません。</span><button class="n3-btn" type="button" data-go="set">持ち点を登録する</button></div>
+<div class="n3-v" id="n3-form" style="padding:0">
+<div class="n3-f"><label for="n3-p">得点<small>取った点数</small></label><div class="n3-stp"><button type="button" data-s="p,-1" aria-label="点数を1へらす">−</button><input id="n3-p" type="number" inputmode="numeric" min="0" max="999" value="0"><button type="button" data-s="p,1" aria-label="点数を1ふやす">＋</button></div></div>
 <div class="n3-f"><label for="n3-i">イニング<small>撞いた回数</small></label><div class="n3-stp"><button type="button" data-s="i,-1" aria-label="イニングを1へらす">−</button><input id="n3-i" type="number" inputmode="numeric" min="0" max="999" value="0"><button type="button" data-s="i,1" aria-label="イニングを1ふやす">＋</button></div></div>
 <div class="n3-live"><span>このゲームの<br>アベレージ</span><b id="n3-av">0.000</b></div>
-<div class="n3-f"><label for="n3-h">ハイラン<small>いちばん続いた点数。入れなくてもOK</small></label><div class="n3-stp"><button type="button" data-s="h,-1" aria-label="ハイランを1へらす">−</button><input id="n3-h" type="number" inputmode="numeric" min="0" max="999" value="0"><button type="button" data-s="h,1" aria-label="ハイランを1ふやす">＋</button></div></div>
+<div class="n3-f"><label for="n3-h">ハイラン<small>1回の最高得点。入れなくてもOK</small></label><div class="n3-stp"><button type="button" data-s="h,-1" aria-label="ハイランを1へらす">−</button><input id="n3-h" type="number" inputmode="numeric" min="0" max="999" value="0"><button type="button" data-s="h,1" aria-label="ハイランを1ふやす">＋</button></div></div>
 <div class="n3-two">
 <div class="n3-f"><label for="n3-d">日付</label><input class="n3-in" id="n3-d" type="date"></div>
 <div class="n3-f"><label for="n3-m">メモ<small>店・相手など</small></label><input class="n3-in" id="n3-m" type="text" maxlength="40" autocomplete="off"></div>
 </div>
+<div class="n3-two">
+<div class="n3-f"><label for="n3-r">結果</label><select class="n3-in" id="n3-r"><option value="auto">自動（持ち点に届いたら勝ち）</option><option value="w">勝ち</option><option value="l">負け</option><option value="d">引き分け</option><option value="n">つけない（練習など）</option></select></div>
+<div class="n3-f"><label for="n3-hc">このゲームの持ち点</label><input class="n3-in" id="n3-hc" type="number" inputmode="numeric" min="1" max="99"></div>
+</div>
 <p class="n3-err" id="n3-er" hidden></p>
-<button class="n3-btn" type="button" id="n3-save">このゲームを記録する</button>
+<button class="n3-btn" type="button" id="n3-save">このゲームを保存する</button>
+</div>
 </section>
 
 <section class="n3-v" id="n3-log" hidden></section>
 <section class="n3-v" id="n3-bdg" hidden></section>
 
 <section class="n3-v" id="n3-set" hidden>
+<h2 class="n3-h">ユーザー登録</h2>
+<div class="n3-card n3-f"><p class="n3-note" style="margin:0">自分の持ち点を登録してください。持ち点に届いたゲームを「勝ち」として数えるのに使います。持ち点が変わったら、ここで直せます。メールアドレスやパスワードはいりません。</p><div class="n3-two"><div class="n3-f"><label for="n3-ph">自分の持ち点<small>必ず入れる</small></label><input class="n3-in" id="n3-ph" type="number" inputmode="numeric" min="1" max="99"></div><div class="n3-f"><label for="n3-pn">ニックネーム<small>なくてもよい</small></label><input class="n3-in" id="n3-pn" type="text" maxlength="20" autocomplete="off"></div></div><p class="n3-err" id="n3-pe" hidden></p><button class="n3-btn dk" type="button" id="n3-ps">登録する</button></div>
 <h2 class="n3-h">目標アベレージ</h2>
 <div class="n3-card n3-f"><label for="n3-goal">目標<small>例：0.500。空にすると、いまの実力の少し上を自動で目標にします</small></label><input class="n3-in" id="n3-goal" type="number" inputmode="decimal" step="0.001" min="0" max="9" placeholder="自動"><button class="n3-btn dk" type="button" id="n3-gs">目標を保存する</button></div>
 <h2 class="n3-h">ホームに出す「直近」のゲーム数</h2>
@@ -134,8 +153,9 @@
 </main>
 
 <dialog id="n3-ed"><h3>記録をなおす</h3><div class="n3-v">
-<div class="n3-two"><div class="n3-f"><label for="n3-ep">点数</label><input class="n3-in" id="n3-ep" type="number" inputmode="numeric" min="0" max="999"></div><div class="n3-f"><label for="n3-ei">イニング</label><input class="n3-in" id="n3-ei" type="number" inputmode="numeric" min="1" max="999"></div></div>
+<div class="n3-two"><div class="n3-f"><label for="n3-ep">得点</label><input class="n3-in" id="n3-ep" type="number" inputmode="numeric" min="0" max="999"></div><div class="n3-f"><label for="n3-ei">イニング</label><input class="n3-in" id="n3-ei" type="number" inputmode="numeric" min="1" max="999"></div></div>
 <div class="n3-two"><div class="n3-f"><label for="n3-eh">ハイラン</label><input class="n3-in" id="n3-eh" type="number" inputmode="numeric" min="0" max="999"></div><div class="n3-f"><label for="n3-edt">日付</label><input class="n3-in" id="n3-edt" type="date"></div></div>
+<div class="n3-two"><div class="n3-f"><label for="n3-erz">結果</label><select class="n3-in" id="n3-erz"><option value="auto">自動</option><option value="w">勝ち</option><option value="l">負け</option><option value="d">引き分け</option><option value="n">つけない</option></select></div><div class="n3-f"><label for="n3-ehc">持ち点</label><input class="n3-in" id="n3-ehc" type="number" inputmode="numeric" min="0" max="99"></div></div>
 <div class="n3-f"><label for="n3-em">メモ</label><input class="n3-in" id="n3-em" type="text" maxlength="40" autocomplete="off"></div>
 <p class="n3-err" id="n3-ee" hidden></p>
 <button class="n3-btn" type="button" id="n3-es">なおした内容で保存</button>
@@ -150,10 +170,11 @@
 <script>
 (function () {
   'use strict';
-  var KEY = 'vibes-3c-note', NS = [10, 20, 30, 50, 100];
+  var KEY = 'vibes-3c-note', NS = [5, 10, 20, 30, 50, 100], RES = { w: '勝ち', l: '負け', d: '引き分け' };
   var $ = function (id) { return document.getElementById(id); };
-  var S = { v: 1, goal: null, n: 20, games: [] };
-  try { var raw = JSON.parse(localStorage.getItem(KEY) || 'null'); if (raw && Array.isArray(raw.games)) { S.goal = typeof raw.goal === 'number' && raw.goal > 0 ? raw.goal : null; S.n = NS.indexOf(raw.n) >= 0 ? raw.n : 20; S.games = raw.games.map(clean).filter(Boolean); } } catch (e) {}
+  var S = { v: 2, goal: null, n: 20, games: [], prof: null, mig: 0 };
+  function profOf(p) { var h = p ? Math.floor(Number(p.h)) : 0; return h >= 1 && h <= 99 ? { h: h, name: String(p.name || '').slice(0, 20) } : null; }
+  try { var raw = JSON.parse(localStorage.getItem(KEY) || 'null'); if (raw && Array.isArray(raw.games)) { S.goal = typeof raw.goal === 'number' && raw.goal > 0 ? raw.goal : null; S.n = NS.indexOf(raw.n) >= 0 ? raw.n : 20; S.games = raw.games.map(clean).filter(Boolean); S.prof = profOf(raw.prof); S.mig = raw.mig ? 1 : 0; } } catch (e) {}
   var saved = true;
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); saved = true; } catch (e) { saved = false; } }
   function int(v, max) { v = Math.floor(Number(v)); return isFinite(v) && v >= 0 ? Math.min(v, max || 999) : 0; }
@@ -165,10 +186,29 @@
     var h = int(g.h != null ? g.h : g.highRun != null ? g.highRun : g.high_run != null ? g.high_run : g.hr); if (h > p) h = p;
     var d = String(g.d || g.date || g.createdAt || g.timestamp || ''), m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d);
     if (!m) { var t = new Date(typeof g.date === 'number' ? g.date : typeof g.timestamp === 'number' ? g.timestamp : d); m = isNaN(t) ? null : [0, t.getFullYear(), ('0' + (t.getMonth() + 1)).slice(-2), ('0' + t.getDate()).slice(-2)]; }
-    return { id: String(g.id || (Date.now().toString(36) + Math.random().toString(36).slice(2, 7))), d: m ? m[1] + '-' + m[2] + '-' + m[3] : today(), p: p, i: i, h: h, m: String(g.m || g.memo || g.note || '').slice(0, 40) };
+    var r = String(g.r || 'auto'); if (!/^(auto|w|l|d|n)$/.test(r)) r = 'auto';
+    return { id: String(g.id || (Date.now().toString(36) + Math.random().toString(36).slice(2, 7))), d: m ? m[1] + '-' + m[2] + '-' + m[3] : today(), p: p, i: i, h: h, m: String(g.m || g.memo || g.note || '').slice(0, 40), r: r, hc: int(g.hc, 99) };
   }
+  /* result of a game: the one the player chose, or (auto) a win when the score reached the handicap of that game */
+  function resOf(g) { return g.r && g.r !== 'auto' ? g.r : g.hc > 0 && g.p >= g.hc ? 'w' : 'n'; }
+  /* one-time import of the records kept by the former "3C 自己データ帳" (same origin, other keys). The old keys are left as they are. */
+  (function () {
+    if (S.mig) return;
+    try {
+      var pp = JSON.parse(localStorage.getItem('vibes-3c-self-profile') || 'null'); if (!S.prof) S.prof = profOf(pp);
+      var a = JSON.parse(localStorage.getItem('vibes-3c-self-v1') || '[]'), seen = {};
+      S.games.forEach(function (g) { seen[g.id] = 1; });
+      (Array.isArray(a) ? a : []).forEach(function (o) {
+        if (!o || typeof o !== 'object') return;
+        if (Array.isArray(o.me)) { var me = o.me.filter(function (v) { return typeof v === 'number' && isFinite(v); }); o = { id: o.id, d: o.d, pts: me.reduce(function (x, y) { return x + y; }, 0), inn: me.length, hr: me.length ? Math.max.apply(null, me) : 0, h: o.hm, res: o.res, memo: o.memo || o.opn }; }
+        var g = clean({ id: 'sd-' + (o.id || Math.random().toString(36).slice(2)), d: o.d, p: o.pts, i: o.inn, h: o.hr, hc: o.h, r: o.res, m: o.memo });
+        if (g && !seen[g.id]) { seen[g.id] = 1; S.games.push(g); }
+      });
+    } catch (e) {}
+    S.mig = 1; if (S.games.length || S.prof) save();
+  })();
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function f3(x) { return isFinite(x) ? x.toFixed(3) : '0.000'; }
+  function f3(x) { return isFinite(x) ? (Math.floor(x * 1000 + 1e-7) / 1000).toFixed(3) : '0.000'; }
   function avg(a) { var p = 0, i = 0; a.forEach(function (g) { p += g.p; i += g.i; }); return i ? p / i : 0; }
   function ga(g) { return g.i ? g.p / g.i : 0; }
   function jd(d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d); return m ? m[1] + '年' + (+m[2]) + '月' + (+m[3]) + '日' : d; }
@@ -197,14 +237,16 @@
 
   function drawHome() {
     var el = $('n3-home'), all = sorted(), n = all.length;
-    if (!n) { el.innerHTML = '<div class="n3-dark"><div><div class="n3-k">通算アベレージ</div><div class="n3-big">0.000</div></div><svg class="n3-tbl" viewBox="0 0 340 196" role="img" aria-label="まだ記録がありません">' + table([], goal()) + '</svg></div><div class="n3-emp"><b>最初の1ゲームを記録しましょう。</b><span>ゲームが終わったら、点数とイニングを入れるだけ。3ゲームほど入れると、グラフが動きはじめます。</span><button class="n3-btn" type="button" data-go="rec">ゲームを記録する</button></div>'; return; }
-    var rec = all.slice(-S.n), last20 = all.slice(-20), G = goal(), ra = avg(rec), b = bestOf(all), hr = 0, tp = 0, ti = 0;
-    all.forEach(function (g) { if (g.h > hr) hr = g.h; tp += g.p; ti += g.i; });
+    var who = S.prof ? '<div class="n3-who"><span>' + (S.prof.name ? esc(S.prof.name) + ' さん' : 'ユーザー登録ずみ') + '</span><span>持ち点 ' + S.prof.h + '</span></div>' : '<div class="n3-emp"><b>はじめに、自分の持ち点を登録してください。</b><span>持ち点に届いたゲームを「勝ち」として数えるのに使います。メールアドレスやパスワードはいりません。</span><button class="n3-btn" type="button" data-go="set">持ち点を登録する</button></div>';
+    if (!n) { el.innerHTML = who + '<div class="n3-dark"><div><div class="n3-k">通算アベレージ</div><div class="n3-big">0.000</div></div><svg class="n3-tbl" viewBox="0 0 340 196" role="img" aria-label="まだ記録がありません">' + table([], goal()) + '</svg></div><div class="n3-emp"><b>最初の1ゲームを記録しましょう。</b><span>ゲームが終わったら、得点とイニングを入れるだけ。3ゲームほど入れると、グラフが動きはじめます。</span><button class="n3-btn" type="button" data-go="rec">ゲームを記録する</button></div>'; return; }
+    var rec = all.slice(-S.n), last20 = all.slice(-20), G = goal(), ra = avg(rec), b = bestOf(all), hr = 0, tp = 0, ti = 0, w = 0, l = 0, dr = 0;
+    all.forEach(function (g) { if (g.h > hr) hr = g.h; tp += g.p; ti += g.i; var r = resOf(g); if (r === 'w') w++; else if (r === 'l') l++; else if (r === 'd') dr++; });
     var pc = Math.max(0, Math.min(100, ra / G * 100)), ok = ra >= G;
-    el.innerHTML = '<div class="n3-dark"><div class="n3-top"><div><div class="n3-k">通算アベレージ</div><div class="n3-big">' + f3(avg(all)) + '</div></div><small>' + tp + '点 ÷ ' + ti + 'イニング<br>ゲーム数<b>' + n + '</b></small></div>' +
+    el.innerHTML = who + '<div class="n3-dark"><div class="n3-top"><div><div class="n3-k">通算アベレージ</div><div class="n3-big">' + f3(avg(all)) + '</div></div><small>' + tp + '点 ÷ ' + ti + 'イニング<br>ゲーム数<b>' + n + '</b></small></div>' +
       '<svg class="n3-tbl" viewBox="0 0 340 196" role="img" aria-label="直近' + last20.length + 'ゲームのアベレージの動き">' + table(last20, G) + '</svg>' +
       '<div class="n3-leg"><span><i style="background:#fff"></i>1ゲーム</span><span><i style="background:#F2C200"></i>いちばん新しい</span><span><i style="background:#D7262E"></i>この中のベスト</span><span>直近' + last20.length + 'ゲーム</span></div></div>' +
-      '<div class="n3-g"><div class="n3-st"><small>ベストゲーム</small><b>' + f3(ga(b)) + '</b><small>' + b.p + '点・' + b.i + 'イニング</small></div><div class="n3-st"><small>ハイラン</small><b>' + hr + '</b><small>最高の連続得点</small></div><div class="n3-st"><small>ゲーム数</small><b>' + n + '</b><small>' + jd(all[0].d).replace(/^\d+年/, '') + ' から</small></div></div>' +
+      '<div class="n3-g"><div class="n3-st"><small>勝ち − 負け</small><b>' + w + ' − ' + l + '</b><small>' + (dr ? '引き分け ' + dr + '・' : '') + '結果をつけたゲームだけ</small></div><div class="n3-st"><small>総得点</small><b>' + tp + '</b><small>これまでの合計</small></div><div class="n3-st"><small>総イニング</small><b>' + ti + '</b><small>これまでの合計</small></div>' +
+      '<div class="n3-st"><small>ベストゲーム</small><b>' + f3(ga(b)) + '</b><small>' + b.p + '点・' + b.i + 'イニング</small></div><div class="n3-st"><small>ハイラン</small><b>' + (hr || '—') + '</b><small>最高の連続得点</small></div><div class="n3-st"><small>ゲーム数</small><b>' + n + '</b><small>' + jd(all[0].d).replace(/^\d+年/, '') + ' から</small></div></div>' +
       '<div class="n3-card"><div class="n3-row"><div><div class="n3-k">直近 ' + rec.length + ' ゲームのアベレージ</div><div class="n3-mid">' + f3(ra) + '</div></div><div class="n3-chips" role="group" aria-label="集計するゲーム数">' + NS.map(function (x) { return '<button type="button" data-n="' + x + '" aria-pressed="' + (x === S.n) + '">' + x + '</button>'; }).join('') + '</div></div>' +
       '<div class="n3-bar"><i class="' + (ok ? 'ok' : '') + '" style="width:' + pc.toFixed(1) + '%"></i></div><p class="n3-note">' + (ok ? '目標 ' + f3(G) + ' をクリアしています。設定で、次の目標を決めましょう。' : '目標 ' + f3(G) + ' まで、あと ' + f3(G - ra) + '。' + (S.goal ? '' : '（目標は自動。設定で変えられます）')) + '</p></div>' +
       '<button class="n3-btn" type="button" data-go="rec">ゲームを記録する</button>' + (saved ? '' : '<p class="n3-err">このブラウザでは記録を保存できません。プライベートブラウズを切るか、別のブラウザでお試しください。</p>');
@@ -214,7 +256,8 @@
     var el = $('n3-log'), a = sorted().reverse(), b = bestOf(a);
     if (!a.length) { el.innerHTML = '<h2 class="n3-h">履歴</h2><div class="n3-emp"><b>まだ記録がありません。</b><span>記録したゲームが、新しい順にここに並びます。</span><button class="n3-btn" type="button" data-go="rec">ゲームを記録する</button></div>'; return; }
     el.innerHTML = '<h2 class="n3-h">履歴（' + a.length + 'ゲーム）</h2><p class="n3-note" style="margin:0">タップすると、なおしたり消したりできます。</p><div class="n3-card n3-list" style="padding:4px 16px">' + a.map(function (g) {
-      return '<button class="n3-it" type="button" data-e="' + esc(g.id) + '"><span class="a">' + f3(ga(g)) + '</span><span class="m"><b>' + g.p + '点・' + g.i + 'イニング' + (g.h ? '・ハイラン' + g.h : '') + '</b><small>' + jd(g.d) + (g.m ? '　' + esc(g.m) : '') + '</small></span>' + (g === b ? '<span class="n3-tag">ベスト</span>' : '<span></span>') + '</button>';
+      var r = resOf(g);
+      return '<button class="n3-it" type="button" data-e="' + esc(g.id) + '"><span class="a">' + f3(ga(g)) + '</span><span class="m"><b>' + g.p + '点・' + g.i + 'イニング' + (g.h ? '・ハイラン' + g.h : '') + '</b><small>' + jd(g.d) + (g.hc ? '・持ち点' + g.hc : '') + (g.m ? '　' + esc(g.m) : '') + '</small></span><span class="tg">' + (RES[r] ? '<span class="n3-pill ' + r + '">' + RES[r] + '</span>' : '') + (g === b ? '<span class="n3-tag">ベスト</span>' : '') + '</span></button>';
     }).join('') + '</div>';
   }
 
@@ -245,7 +288,7 @@
     var s = stats(), got = 0, h = BD.map(function (b) { var on = b[4](s); if (on) got++; return '<div class="n3-b' + (on ? ' on' : '') + '" style="--c:' + b[1] + '"><span class="o' + (b[5] ? ' d' : '') + '">' + b[0] + '</span><div><b>' + b[2] + '</b><small>' + b[3] + '</small></div></div>'; }).join('');
     $('n3-bdg').innerHTML = '<h2 class="n3-h">称号（' + got + ' / ' + BD.length + '）</h2><p class="n3-note" style="margin:0">条件をクリアすると、球に色がつきます。アベレージの称号は、5イニング以上のゲームが対象です。</p><div class="n3-bd">' + h + '</div>';
   }
-  function drawSet() { $('n3-goal').value = S.goal ? f3(S.goal) : ''; $('n3-nset').innerHTML = NS.map(function (x) { return '<button type="button" data-n="' + x + '" aria-pressed="' + (x === S.n) + '">' + x + 'ゲーム</button>'; }).join(''); }
+  function drawSet() { $('n3-ph').value = S.prof ? S.prof.h : ''; $('n3-pn').value = S.prof ? S.prof.name : ''; $('n3-ps').textContent = S.prof ? '変更を保存する' : '登録する'; $('n3-pe').hidden = true; $('n3-goal').value = S.goal ? f3(S.goal) : ''; $('n3-nset').innerHTML = NS.map(function (x) { return '<button type="button" data-n="' + x + '" aria-pressed="' + (x === S.n) + '">' + x + 'ゲーム</button>'; }).join(''); }
 
   /* ---- tabs ---- */
   var TABS = ['home', 'rec', 'log', 'bdg', 'set'], cur = 'home';
@@ -253,7 +296,7 @@
     if (TABS.indexOf(t) < 0) t = 'home'; cur = t;
     TABS.forEach(function (x) { $('n3-' + x).hidden = x !== t; });
     [].forEach.call(document.querySelectorAll('.n3-tabs button'), function (b) { b.setAttribute('aria-selected', b.dataset.t === t); });
-    ({ home: drawHome, log: drawLog, bdg: drawBdg, set: drawSet, rec: function () { if (!$('n3-d').value) $('n3-d').value = today(); live(); } })[t]();
+    ({ home: drawHome, log: drawLog, bdg: drawBdg, set: drawSet, rec: function () { $('n3-need').hidden = !!S.prof; $('n3-form').hidden = !S.prof; if (!$('n3-d').value) $('n3-d').value = today(); if (S.prof && !$('n3-hc').value) $('n3-hc').value = S.prof.h; live(); } })[t]();
     if (!keep) { try { history.replaceState(null, '', t === 'home' ? location.pathname : '#' + t); } catch (e) {} var tb = document.querySelector('.n3-tabs'); if (tb.getBoundingClientRect().top < 0) tb.scrollIntoView(); }
   }
   document.querySelector('.n3').addEventListener('click', function (ev) {
@@ -268,26 +311,27 @@
   /* ---- record ---- */
   function live() { var p = int($('n3-p').value), i = int($('n3-i').value); $('n3-av').textContent = f3(i ? p / i : 0); $('n3-er').hidden = true; }
   ['p', 'i', 'h'].forEach(function (k) { $('n3-' + k).addEventListener('input', live); $('n3-' + k).addEventListener('focus', function () { this.select(); }); });
-  function check(p, i, h) { return i < 1 ? 'イニングを1以上で入れてください。' : h > p ? 'ハイランが点数より大きくなっています。' : p > i * 30 ? '点数とイニングが逆になっていないか、確かめてください。' : ''; }
+  function check(p, i, h) { return i < 1 ? 'イニングを 1 以上の数字で入れてください。' : h > p ? 'ハイラン（' + h + '）が得点（' + p + '）より大きくなっています。数字を確かめてください。' : h > 0 && h * i < p ? 'ハイラン ' + h + ' で ' + i + ' イニングだと、最大でも ' + (h * i) + ' 点です。得点（' + p + '）かイニングを確かめてください。' : p > i * 30 ? '得点とイニングが逆になっていないか、確かめてください。' : ''; }
   $('n3-save').addEventListener('click', function () {
     var p = int($('n3-p').value), i = int($('n3-i').value), h = int($('n3-h').value), er = check(p, i, h);
     if (er) { $('n3-er').textContent = er; $('n3-er').hidden = false; return; }
-    var before = bestOf(S.games), g = clean({ p: p, i: i, h: h, d: $('n3-d').value || today(), m: $('n3-m').value.trim() });
+    if (!S.prof) return go('set');
+    var before = bestOf(S.games), g = clean({ p: p, i: i, h: h, d: $('n3-d').value || today(), m: $('n3-m').value.trim(), r: $('n3-r').value, hc: int($('n3-hc').value, 99) || S.prof.h });
     S.games.push(g); save();
-    $('n3-p').value = 0; $('n3-i').value = 0; $('n3-h').value = 0; $('n3-m').value = '';
+    $('n3-p').value = 0; $('n3-i').value = 0; $('n3-h').value = 0; $('n3-m').value = ''; $('n3-r').value = 'auto'; $('n3-hc').value = S.prof.h;
     go('home');
     if (!saved) return toast('このブラウザでは保存できませんでした');
-    if (before && S.games.length >= 3 && ga(g) > ga(before)) { $('n3-nbv').textContent = f3(ga(g)); $('n3-nbt').textContent = 'これまでのベスト ' + f3(ga(before)) + ' を超えました。'; $('n3-nb').showModal(); } else toast('記録しました（' + S.games.length + 'ゲーム目）');
+    if (before && S.games.length >= 3 && ga(g) > ga(before)) { $('n3-nbv').textContent = f3(ga(g)); $('n3-nbt').textContent = 'これまでのベスト ' + f3(ga(before)) + ' を超えました。'; $('n3-nb').showModal(); } else toast('保存しました（' + S.games.length + 'ゲーム目）' + (resOf(g) === 'w' ? '・勝ち' : ''));
   });
   $('n3-nbc').addEventListener('click', function () { $('n3-nb').close(); });
 
   /* ---- edit ---- */
   var eid = null, del = 0;
-  function edit(id) { var g = S.games.filter(function (x) { return x.id === id; })[0]; if (!g) return; eid = id; del = 0; $('n3-ep').value = g.p; $('n3-ei').value = g.i; $('n3-eh').value = g.h; $('n3-edt').value = g.d; $('n3-em').value = g.m; $('n3-ee').hidden = true; $('n3-edel').textContent = 'このゲームを消す'; $('n3-edel').className = 'n3-btn ln'; $('n3-ed').showModal(); }
+  function edit(id) { var g = S.games.filter(function (x) { return x.id === id; })[0]; if (!g) return; eid = id; del = 0; $('n3-ep').value = g.p; $('n3-ei').value = g.i; $('n3-eh').value = g.h; $('n3-edt').value = g.d; $('n3-em').value = g.m; $('n3-erz').value = g.r || 'auto'; $('n3-ehc').value = g.hc || ''; $('n3-ee').hidden = true; $('n3-edel').textContent = 'このゲームを消す'; $('n3-edel').className = 'n3-btn ln'; $('n3-ed').showModal(); }
   $('n3-es').addEventListener('click', function () {
     var p = int($('n3-ep').value), i = int($('n3-ei').value), h = int($('n3-eh').value), er = check(p, i, h);
     if (er) { $('n3-ee').textContent = er; $('n3-ee').hidden = false; return; }
-    S.games = S.games.map(function (g) { return g.id === eid ? { id: g.id, p: p, i: i, h: h, d: $('n3-edt').value || g.d, m: $('n3-em').value.trim().slice(0, 40) } : g; });
+    S.games = S.games.map(function (g) { return g.id === eid ? { id: g.id, p: p, i: i, h: h, d: $('n3-edt').value || g.d, m: $('n3-em').value.trim().slice(0, 40), r: $('n3-erz').value, hc: int($('n3-ehc').value, 99) } : g; });
     save(); $('n3-ed').close(); drawLog(); toast('なおしました');
   });
   $('n3-ex').addEventListener('click', function () { $('n3-ed').close(); });
@@ -297,16 +341,23 @@
   });
 
   /* ---- settings ---- */
+  $('n3-ps').addEventListener('click', function () {
+    var p = profOf({ h: $('n3-ph').value, name: $('n3-pn').value.trim() }), first = !S.prof;
+    if (!p) { $('n3-pe').textContent = '持ち点を 1〜99 の数字で入れてください。'; $('n3-pe').hidden = false; return; }
+    S.prof = p; save(); $('n3-hc').value = p.h;
+    if (!saved) { $('n3-pe').textContent = 'この端末に保存できませんでした。プライベートブラウズ（シークレット）を切ってから、もう一度ためしてください。'; $('n3-pe').hidden = false; return; }
+    if (first) { go('rec'); toast('登録しました。ゲームを記録できます'); } else { drawSet(); toast('持ち点を ' + p.h + ' にしました'); }
+  });
   $('n3-gs').addEventListener('click', function () { var v = parseFloat($('n3-goal').value); S.goal = isFinite(v) && v > 0 && v < 10 ? Math.round(v * 1000) / 1000 : null; save(); drawSet(); toast(S.goal ? '目標を ' + f3(S.goal) + ' にしました' : '目標を自動にしました'); });
   function dl(name, text, type) { var u = URL.createObjectURL(new Blob([text], { type: type })), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
-  $('n3-ej').addEventListener('click', function () { if (!S.games.length) return toast('まだ記録がありません'); dl('3c-note-' + today() + '.json', JSON.stringify({ app: 'vibes-3c-note', v: 1, goal: S.goal, n: S.n, games: sorted() }, null, 1), 'application/json'); });
-  $('n3-ec').addEventListener('click', function () { if (!S.games.length) return toast('まだ記録がありません'); dl('3c-note-' + today() + '.csv', '﻿日付,点数,イニング,アベレージ,ハイラン,メモ\r\n' + sorted().map(function (g) { return [g.d, g.p, g.i, f3(ga(g)), g.h, '"' + g.m.replace(/"/g, '""') + '"'].join(','); }).join('\r\n') + '\r\n', 'text/csv'); });
+  $('n3-ej').addEventListener('click', function () { if (!S.games.length) return toast('まだ記録がありません'); dl('vibes-personal-data-note-' + today() + '.json', JSON.stringify({ app: 'vibes-personal-data-note', v: 2, goal: S.goal, n: S.n, prof: S.prof, games: sorted() }, null, 1), 'application/json'); });
+  $('n3-ec').addEventListener('click', function () { if (!S.games.length) return toast('まだ記録がありません'); dl('vibes-personal-data-note-' + today() + '.csv', '﻿日付,得点,イニング,アベレージ,ハイラン,結果,持ち点,メモ\r\n' + sorted().map(function (g) { return [g.d, g.p, g.i, f3(ga(g)), g.h, RES[resOf(g)] || '', g.hc || '', '"' + g.m.replace(/"/g, '""') + '"'].join(','); }).join('\r\n') + '\r\n', 'text/csv'); });
   $('n3-ib').addEventListener('click', function () { $('n3-if').click(); });
   $('n3-if').addEventListener('change', function () {
     var f = this.files && this.files[0]; this.value = ''; if (!f) return;
     var r = new FileReader();
     r.onload = function () {
-      var arr; try { var j = JSON.parse(r.result); arr = Array.isArray(j) ? j : j.games || j.records || j.history || j.data || []; } catch (e) { arr = null; }
+      var arr; try { var j = JSON.parse(r.result); arr = Array.isArray(j) ? j : j.games || j.records || j.history || j.data || []; if (!S.prof && j && j.prof) S.prof = profOf(j.prof); } catch (e) { arr = null; }
       if (!Array.isArray(arr)) return toast('読み込めないファイルです');
       var seen = {}, add = 0; S.games.forEach(function (g) { seen[g.id] = seen[[g.d, g.p, g.i, g.h].join('/')] = 1; });
       arr.forEach(function (x) { var g = clean(x); if (!g) return; var k = [g.d, g.p, g.i, g.h].join('/'); if (seen[g.id] || (x && x.id == null && seen[k])) return; seen[g.id] = seen[k] = 1; S.games.push(g); add++; });
@@ -314,7 +365,7 @@
     };
     r.readAsText(f);
   });
-  $('n3-rs').addEventListener('click', function () { if (!S.games.length) return toast('消す記録がありません'); $('n3-cft').textContent = S.games.length + 'ゲームの記録を消します。元には戻せません。'; $('n3-cf').showModal(); });
+  $('n3-rs').addEventListener('click', function () { if (!S.games.length) return toast('消す記録がありません'); $('n3-cft').textContent = S.games.length + 'ゲームの記録を消します。元には戻せません。（登録した持ち点は残ります）'; $('n3-cf').showModal(); });
   $('n3-cfn').addEventListener('click', function () { $('n3-cf').close(); });
   $('n3-cfy').addEventListener('click', function () { S.games = []; S.goal = null; save(); $('n3-cf').close(); go('home'); toast('すべて消しました'); });
 
