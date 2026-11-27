@@ -100,6 +100,8 @@ main{display:block;padding-bottom:110px}
 .row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;grid-template-areas:"tm tt tag" "tm vv tag";column-gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line2);text-decoration:none}
 .row.nov{grid-template-areas:"tm tt tag"}
 @media(min-width:900px){.row,.row.nov{grid-template-columns:72px minmax(0,1fr) minmax(0,240px) 74px;grid-template-areas:"tm tt vv tag";column-gap:16px;padding:14px 8px}}
+/* 2026-11-27 幅のせまい列（大会・店のページの右の列、半分ずつの列）では、パソコンでもスマホと同じ2段の並びにする。4列のままだと大会名の幅がなくなり、1文字ずつ縦に折れていた */
+@media(min-width:900px){.cols .row{grid-template-columns:52px minmax(0,1fr) auto;grid-template-areas:"tm tt tag" "tm vv tag";column-gap:10px;padding:12px 4px}.cols .row.nov{grid-template-areas:"tm tt tag"}}
 .row .tm{grid-area:tm;font-family:var(--disp);font-size:20px;line-height:1}
 .row .tt{grid-area:tt;display:block;min-width:0;font-size:14px;font-weight:700;line-height:1.45}
 .row .vv{grid-area:vv;display:block;min-width:0;font-size:11px;color:var(--sub)}
