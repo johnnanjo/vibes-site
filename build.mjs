@@ -560,7 +560,7 @@ ${o.extra || ''}<section class="sec"><div class="sec-h"><h2>${o.h2}</h2></div><d
 function contact() {
   const body = `<div class="band"><div class="wrap band-in narrow"><div class="ph"><h1>お問い合わせ</h1><p>${stripTxt(pages.contact?.body).replace(/メール：.*$/, '')}</p></div></div></div>
 <main class="wrap narrow"><div class="cols eq" style="padding-top:20px">
-<form class="card pad form" data-hook="${esc(config.contactHook || '')}" data-kind="contact" novalidate>
+<form class="card pad form" data-hook="${esc(config.contactHook || '')}" data-backup="${esc(config.backupFormKey || '')}" data-kind="contact" novalidate>
 <label>お名前<span class="req">必須</span><input name="name" required autocomplete="name"></label>
 <label>メールアドレス<span class="req">必須</span><input type="email" name="email" required autocomplete="email"></label>
 <label>内容<span class="req">必須</span><textarea name="message" required></textarea></label>
