@@ -251,3 +251,4 @@ AI どうし・AI と運営者のあいだの引きつぎ用です。**作業の
 
 ## 2026-11-28 Claude：第5回 短距離オープン 3C フェスティバル（11/29・大阪）の組合せ
 - 運営者が送った組合せ表から、大会 `official-nba-kansai-20261129-tankyori-open` に会場（みやこビリヤード／Palms!）・方式・8組31名の組合せを追記（`data/inbox/tournaments/sync-202611281300-tankyori-open-5-draw.json`）。NEWS `tankyori-open-5-draw-2026-11-28`。画像は `static/img/results/nba-kansai-tankyori-open-5-draw-20261129.jpg`（問い合わせ先＝個人の電話・メールの段は切って載せていない）。結果はまだ（大会は 11/29）。
+- 同日：【関西】公式戦 の表記を大会名と NEWS に追加（運営者の指示。運営は「JPBF,W」）。ポケットのハウストーナメント「BIZEN CUP IN YOKOHAMA」（11/29・MECCA Yokohama。出典 On the hill! のポスター。ポスター画像は載せていない）を `house-mecca-yokohama-20261129-bizen-cup` として追加、NEWS `bizen-cup-yokohama-2026-11-28`。
