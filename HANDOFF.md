@@ -255,3 +255,4 @@ AI どうし・AI と運営者のあいだの引きつぎ用です。**作業の
 
 ## 2026-11-28 Claude：公式LINE → 運営者の LINE へ転送
 - worker.mjs に `/api/line/hook` を追加（署名の確認つき）。まだ動いていない＝運営者が Cloudflare にシークレット4つを入れ、LINE Developers で Webhook のアドレスを切り替えてから。手元のテスト（にせの LINE）は成功、実機は未確認。Make 側の「デジラボ／シャフト」の通知は残してあるので、切り替え後はその2種類だけ通知が2通になる（運営者に確認してから Make 側を外す）。
+- 2026-11-28 14:35：シークレット4つが入り（トークンは @361mehjz のものと確認）、LINE Developers の Webhook を `/api/line/hook` に切り替えた。LINE の「検証」は成功。実際の転送が届くかは運営者の確認待ち。もとの届け先は Make の「VIBES 公式LINE 受付口」のアドレス（`LINE_RELAY` に入れてある）。
