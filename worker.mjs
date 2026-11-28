@@ -218,9 +218,52 @@ export class BoardQuota extends DurableObject {
     return '';
   }
 }
+
+// ================= 公式LINE に届いたメッセージを、運営者の LINE へ転送 =================
+// 2026-11-28 運営者「公式LINEに来たLINEを私のLINEに転送して欲しい」。
+// LINE の Webhook の届け先をここ（/api/line/hook）にする。届いた1対1のメッセージを運営者の LINE へ送り（公式LINEの友だちには届かない）、
+// 同じ中身を今までの受付（Make）へもそのまま渡す＝自動の返信やハウストーナメント受付は今までどおり。
+// 設定は Cloudflare の「シークレット」4つ（値はリポジトリに置かない）：LINE_SECRET（チャネルシークレット）／LINE_TOKEN（チャネルアクセストークン）／
+// LINE_OWNER（転送先＝運営者のユーザーID）／LINE_RELAY（今までの受付のアドレス。空なら渡さない）。
+const LINE_KIND = { image: '画像', video: '動画', audio: '音声', file: 'ファイル', location: '位置情報', sticker: 'スタンプ' };
+export function lineForwardText(ev, name) {
+  const m = ev.message || {};
+  const who = (name ? name + ' さん' : '友だち') + 'から';
+  if (m.type === 'text') return '📩 公式LINEに届きました\n' + who + '\n\n' + String(m.text || '').slice(0, 4500);
+  const k = LINE_KIND[m.type] || 'メッセージ';
+  return '📩 公式LINEに' + k + 'が届きました\n' + who + (m.type === 'location' && m.address ? '\n\n' + m.address : '') + '\n\n→ 中身は LINE公式アカウントのチャットで確認してください。';
+}
+async function lineSignOk(env, body, sig) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.LINE_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const mac = new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(body)));
+  let b = ''; for (const x of mac) b += String.fromCharCode(x);
+  return same(btoa(b), String(sig || ''));
+}
+async function lineForward(env, events) {
+  const h = { Authorization: 'Bearer ' + env.LINE_TOKEN };
+  for (const ev of events) {
+    const src = ev.source || {};
+    if (ev.type !== 'message' || src.type !== 'user' || !src.userId || src.userId === env.LINE_OWNER) continue; // 運営者本人が送ったものは転送しない
+    let name = '';
+    try { const r = await fetch('https://api.line.me/v2/bot/profile/' + src.userId, { headers: h }); if (r.ok) name = String((await r.json()).displayName || '').slice(0, 40); } catch (e) {}
+    await fetch('https://api.line.me/v2/bot/message/push', { method: 'POST', headers: { ...h, 'content-type': 'application/json' }, body: JSON.stringify({ to: env.LINE_OWNER, messages: [{ type: 'text', text: lineForwardText(ev, name) }] }) }).catch(() => {});
+  }
+}
+async function lineHook(req, env, ctx) {
+  const ready = !!(env.LINE_SECRET && env.LINE_TOKEN && env.LINE_OWNER);
+  if (req.method !== 'POST') return json({ ok: true, ready, relay: !!env.LINE_RELAY }); // 設定が入ったかを見るだけ（値は出さない）
+  if (!env.LINE_SECRET) return json({ ok: false }, 503);
+  const body = await req.text(), sig = req.headers.get('x-line-signature');
+  if (!(await lineSignOk(env, body, sig))) return json({ ok: false }, 401);
+  let d = null; try { d = JSON.parse(body); } catch (e) {}
+  if (env.LINE_RELAY) ctx.waitUntil(fetch(env.LINE_RELAY, { method: 'POST', headers: { 'content-type': 'application/json', 'x-line-signature': sig }, body }).catch(() => {}));
+  if (ready && d && Array.isArray(d.events)) ctx.waitUntil(lineForward(env, d.events).catch(() => {}));
+  return json({ ok: true });
+}
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
+    if (url.pathname === '/api/line/hook') return lineHook(req, env, ctx);
     if (url.pathname === '/api/yt/search') return ytSearch(req, env, url, ctx);
     const m = url.pathname.match(/^\/api\/count\/(\d{6})$/);
     if (m) return env.COUNT_ROOM.get(env.COUNT_ROOM.idFromName(m[1])).fetch(req);
