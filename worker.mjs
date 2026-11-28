@@ -251,7 +251,10 @@ async function lineForward(env, events) {
 }
 async function lineHook(req, env, ctx) {
   const ready = !!(env.LINE_SECRET && env.LINE_TOKEN && env.LINE_OWNER);
-  if (req.method !== 'POST') return json({ ok: true, ready, relay: !!env.LINE_RELAY }); // 設定が入ったかを見るだけ（値は出さない）
+  if (req.method !== 'POST') { // 設定が入ったかを見るだけ（値は出さない）。bot＝トークンがどの公式LINEのものか（@から始まる公開のID）
+    let bot = ''; if (env.LINE_TOKEN) { try { const r = await fetch('https://api.line.me/v2/bot/info', { headers: { Authorization: 'Bearer ' + env.LINE_TOKEN } }); bot = r.ok ? String((await r.json()).basicId || '') : 'token_rejected'; } catch (e) { bot = 'error'; } }
+    return json({ ok: true, ready, relay: !!env.LINE_RELAY, bot });
+  }
   if (!env.LINE_SECRET) return json({ ok: false }, 503);
   const body = await req.text(), sig = req.headers.get('x-line-signature');
   if (!(await lineSignOk(env, body, sig))) return json({ ok: false }, 401);
